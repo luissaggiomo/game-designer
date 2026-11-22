@@ -25,7 +25,7 @@ Modello di voce:
 - Rif.: GDD §2, §18
 
 ## D-003 — Architettura: server autorevole, motore puro, viste filtrate
-- Data: 2026-11-20 · Stato: 🟡 (raccomandata nell'architettura, da confermare)
+- Data: 2026-11-20 · Stato: ✅ confermata da Luis il 2026-11-22
 - Rif.: Architettura §2, §3
 
 ## D-005 — Pari opportunità tra reparti
@@ -36,8 +36,17 @@ Modello di voce:
 - Rif.: GDD §1, Architettura §14
 
 ## D-004 — Libreria per l'interfaccia: Svelte o React
-- Data: — · Stato: 🔴 da decidere prima della fase 3 (non blocca il motore)
+- Data: 2026-11-22 · Stato: ✅ (scelta delegata a Claude da Luis)
 - Alternative: A) Svelte — più leggero e semplice da leggere. B) React — più diffuso, più esempi in rete.
+- Scelta: **Svelte** (con Vite).
+- Motivo: Svelte compila in JavaScript semplice senza una grossa libreria da scaricare, quindi
+  pacchetti più piccoli e meno lavoro per il processore: conta su smart TV, chiavette e
+  telefoni economici. La maggiore diffusione di React conta poco, perché il codice lo scrive Claude.
+- Controindicazioni e rimedi: la compatibilità con i browser datati delle smart TV dipende
+  soprattutto dall'obiettivo di compilazione (vale per Svelte e React): per il client TV si
+  compila per browser datati (es. ES2017, eventuale plugin "legacy" di Vite); Socket.IO ripiega
+  sul long-polling se il WebSocket manca; la TV consigliata resta il portatile via HDMI.
+  Prova obbligatoria su dispositivi reali (smart TV, chiavetta, iPhone, Android) in fase 3.
 - Rif.: Architettura §5
 
 ## D-006 — Peso dei reparti vacanti nella soglia
@@ -140,3 +149,84 @@ Modello di voce:
   delle spie per configurazione a 8 (0/1/2 spie, alleate o rivali); frequenza di vittoria del
   concorrente senza spia; frequenza di doppia vittoria di spie rivali; utilità del Marketing per N.
 - Rif.: GDD §12, §16 · Architettura §10.1, §10.10
+
+## D-012 — Soglia del voto di demansionamento e promozione
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Contesto: senza astensione e con il tempo scaduto = no (D-007), aventi diritto e votanti
+  coincidono; restava da scegliere la maggioranza. Le alternative differiscono solo a 6 e 8 giocatori.
+- Alternative: A) metà più uno · B) due terzi · C) demansionamento ai 2/3, promozione a metà più uno.
+- Scelta: **A**, per demansionamento e promozione; **pareggio = non passa**.
+- Motivo: regola unica e uguale a quella delle proposte (§8.4); il voto palese scoraggia l'abuso.
+- Da sorvegliare: effetto "valanga" (ogni demansionato esce dal conteggio e abbassa la soglia
+  del demansionamento successivo).
+- Verifica col simulatore, per numero di giocatori: frequenza dei demansionamenti; onesti
+  demansionati per errore; spie demansionate; promozioni riuscite; frequenza di 2+ demansionati
+  contemporanei.
+- Idee collegate (da valutare): voto decisivo di Risorse Umane in caso di pareggio (n. 22);
+  numero massimo di demansionati contemporanei (n. 23).
+- Rif.: GDD §13.4 · Architettura §10.8
+
+## D-013 — Quesiti con astensione vera: dettagli
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Contesto: completa D-007 (punto aperto 19).
+- Scelte:
+  - peso dei demansionati: **conta come un "no" fisso** (alternativa scartata: escluderlo,
+    che avrebbe reso gratuito il demansionamento in questi quesiti);
+  - tempo scaduto: **"no"**, come ovunque (scartata: astensione automatica);
+  - frequenza e tema: **rari** (⚖️ ~15% del mazzo, 1–2 per partita), segnalati in TV con
+    "⚖️ Astensione ammessa", su temi di coscienza o conflitto di interessi;
+  - **pesi tutti 1** per i reparti occupati in questi quesiti ("votazione del consiglio").
+- Motivo: il demansionamento resta costoso ovunque (§8.4); una sola regola sul tempo; i pesi
+  uguali eliminano lo squilibrio segnalato in D-007 (D-005); gli onesti hanno un motivo
+  legittimo in più per sembrare ambigui.
+- Verifica col simulatore: % di approvazione dei quesiti con astensione rispetto agli altri;
+  frequenza di astensione per fazione e per reparto; quota di esiti decisi da un'astensione;
+  frequenza reale per partita; confronto con e senza "pesi tutti 1".
+- Rif.: GDD §8.4bis · Architettura §7.4, §10.3
+
+## D-014 — Numero di votazioni, bilanciamento dei favoriti, mazzo di quesiti
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Contesto: punto aperto 17, nato da D-006.
+- Scelte:
+  - votazioni: **scaletta 2-3-3-2** (T1-T4, 10 a partita), nota in anticipo
+    (scartate: 3 fisse, troppo lunghe; 2 fisse, poche occasioni per i reparti);
+  - **bilanciamento dei favoriti**: ogni reparto occupato favorito in un numero simile di
+    quesiti, tolleranza ±1;
+  - **mazzo**: 30 quesiti (simulatore), 40–50 (serate); a strati ~60% base, ~25% con
+    Finanza, ~15% reparti aggiuntivi.
+- Motivo: ritmo (T1 di apprendimento, T4 leggero prima del finale); pari opportunità
+  applicata all'ordine del giorno (D-005); la selezione di D-006 funziona anche a 4 giocatori.
+- Verifica col simulatore: quesiti estraibili per numero di giocatori (≥ 2× il necessario);
+  frequenza di quesiti con vacanti pesanti; volte in cui ogni reparto è favorito; durata
+  stimata del trimestre; ripetizioni tra partite consecutive.
+- Rif.: GDD §8.6 · Architettura §10.2
+
+## D-015 — Provenienza visibile dei segreti
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Alternative (segreto ricevuto da un giocatore): A) solo il mittente diretto ·
+  B) mittente + "di prima / seconda mano" · C) catena completa (scartata: distrugge la deduzione).
+- Scelta: segreto dal gioco con etichetta **"dato ufficiale del tuo reparto"**; segreto da un
+  giocatore con **solo il mittente diretto** (o "anonimo"); la catena resta solo sul server.
+- Motivo: la fonte deve conoscere il valore vero per falsificare e usare il canarino; la
+  massima ambiguità sui passaggi alimenta il dilemma "ci si può fidare?"; B darebbe ai reparti
+  fonte un vantaggio strutturale di credibilità (D-005) e indicherebbe le fonti alla spia.
+- Verifica col simulatore: % segreti veri arrivati al reparto giusto in tempo; % segreti
+  falsi passati ai concorrenti; spie scoperte col canarino (robot "onesto canarino"); segreti
+  ricevuti e valore prodotto per reparto. La credibilità a voce va verificata nelle serate.
+- Punto aperto generato: GDD §20 n. 24 (poteri IT/RU e messaggi anonimi).
+- Rif.: GDD §11.5 · Architettura §8, §10.5
+
+## D-016 — Stack del motore e del simulatore
+- Data: 2026-11-22 · Stato: ✅
+- Scelta: TypeScript, Vitest (test), pnpm workspaces (pacchetti nello stesso archivio).
+  Server (Node.js) e tempo reale (Socket.IO) restano 🟡, da confermare in fase 3.
+- Rif.: Architettura §5
+
+## D-017 — Durata della partita
+- Data: 2026-11-22 · Stato: ✅ (da verificare col simulatore e nelle serate)
+- Scelta: circa 45–60 minuti più il finale.
+- Indicazione di Luis: se dura un'ora, la priorità è che non sia noioso né ripetitivo.
+- Verifica: durata stimata dal simulatore (scaletta 2-3-3-2, timer); nelle serate, momenti
+  di calo d'attenzione e ripetitività (scheda di playtest).
+- Idea collegata (da valutare, sviluppo successivo): mini-sfide sul telefono, GDD §20 n. 25.
+- Rif.: GDD §1

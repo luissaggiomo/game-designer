@@ -6,7 +6,7 @@
 - **Genere:** gioco di società psicologico e politico (influenze, alleanze, spie)
 - **Giocatori:** 4–8 · **Durata:** ~45–60 min + finale
 - **Modello:** A (TV tabellone + telefoni controller). Fase online futura: più TV + audio integrato.
-- **Fase attuale:** 1 · Design (vedi [ROADMAP.md](ROADMAP.md))
+- **Fase attuale:** 2 · Motore e simulazione (vedi [ROADMAP.md](ROADMAP.md))
 
 ## Documenti del gioco
 - [docs/01-design-del-gioco.md](docs/01-design-del-gioco.md) — **fonte di verità delle regole**

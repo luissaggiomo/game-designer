@@ -115,7 +115,7 @@
 |---|---|
 | **Portatile collegato via HDMI** | 🟡 **Consigliata.** Browser completo, affidabile, e in fase online può fare anche da microfono di stanza. |
 | Chiavetta Fire TV / Google TV con browser | Buona, economica. Da verificare le prestazioni delle animazioni. |
-| Browser integrato della smart TV | ⚠️ Spesso lento e con supporto WebSocket/WebRTC incompleto. Solo come ripiego. |
+| Browser integrato della smart TV | ⚠️ Spesso lento, con motore del browser datato e supporto WebSocket/WebRTC incompleto. Solo come ripiego. Il client TV va compilato per browser datati (es. ES2017, eventuale plugin "legacy" di Vite) e Socket.IO può ripiegare sul long-polling. Da provare su dispositivi reali in fase 3. |
 | Chromecast (trasmissione di una scheda) | Possibile, con ritardo maggiore. |
 
 ### 4.2 Telefoni
@@ -133,16 +133,16 @@
 
 | Livello | Scelta 🟡 | Motivo |
 |---|---|---|
-| Linguaggio | **TypeScript** ovunque | Un solo linguaggio per motore, server e client. I tipi riducono gli errori. |
+| Linguaggio | ✅ **TypeScript** ovunque (D-016) | Un solo linguaggio per motore, server e client. I tipi riducono gli errori. |
 | Server | **Node.js** con **Fastify** o Express | Semplice, diffuso, ottimo per il tempo reale |
 | Tempo reale | **Socket.IO** (WebSocket) | Riconnessione automatica, stanze, ampia documentazione |
-| Client | **Svelte** o React, con **Vite** | Svelte è più leggero e semplice; React è più diffuso. 🔴 da scegliere |
+| Client | ✅ **Svelte** con **Vite** (D-004) | Codice compilato in JavaScript semplice, pacchetti piccoli: più leggero su smart TV, chiavette e telefoni economici. Per la TV: obiettivo di compilazione abbassato per browser datati e prova su dispositivi reali (vedi §4.1) |
 | Stile | CSS semplice o Tailwind | |
 | Audio | **LiveKit** (SDK client e server) | SFU open source, con assegnazione dei flussi per "stanza" |
 | Persistenza | In memoria più **SQLite** (o Redis) per gli snapshot | Leggera, sufficiente per decine di partite contemporanee |
 | QR code | libreria `qrcode` | Genera il QR lato server o client |
-| Test | **Vitest** | Veloce, integrato con Vite |
-| Monorepo | **pnpm workspaces** | Pacchetti condivisi tra server, client e simulatore |
+| Test | ✅ **Vitest** (D-016) | Veloce, integrato con Vite |
+| Monorepo | ✅ **pnpm workspaces** (D-016) | Pacchetti condivisi tra server, client e simulatore |
 
 ---
 
@@ -201,7 +201,7 @@ Ogni azione viene controllata prima di passare al motore:
 ### 7.4 Timer
 - I timer stanno **sul server**. I client mostrano solo un conto alla rovescia basato sull'orario di scadenza ricevuto.
 - Alla scadenza, chi non ha agito riceve una **scelta predefinita**: voto → **"NO"** (D-007; in TV "No (tempo scaduto)"); mossa privata → "azienda".
-- Quesiti con `astensioneAmmessa: true`: valore del tempo scaduto 🔴 da definire (GDD §20 n. 19).
+- Quesiti con `astensioneAmmessa: true`: tempo scaduto = "NO" anche qui (D-013).
 
 ---
 
@@ -354,7 +354,9 @@ input: N giocatori (4..8), seme
 2. escludi le proposte con "riguarda" ∈ reparti in autogestione
    e penalizza (estrazione rara) quelle in cui i reparti vacanti avrebbero peso rilevante (D-006)
 3. escludi le proposte già uscite
-4. estrai 2–3 proposte, preferendo categorie diverse (varietà dei pesi)
+4. estrai il numero previsto dalla scaletta (T1: 2, T2: 3, T3: 3, T4: 2 — D-014, parametro),
+   preferendo categorie diverse (varietà dei pesi) e rispettando il bilanciamento dei favoriti:
+   conteggio "favorito" per reparto occupato, scarto massimo ±1 a fine partita (D-014)
 5. per ognuna calcola:
      pesi = tabella_pesi[categoria], con i reparti assenti a 0
      effetti privati = modello ± variazione casuale piccola (±1), se previsto
@@ -363,12 +365,15 @@ input: N giocatori (4..8), seme
 
 ### 10.3 Risoluzione di una votazione
 ```
-pesoTotale = Σ pesi dei reparti OCCUPATI (anche se demansionati)
-             (i reparti vacanti dall'inizio non contano — D-006, provvisorio)
-soglia     = floor(pesoTotale / 2) + 1
+se proposta.astensioneAmmessa: pesi = 1 per ogni reparto occupato   ("votazione del consiglio", D-013)
+
 sì         = Σ pesi dei giocatori ATTIVI che hanno votato SÌ
-se proposta.astensioneAmmessa (D-007):
-  pesoVotanti = Σ pesi di chi ha votato SÌ o NO   (demansionati: 🔴 GDD §20 n. 19)
+caso normale:
+  pesoTotale = Σ pesi dei reparti OCCUPATI (anche se demansionati)
+               (i reparti vacanti dall'inizio non contano — D-006, provvisorio)
+  soglia     = floor(pesoTotale / 2) + 1
+quesito con astensione (D-007, D-013):
+  pesoVotanti = Σ pesi di chi ha votato SÌ o NO + Σ pesi dei demansionati (no fisso)
   soglia      = floor(pesoVotanti / 2) + 1
 approvata  = (sì ≥ soglia) E (costo ≤ cassa)
 pareggio   → respinta
@@ -397,6 +402,8 @@ INOLTRO (messaggio con modello SEGRETO):
   falsa = (campi ≠ campi dell'originale)
   catena = catena del mittente + [mittente]
   il destinatario NON vede il flag "falsa"
+  vista del destinatario (D-015): provenienza GIOCO → "dato ufficiale del tuo reparto";
+  da giocatore → solo il mittente diretto ("anonimo" se anonimo); mai la catena
 
 VALORE PER L'AZIENDA (fase RISOLUZIONE):
   se il giocatore del repartoUtile possiede una copia VERA prima della votazione collegata
@@ -437,7 +444,7 @@ proposte:      non vengono generate proposte che lo riguardano specificamente
 ```
 PROPOSTA: un giocatore attivo propone un bersaglio (limiti: 1 per trimestre,
           non lo stesso bersaglio due volte di fila — 🟡)
-VOTO:     1 a testa tra gli attivi, il bersaglio escluso (D-009); soglia: maggioranza (🔴 GDD §20 n. 21)
+VOTO:     1 a testa tra gli attivi, il bersaglio escluso (D-009); soglia: metà più uno degli aventi diritto, pareggio = respinta (D-012)
           solo SÌ/NO, nessuna astensione; tempo scaduto = NO (D-007)
 EFFETTI:  stato = DEMANSIONATO; reparto in autogestione;
           revoca delle copie segreto del proprio reparto; quota messaggi = 1

@@ -3,6 +3,22 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.0
+
+### Modificato
+- Superato il cancello fase 1 → 2: il gioco passa alla fase **2 · Motore e simulazione**.
+
+## 2026-11-22 — 0.1.3
+
+### Design
+- D-012 (provvisoria): demansionamento e promozione a metà più uno degli aventi diritto; pareggio = non passa.
+- D-013 (provvisoria): nei quesiti con astensione i demansionati contano come "no", il tempo scaduto vale "no", pesi tutti 1; quesiti rari (~15% del mazzo) e segnalati in TV.
+- D-014 (provvisoria): 10 votazioni a partita (2-3-3-2), favoriti bilanciati tra i reparti, mazzo da 30 (simulatore) a 40–50 quesiti a strati.
+- D-015 (provvisoria): i segreti dal gioco sono marcati "dato ufficiale"; quelli da altri giocatori mostrano solo il mittente diretto.
+- Confermate l'architettura (D-003) e la durata 45–60 min + finale (D-017); scelti TypeScript/Vitest/pnpm (D-016) e Svelte per le schermate (D-004).
+- Nuovo punto aperto: poteri IT/RU e messaggi anonimi (n. 24).
+- Nuove idee da valutare: voto decisivo di Risorse Umane in caso di pareggio (variante del n. 22); numero massimo di demansionati (n. 23); mini-sfide sul telefono (n. 25).
+
 ## 2026-11-22 — 0.1.2
 
 ### Design

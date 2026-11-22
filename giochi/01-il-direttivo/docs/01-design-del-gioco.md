@@ -58,7 +58,7 @@
 
 **Obiettivi pratici:**
 - ✅ da 4 a 8 giocatori;
-- 🟡 durata circa 45–60 minuti più il finale;
+- ✅ durata circa 45–60 minuti più il finale *(da verificare col simulatore e nelle serate; priorità: che non sia noioso né ripetitivo — D-017)*;
 - 🟡 regole spiegabili in circa 3 minuti, anche con l'aiuto della TV.
 
 ---
@@ -277,18 +277,23 @@
 ✅ *(provvisorio, da verificare col simulatore — D-007)* **Regola normale: solo SÌ / NO.** Chi non vota entro il tempo vale **"no"**; in TV: *"No (tempo scaduto)"*.
 ✅ *(provvisorio — D-007)* **Eccezione: quesiti "con astensione".** Alcuni quesiti, indicati nel mazzo, mostrano anche il tasto **"Mi astengo"**. In quel caso l'astensione è **vera**: la soglia si calcola **solo sul peso di chi ha votato** (sì + no).
 ✅ *(provvisorio — D-007)* Nei voti di **demansionamento e promozione** l'astensione **non esiste mai**: solo SÌ / NO, e il tempo scaduto vale "no".
-🔴 Da definire (punto aperto 19): nei quesiti con astensione, il peso dei demansionati entra nel calcolo? Il tempo scaduto vale "no" o astensione? Quanti e quali quesiti hanno l'astensione?
+✅ *(provvisorio, da verificare col simulatore — D-013)* Dettagli dei quesiti con astensione:
+- il peso dei **demansionati conta come un "no" fisso**: soglia = metà più uno di (peso dei votanti + peso dei demansionati), così il demansionamento resta costoso (§8.4);
+- il **tempo scaduto vale "no"**, come in tutte le altre votazioni (una sola regola sul tempo);
+- sono **rari** (⚖️ circa il 15% del mazzo, in media 1–2 per partita), **segnalati in TV** dall'inizio della discussione con l'etichetta *"⚖️ Astensione ammessa"*, e riguardano temi in cui un onesto ha motivi legittimi per non schierarsi (conflitti di interesse, "votazione di coscienza");
+- in questi quesiti **tutti i reparti occupati hanno peso 1** ("votazione del consiglio"), per non dare ai reparti di peso 2 un'astensione più pesante (D-005).
 
 ### 8.5 Voto palese
 ✅ Il voto è **palese**: in TV si vede chi ha votato cosa. Le votazioni sono il cuore delle discussioni.
 ✅ Rarissime eccezioni con voto segreto, legate a eventi speciali (per esempio "votazione anonima del consiglio").
 
 ### 8.6 Numero di proposte
-⚖️ 2–3 proposte per trimestre.
+✅ *(provvisorio, da verificare col simulatore — D-014)* **Scaletta fissa e nota in anticipo: 2 votazioni nel T1, 3 nel T2 e nel T3, 2 nel T4** (10 a partita). Il T1 serve anche a imparare; il T4 lascia tempo per il finale.
 🔴 Da definire: la lista completa (indicativamente 20–30 proposte) con effetti e pesi.
 
 ✅ *(provvisorio, da verificare col simulatore — D-006)* **Selezione dell'ordine del giorno:** l'estrattore privilegia i quesiti che interessano soprattutto i reparti **occupati** (compresi i demansionati) e scarta quelli con molti reparti vacanti o in cui i vacanti avrebbero un peso rilevante. Il mazzo dei quesiti va costruito in modo che un quesito in cui un vacante "avrebbe" pesato esca solo raramente.
-🔴 Da definire: quante votazioni avvengono in una partita e quanto deve essere grande il mazzo perché la selezione funzioni con ogni numero di giocatori (punto aperto 17).
+✅ *(provvisorio — D-014)* **Bilanciamento dei favoriti:** nel corso della partita ogni reparto occupato risulta "favorito" (l'effetto privato migliore) in un numero di quesiti simile agli altri, con tolleranza ±1 (D-005).
+✅ *(provvisorio — D-014)* **Mazzo:** 30 quesiti nella versione minima per il simulatore, 40–50 per le serate. Composizione a strati: ⚖️ ~60% solo reparti base, ~25% anche Finanza, ~15% reparti aggiuntivi. Ogni quesito indica nei dati trimestri ammessi, categoria ed eventuale astensione.
 
 ---
 
@@ -364,7 +369,9 @@
 
 ### 11.5 Da definire
 🔴 Quanti segreti per trimestre, a chi arrivano, quanto valgono.
-🔴 Se un segreto ricevuto dal gioco o da un messaggio anonimo mostri o no la sua provenienza.
+✅ *(provvisorio, da verificare col simulatore — D-015)* **Provenienza visibile:**
+- un segreto distribuito dal gioco porta l'etichetta **"dato ufficiale del tuo reparto"**: chi lo riceve sa che è vero (serve per falsificare e per la trappola del canarino);
+- un segreto ricevuto da un altro giocatore mostra **solo il mittente diretto** ("da Marco", oppure "anonimo"). Non si vede se il mittente è la fonte o un passaggio intermedio, né la catena.
 🔴 Quanti punti vale per la spia un segreto usato.
 
 ---
@@ -407,7 +414,7 @@
 
 ### 13.4 Da definire
 ✅ *(provvisorio, da verificare col simulatore — D-009)* Il voto per demansionare è **1 a testa** tra i direttori attivi. **Il bersaglio non vota** sul proprio demansionamento. Solo SÌ/NO, il tempo scaduto vale "no" (D-007).
-🔴 Da definire (punto aperto 21): soglia esatta (metà più uno degli aventi diritto o dei votanti) e cosa succede con il pareggio.
+✅ *(provvisorio, da verificare col simulatore — D-012)* Soglia: **metà più uno** degli aventi diritto (con D-007 coincidono con i votanti). **Pareggio = non passa.** Vale anche per la promozione.
 ✅ *(provvisorio, da verificare col simulatore — D-010)* **Promozione: durata minima di un trimestre intero, poi solo a voto.** Chi è demansionato a fine T1 resta fuori per tutto T2 e può essere promosso dalla fine di T2; chi è demansionato a fine T3 ha come unica occasione il finale. Il trimestre minimo serve anche a osservare se le fughe di notizie si fermano (§13.2).
 ✅ *(provvisorio — D-010)* Modalità:
 - si vota nella **fase 6**, **prima** dell'eventuale proposta di demansionamento;
@@ -574,12 +581,15 @@ Dettagli tecnici nel documento di architettura.
 | 14 | Probabilità di partita senza spie | ⚖️ |
 | 15 | Equilibrio generale (simulatore) | ⚖️ |
 | 16 | Titolo definitivo del gioco | 🔴 |
-| 17 | Numero di votazioni per partita e dimensione del mazzo di quesiti, perché la selezione "reparti occupati" (D-006) funzioni con ogni numero di giocatori | 🔴 |
+| 17 | Numero di votazioni per partita e dimensione del mazzo di quesiti, perché la selezione "reparti occupati" (D-006) funzioni con ogni numero di giocatori | ✅ provvisorio (D-014) |
 | 18 | 💡 Idea da valutare: bot che occupano i reparti (anche con 3 umani), con livello da 1 = "solo interesse aziendale" a 5 = "solo interesse del reparto", e opzione d'avvio "i bot possono essere spie sì/no" | 🔴 da valutare |
-| 19 | Quesiti "con astensione vera" (D-007): peso dei demansionati, valore del tempo scaduto, quanti e quali quesiti | 🔴 |
+| 19 | Quesiti "con astensione vera" (D-007): peso dei demansionati, valore del tempo scaduto, quanti e quali quesiti | ✅ provvisorio (D-013) |
 | 20 | 💡 Idea da valutare: "livello di fiducia" 1–5 mosso dalle mosse private; a 5 "scudo sociale" contro il demansionamento, che perde efficacia nel finale | 🔴 da valutare |
-| 21 | Soglia esatta del voto di demansionamento/promozione (aventi diritto o votanti) e pareggio | 🔴 |
-| 22 | 💡 Idea da valutare (da discutere quando si costruiscono i reparti): Risorse Umane con peso 2 nei voti di demansionamento/promozione e punti extra o penalità nel finale per spie scoperte o innocenti accusati. Da confrontare con D-009 (1 a testa) e D-005 | 🔴 da valutare |
+| 21 | Soglia esatta del voto di demansionamento/promozione (aventi diritto o votanti) e pareggio | ✅ provvisorio (D-012) |
+| 22 | 💡 Idea da valutare (da discutere quando si costruiscono i reparti): Risorse Umane con peso 2 nei voti di demansionamento/promozione — **oppure, variante, voto decisivo in caso di pareggio** — e punti extra o penalità nel finale per spie scoperte o innocenti accusati. Da confrontare con D-009 (1 a testa) e D-005 | 🔴 da valutare |
+| 23 | 💡 Idea da valutare: numero massimo di demansionati contemporanei (es. 1 fino a 4 giocatori, 2 da 5 in su) | 🔴 da valutare |
+| 24 | Poteri di IT e Risorse Umane (chi scrive a chi): valgono anche per i messaggi anonimi? Da decidere con i punti 5–6 | 🔴 |
+| 25 | 💡 Idea da valutare (sviluppo successivo): mini-sfide sul telefono con bonus/penalità (quiz, giochini a tema: "evita ostacoli", "evadi pratiche"…) contro noia e ripetitività | 🔴 da valutare |
 
 ---
 
