@@ -1,0 +1,29 @@
+# Dipendenze e build
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+
+# Ambiente e segreti
+.env
+.env.*
+!.env.example
+
+# Database locali e log
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# Report generati dal simulatore
+**/simulator/output/
+
+# Sistema e editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# Impostazioni personali di Claude
+.claude/settings.local.json

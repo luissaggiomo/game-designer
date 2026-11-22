@@ -1,0 +1,6 @@
+# Fine riga uniforme (LF) per tutti i file di testo
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.mp3 binary
+*.ogg binary
