@@ -3,6 +3,13 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.7
+
+### Aggiunto
+- Simulatore: robot con 4 profili (onesto cooperativo, onesto egoista, spia prudente, spia aggressiva) che decidono vedendo solo la propria vista; partite complete riproducibili; report con avvisi automatici e dati in CSV.
+- Primo report (5000 partite): docs/simulazioni/2026-11-22-simulazione-01.md. 11 avvisi: azienda troppo forte, squilibri tra reparti (dovuti ai contenuti segnaposto), egoismo troppo conveniente.
+- 126 test automatici.
+
 ## 2026-11-22 — 0.2.6
 
 ### Aggiunto

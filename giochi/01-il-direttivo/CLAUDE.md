@@ -19,7 +19,11 @@
 | Installare le dipendenze | `corepack pnpm install` |
 | Controllo tipi + test (da usare prima di dire "fatto") | `corepack pnpm verifica` |
 | Solo i test | `corepack pnpm test` |
-| Avviare il simulatore | *(da definire)* |
+| Avviare il simulatore (1000 partite per 4–8 giocatori, ~4 min) | `corepack pnpm simula` |
+| Simulazione veloce | `corepack pnpm simula -- --partite 100` |
+
+Il report del simulatore esce in `packages/simulator/output/report.md` (non salvato in Git);
+i report da conservare si copiano in `docs/simulazioni/` con la data.
 
 pnpm si usa tramite `corepack` (incluso in Node 22), senza installazioni di sistema.
 Versione fissata in `package.json` (`packageManager`): pnpm 10, perché pnpm 12 non è

@@ -1,0 +1,9 @@
+{
+  "name": "@il-direttivo/simulator",
+  "private": true,
+  "type": "module",
+  "description": "Simulatore: robot che giocano migliaia di partite per tarare i numeri (Architettura §14).",
+  "dependencies": {
+    "@il-direttivo/engine": "workspace:*"
+  }
+}
