@@ -1,7 +1,8 @@
 /**
  * Promozioni e demansionamenti (GDD §13 · Architettura §10.8 · D-009, D-010, D-012, D-022).
  *
- * - Fase 6 del trimestre (DEMANSIONAMENTO) e finale (PROMOZIONI_FINALI, solo promozioni).
+ * - Fase 6 del trimestre (DEMANSIONAMENTO). Nel finale la decisione su ogni demansionato si apre
+ *   da sola (finale.ts, D-028) e si vota qui con VOTA_PROMOZIONE: SÌ = promuovi, NO = licenzia.
  * - Prima le promozioni, poi l'eventuale demansionamento: dopo una proposta di demansionamento
  *   non si propongono più promozioni in quella fase.
  * - Voto 1 a testa tra gli attivi, il bersaglio non vota; solo SÌ/NO; tempo scaduto = no;
@@ -18,7 +19,7 @@ import type { MomentoVoto, Partita, VotoPersonale } from "./tipi.js";
 
 function momentoAttuale(partita: Partita): MomentoVoto | null {
   if (partita.fase.nome === "DEMANSIONAMENTO") return partita.trimestre;
-  if (partita.fase.nome === "PROMOZIONI_FINALI") return "FINALE";
+  if (partita.fase.nome === "DECISIONE_FINALE") return "FINALE";
   return null;
 }
 
@@ -129,7 +130,7 @@ export function chiudiVotoPersonale(partita: Partita): Evento[] {
 
   const voti: Partial<Record<string, "SI" | "NO" | "TEMPO_SCADUTO">> = {};
   for (const g of aventiDiritto) voti[g.id] = voto.voti[g.id] ?? "TEMPO_SCADUTO";
-  const esito = voto.tipo === "PROMOZIONE" ? (approvato ? "è stato promosso" : "resta demansionato") : approvato ? "è stato demansionato" : "resta al suo posto";
+  const esito = voto.tipo === "PROMOZIONE" ? (approvato ? "è stato promosso" : voto.momento === "FINALE" ? "non è stato promosso" : "resta demansionato") : approvato ? "è stato demansionato" : "resta al suo posto";
   return [
     {
       tipo: "VOTO_PERSONALE_CHIUSO",

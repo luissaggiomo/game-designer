@@ -7,7 +7,7 @@
 import type { Azione, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import { descriviFase, entraNellaFase, faseSuccessiva } from "./fasi.js";
-import { chiudiNomina, chiudiVerifica, nominaSpia, rispondiVerifica } from "./finale.js";
+import { chiudiDecisioneFinale, chiudiNomina, chiudiVerifica, nominaSpia, rispondiVerifica } from "./finale.js";
 import { chiudiVotoPersonale, proponiDemansionamento, proponiPromozione, votaPersonale } from "./personali.js";
 import { registraMossa } from "./risoluzione.js";
 import { inviaMessaggio, passaAlConcorrente } from "./segreti.js";
@@ -20,6 +20,8 @@ export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): E
       return avanzaFase(partita, ambiente);
     case "CHIUDI_VOTO_PERSONALE": {
       if (!partita.votoPersonale) return { ok: false, errore: "Non c'è nessuna votazione in corso" };
+      // La decisione finale si chiude solo con AVANZA_FASE (che licenzia chi non è promosso).
+      if (partita.fase.nome === "DECISIONE_FINALE") return { ok: false, errore: "La decisione finale si chiude allo scadere del tempo" };
       const nuova = structuredClone(partita);
       return { ok: true, partita: nuova, eventi: chiudiVotoPersonale(nuova) };
     }
@@ -51,8 +53,9 @@ function chiudiFase(partita: Partita, ambiente: Ambiente): Evento[] {
     case "VOTAZIONE":
       return chiudiVotazione(partita, ambiente);
     case "DEMANSIONAMENTO":
-    case "PROMOZIONI_FINALI":
       return chiudiVotoPersonale(partita);
+    case "DECISIONE_FINALE":
+      return chiudiDecisioneFinale(partita);
     case "VERIFICA":
       return chiudiVerifica(partita, ambiente);
     case "NOMINA":

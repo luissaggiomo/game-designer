@@ -33,8 +33,9 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
   if (partita.concorrenti.every((c) => quotaAzienda > c.quota)) {
     for (const g of onesti) aggiungi(g.id, "L'azienda ha battuto i concorrenti", v.aziendaVince);
   }
+  // Una spia scoperta (licenziata) ha perso: niente bonus anche se il suo concorrente vince (D-025).
   for (const c of partita.concorrenti.filter((x) => x.quota > quotaAzienda)) {
-    for (const g of spie.filter((s) => concorrenteDi(s.id) === c.id)) aggiungi(g.id, `${c.nome} ha superato l'azienda`, v.concorrenteVince);
+    for (const g of spie.filter((s) => concorrenteDi(s.id) === c.id && s.stato !== "LICENZIATO")) aggiungi(g.id, `${c.nome} ha superato l'azienda`, v.concorrenteVince);
   }
 
   // Segreti consegnati con successo.
@@ -52,12 +53,17 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
     }
   }
 
-  // Licenziamenti nel finale.
+  // Spie licenziate: nominate nel finale oppure ancora demansionate a fine anno (= contratto non
+  // rinnovato, D-027). In entrambi i casi la spia è scoperta: penalità a lei, bonus agli onesti.
+  for (const s of spie.filter((x) => x.stato === "LICENZIATO")) {
+    for (const g of onesti) aggiungi(g.id, `Spia licenziata (${nome(s.id)})`, v.spiaLicenziataBonusOnesti);
+    aggiungi(s.id, "Sei stata scoperta e licenziata", v.spiaLicenziataPenalita);
+  }
+
+  // Nomine del finale: punti e penalità a chi ha nominato.
   for (const l of partita.finale.licenziamenti) {
     const concorrenteLicenziato = concorrenteDi(l.giocatore);
     if (concorrenteLicenziato) {
-      for (const g of onesti) aggiungi(g.id, `Spia licenziata (${nome(l.giocatore)})`, v.spiaLicenziataBonusOnesti);
-      aggiungi(l.giocatore, "Sei stata scoperta e licenziata", v.spiaLicenziataPenalita);
       for (const da of l.nominatoDa) {
         const concorrenteNominatore = concorrenteDi(da);
         if (concorrenteNominatore === null) aggiungi(da, `Hai nominato la spia ${nome(l.giocatore)}`, v.spiaLicenziataBonusNominatori);
@@ -68,6 +74,31 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
       for (const g of spie) aggiungi(g.id, `Un onesto è stato licenziato al posto tuo`, v.onestoLicenziatoBonusSpie);
     }
   }
+
+  // Decisione finale sui demansionati (D-028): chi vota "licenzia" è trattato come chi nomina;
+  // chi vota "promuovi" per una spia prende la stessa penalità di chi fa licenziare un onesto.
+  // Contano solo i voti espressi (il tempo scaduto decide l'esito ma non dà punti, come nella nomina).
+  for (const d of partita.storicoVotiPersonali.filter((x) => x.tipo === "PROMOZIONE" && x.momento === "FINALE")) {
+    const concorrenteBersaglio = concorrenteDi(d.bersaglio);
+    const licenziato = !d.approvato;
+    if (licenziato && concorrenteBersaglio === null) {
+      for (const g of spie) aggiungi(g.id, `Un onesto è stato licenziato (${nome(d.bersaglio)})`, v.onestoLicenziatoBonusSpie);
+    }
+    for (const [id, scelta] of Object.entries(d.voti)) {
+      const concorrenteVotante = concorrenteDi(id);
+      if (licenziato && scelta === "NO") {
+        if (concorrenteBersaglio === null) aggiungi(id, `Hai votato per licenziare un onesto (${nome(d.bersaglio)})`, v.onestoLicenziatoPenalitaNominatori);
+        else if (concorrenteVotante === null) aggiungi(id, `Hai votato per licenziare la spia ${nome(d.bersaglio)}`, v.spiaLicenziataBonusNominatori);
+        else if (concorrenteVotante !== concorrenteBersaglio) aggiungi(id, "Hai fatto licenziare una spia rivale", v.spiaRivaleLicenziata);
+      }
+      if (!licenziato && scelta === "SI" && concorrenteBersaglio !== null) {
+        aggiungi(id, `Hai votato per promuovere una spia (${nome(d.bersaglio)})`, v.onestoLicenziatoPenalitaNominatori);
+      }
+    }
+  }
+
+  // Onesto licenziato (nominato o non promosso a fine anno): penalità (D-026).
+  for (const g of onesti.filter((x) => x.stato === "LICENZIATO")) aggiungi(g.id, "Sei stato licenziato", v.onestoLicenziatoPenalita);
 
   // Demansionamenti di onesti durante la partita (🟡 GDD §13.3).
   for (const voto of partita.storicoVotiPersonali.filter((x) => x.tipo === "DEMANSIONAMENTO" && x.approvato)) {

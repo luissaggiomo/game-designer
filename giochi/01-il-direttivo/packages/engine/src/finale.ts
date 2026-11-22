@@ -1,8 +1,9 @@
 /**
  * Il finale (GDD §15 · Architettura §10.9 · D-022).
  *
- * 1. Promozioni finali (vedi personali.ts).
- * 2. Licenziamento dei demansionati, con ruolo rivelato.
+ * 1-2. Decisione obbligatoria su ogni demansionato: promuoverlo o licenziarlo (D-028). Voto palese
+ *    1 a testa tra gli attivi (il demansionato non vota), metà più uno; pareggio o tempo scaduto =
+ *    licenziato, con ruolo rivelato. Chi viene promosso torna attivo e vota sui successivi.
  * 3. Verifica: ogni attivo risponde in segreto "nel direttivo sono rimasti solo onesti?".
  *    Tutti sì → punteggio. Almeno un no → la TV rivela chi ha risposto no.
  * 4. Nomina segreta della spia (solo membri attivi, non se stessi); rivelazione una alla volta.
@@ -12,6 +13,7 @@
  */
 import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
+import { chiudiVotoPersonale } from "./personali.js";
 import { creaCasuale } from "./rng.js";
 import type { Giocatore, GiocatoreId, Partita } from "./tipi.js";
 
@@ -32,11 +34,40 @@ function licenzia(p: Partita, g: Giocatore, motivo: string): Evento {
 /** Sono possibili due spie solo con 8 giocatori (GDD §4.2): serve per il secondo giro. */
 export const duePossibiliSpie = (p: Partita) => p.giocatori.length === 8;
 
-/** Ingresso in LICENZIAMENTO_DEMANSIONATI: chi è ancora demansionato viene licenziato. */
-export function licenziaDemansionati(partita: Partita): Evento[] {
+/**
+ * Il prossimo demansionato su cui decidere (D-028): prima chi è fuori da più tempo, poi
+ * nell'ordine dei giocatori. Undefined se non ne restano.
+ */
+export function prossimoDemansionato(partita: Partita): GiocatoreId | undefined {
   return partita.giocatori
     .filter((g) => g.stato === "DEMANSIONATO")
-    .map((g) => licenzia(partita, g, "è ancora demansionato e viene licenziato"));
+    .sort((a, b) => (a.demansionatoDalTrimestre ?? 0) - (b.demansionatoDalTrimestre ?? 0))[0]?.id;
+}
+
+/** Ingresso in DECISIONE_FINALE: si apre da solo il voto "promuovere o licenziare?" sul demansionato. */
+export function apriDecisioneFinale(partita: Partita): Evento[] {
+  if (partita.fase.nome !== "DECISIONE_FINALE") return [];
+  const bersaglio = partita.fase.bersaglio;
+  partita.votoPersonale = { tipo: "PROMOZIONE", bersaglio, proponente: bersaglio, momento: "FINALE", voti: {} };
+  const nome = nomeDi(partita, bersaglio);
+  return [
+    {
+      tipo: "VOTO_PERSONALE_APERTO",
+      voto: "PROMOZIONE",
+      bersaglio,
+      proponente: bersaglio,
+      causa: `${nome} è ancora demansionato: promuoverlo o licenziarlo? (pareggio o nessuna risposta = licenziato)`,
+    },
+  ];
+}
+
+/** Chiude la decisione finale: se non viene promosso, il demansionato è licenziato e il ruolo rivelato. */
+export function chiudiDecisioneFinale(partita: Partita): Evento[] {
+  if (partita.fase.nome !== "DECISIONE_FINALE") return [];
+  const eventi = chiudiVotoPersonale(partita);
+  const g = partita.giocatori.find((x) => x.id === (partita.fase as { bersaglio: GiocatoreId }).bersaglio)!;
+  if (g.stato === "DEMANSIONATO") eventi.push(licenzia(partita, g, "non è stato promosso e viene licenziato"));
+  return eventi;
 }
 
 export function rispondiVerifica(partita: Partita, azione: Extract<AzioneGiocatore, { tipo: "VERIFICA_FINALE" }>): Esito {

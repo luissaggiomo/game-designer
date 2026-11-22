@@ -128,7 +128,10 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
 
   for (let passi = 0; passi < 500 && p.fase.nome !== "FINE"; passi++) {
     const fase = p.fase.nome;
-    if (fase === "DEMANSIONAMENTO" || fase === "PROMOZIONI_FINALI") {
+    if (fase === "DECISIONE_FINALE") {
+      // Il voto "promuovere o licenziare?" è già aperto: votano tutti, poi AVANZA_FASE lo chiude.
+      for (const [id, rob] of robot) prova(rob.votaPersonale(vistaGiocatore(p, id)));
+    } else if (fase === "DEMANSIONAMENTO") {
       // Proposte una alla volta: chi ha una proposta la presenta, tutti votano, si chiude.
       for (let giro = 0; giro < 8; giro++) {
         let aperta = false;
@@ -167,7 +170,6 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
   const punteggi = p.punteggi ?? {};
   const massimo = Math.max(...p.giocatori.map((g) => punteggi[g.id]?.totale ?? 0));
   const demansionatiMai = new Set(p.storicoVotiPersonali.filter((v) => v.tipo === "DEMANSIONAMENTO" && v.approvato).map((v) => v.bersaglio));
-  const licenziatiNelFinale = new Set(p.finale.licenziamenti.map((l) => l.giocatore));
 
   return {
     ...dati,
@@ -191,7 +193,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       passatiFalsi: p.segretiPassati.filter((s) => s.riuscito === false).length,
     },
     spieLicenziate: spie.filter((g) => g.stato === "LICENZIATO").length,
-    onestiLicenziatiNelFinale: p.giocatori.filter((g) => g.fazione.tipo === "ONESTO" && licenziatiNelFinale.has(g.id)).length,
+    onestiLicenziatiNelFinale: p.giocatori.filter((g) => g.fazione.tipo === "ONESTO" && g.stato === "LICENZIATO").length,
     dettaglio: p.giocatori.map((g) => ({
       reparto: g.repartoId,
       spia: g.fazione.tipo === "SPIA",

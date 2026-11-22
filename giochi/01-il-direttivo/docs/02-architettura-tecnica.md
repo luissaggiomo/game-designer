@@ -308,8 +308,7 @@ LOBBY
                     ├─ RISOLUZIONE        (calcoli + animazioni TV)
                     └─ DEMANSIONAMENTO    (facoltativo: proposta → voto)
               └─► FINALE
-                    ├─ PROMOZIONI
-                    ├─ LICENZIAMENTO_DEMANSIONATI   (rivelazione ruoli)
+                    ├─ DECISIONE_FINALE  (una per demansionato: promuovi/licenzia, D-028)
                     ├─ VERIFICA          (sì/no segreto)
                     │    ├─ tutti sì ───────────────────────────┐
                     │    └─ almeno un no → RIVELA_NO            │
@@ -458,8 +457,8 @@ PROMOZIONE (D-010): nella fase DEMANSIONAMENTO, PRIMA della proposta di demansio
 
 ### 10.9 Finale
 ```
-1. promozioni finali (voti)
-2. per ogni DEMANSIONATO → LICENZIATO, rivela ruolo
+1-2. per ogni DEMANSIONATO, uno alla volta: voto palese "promuovere o licenziare?" (D-028)
+     promosso → ATTIVO (vota sui successivi); altrimenti → LICENZIATO, rivela ruolo
 3. VERIFICA: ogni attivo vota segretamente sì/no
    se tutti sì → PUNTEGGIO
    altrimenti → rivela l'elenco di chi ha votato no

@@ -5,7 +5,8 @@ import { simulaPartita } from "../src/simula.js";
 
 const ambiente = caricaAmbiente();
 
-describe("simulatore", () => {
+// Partite complete: con tutti i test in parallelo possono superare i 5 s predefiniti.
+describe("simulatore", { timeout: 30_000 }, () => {
   it("le partite di soli robot arrivano sempre alla fine, da 4 a 8 giocatori", () => {
     for (const n of [4, 5, 6, 7, 8]) {
       for (let seme = 1; seme <= 10; seme++) {

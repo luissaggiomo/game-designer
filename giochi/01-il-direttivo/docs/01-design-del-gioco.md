@@ -455,8 +455,8 @@
 
 ### 15.1 Sequenza approvata
 
-1. **Promozioni finali.** Ultima occasione per promuovere i demansionati.
-2. **Licenziamento dei demansionati.** Chi è ancora demansionato viene licenziato e il suo ruolo viene rivelato.
+1. **Decisione sui demansionati** *(provvisorio, da verificare col simulatore — D-028)*. Per **ogni** demansionato, uno alla volta (prima chi è fuori da più tempo), il direttivo decide esplicitamente: **promuoverlo o licenziarlo?** Voto palese, 1 a testa tra gli attivi, il demansionato non vota, metà più uno per promuovere. **Pareggio o nessuna risposta = licenziato.** Chi viene promosso torna nel direttivo e vota sui successivi.
+2. **Licenziamento.** Chi non viene promosso è licenziato e il suo ruolo viene rivelato subito. Punti come la nomina (§16.2): chi ha votato "licenzia" prende i punti o le penalità di chi nomina; chi ha votato "promuovi" per una spia prende la stessa penalità di chi fa licenziare un onesto.
 3. **Domanda di verifica.** Ogni membro del direttivo vota **in segreto**: *"Nel direttivo sono rimasti solo onesti?"* Sì o no.
 4. **Se tutti rispondono sì**, il gioco passa al punteggio.
 5. **Se c'è almeno un no**, la TV rivela **chi ha votato no**.
@@ -491,7 +491,7 @@
 | Voce | Chi | Punti (indicativi) |
 |---|---|---|
 | Azienda batte i concorrenti | ogni onesto | +20 *(D-024: il bonus comune deve valere più del guadagno egoistico)* |
-| Concorrente della spia vince (supera l'azienda, D-011) | spia | +10 |
+| Concorrente della spia vince (supera l'azienda, D-011) | spia **non licenziata** *(D-025: una spia scoperta ha perso)* | +10 |
 | Punti di reparto | tutti | accumulati in partita |
 | Obiettivo personale facile / difficile | tutti | +2 / +5 |
 | Segreto passato al concorrente con successo | spia | 🔴 da definire |
@@ -504,9 +504,10 @@
 | Tutti "sì" e davvero nessuna spia | Bonus a tutti gli onesti |
 | Tutti "sì" ma la spia c'era | Grande bonus alla spia |
 | Qualcuno "no" ma non c'erano spie | Penalità a chi ha votato "no" (falso allarme) |
-| Spia licenziata | Bonus agli onesti, punti extra a chi l'ha nominata, grossa penalità alla spia |
-| Onesto licenziato | Penalità a chi l'ha nominato, punti alla spia |
+| Spia licenziata | Bonus agli onesti, punti extra a chi l'ha nominata, grossa penalità alla spia *(D-027: vale anche per la spia ancora demansionata a fine anno — contratto non rinnovato = licenziata; l'unica via d'uscita è farsi promuovere all'ultimo turno)* |
+| Onesto licenziato | Penalità a chi l'ha nominato, punti alla spia, **penalità anche all'onesto licenziato** *(D-026, −5 indicativo ⚖️; vale anche per chi è licenziato perché ancora demansionato)* |
 | Spia che fa licenziare una spia rivale | Punti alla spia accusatrice |
+| Decisione finale su un demansionato *(D-028)* | Chi vota "licenzia" = come chi nomina (stessi punti e penalità); chi vota "promuovi" per una spia = penalità come chi fa licenziare un onesto. Contano i voti espressi |
 | Demansionamento di un onesto (durante la partita) | 🟡 Penalità a chi l'ha votato |
 
 ### 16.3 Classifica
@@ -612,7 +613,8 @@ Dettagli tecnici nel documento di architettura.
 | 27 | Voto palese: voti mostrati man mano o tutti alla chiusura; voto modificabile prima della chiusura? | ✅ provvisorio (D-019) |
 | 28 | Mossa privata dei reparti in autogestione (sì/no, con quale probabilità) e scelta predefinita a tempo scaduto | ✅ provvisorio (D-020) |
 | 29 | Informazioni di contesto dei reparti (es. Marketing e mercato) con i quesiti generici di D-023 | 🔴 |
-| 30 | Spia scoperta (licenziata): conserva il bonus "il suo concorrente vince"? Oggi sì (+10, poi −5); il criterio di vittoria indicato da Luis dice che una spia scoperta ha perso | 🔴 |
+| 30 | Spia scoperta (licenziata): conserva il bonus "il suo concorrente vince"? Oggi sì (+10, poi −5); il criterio di vittoria indicato da Luis dice che una spia scoperta ha perso | ✅ provvisorio (D-025: niente bonus alla spia licenziata) |
+| 31 | Gli onesti egoisti vincono più spesso dei cooperativi (simulazione 04: 23% contro 9%) perché il bonus aziendale va a tutti gli onesti. Alternative: A) bonus proporzionale alle mosse "per l'azienda" · B) ridurre il guadagno della mossa "reparto" · C) lasciare così e contare sulle accuse | ⏸️ per ora C (Luis, 22/11/2026): si osserva nelle serate di prova |
 
 ---
 

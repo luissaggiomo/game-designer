@@ -131,13 +131,27 @@ describe("promozione (D-010)", () => {
 });
 
 describe("finale (GDD §15)", () => {
-  it("chi è ancora demansionato a fine anno viene licenziato e il ruolo rivelato", () => {
+  it("decisione finale obbligatoria: nessuna risposta → licenziato e ruolo rivelato (D-028)", () => {
     let q = demansionaG2(conSpia(nuova()));
-    q = vaiA(q, "PROMOZIONI_FINALI", 4);
+    q = vaiA(q, "DECISIONE_FINALE", 4);
+    expect(q.fase).toMatchObject({ nome: "DECISIONE_FINALE", bersaglio: "g2" });
+    expect(q.votoPersonale).toMatchObject({ tipo: "PROMOZIONE", bersaglio: "g2", momento: "FINALE" });
+    expect(rifiutata(q, { tipo: "CHIUDI_VOTO_PERSONALE" })).toBe(true);
     const { partita, eventi } = avanza(q);
-    expect(partita.fase.nome).toBe("LICENZIAMENTO_DEMANSIONATI");
+    expect(partita.fase.nome).toBe("VERIFICA");
     expect(g(partita, "g2").stato).toBe("LICENZIATO");
     expect(eventi.find((e) => e.tipo === "LICENZIAMENTO")!.causa).toContain("era onesto");
+  });
+
+  it("decisione finale: maggioranza per promuovere → torna attivo; pareggio → licenziato (D-028)", () => {
+    let q = vaiA(demansionaG2(conSpia(nuova())), "DECISIONE_FINALE", 4);
+    for (const id of ["g1", "g3", "g4"]) q = fai(q, { tipo: "VOTA_PROMOZIONE", da: id, voto: "SI" }).partita;
+    const promosso = avanza(q).partita;
+    expect(g(promosso, "g2").stato).toBe("ATTIVO");
+    let r = vaiA(demansionaG2(conSpia(nuova())), "DECISIONE_FINALE", 4);
+    for (const id of ["g1", "g3"]) r = fai(r, { tipo: "VOTA_PROMOZIONE", da: id, voto: "SI" }).partita;
+    for (const id of ["g4", "g5"]) r = fai(r, { tipo: "VOTA_PROMOZIONE", da: id, voto: "NO" }).partita;
+    expect(g(avanza(r).partita, "g2").stato).toBe("LICENZIATO");
   });
 
   it("tutti sì alla verifica → si passa al punteggio", () => {
@@ -242,6 +256,57 @@ describe("punteggio (GDD §16, segnaposto)", () => {
     expect(q.punteggi!["g1"]!.voci).toContainEqual(expect.objectContaining({ punti: v.spiaLicenziataPenalita }));
     expect(q.punteggi!["g2"]!.voci).toContainEqual(expect.objectContaining({ punti: v.spiaLicenziataBonusNominatori }));
     expect(q.punteggi!["g5"]!.voci).toContainEqual(expect.objectContaining({ punti: v.spiaLicenziataBonusOnesti }));
+  });
+
+  it("spia licenziata → niente bonus anche se il suo concorrente vince (D-025)", () => {
+    const q = finoAlPunteggio(conSpia(nuova()), (r) => {
+      let s = structuredClone(r);
+      s.azienda.quota = 5;
+      s.concorrenti[0]!.quota = 10;
+      s = avanza(s).partita;
+      for (const id of ["g2", "g3", "g4"]) s = fai(s, { tipo: "NOMINA_SPIA", da: id, bersaglio: "g1" }).partita;
+      return s;
+    });
+    expect(q.giocatori.find((g) => g.id === "g1")!.stato).toBe("LICENZIATO");
+    expect(q.punteggi!["g1"]!.voci.some((x) => x.testo.includes("superato"))).toBe(false);
+  });
+
+  it("onesto licenziato → penalità a lui e a chi l'ha nominato (D-026)", () => {
+    const q = finoAlPunteggio(conSpia(nuova()), (r) => {
+      let s = avanza(r).partita;
+      for (const id of ["g1", "g3", "g4"]) s = fai(s, { tipo: "NOMINA_SPIA", da: id, bersaglio: "g2" }).partita;
+      return s;
+    });
+    expect(q.giocatori.find((g) => g.id === "g2")!.stato).toBe("LICENZIATO");
+    expect(q.punteggi!["g2"]!.voci).toContainEqual(expect.objectContaining({ punti: v.onestoLicenziatoPenalita }));
+    expect(q.punteggi!["g3"]!.voci).toContainEqual(expect.objectContaining({ punti: v.onestoLicenziatoPenalitaNominatori }));
+  });
+
+  it("spia ancora demansionata a fine anno → licenziata: penalità a lei, bonus agli onesti (D-027)", () => {
+    const q = finoAlPunteggio(demansionaG2(conSpia(nuova(), ["g2"])));
+    expect(q.giocatori.find((g) => g.id === "g2")!.stato).toBe("LICENZIATO");
+    expect(q.punteggi!["g2"]!.voci).toContainEqual(expect.objectContaining({ punti: v.spiaLicenziataPenalita }));
+    expect(q.punteggi!["g3"]!.voci).toContainEqual(expect.objectContaining({ punti: v.spiaLicenziataBonusOnesti }));
+  });
+
+  it("decisione finale: punti come la nomina; chi promuove una spia paga come chi licenzia un onesto (D-028)", () => {
+    const v2 = v;
+    // g2 è la spia, demansionata; g3 e g4 votano licenzia, g5 promuovi, g1 (onesto qui) non vota.
+    const spiaLicenziata = finoAlPunteggio(demansionaG2(conSpia(nuova(), ["g2"])), (r) => r);
+    expect(spiaLicenziata.punteggi!["g3"]!.voci.some((x) => x.punti === v2.spiaLicenziataBonusNominatori)).toBe(false); // nessun voto espresso
+    const conVoti = (voti: Record<string, "SI" | "NO">, spia: string[]) => {
+      let q = vaiA(demansionaG2(conSpia(nuova(), spia)), "DECISIONE_FINALE", 4);
+      for (const [id, voto] of Object.entries(voti)) q = fai(q, { tipo: "VOTA_PROMOZIONE", da: id, voto }).partita;
+      return finoAlPunteggio(q);
+    };
+    const a = conVoti({ g3: "NO", g4: "NO", g5: "NO", g1: "SI" }, ["g2"]);
+    expect(a.punteggi!["g3"]!.voci).toContainEqual(expect.objectContaining({ punti: v2.spiaLicenziataBonusNominatori }));
+    const b = conVoti({ g3: "SI", g4: "SI", g5: "SI", g1: "NO" }, ["g2"]);
+    expect(g(b, "g2").stato).not.toBe("DEMANSIONATO");
+    expect(b.punteggi!["g3"]!.voci.some((x) => x.testo.includes("promuovere una spia"))).toBe(true);
+    const c = conVoti({ g3: "NO", g4: "NO", g5: "NO", g1: "SI" }, ["g1"]);
+    expect(c.punteggi!["g3"]!.voci).toContainEqual(expect.objectContaining({ punti: v2.onestoLicenziatoPenalitaNominatori }));
+    expect(c.punteggi!["g1"]!.voci).toContainEqual(expect.objectContaining({ punti: v2.onestoLicenziatoBonusSpie }));
   });
 
   it("chi vota per demansionare un onesto perde punti (🟡 GDD §13.3)", () => {

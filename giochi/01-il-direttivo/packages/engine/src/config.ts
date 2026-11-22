@@ -54,6 +54,8 @@ export interface Configurazione {
     spiaLicenziataBonusNominatori: number;
     spiaLicenziataPenalita: number;
     onestoLicenziatoPenalitaNominatori: number;
+    /** Penalità all'onesto licenziato, per accusa o perché ancora demansionato (D-026). */
+    onestoLicenziatoPenalita: number;
     onestoLicenziatoBonusSpie: number;
     spiaRivaleLicenziata: number;
     demansionamentoOnestoPenalitaPerVoto: number;

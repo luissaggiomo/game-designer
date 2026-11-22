@@ -344,3 +344,55 @@ Modello di voce:
 - Verifica: terzo report — vittoria dell'azienda per numero di giocatori, soglia, chi vince
   tra onesti e spie, cooperativi contro egoisti, cassa, segreti per reparto.
 - Rif.: GDD §6, §11, §12, §16 · docs/simulazioni/
+
+## D-025 — La spia scoperta non prende il bonus "il suo concorrente vince"
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Scelta di Luis: una spia licenziata ha perso, anche se il suo concorrente supera l'azienda;
+  quindi non riceve il bonus del concorrente (resta la penalità per essere stata scoperta).
+- Motivo: il punteggio deve dire la stessa cosa del criterio di vittoria per fazione (D-024).
+- Effetto: spie (scoperta = sconfitta piena, più incentivo alla prudenza); onesti (scoprire la
+  spia conta anche quando l'azienda perde); reparti: nessun effetto, vale per tutti uguale.
+- Verifica: nel report, vittorie della spia aggressiva contro quella prudente.
+- Rif.: GDD §16, §20 n. 30
+
+## D-026 — Penalità all'onesto licenziato
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Scelta di Luis (alternativa B, tra: A non può vincere · B penalità · C niente): l'onesto
+  licenziato prende una penalità in punti, oltre a quella di chi l'ha nominato. Valore
+  indicativo −5 (come la spia scoperta), ⚖️ da tarare.
+- Vale anche per l'onesto licenziato perché ancora demansionato a fine anno.
+- Motivo: chi gioca da egoista deve rischiare qualcosa di concreto se si fa sospettare.
+- Effetto: onesti (l'egoismo visibile costa); spie (accusare un onesto lo danneggia due volte,
+  quindi depistare rende di più); reparti: nessun effetto, vale per tutti uguale.
+- Verifica: nel report, vittorie egoisti contro cooperativi.
+- Rif.: GDD §16.2
+
+## D-027 — Demansionato a fine anno = licenziato a tutti gli effetti
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Chiarimento di Luis: chi è ancora demansionato a fine anno non ottiene il rinnovo del
+  contratto, quindi è licenziato. Se è una spia: penalità come spia scoperta e bonus agli onesti,
+  come se fosse stata nominata (senza punti ai nominatori, perché nessuno l'ha nominata). Se è
+  un onesto: penalità di D-026. L'unica via d'uscita è ottenere la promozione all'ultimo turno.
+- Effetto: spie (il demansionamento diventa una minaccia piena); onesti (demansionare un sospetto
+  è un'accusa che "paga" anche senza la nomina finale); reparti: nessun effetto.
+- Verifica: nel report, demansionamenti su spie e punteggio medio delle spie.
+- Rif.: GDD §13, §15, §16.2
+
+## D-028 — Decisione finale obbligatoria sui demansionati: promuovere o licenziare
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Scelta di Luis: prima della chiusura, per **ogni** demansionato il direttivo decide
+  esplicitamente se promuoverlo o licenziarlo. Così criterio e punti sono unificati con la nomina.
+  Sostituisce i punti 1-2 del finale (promozioni finali facoltative + licenziamento automatico).
+- Dettagli (proposta approvata): voto palese 1 a testa tra gli attivi, il demansionato non vota,
+  metà più uno per promuovere; **pareggio o nessuna risposta = licenziato**; un demansionato alla
+  volta (prima chi è fuori da più tempo); chi viene promosso torna attivo e vota sui successivi.
+- Punti: chi vota "licenzia" è trattato come chi nomina (spia licenziata: +3 all'onesto, +3 alla
+  spia rivale; onesto licenziato: −2 a chi ha votato, +2 alle spie); **chi vota "promuovi" per
+  una spia prende la stessa penalità di chi fa licenziare un onesto (−2)**. Restano D-026 e D-027.
+- Scelta tecnica di Claude (da confermare): come nella nomina, contano solo i voti espressi; il
+  tempo scaduto decide l'esito (licenziato) ma non dà punti né penalità.
+- Effetto: spie (il demansionamento porta a un verdetto esplicito; salvare un alleato costa);
+  onesti (votare "licenzia" a cuor leggero costa, come una nomina sbagliata); reparti: nessuno.
+- Verifica: quanti licenziati con questo voto sono davvero spie; onesti licenziati per partita;
+  egoisti contro cooperativi.
+- Rif.: GDD §13, §15.1, §16.2 · Architettura §9, §10.9

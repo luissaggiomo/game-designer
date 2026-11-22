@@ -87,8 +87,8 @@ export type Fase =
   | { nome: "RISOLUZIONE" }
   | { nome: "DEMANSIONAMENTO" }
   // Finale (GDD §15, Architettura §9 e §10.9)
-  | { nome: "PROMOZIONI_FINALI" }
-  | { nome: "LICENZIAMENTO_DEMANSIONATI" }
+  /** Decisione obbligatoria su un demansionato: promuoverlo o licenziarlo (D-028). */
+  | { nome: "DECISIONE_FINALE"; bersaglio: GiocatoreId }
   | { nome: "VERIFICA"; giro: number }
   | { nome: "NOMINA"; giro: number; ballottaggio: boolean }
   | { nome: "PUNTEGGIO" }

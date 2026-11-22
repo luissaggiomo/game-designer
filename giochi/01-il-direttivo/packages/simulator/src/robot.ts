@@ -166,7 +166,7 @@ export class Robot {
     return azioni;
   }
 
-  /** Fase 6 e promozioni finali: una proposta (promozione o demansionamento), se il robot ne ha una. */
+  /** Fase 6: una proposta (promozione o demansionamento), se il robot ne ha una. */
   proponi(v: VistaGiocatore): Azione | undefined {
     const io = v.giocatori.find((g) => g.id === this.id)!;
     if (io.stato === "DEMANSIONATO") return { tipo: "PROPONI_PROMOZIONE", da: this.id, bersaglio: this.id };

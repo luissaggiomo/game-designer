@@ -29,8 +29,8 @@
     "finoA7Giocatori": 1,
     "con8Giocatori": 2,
     "nomi": ["Concorrente A", "Concorrente B"],
-    "crescitaBase": 2.25,
-    "crescitaPerGiocatore": 0.2,
+    "crescitaBase": 2.7,
+    "crescitaPerGiocatore": 0.1,
     "eventoCasuale": [-1, 0, 1, 2]
   },
   "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6). Crescita a trimestre = crescitaBase + crescitaPerGiocatore × numero di giocatori (la parte decimale diventa +1 con quella probabilità) + evento casuale: la parte per giocatore compensa il fatto che le mosse private pesano di più con più giocatori.",
@@ -62,6 +62,7 @@
     "spiaLicenziataBonusNominatori": 3,
     "spiaLicenziataPenalita": -5,
     "onestoLicenziatoPenalitaNominatori": -2,
+    "onestoLicenziatoPenalita": -5,
     "onestoLicenziatoBonusSpie": 2,
     "spiaRivaleLicenziata": 3,
     "demansionamentoOnestoPenalitaPerVoto": -1

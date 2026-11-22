@@ -9,10 +9,16 @@ import type { Configurazione } from "./config.js";
 import { estraiOrdineDelGiorno } from "./proposte.js";
 import { risolviTrimestre } from "./risoluzione.js";
 import { distribuisciSegreti } from "./segreti.js";
-import { duePossibiliSpie, licenziaDemansionati } from "./finale.js";
+import { apriDecisioneFinale, duePossibiliSpie, prossimoDemansionato } from "./finale.js";
 import { calcolaPunteggi } from "./punteggio.js";
 import { creaCasuale } from "./rng.js";
 import type { Fase, Partita } from "./tipi.js";
+
+/** Nel finale: decisione sul prossimo demansionato, oppure la domanda di verifica se non ne restano (D-028). */
+function dopoLeDecisioni(partita: Partita, trimestre: number): { fase: Fase; trimestre: number } {
+  const bersaglio = prossimoDemansionato(partita);
+  return bersaglio ? { fase: { nome: "DECISIONE_FINALE", bersaglio }, trimestre } : { fase: { nome: "VERIFICA", giro: 1 }, trimestre };
+}
 
 /** Fase successiva a quella attuale; null se la partita è finita. */
 export function faseSuccessiva(partita: Partita, config: Configurazione): { fase: Fase; trimestre: number } | null {
@@ -37,12 +43,10 @@ export function faseSuccessiva(partita: Partita, config: Configurazione): { fase
     case "DEMANSIONAMENTO":
       return trimestre < config.trimestri
         ? { fase: { nome: "RAPPORTO" }, trimestre: trimestre + 1 }
-        : { fase: { nome: "PROMOZIONI_FINALI" }, trimestre };
-    // Finale (GDD §15). Le chiusure di verifica e nomina sono già avvenute quando si calcola la fase successiva.
-    case "PROMOZIONI_FINALI":
-      return { fase: { nome: "LICENZIAMENTO_DEMANSIONATI" }, trimestre };
-    case "LICENZIAMENTO_DEMANSIONATI":
-      return { fase: { nome: "VERIFICA", giro: 1 }, trimestre };
+        : dopoLeDecisioni(partita, trimestre);
+    // Finale (GDD §15). Le chiusure di decisione, verifica e nomina sono già avvenute quando si calcola la fase successiva.
+    case "DECISIONE_FINALE":
+      return dopoLeDecisioni(partita, trimestre);
     case "VERIFICA": {
       const ultimo = partita.finale.esitiVerifica.at(-1);
       return ultimo?.tuttiSi
@@ -69,8 +73,8 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
   switch (partita.fase.nome) {
     case "RISOLUZIONE":
       return risolviTrimestre(partita, ambiente);
-    case "LICENZIAMENTO_DEMANSIONATI":
-      return licenziaDemansionati(partita);
+    case "DECISIONE_FINALE":
+      return apriDecisioneFinale(partita);
     case "VERIFICA":
       partita.finale.verifica = {};
       return [];
@@ -137,10 +141,8 @@ export function descriviFase(fase: Fase, trimestre: number): string {
       return `Trimestre ${trimestre}: risultati`;
     case "DEMANSIONAMENTO":
       return `Trimestre ${trimestre}: promozioni e demansionamento`;
-    case "PROMOZIONI_FINALI":
-      return "Il finale: ultime promozioni";
-    case "LICENZIAMENTO_DEMANSIONATI":
-      return "Il finale: licenziamento dei demansionati";
+    case "DECISIONE_FINALE":
+      return "Il finale: promuovere o licenziare?";
     case "VERIFICA":
       return `Il finale: nel direttivo sono rimasti solo onesti? (giro ${fase.giro})`;
     case "NOMINA":

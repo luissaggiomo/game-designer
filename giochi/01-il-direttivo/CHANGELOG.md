@@ -8,6 +8,16 @@ Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 ### Design
 - D-024 (provvisoria): bonus "l'azienda batte i concorrenti" da +10 a +20; costi dei quesiti +35%; segreti con fonte e reparto utile scelti alla distribuzione; nuovo criterio di vittoria per fazione (vince la spia solo se il suo concorrente vince e lei non è scoperta).
 - Nuovo punto aperto: la spia scoperta conserva il bonus "concorrente vince"? (n. 30).
+- Nuovo punto aperto 31: gli onesti egoisti vincono più dei cooperativi (23% contro 9%); per ora si lascia così e si osserva nelle serate (scelta C di Luis).
+- D-025 (provvisoria): la spia licenziata non prende il bonus "il suo concorrente vince" (punto 30 chiuso).
+- D-026 (provvisoria): anche l'onesto licenziato prende una penalità (−5 indicativo), così l'egoismo ha un rischio concreto.
+- D-027 (provvisoria): la spia ancora demansionata a fine anno è licenziata a tutti gli effetti (penalità a lei, bonus agli onesti).
+- D-028 (provvisoria): nel finale, per ogni demansionato, voto obbligatorio "promuovere o licenziare?" (pareggio o nessuna risposta = licenziato); chi vota "licenzia" prende i punti della nomina, chi vota "promuovi" per una spia paga come chi fa licenziare un onesto. Sostituisce "promozioni finali" + "licenziamento automatico".
+
+### Modificato (taratura)
+- Concorrenti: crescita 2,7 + 0,1 × giocatori (studio 04 e prova di controllo su 2000 partite: con 2,85 l'azienda vinceva circa il 57% senza spie; 2,7 punta al 59–60%, simile da 4 a 8 giocatori).
+- Studi 03 e 04 sui concorrenti e quarto report (docs/simulazioni/2026-11-22-studio-concorrenti-03.md, -04.md, 2026-11-22-simulazione-04.md).
+- Test del simulatore: tempo massimo portato a 30 s (le partite complete in parallelo superavano i 5 s).
 
 ### Modificato
 - Crescita dei concorrenti con arrotondamento casuale (niente più salti a gradini tra un numero di giocatori e l'altro); taratura provvisoria 2,25 + 0,2 × giocatori.
