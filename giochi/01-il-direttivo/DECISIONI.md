@@ -286,3 +286,24 @@ Modello di voce:
   segreti ricevuti come fonte per reparto; nelle serate, ritmo dei messaggi con le due
   impostazioni di S3.
 - Rif.: GDD §10, §11 · Architettura §10.5
+
+## D-022 — Demansionamento, finale e punteggio: regole di dettaglio
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Scelte (tutte come raccomandato):
+  - F1: una sola votazione di demansionamento per trimestre; chi è stato bersaglio non può
+    essere riproposto nel trimestre successivo; niente demansionamenti nel 4° trimestre;
+  - F2: propone un direttore attivo nella fase 6, dopo le promozioni; va al voto la prima proposta;
+  - F3: con il demansionamento il ruolo non si rivela, si perdono i segreti del proprio
+    reparto, si ha 1 messaggio a trimestre;
+  - F4: nel finale si nominano solo membri attivi del direttivo (non se stessi né licenziati);
+  - F5: pareggio nella corsa di mercato = non vince nessuno;
+  - F6: punteggio per ora senza obiettivi personali, valori del GDD §16 come segnaposto.
+- Motivo: limitare l'uso politico del demansionamento e la manipolazione del voto finale da
+  parte delle spie; neutralità del pareggio tra onesti e spie.
+- Verifica col simulatore: demansionamenti per trimestre e per fazione; onesti fuori dal voto
+  finale; frequenza dei pareggi; distribuzione dei punteggi per reparto e fazione.
+- Interpretazioni applicate nel motore e approvate da Luis (2026-11-22): chi non risponde alla
+  verifica vale "no" (D-007, parametro); chi non nomina non conta; nessuna nomina = nessun
+  licenziamento; i demansionati licenziati a fine anno non danno bonus o penalità aggiuntive;
+  una spia che fa licenziare una spia rivale prende il bonus "spia rivale".
+- Rif.: GDD §13, §15, §16 · Architettura §10.8–10.10

@@ -62,7 +62,17 @@ describe("macchina a stati delle fasi", () => {
 
   it("dopo il 4° trimestre: finale, punteggio, lettura dei messaggi, fine", () => {
     const { fasi, finale } = giocaFinoAllaFine(nuova());
-    expect(fasi.slice(-5)).toEqual(["4:DEMANSIONAMENTO", "4:FINALE", "4:PUNTEGGIO", "4:LETTURA_MESSAGGI", "4:FINE"]);
+    // Senza risposte: tutti "no" alla verifica (tempo scaduto) → nomina senza nomi → punteggio (5 giocatori: un solo giro).
+    expect(fasi.slice(-8)).toEqual([
+      "4:DEMANSIONAMENTO",
+      "4:PROMOZIONI_FINALI",
+      "4:LICENZIAMENTO_DEMANSIONATI",
+      "4:VERIFICA",
+      "4:NOMINA",
+      "4:PUNTEGGIO",
+      "4:LETTURA_MESSAGGI",
+      "4:FINE",
+    ]);
     expect(finale.fase.nome).toBe("FINE");
   });
 

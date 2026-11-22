@@ -20,8 +20,8 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Impianto del codice (pacchetti, test, controllo tipi) — 22/11/2026
 - ✅ Motore: stato, azioni, macchina a stati delle fasi — 22/11/2026 (sotto-fasi del finale insieme alle regole del finale)
 - ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (segnaposto), segreti e messaggi
-- 🔄 Demansionamento/promozione, finale, punteggio — prossimo passo
-- ⬜ Viste filtrate + test di riservatezza
+- ✅ Demansionamento/promozione, finale, punteggio (senza obiettivi personali, D-022)
+- 🔄 Viste filtrate + test di riservatezza — prossimo passo
 - ⬜ Contenuti minimi (proposte, segreti, obiettivi) in JSON
 - ⬜ Simulatore con robot e report
 - ⬜ Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-015
@@ -64,4 +64,5 @@ D-009 voto di demansionamento · D-010 promozione · D-011 numero di concorrenti
 D-012 soglia di demansionamento e promozione · D-013 dettagli dei quesiti con astensione ·
 D-014 numero di votazioni, bilanciamento dei favoriti, mazzo · D-015 provenienza dei segreti ·
 D-018 cassa: 100 K a trimestre, accumulo con tetto 150 K · D-019 voti rivelati alla chiusura · D-020 mossa privata: solo demansionati in automatico, predefinita "azienda" ·
-D-021 segreti e messaggi: collegamento al voto, quando si scrive, anonimi, scadenza.
+D-021 segreti e messaggi: collegamento al voto, quando si scrive, anonimi, scadenza ·
+D-022 demansionamento, finale e punteggio: limiti, nomina, pareggio, punteggio senza obiettivi.

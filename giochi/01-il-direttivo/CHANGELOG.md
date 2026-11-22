@@ -3,6 +3,17 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.5
+
+### Aggiunto
+- Promozioni e demansionamenti: proposta pubblica, voto 1 a testa (il bersaglio non vota), voti rivelati alla chiusura, limiti di D-022, perdita dei segreti del reparto, ruolo non rivelato.
+- Finale completo: promozioni finali, licenziamento dei demansionati con ruolo rivelato, domanda di verifica, nomina segreta con rivelazione una alla volta, ballottaggio, secondo giro con 8 giocatori.
+- Punteggio finale con ogni voce spiegata (senza obiettivi personali per ora) e classifica. Valori segnaposto in config.json.
+- 116 test automatici.
+
+### Design
+- D-022 (provvisoria): limiti al demansionamento, chi si può nominare nel finale, pareggio nella corsa di mercato, punteggio senza obiettivi.
+
 ## 2026-11-22 — 0.2.4
 
 ### Aggiunto

@@ -122,7 +122,7 @@ export function inviaMessaggio(
   // Inoltro di un segreto: controllo prima di modificare qualcosa.
   let copiaOrigine: CopiaSegreto | undefined;
   if (azione.modello === "SEGRETO") {
-    copiaOrigine = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === mittente.id);
+    copiaOrigine = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === mittente.id && !c.revocata);
     if (!copiaOrigine) return { ok: false, errore: "Puoi inoltrare solo un segreto che possiedi" };
     const sconosciuti = Object.keys(azione.campi ?? {}).filter((k) => !(k in copiaOrigine!.campi));
     if (sconosciuti.length > 0) return { ok: false, errore: `Campi inesistenti: ${sconosciuti.join(", ")}` };
@@ -180,7 +180,7 @@ export function passaAlConcorrente(partita: Partita, azione: Extract<AzioneGioca
   if (!["RAPPORTO", "DISCUSSIONE", "VOTAZIONE", "MOSSA_PRIVATA"].includes(partita.fase.nome)) {
     return { ok: false, errore: "Ora non puoi consegnare segreti" };
   }
-  const copia = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === spia.id);
+  const copia = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === spia.id && !c.revocata);
   if (!copia) return { ok: false, errore: "Puoi consegnare solo un segreto che possiedi" };
   const segreto = partita.segreti.find((s) => s.id === copia.segretoId)!;
   if (segreto.trimestre !== partita.trimestre) return { ok: false, errore: "Questo segreto è scaduto" };

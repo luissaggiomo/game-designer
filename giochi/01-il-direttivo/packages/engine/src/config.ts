@@ -48,6 +48,21 @@ export interface Configurazione {
     fattoreFonteInEccesso: number;
   };
   quesitiConAstensione: { quotaDelMazzo: number };
+  finale: { rispostaVerificaPredefinita: "SI" | "NO" };
+  punteggio: {
+    aziendaVince: number;
+    concorrenteVince: number;
+    tuttiSiNessunaSpia: number;
+    tuttiSiConSpia: number;
+    falsoAllarme: number;
+    spiaLicenziataBonusOnesti: number;
+    spiaLicenziataBonusNominatori: number;
+    spiaLicenziataPenalita: number;
+    onestoLicenziatoPenalitaNominatori: number;
+    onestoLicenziatoBonusSpie: number;
+    spiaRivaleLicenziata: number;
+    demansionamentoOnestoPenalitaPerVoto: number;
+  };
   autogestione: { mossaPrivataDemansionati: boolean; probabilitaMossaAzienda: number; fattoreEffetti: number };
 }
 
@@ -86,6 +101,9 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("segreti.fattoreFonteInEccesso", c.segreti.fattoreFonteInEccesso);
   if (!["DAL_RAPPORTO_ALLE_VOTAZIONI", "TUTTO_IL_TRIMESTRE"].includes(c.messaggi.quando)) {
     problemi.push('messaggi.quando deve essere "DAL_RAPPORTO_ALLE_VOTAZIONI" o "TUTTO_IL_TRIMESTRE"');
+  }
+  if (!["SI", "NO"].includes(c.finale.rispostaVerificaPredefinita)) {
+    problemi.push('finale.rispostaVerificaPredefinita deve essere "SI" o "NO"');
   }
   if (c.messaggi.costoAnonimo < 1) problemi.push("Il costo del messaggio anonimo deve essere almeno 1");
   if (c.segreti.perTrimestre < 0) problemi.push("I segreti per trimestre non possono essere negativi");

@@ -55,6 +55,23 @@
   "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso, punti alla spia per segreto usato (GDD §16). fattoreFonteInEccesso: bilancia quante volte ogni reparto riceve segreti come fonte (D-005).",
   "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
   "_quesitiConAstensione": "D-013",
+  "finale": { "rispostaVerificaPredefinita": "NO" },
+  "_finale": "Chi non risponde in tempo alla domanda di verifica vale 'no' (D-007: tempo scaduto = no). Chi non nomina nessuno non conta.",
+  "punteggio": {
+    "aziendaVince": 10,
+    "concorrenteVince": 10,
+    "tuttiSiNessunaSpia": 3,
+    "tuttiSiConSpia": 8,
+    "falsoAllarme": -2,
+    "spiaLicenziataBonusOnesti": 2,
+    "spiaLicenziataBonusNominatori": 3,
+    "spiaLicenziataPenalita": -5,
+    "onestoLicenziatoPenalitaNominatori": -2,
+    "onestoLicenziatoBonusSpie": 2,
+    "spiaRivaleLicenziata": 3,
+    "demansionamentoOnestoPenalitaPerVoto": -1
+  },
+  "_punteggio": "GDD §16. SEGNAPOSTO da tarare (D-022). Gli obiettivi personali si aggiungeranno con la loro lista (punto aperto 3).",
   "autogestione": { "mossaPrivataDemansionati": true, "probabilitaMossaAzienda": 0.8, "fattoreEffetti": 0.5 },
   "_autogestione": "Architettura §10.7. mossaPrivataDemansionati: il reparto di un demansionato fa la mossa privata scelta dal computer; i reparti vacanti no (D-020). fattoreEffetti: gli effetti delle proposte sui reparti in autogestione sono ridotti ('rende poco, non fa disastri'), arrotondati verso lo zero. SEGNAPOSTO."
 }

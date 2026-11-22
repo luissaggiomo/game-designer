@@ -86,7 +86,11 @@ export type Fase =
   | { nome: "MOSSA_PRIVATA" }
   | { nome: "RISOLUZIONE" }
   | { nome: "DEMANSIONAMENTO" }
-  | { nome: "FINALE" }
+  // Finale (GDD §15, Architettura §9 e §10.9)
+  | { nome: "PROMOZIONI_FINALI" }
+  | { nome: "LICENZIAMENTO_DEMANSIONATI" }
+  | { nome: "VERIFICA"; giro: number }
+  | { nome: "NOMINA"; giro: number; ballottaggio: boolean }
   | { nome: "PUNTEGGIO" }
   | { nome: "LETTURA_MESSAGGI" }
   | { nome: "FINE" };
@@ -121,6 +125,54 @@ export interface Partita {
   conteggioFontiSegreti: Partial<Record<RepartoId, number>>;
   /** Numeratore per creare identificativi unici in modo riproducibile. */
   contatore: number;
+  /** Votazione di promozione o demansionamento in corso (una alla volta). */
+  votoPersonale?: VotoPersonale;
+  storicoVotiPersonali: VotoPersonaleChiuso[];
+  finale: StatoFinale;
+  /** Calcolati nella fase PUNTEGGIO. */
+  punteggi?: Partial<Record<GiocatoreId, Punteggio>>;
+}
+
+/** "Momento" di un voto personale: il numero del trimestre (fase 6) oppure il finale. */
+export type MomentoVoto = number | "FINALE";
+
+export interface VotoPersonale {
+  tipo: "PROMOZIONE" | "DEMANSIONAMENTO";
+  bersaglio: GiocatoreId;
+  proponente: GiocatoreId;
+  momento: MomentoVoto;
+  voti: Partial<Record<GiocatoreId, "SI" | "NO">>;
+}
+
+export interface VotoPersonaleChiuso extends VotoPersonale {
+  approvato: boolean;
+  si: number;
+  soglia: number;
+}
+
+export interface EsitoVerifica {
+  giro: number;
+  tuttiSi: boolean;
+  votiNo: GiocatoreId[];
+  /** Spie presenti tra gli attivi al momento della domanda (solo server, per il punteggio). */
+  spieTraAttivi: GiocatoreId[];
+}
+
+export interface StatoFinale {
+  /** Risposte segrete alla domanda "nel direttivo sono rimasti solo onesti?" (giro in corso). */
+  verifica: Partial<Record<GiocatoreId, boolean>>;
+  /** Nomine segrete (giro o ballottaggio in corso). */
+  nomine: Partial<Record<GiocatoreId, GiocatoreId>>;
+  /** Candidati del ballottaggio in corso (vuoto = nessun ballottaggio). */
+  ballottaggio: GiocatoreId[];
+  esitiVerifica: EsitoVerifica[];
+  licenziamenti: { giocatore: GiocatoreId; giro: number; nominatoDa: GiocatoreId[] }[];
+}
+
+export interface Punteggio {
+  totale: number;
+  /** Ogni voce spiegata in una frase ("mai nascondere il perché"). */
+  voci: { testo: string; punti: number }[];
 }
 
 export type ValoreCampo = string | number;
@@ -153,6 +205,8 @@ export interface CopiaSegreto {
   provenienza: { tipo: "GIOCO" } | { tipo: "GIOCATORE"; da: GiocatoreId; anonimo: boolean };
   /** Percorso completo dei passaggi (solo server, lettura finale e poteri d'indagine). */
   catena: GiocatoreId[];
+  /** Vero se il possessore l'ha persa perché demansionato (dato del proprio reparto, D-022). */
+  revocata?: boolean;
 }
 
 export type ModelloMessaggio = "SEGRETO" | "CHIEDI_DATO" | "PATTO" | "SOLO_TESTO";

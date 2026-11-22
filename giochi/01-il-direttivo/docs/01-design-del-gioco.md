@@ -413,15 +413,15 @@
 ✅ **A fine partita chi è ancora demansionato viene licenziato**, quindi ha interesse a convincere gli altri a promuoverlo.
 
 ### 13.2 Proposte collegate
-🟡 **Il ruolo non viene rivelato** con il demansionamento.
-🟡 Il demansionato **perde l'accesso ai segreti** del proprio reparto. Se le fughe di notizie si fermano, è un indizio, non una prova.
-🟡 Il demansionato ha **1 solo messaggio** a trimestre invece di 2.
+✅ *(provvisorio — D-022)* **Il ruolo non viene rivelato** con il demansionamento.
+✅ *(provvisorio — D-022)* Il demansionato **perde l'accesso ai segreti** del proprio reparto. Se le fughe di notizie si fermano, è un indizio, non una prova.
+✅ *(provvisorio — D-022)* Il demansionato ha **1 solo messaggio** a trimestre invece di 2.
 
 ### 13.3 Limiti contro l'uso politico (proposti)
-🟡 Al massimo **un demansionamento per trimestre**.
-🟡 La stessa persona **non può essere demansionata due volte di fila**.
+✅ *(provvisorio, da verificare col simulatore — D-022)* Al massimo **una votazione di demansionamento per trimestre**: se fallisce, non se ne propone un'altra. La propone un direttore attivo nella fase 6, dopo le promozioni; va al voto la prima proposta.
+✅ *(provvisorio — D-022)* **Chi è stato bersaglio** di una proposta di demansionamento (riuscita o no) non può essere riproposto nel trimestre successivo.
 🟡 A fine anno, **chi ha votato per demansionare un onesto perde punti**.
-🟡 Possibile regola correttiva, se le prove lo richiedono: **niente demansionamenti nel 4° trimestre**. Altrimenti una spia può togliere un onesto dal voto finale.
+✅ *(provvisorio — D-022)* **Niente demansionamenti nel 4° trimestre**: altrimenti una spia può togliere un onesto dal voto finale.
 
 ### 13.4 Da definire
 ✅ *(provvisorio, da verificare col simulatore — D-009)* Il voto per demansionare è **1 a testa** tra i direttori attivi. **Il bersaglio non vota** sul proprio demansionamento. Solo SÌ/NO, il tempo scaduto vale "no" (D-007).
@@ -466,6 +466,7 @@
 ### 15.2 Regole del finale
 ✅ **Votano solo i membri del direttivo.** Demansionati e licenziati possono solo suggerire e confondere.
 ✅ Nel finale **ogni voto vale 1**, senza pesi di reparto.
+✅ *(provvisorio — D-022)* Si può nominare come spia solo un **membro attivo del direttivo**, esclusi se stessi e i licenziati.
 ✅ Il ruolo di ogni licenziato viene rivelato subito.
 
 ### 15.3 Dopo il finale
@@ -480,6 +481,9 @@
 ✅ Punteggi e penalità a più livelli. ⚖️ Tutti i valori vanno tarati.
 
 🟡 Principio: **il bonus aziendale vale più di qualsiasi obiettivo personale**. Così a un onesto non conviene mai far fallire l'azienda per i propri punti.
+
+✅ *(provvisorio — D-022)* **Pareggio** nella corsa di mercato a fine anno: **non vince nessuno** (niente bonus agli onesti né alla spia).
+✅ *(provvisorio — D-022)* Il punteggio si calcola per ora **senza obiettivi personali** (si aggiungono quando ci sarà la lista, punto aperto 3), con i valori indicativi di questa sezione come segnaposto ⚖️. Ogni giocatore vede l'elenco delle voci che compongono il suo punteggio.
 
 | Voce | Chi | Punti (indicativi) |
 |---|---|---|

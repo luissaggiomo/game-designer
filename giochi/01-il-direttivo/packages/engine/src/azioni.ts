@@ -5,7 +5,7 @@
 import type { Fase, GiocatoreId, ModelloMessaggio, Partita, SceltaMossa, ValoreCampo, Voto } from "./tipi.js";
 
 /** Azioni di sistema, inviate dal server (per esempio allo scadere di un timer). */
-export type AzioneSistema = { tipo: "AVANZA_FASE" };
+export type AzioneSistema = { tipo: "AVANZA_FASE" } | { tipo: "CHIUDI_VOTO_PERSONALE" };
 
 /**
  * Azioni dei giocatori. Quelle non ancora gestite dal motore vengono rifiutate:
@@ -30,6 +30,9 @@ export type AzioneGiocatore = { da: GiocatoreId } & (
   | { tipo: "VOTA_DEMANSIONAMENTO"; voto: "SI" | "NO" }
   | { tipo: "PROPONI_PROMOZIONE"; bersaglio: GiocatoreId }
   | { tipo: "VOTA_PROMOZIONE"; voto: "SI" | "NO" }
+  /** Finale: "nel direttivo sono rimasti solo onesti?" (risposta segreta). */
+  | { tipo: "VERIFICA_FINALE"; soloOnesti: boolean }
+  | { tipo: "NOMINA_SPIA"; bersaglio: GiocatoreId }
 );
 
 export type Azione = AzioneSistema | AzioneGiocatore;
@@ -67,7 +70,29 @@ type ContenutoEvento =
   /** Pubblico, senza dire quale segreto (D-021, S2). */
   | { tipo: "SEGRETO_IN_TEMPO"; variazione: number; causa: string }
   /** Pubblico: quale segreto ha usato il concorrente, e se era falso (GDD §11.3–11.4). */
-  | { tipo: "SEGRETO_USATO"; concorrente: string; segretoId: string; falso: boolean; variazione: number; causa: string };
+  | { tipo: "SEGRETO_USATO"; concorrente: string; segretoId: string; falso: boolean; variazione: number; causa: string }
+  /** Promozioni e demansionamenti (GDD §13): proposta pubblica, voti rivelati alla chiusura. */
+  | { tipo: "VOTO_PERSONALE_APERTO"; voto: "PROMOZIONE" | "DEMANSIONAMENTO"; bersaglio: GiocatoreId; proponente: GiocatoreId; causa: string }
+  | { tipo: "VOTO_PERSONALE_REGISTRATO"; da: GiocatoreId; causa: string }
+  | {
+      tipo: "VOTO_PERSONALE_CHIUSO";
+      voto: "PROMOZIONE" | "DEMANSIONAMENTO";
+      bersaglio: GiocatoreId;
+      approvato: boolean;
+      si: number;
+      soglia: number;
+      voti: Partial<Record<GiocatoreId, "SI" | "NO" | "TEMPO_SCADUTO">>;
+      causa: string;
+    }
+  /** Licenziamento: il ruolo viene rivelato subito (GDD §15). */
+  | { tipo: "LICENZIAMENTO"; giocatore: GiocatoreId; spia: boolean; causa: string }
+  /** Dice solo chi ha risposto / nominato, mai cosa. */
+  | { tipo: "RISPOSTA_REGISTRATA"; da: GiocatoreId; causa: string }
+  | { tipo: "ESITO_VERIFICA"; tuttiSi: boolean; votiNo: GiocatoreId[]; causa: string }
+  | { tipo: "BALLOTTAGGIO"; candidati: GiocatoreId[]; causa: string }
+  /** Le nomine, nell'ordine in cui la TV le mostra una alla volta. */
+  | { tipo: "RIVELAZIONE_NOMINE"; nomine: { da: GiocatoreId; bersaglio: GiocatoreId }[]; causa: string }
+  | { tipo: "PUNTEGGI"; classifica: { giocatore: GiocatoreId; totale: number }[]; causa: string };
 
 /**
  * Evento da mostrare: ognuno porta una causa leggibile (regola 2 del gioco).
