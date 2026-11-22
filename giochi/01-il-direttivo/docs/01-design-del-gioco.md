@@ -192,7 +192,7 @@
 | Numero | Dove si vede | Funzione |
 |---|---|---|
 | **Quota di mercato** | TV (pubblico) | Una "corsa" tra l'azienda e i concorrenti. A fine anno conta chi è davanti. |
-| **Cassa aziendale** | TV (pubblico) | ⚖️ Pochi crediti a trimestre (indicativamente 10). Non si può approvare tutto, quindi bisogna scegliere e litigare. 🔴 La cassa non spesa si accumula o si azzera a ogni trimestre? (punto aperto 26) |
+| **Cassa aziendale** | TV (pubblico) | ✅ *(provvisorio, da verificare col simulatore — D-018)* **Budget di 100 K (100.000 €) a ogni trimestre**, che si somma a quanto avanzato, con un **tetto di 150 K**. Approvare tutte le proposte di un trimestre costa spesso più di 100 K: non si può approvare tutto, bisogna scegliere e litigare; rinunciare a qualcosa nei primi trimestri dà più margine dopo. ⚖️ Importi da tarare. |
 | **Punti di reparto** | Telefono (privato) | Il punteggio personale di ogni direttore. |
 
 🟡 Ogni reparto ha di fatto un **proprio bilancio**: una scelta può essere buona per l'azienda e cattiva per chi la deve gestire. Esempio: un nuovo macchinario aiuta l'azienda, ma la Produzione si ritrova più spese che utili a fine trimestre.
@@ -241,7 +241,7 @@
 ✅ A fine trimestre la TV mostra **l'effetto reale sull'azienda**, e si scopre chi aveva esagerato.
 
 **Esempio:**
-> TV: *"Nuovo macchinario — costo 4 crediti"*
+> TV: *"Nuovo macchinario — costo 40 K"*
 > - Produzione vede: **−2** per il tuo reparto
 > - Vendite vede: **+3** per il tuo reparto
 > - Finanza vede: **−1** per il tuo reparto
@@ -285,6 +285,7 @@
 
 ### 8.5 Voto palese
 ✅ Il voto è **palese**: in TV si vede chi ha votato cosa. Le votazioni sono il cuore delle discussioni.
+🔴 Da definire (punto aperto 27): i voti si vedono in TV **man mano** che arrivano o **tutti insieme** alla chiusura? Si può cambiare voto prima della chiusura? (Nel motore, per ora, l'ultimo voto sostituisce il precedente.)
 ✅ Rarissime eccezioni con voto segreto, legate a eventi speciali (per esempio "votazione anonima del consiglio").
 
 ### 8.6 Numero di proposte
@@ -590,7 +591,8 @@ Dettagli tecnici nel documento di architettura.
 | 23 | 💡 Idea da valutare: numero massimo di demansionati contemporanei (es. 1 fino a 4 giocatori, 2 da 5 in su) | 🔴 da valutare |
 | 24 | Poteri di IT e Risorse Umane (chi scrive a chi): valgono anche per i messaggi anonimi? Da decidere con i punti 5–6 | 🔴 |
 | 25 | 💡 Idea da valutare (sviluppo successivo): mini-sfide sul telefono con bonus/penalità (quiz, giochini a tema: "evita ostacoli", "evadi pratiche"…) contro noia e ripetitività | 🔴 da valutare |
-| 26 | Cassa non spesa: si accumula nel trimestre successivo o si azzera? | 🔴 |
+| 26 | Cassa non spesa: si accumula nel trimestre successivo o si azzera? | ✅ provvisorio (D-018) |
+| 27 | Voto palese: voti mostrati man mano o tutti alla chiusura; voto modificabile prima della chiusura? | 🔴 |
 
 ---
 

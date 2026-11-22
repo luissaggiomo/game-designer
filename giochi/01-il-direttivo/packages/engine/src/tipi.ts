@@ -1,7 +1,7 @@
 /**
  * Stato della partita: tutto ciò che il server conosce.
- * ATTENZIONE: questo stato contiene i segreti (ruoli, spie). Non va mai inviato così com'è
- * ai dispositivi: ognuno riceverà solo la propria "vista filtrata" (Architettura §2, regola 3).
+ * ATTENZIONE: questo stato contiene i segreti (ruoli, spie, effetti privati). Non va mai inviato
+ * così com'è ai dispositivi: ognuno riceverà solo la propria "vista filtrata" (Architettura §2, regola 3).
  */
 
 export type RepartoId =
@@ -16,6 +16,8 @@ export type RepartoId =
 
 export type GiocatoreId = string;
 export type ConcorrenteId = string;
+export type Peso = 0 | 1 | 2;
+export type Voto = "SI" | "NO" | "ASTENUTO";
 
 export type Fazione = { tipo: "ONESTO" } | { tipo: "SPIA"; concorrente: ConcorrenteId };
 
@@ -47,6 +49,34 @@ export interface Concorrente {
   quota: number;
 }
 
+export interface EsitoVotazione {
+  approvata: boolean;
+  si: number;
+  soglia: number;
+  /** Voti assegnati d'ufficio come "no" per tempo scaduto (D-007). */
+  votiPerTempoScaduto: number;
+  /** Spiegazione in una frase, da mostrare in TV. */
+  motivo: string;
+}
+
+/** Un quesito estratto per il trimestre in corso. */
+export interface PropostaIstanza {
+  id: string;
+  modelloId: string;
+  titolo: string;
+  categoria: string;
+  costo: number;
+  astensioneAmmessa: boolean;
+  /** Pesi effettivi: solo reparti occupati (D-006); tutti 1 nei quesiti con astensione (D-013). */
+  pesi: Partial<Record<RepartoId, Peso>>;
+  /** Effetti privati per reparto: SEGRETI, ognuno vede solo il proprio. */
+  effettiPrivati: Partial<Record<RepartoId, { punti?: number; testo: string }>>;
+  /** Effetto sull'azienda: nascosto fino alla risoluzione. */
+  effettoAzienda: number;
+  voti: Partial<Record<GiocatoreId, Voto>>;
+  esito?: EsitoVotazione;
+}
+
 /** Le fasi della partita (Architettura §9, con il ciclo discussione → voto di D-008). */
 export type Fase =
   | { nome: "RAPPORTO" }
@@ -69,5 +99,12 @@ export interface Partita {
   giocatori: Giocatore[];
   reparti: Reparto[];
   concorrenti: Concorrente[];
+  /** Quota di mercato e cassa (in K€, D-018). */
   azienda: { quota: number; cassa: number };
+  /** Ordine del giorno del trimestre, nell'ordine annunciato nel Rapporto (D-008). */
+  proposteTrimestre: PropostaIstanza[];
+  /** Identificativi dei quesiti già usciti nella partita. */
+  proposteUscite: string[];
+  /** Quante volte ogni reparto è stato "favorito" da un quesito estratto (D-014). */
+  conteggioFavoriti: Partial<Record<RepartoId, number>>;
 }

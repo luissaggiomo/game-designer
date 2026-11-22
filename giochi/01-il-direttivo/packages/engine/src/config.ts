@@ -10,7 +10,13 @@ export interface Configurazione {
   trimestri: number;
   reparti: { base: RepartoId[]; aggiuntiviInOrdine: RepartoId[] };
   votazioniPerTrimestre: number[];
-  cassaPerTrimestre: number;
+  cassa: { perTrimestre: number; massima: number; unita: string };
+  selezione: {
+    sogliaPesoVacanti: number;
+    fattoreVacantiPesanti: number;
+    fattoreStessaCategoria: number;
+    fattoreFavoritoInEccesso: number;
+  };
   mossaPrivata: {
     reparto: { puntiReparto: number; deltaAzienda: number };
     azienda: { puntiReparto: number; deltaAzienda: number };
@@ -50,7 +56,8 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   if (c.votazioniPerTrimestre.some((n) => !Number.isInteger(n) || n < 1)) {
     problemi.push("Ogni trimestre deve avere almeno una votazione");
   }
-  if (c.cassaPerTrimestre <= 0) problemi.push("La cassa per trimestre deve essere positiva");
+  if (c.cassa.perTrimestre <= 0) problemi.push("Il budget per trimestre deve essere positivo");
+  if (c.cassa.massima < c.cassa.perTrimestre) problemi.push("Il tetto della cassa non può essere inferiore al budget per trimestre");
   if (c.mossaPrivata.rumore.length === 0) problemi.push("Il rumore della mossa privata non può essere vuoto");
   const maxConcorrenti = Math.max(c.concorrenti.finoA7Giocatori, c.concorrenti.con8Giocatori);
   if (c.concorrenti.nomi.length < maxConcorrenti) {
@@ -61,6 +68,10 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("spie.con8Giocatori.probabilitaStessoConcorrente", c.spie.con8Giocatori.probabilitaStessoConcorrente);
   probabilita("quesitiConAstensione.quotaDelMazzo", c.quesitiConAstensione.quotaDelMazzo);
   probabilita("autogestione.probabilitaMossaAzienda", c.autogestione.probabilitaMossaAzienda);
+  probabilita("selezione.sogliaPesoVacanti", c.selezione.sogliaPesoVacanti);
+  probabilita("selezione.fattoreVacantiPesanti", c.selezione.fattoreVacantiPesanti);
+  probabilita("selezione.fattoreStessaCategoria", c.selezione.fattoreStessaCategoria);
+  probabilita("selezione.fattoreFavoritoInEccesso", c.selezione.fattoreFavoritoInEccesso);
   return problemi;
 }
 

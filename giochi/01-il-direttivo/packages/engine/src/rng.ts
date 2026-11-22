@@ -16,6 +16,11 @@ export interface Casuale {
   probabilita(p: number): boolean;
   /** Un elemento a caso dell'elenco (che non deve essere vuoto). */
   scegli<T>(elenco: readonly T[]): T;
+  /**
+   * Un elemento a caso, dove ogni elemento ha una probabilità proporzionale al suo peso.
+   * Se tutti i pesi sono 0 si sceglie in modo uniforme.
+   */
+  scegliPesato<T>(elenco: readonly T[], pesi: readonly number[]): T;
   /** Copia mescolata dell'elenco (l'originale non cambia). */
   mescola<T>(elenco: readonly T[]): T[];
   /** Stato interno, per salvare e riprendere la sequenza dallo stesso punto. */
@@ -45,6 +50,21 @@ export function creaCasuale(seme: number): Casuale {
     return elenco[intero(0, elenco.length - 1)] as T;
   };
 
+  const scegliPesato = <T>(elenco: readonly T[], pesi: readonly number[]): T => {
+    if (elenco.length === 0) throw new Error("Impossibile scegliere da un elenco vuoto");
+    if (pesi.length !== elenco.length || pesi.some((p) => !(p >= 0))) {
+      throw new Error("Pesi non validi: servono numeri ≥ 0, uno per elemento");
+    }
+    const totale = pesi.reduce((a, b) => a + b, 0);
+    if (totale === 0) return scegli(elenco);
+    let soglia = numero() * totale;
+    for (let i = 0; i < elenco.length; i++) {
+      soglia -= pesi[i] as number;
+      if (soglia < 0) return elenco[i] as T;
+    }
+    return elenco[elenco.length - 1] as T;
+  };
+
   const mescola = <T>(elenco: readonly T[]): T[] => {
     // Mescolamento di Fisher-Yates: ogni ordine ha la stessa probabilità.
     const copia = [...elenco];
@@ -62,6 +82,7 @@ export function creaCasuale(seme: number): Casuale {
     intero,
     probabilita: (p) => numero() < p,
     scegli,
+    scegliPesato,
     mescola,
     stato: () => s,
   };

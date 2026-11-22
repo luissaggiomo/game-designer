@@ -563,10 +563,11 @@ Tutti i contenuti sono file JSON validati da uno schema all'avvio.
   "id": "nuovo-macchinario",
   "titolo": "Nuovo macchinario per la linea 2",
   "categoria": "INVESTIMENTI",
-  "costo": 4,
+  "costo": 40,
   "riguarda": ["PRODUZIONE"],
   "trimestri": [1, 2, 3],
   "astensioneAmmessa": false,
+  "pesi": { "PRODUZIONE": 2, "ACQUISTI": 1, "VENDITE": 1, "MARKETING": 1 },   // facoltativo: se assente valgono i pesi della categoria
   "effettiPrivati": {
     "PRODUZIONE": { "punti": -2, "testo": "Più costi di gestione per il tuo reparto" },
     "VENDITE":    { "punti": 3,  "testo": "Più merce da vendere" },

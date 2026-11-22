@@ -3,6 +3,18 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.2
+
+### Aggiunto
+- Regole della votazione pesata: soglia, pareggio, demansionati, vacanti, astensione vera, tempo scaduto = no, controllo della cassa; ogni esito spiegato in una frase.
+- Cassa: 100 K a trimestre con tetto 150 K (D-018).
+- Estrazione dell'ordine del giorno: niente quesiti di reparti in autogestione, vacanti pesanti rari, categorie varie, favoriti bilanciati, ordine annunciato nel Rapporto.
+- Mazzo segnaposto di 16 quesiti e tabella dei pesi segnaposto (da sostituire con i contenuti veri, punto aperto 1). Un quesito può avere pesi propri.
+- 67 test automatici.
+
+### Design
+- Nuovo punto aperto: voti mostrati man mano o alla chiusura, voto modificabile (n. 27).
+
 ## 2026-11-22 — 0.2.1
 
 ### Aggiunto
@@ -13,7 +25,7 @@ Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 - Parametri segnaposto in config.json: ordine dei reparti aggiuntivi (punto aperto 7) e probabilità delle spie con 8 giocatori.
 
 ### Design
-- Nuovo punto aperto: cassa non spesa, accumulo o azzeramento (n. 26).
+- D-018 (provvisoria): cassa di 100 K a trimestre, l'avanzo si accumula fino a un tetto di 150 K.
 
 ## 2026-11-22 — 0.2.0
 

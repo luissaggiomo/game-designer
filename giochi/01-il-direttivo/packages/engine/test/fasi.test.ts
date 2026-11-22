@@ -1,16 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { caricaConfigurazione } from "../src/config.js";
+import { caricaAmbiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
 import { creaPartita } from "../src/partita.js";
 import type { Partita } from "../src/tipi.js";
 
-const config = caricaConfigurazione();
+const ambiente = caricaAmbiente();
+const config = ambiente.config;
 
 function nuova(): Partita {
   const esito = creaPartita(
     Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })),
     2026,
-    config,
+    ambiente,
   );
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
@@ -21,7 +22,7 @@ function giocaFinoAllaFine(p: Partita): { fasi: string[]; finale: Partita } {
   const fasi = [`${p.trimestre}:${p.fase.nome}`];
   let attuale = p;
   for (let passi = 0; passi < 200; passi++) {
-    const esito = applica(attuale, { tipo: "AVANZA_FASE" }, config);
+    const esito = applica(attuale, { tipo: "AVANZA_FASE" }, ambiente);
     if (!esito.ok) break;
     attuale = esito.partita;
     const extra = "votazione" in attuale.fase ? `#${attuale.fase.votazione}` : "";
@@ -67,22 +68,22 @@ describe("macchina a stati delle fasi", () => {
 
   it("a partita finita non si può più avanzare", () => {
     const { finale } = giocaFinoAllaFine(nuova());
-    const esito = applica(finale, { tipo: "AVANZA_FASE" }, config);
+    const esito = applica(finale, { tipo: "AVANZA_FASE" }, ambiente);
     expect(esito.ok).toBe(false);
   });
 
   it("il motore non modifica la partita ricevuta (funzione pura)", () => {
     const p = nuova();
     const copia = structuredClone(p);
-    applica(p, { tipo: "AVANZA_FASE" }, config);
+    applica(p, { tipo: "AVANZA_FASE" }, ambiente);
     expect(p).toEqual(copia);
   });
 
   it("ogni cambio di fase produce un evento con una causa leggibile", () => {
-    const esito = applica(nuova(), { tipo: "AVANZA_FASE" }, config);
+    const esito = applica(nuova(), { tipo: "AVANZA_FASE" }, ambiente);
     expect(esito.ok).toBe(true);
     if (esito.ok) {
-      expect(esito.eventi).toHaveLength(1);
+      expect(esito.eventi[0]?.tipo).toBe("FASE_INIZIATA");
       expect(esito.eventi[0]?.causa).toContain("discussione");
     }
   });
@@ -93,7 +94,7 @@ describe("macchina a stati delle fasi", () => {
     p.giocatori[1]!.quotaMessaggi = 0;
     p.giocatori[1]!.stato = "DEMANSIONATO";
     while (!(p.trimestre === 2 && p.fase.nome === "RAPPORTO")) {
-      const esito = applica(p, { tipo: "AVANZA_FASE" }, config);
+      const esito = applica(p, { tipo: "AVANZA_FASE" }, ambiente);
       if (!esito.ok) throw new Error(esito.errore);
       p = esito.partita;
     }
@@ -103,7 +104,7 @@ describe("macchina a stati delle fasi", () => {
 
   it("le azioni dei giocatori non ancora gestite vengono rifiutate senza toccare la partita", () => {
     const p = nuova();
-    const esito = applica(p, { tipo: "VOTA", da: "g1", voto: "SI" }, config);
+    const esito = applica(p, { tipo: "MOSSA_PRIVATA", da: "g1", scelta: "AZIENDA" }, ambiente);
     expect(esito.ok).toBe(false);
   });
 });

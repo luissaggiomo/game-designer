@@ -1,0 +1,244 @@
+{
+  "_nota": "SEGNAPOSTO per il motore e i test: 16 quesiti di prova. La lista vera (40-50 quesiti, D-014) è il punto aperto 1 e va decisa con Luis. Strati: 10 solo reparti base, 4 con Finanza, 2 con reparti aggiuntivi. Costi in K€ (D-018).",
+  "proposte": [
+    {
+      "id": "nuovo-macchinario",
+      "titolo": "Nuovo macchinario per la linea 2",
+      "categoria": "INVESTIMENTI",
+      "costo": 40,
+      "riguarda": ["PRODUZIONE"],
+      "trimestri": [1, 2, 3],
+      "pesi": { "PRODUZIONE": 2, "ACQUISTI": 1, "VENDITE": 1, "MARKETING": 1 },
+      "effettiPrivati": {
+        "PRODUZIONE": { "punti": -2, "testo": "Più costi di gestione per il tuo reparto" },
+        "VENDITE": { "punti": 3, "testo": "Più merce da vendere" },
+        "ACQUISTI": { "punti": 1, "testo": "Ordini più grandi, sconti migliori" },
+        "MARKETING": { "testo": "Il mercato è in calo: effetto sull'azienda minore del previsto" }
+      },
+      "effettoAzienda": { "base": 2 }
+    },
+    {
+      "id": "campagna-influencer",
+      "titolo": "Campagna con un influencer di gatti",
+      "categoria": "CAMPAGNE",
+      "costo": 50,
+      "riguarda": ["MARKETING"],
+      "trimestri": [1, 2, 3, 4],
+      "pesi": { "MARKETING": 2, "VENDITE": 2, "ACQUISTI": 1, "PRODUZIONE": 0 },
+      "effettiPrivati": {
+        "MARKETING": { "punti": 3, "testo": "Visibilità enorme per il tuo reparto" },
+        "VENDITE": { "punti": 1, "testo": "Qualche contatto in più" },
+        "PRODUZIONE": { "punti": -2, "testo": "Picchi di ordini difficili da gestire" }
+      },
+      "effettoAzienda": { "base": 1 }
+    },
+    {
+      "id": "fornitore-low-cost",
+      "titolo": "Cambio di fornitore: costa meno, consegna quando vuole",
+      "categoria": "FORNITURE",
+      "costo": 20,
+      "riguarda": ["ACQUISTI"],
+      "trimestri": [1, 2, 3, 4],
+      "pesi": { "ACQUISTI": 2, "PRODUZIONE": 1, "VENDITE": 1, "MARKETING": 1 },
+      "effettiPrivati": {
+        "ACQUISTI": { "punti": 3, "testo": "Risparmio record sul tuo budget" },
+        "PRODUZIONE": { "punti": -2, "testo": "Linee ferme in attesa dei pezzi" },
+        "VENDITE": { "punti": -1, "testo": "Consegne in ritardo ai clienti" }
+      },
+      "effettoAzienda": { "base": 0 }
+    },
+    {
+      "id": "gara-ministero",
+      "titolo": "Partecipazione alla gara del Ministero",
+      "categoria": "CAMPAGNE",
+      "costo": 60,
+      "riguarda": ["VENDITE"],
+      "trimestri": [2, 3, 4],
+      "pesi": { "VENDITE": 2, "MARKETING": 1, "PRODUZIONE": 1, "ACQUISTI": 1 },
+      "effettiPrivati": {
+        "VENDITE": { "punti": 4, "testo": "Il contratto dell'anno, se va bene" },
+        "PRODUZIONE": { "punti": -1, "testo": "Specifiche ministeriali complicate" },
+        "MARKETING": { "punti": -1, "testo": "Niente pubblicità: gara riservata" }
+      },
+      "effettoAzienda": { "base": 3 }
+    },
+    {
+      "id": "manutenzione-straordinaria",
+      "titolo": "Manutenzione straordinaria del capannone",
+      "categoria": "INVESTIMENTI",
+      "costo": 30,
+      "riguarda": ["PRODUZIONE"],
+      "trimestri": [1, 2, 3, 4],
+      "pesi": { "PRODUZIONE": 2, "ACQUISTI": 1, "VENDITE": 1, "MARKETING": 0 },
+      "effettiPrivati": {
+        "PRODUZIONE": { "punti": 2, "testo": "Meno guasti nel tuo reparto" },
+        "ACQUISTI": { "punti": -1, "testo": "Budget ricambi prosciugato" },
+        "MARKETING": { "punti": -1, "testo": "Rinviata la nuova insegna" }
+      },
+      "effettoAzienda": { "base": 1 }
+    },
+    {
+      "id": "fiera-internazionale",
+      "titolo": "Stand alla fiera internazionale di Francoforte",
+      "categoria": "CAMPAGNE",
+      "costo": 45,
+      "riguarda": ["MARKETING", "VENDITE"],
+      "trimestri": [1, 2, 3],
+      "pesi": { "MARKETING": 2, "VENDITE": 1, "ACQUISTI": 1, "PRODUZIONE": 1 },
+      "effettiPrivati": {
+        "MARKETING": { "punti": 2, "testo": "Il tuo stand sarà il più fotografato" },
+        "VENDITE": { "punti": 2, "testo": "Nuovi clienti esteri" },
+        "ACQUISTI": { "punti": -2, "testo": "Trasferte pagate dal tuo budget" }
+      },
+      "effettoAzienda": { "base": 2 }
+    },
+    {
+      "id": "magazzino-automatico",
+      "titolo": "Magazzino automatico con robot",
+      "categoria": "FORNITURE",
+      "costo": 70,
+      "riguarda": ["ACQUISTI", "PRODUZIONE"],
+      "trimestri": [2, 3],
+      "pesi": { "ACQUISTI": 2, "PRODUZIONE": 2, "VENDITE": 1, "MARKETING": 0 },
+      "effettiPrivati": {
+        "ACQUISTI": { "punti": 2, "testo": "Scorte sempre sotto controllo" },
+        "PRODUZIONE": { "punti": 1, "testo": "Rifornimenti più rapidi" },
+        "VENDITE": { "punti": -2, "testo": "Sei mesi di cantiere: consegne rallentate" }
+      },
+      "effettoAzienda": { "base": 3 }
+    },
+    {
+      "id": "sconti-fine-anno",
+      "titolo": "Sconti aggressivi di fine anno",
+      "categoria": "CAMPAGNE",
+      "costo": 25,
+      "riguarda": ["VENDITE"],
+      "trimestri": [3, 4],
+      "pesi": { "VENDITE": 2, "MARKETING": 2, "ACQUISTI": 0, "PRODUZIONE": 1 },
+      "effettiPrivati": {
+        "VENDITE": { "punti": 2, "testo": "Obiettivi di vendita centrati" },
+        "MARKETING": { "punti": -1, "testo": "Il marchio sembra da discount" },
+        "PRODUZIONE": { "punti": 1, "testo": "Magazzino finalmente svuotato" }
+      },
+      "effettoAzienda": { "base": 0 }
+    },
+    {
+      "id": "corso-sicurezza",
+      "titolo": "Corso obbligatorio di sicurezza per tutti",
+      "categoria": "PERSONALE",
+      "costo": 15,
+      "riguarda": [],
+      "trimestri": [1, 2, 3, 4],
+      "astensioneAmmessa": true,
+      "effettiPrivati": {
+        "PRODUZIONE": { "punti": 1, "testo": "Meno infortuni nel tuo reparto" },
+        "VENDITE": { "punti": -1, "testo": "Due giorni lontano dai clienti" },
+        "MARKETING": { "punti": -1, "testo": "Due giorni senza campagne" },
+        "ACQUISTI": { "punti": 0, "testo": "Nessun effetto rilevante" }
+      },
+      "effettoAzienda": { "base": 1 }
+    },
+    {
+      "id": "packaging-ecologico",
+      "titolo": "Packaging ecologico (che costa il doppio)",
+      "categoria": "FORNITURE",
+      "costo": 35,
+      "riguarda": ["MARKETING"],
+      "trimestri": [1, 2, 3, 4],
+      "pesi": { "ACQUISTI": 2, "MARKETING": 1, "PRODUZIONE": 1, "VENDITE": 1 },
+      "effettiPrivati": {
+        "MARKETING": { "punti": 3, "testo": "Finalmente una storia da raccontare" },
+        "ACQUISTI": { "punti": -2, "testo": "Fornitori nuovi e più cari" },
+        "VENDITE": { "punti": 1, "testo": "Piace ai clienti giovani" }
+      },
+      "effettoAzienda": { "base": 1 }
+    },
+    {
+      "id": "software-contabile",
+      "titolo": "Nuovo software contabile (di nuovo)",
+      "categoria": "INVESTIMENTI",
+      "costo": 30,
+      "riguarda": ["FINANZA"],
+      "trimestri": [1, 2, 3, 4],
+      "effettiPrivati": {
+        "FINANZA": { "punti": 3, "testo": "Chiusure di bilancio in metà tempo" },
+        "VENDITE": { "punti": -1, "testo": "Fatture bloccate durante la migrazione" },
+        "PRODUZIONE": { "punti": -1, "testo": "Altre procedure da imparare" },
+        "ACQUISTI": { "punti": 1, "testo": "Ordini approvati più in fretta" }
+      },
+      "effettoAzienda": { "base": 1 }
+    },
+    {
+      "id": "taglio-trasferte",
+      "titolo": "Taglio drastico delle trasferte",
+      "categoria": "PERSONALE",
+      "costo": 10,
+      "riguarda": ["FINANZA"],
+      "trimestri": [2, 3, 4],
+      "astensioneAmmessa": true,
+      "effettiPrivati": {
+        "FINANZA": { "punti": 2, "testo": "Conti più puliti" },
+        "VENDITE": { "punti": -2, "testo": "Clienti visitati solo in videochiamata" },
+        "MARKETING": { "punti": -1, "testo": "Addio fiere minori" },
+        "PRODUZIONE": { "punti": 1, "testo": "Più fondi per le linee" }
+      },
+      "effettoAzienda": { "base": 0 }
+    },
+    {
+      "id": "rinegoziazione-prestito",
+      "titolo": "Rinegoziazione del prestito con la banca",
+      "categoria": "INVESTIMENTI",
+      "costo": 20,
+      "riguarda": ["FINANZA"],
+      "trimestri": [1, 2, 3],
+      "effettiPrivati": {
+        "FINANZA": { "punti": 2, "testo": "Interessi più bassi" },
+        "ACQUISTI": { "punti": -1, "testo": "Pagamenti ai fornitori rimandati" },
+        "MARKETING": { "punti": 1, "testo": "Si libera budget per le campagne" }
+      },
+      "effettoAzienda": { "base": 2 }
+    },
+    {
+      "id": "assicurazione-crediti",
+      "titolo": "Assicurazione sui crediti verso clienti",
+      "categoria": "CAMPAGNE",
+      "costo": 25,
+      "riguarda": ["FINANZA", "VENDITE"],
+      "trimestri": [2, 3, 4],
+      "effettiPrivati": {
+        "FINANZA": { "punti": 1, "testo": "Meno rischi di insoluti" },
+        "VENDITE": { "punti": 2, "testo": "Puoi vendere anche ai clienti incerti" },
+        "MARKETING": { "punti": -1, "testo": "Budget campagne ridotto" }
+      },
+      "effettoAzienda": { "base": 1 }
+    },
+    {
+      "id": "team-building",
+      "titolo": "Team building in montagna (obbligatorio, con canti)",
+      "categoria": "PERSONALE",
+      "costo": 30,
+      "riguarda": ["RISORSE_UMANE"],
+      "trimestri": [1, 2, 3, 4],
+      "effettiPrivati": {
+        "RISORSE_UMANE": { "punti": 3, "testo": "Clima aziendale alle stelle (forse)" },
+        "PRODUZIONE": { "punti": -1, "testo": "Due giorni di linee ferme" },
+        "FINANZA": { "punti": -1, "testo": "Spesa difficile da giustificare" }
+      },
+      "effettoAzienda": { "base": 0 }
+    },
+    {
+      "id": "prototipo-segreto",
+      "titolo": "Prototipo del prodotto segreto",
+      "categoria": "INVESTIMENTI",
+      "costo": 65,
+      "riguarda": ["RICERCA_SVILUPPO"],
+      "trimestri": [1, 2, 3],
+      "effettiPrivati": {
+        "RICERCA_SVILUPPO": { "punti": 4, "testo": "Il tuo progetto prende vita" },
+        "PRODUZIONE": { "punti": -1, "testo": "Linea di prova da allestire" },
+        "VENDITE": { "punti": 1, "testo": "Qualcosa di nuovo da proporre" }
+      },
+      "effettoAzienda": { "base": 3 }
+    }
+  ]
+}

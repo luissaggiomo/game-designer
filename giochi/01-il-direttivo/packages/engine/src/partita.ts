@@ -1,12 +1,15 @@
 /**
  * Creazione di una partita: assegnazione segreta di reparti, fazioni e concorrenti
- * (GDD §4, §5, §12 · Architettura §10.1).
+ * (GDD §4, §5, §12 · Architettura §10.1), poi ingresso nel Rapporto del primo trimestre.
  *
  * L'ingresso nella stanza (lobby) e la spiegazione delle regole (tutorial) sono compiti
  * del server e della TV: il motore parte con i giocatori già presenti.
  */
+import type { Evento } from "./azioni.js";
+import type { Ambiente } from "./contenuti.js";
 import type { Configurazione } from "./config.js";
-import { creaCasuale } from "./rng.js";
+import { entraNellaFase } from "./fasi.js";
+import { creaCasuale, type Casuale } from "./rng.js";
 import type { Concorrente, Fazione, Giocatore, GiocatoreId, Partita, Reparto } from "./tipi.js";
 
 export interface NuovoGiocatore {
@@ -14,9 +17,10 @@ export interface NuovoGiocatore {
   nome: string;
 }
 
-export type EsitoCreazione = { ok: true; partita: Partita } | { ok: false; errore: string };
+export type EsitoCreazione = { ok: true; partita: Partita; eventi: Evento[] } | { ok: false; errore: string };
 
-export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, config: Configurazione): EsitoCreazione {
+export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambiente: Ambiente): EsitoCreazione {
+  const { config } = ambiente;
   const n = partecipanti.length;
   if (n < config.giocatori.minimo || n > config.giocatori.massimo) {
     return { ok: false, errore: `Servono da ${config.giocatori.minimo} a ${config.giocatori.massimo} giocatori (sono ${n})` };
@@ -60,28 +64,27 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, config
     return direttore ? { id, occupatoDa: direttore.id, autogestione: false } : { id, autogestione: true };
   });
 
-  return {
-    ok: true,
-    partita: {
-      seme,
-      statoCasuale: casuale.stato(),
-      fase: { nome: "RAPPORTO" },
-      trimestre: 1,
-      giocatori,
-      reparti,
-      concorrenti,
-      azienda: { quota: 0, cassa: config.cassaPerTrimestre },
-    },
+  const partita: Partita = {
+    seme,
+    statoCasuale: casuale.stato(),
+    fase: { nome: "RAPPORTO" },
+    trimestre: 1,
+    giocatori,
+    reparti,
+    concorrenti,
+    azienda: { quota: 0, cassa: 0 },
+    proposteTrimestre: [],
+    proposteUscite: [],
+    conteggioFavoriti: {},
   };
+
+  // Ingresso nel Rapporto del trimestre 1: budget, quota messaggi, ordine del giorno.
+  const eventi = entraNellaFase(partita, ambiente);
+  return { ok: true, partita, eventi };
 }
 
 /** Restituisce N fazioni (una per giocatore, non ancora assegnate a nessuno). */
-function assegnaFazioni(
-  n: number,
-  concorrenti: Concorrente[],
-  config: Configurazione,
-  casuale: ReturnType<typeof creaCasuale>,
-): Fazione[] {
+function assegnaFazioni(n: number, concorrenti: Concorrente[], config: Configurazione, casuale: Casuale): Fazione[] {
   const spie: Fazione[] = [];
   const nessunaSpia = casuale.probabilita(config.spie.probabilitaNessunaSpia);
 

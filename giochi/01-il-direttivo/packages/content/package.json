@@ -1,6 +1,10 @@
 {
   "name": "@il-direttivo/content",
   "private": true,
-  "description": "Contenuti del gioco come dati (JSON): parametri, proposte, segreti, obiettivi, eventi.",
-  "exports": { "./config.json": "./config.json" }
+  "description": "Contenuti del gioco come dati (JSON): parametri, proposte, pesi, segreti, obiettivi, eventi.",
+  "exports": {
+    "./config.json": "./config.json",
+    "./proposte.json": "./proposte.json",
+    "./pesi.json": "./pesi.json"
+  }
 }

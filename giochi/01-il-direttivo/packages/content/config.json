@@ -9,8 +9,15 @@
   "_reparti": "GDD §5. PROVVISORIO: l'ordine dei reparti aggiuntivi oltre Finanza è il punto aperto 7 (GDD §20); qui è solo un segnaposto per far funzionare il motore da 4 a 8 giocatori.",
   "votazioniPerTrimestre": [2, 3, 3, 2],
   "_votazioniPerTrimestre": "Scaletta T1-T4 (D-014)",
-  "cassaPerTrimestre": 10,
-  "_cassaPerTrimestre": "GDD §6",
+  "cassa": { "perTrimestre": 100, "massima": 150, "unita": "K" },
+  "_cassa": "K€ (migliaia di euro). Ogni trimestre: cassa = minimo tra avanzo + perTrimestre e massima (D-018)",
+  "selezione": {
+    "sogliaPesoVacanti": 0.25,
+    "fattoreVacantiPesanti": 0.1,
+    "fattoreStessaCategoria": 0.3,
+    "fattoreFavoritoInEccesso": 0.1
+  },
+  "_selezione": "Estrazione dell'ordine del giorno (D-006, D-014). Un quesito è 'con vacanti pesanti' se i reparti vacanti hanno più di sogliaPesoVacanti del suo peso totale; i fattori riducono la probabilità di estrazione (1 = nessuna riduzione).",
   "mossaPrivata": {
     "reparto": { "puntiReparto": 1, "deltaAzienda": -1 },
     "azienda": { "puntiReparto": 0, "deltaAzienda": 1 },

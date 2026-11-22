@@ -230,3 +230,17 @@ Modello di voce:
   di calo d'attenzione e ripetitività (scheda di playtest).
 - Idea collegata (da valutare, sviluppo successivo): mini-sfide sul telefono, GDD §20 n. 25.
 - Rif.: GDD §1
+
+## D-018 — Cassa aziendale: budget, accumulo e tetto
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Alternative: A) si azzera a ogni trimestre · B) si accumula senza limiti · C) si accumula con un tetto.
+- Scelta: **C**. A ogni trimestre arrivano **100 K** (100.000 €), sommati alla cassa avanzata,
+  con un **tetto di 150 K** (cassa = minimo tra avanzo + 100 K e 150 K). Gli importi diventano
+  in K€ (prima "crediti").
+- Indicazione per i contenuti: le proposte di un trimestre, sommate, costano spesso più di 100 K.
+- Motivo: rinunciare a investimenti nei primi trimestri dà margine dopo (strategia e argomento
+  politico), mentre il tetto evita un T4 in cui passa tutto.
+- Da sorvegliare: una spia può spingere a "risparmiare" per bloccare proposte utili (D-005 e spie).
+- Verifica col simulatore: cassa media a inizio trimestre; frequenza del tetto raggiunto;
+  frequenza di cassa esaurita prima dell'ultimo voto; % approvazione per posizione e per trimestre.
+- Rif.: GDD §6 · Architettura §10.3

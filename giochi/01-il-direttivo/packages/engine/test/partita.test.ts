@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { caricaConfigurazione } from "../src/config.js";
+import { caricaAmbiente } from "../src/contenuti.js";
 import { creaPartita, type NuovoGiocatore } from "../src/partita.js";
 import type { Partita } from "../src/tipi.js";
 
-const config = caricaConfigurazione();
+const ambiente = caricaAmbiente();
+const config = ambiente.config;
 const persone = (n: number): NuovoGiocatore[] => Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `Giocatore ${i + 1}` }));
 
 function crea(n: number, seme: number): Partita {
-  const esito = creaPartita(persone(n), seme, config);
+  const esito = creaPartita(persone(n), seme, ambiente);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }
@@ -16,13 +17,13 @@ const spieDi = (p: Partita) => p.giocatori.filter((g) => g.fazione.tipo === "SPI
 
 describe("creazione della partita", () => {
   it("rifiuta meno di 4 o più di 8 giocatori", () => {
-    expect(creaPartita(persone(3), 1, config).ok).toBe(false);
-    expect(creaPartita(persone(9), 1, config).ok).toBe(false);
+    expect(creaPartita(persone(3), 1, ambiente).ok).toBe(false);
+    expect(creaPartita(persone(9), 1, ambiente).ok).toBe(false);
   });
 
   it("rifiuta identificativi doppi", () => {
     const doppi = [...persone(3), { id: "g1", nome: "Copia" }];
-    expect(creaPartita(doppi, 1, config).ok).toBe(false);
+    expect(creaPartita(doppi, 1, ambiente).ok).toBe(false);
   });
 
   it("stesso seme → stessa assegnazione segreta", () => {
@@ -51,7 +52,8 @@ describe("creazione della partita", () => {
     const p = crea(5, 3);
     expect(p.fase).toEqual({ nome: "RAPPORTO" });
     expect(p.trimestre).toBe(1);
-    expect(p.azienda.cassa).toBe(config.cassaPerTrimestre);
+    expect(p.azienda.cassa).toBe(config.cassa.perTrimestre);
+    expect(p.proposteTrimestre.length).toBe(config.votazioniPerTrimestre[0]);
     expect(p.giocatori.every((g) => g.stato === "ATTIVO")).toBe(true);
   });
 });

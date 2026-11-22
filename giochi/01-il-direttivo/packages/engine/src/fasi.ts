@@ -3,17 +3,23 @@
  * Architettura §9, con il ciclo discussione → voto per ogni proposta (D-008)
  * e la scaletta delle votazioni per trimestre (D-014).
  */
+import type { Evento } from "./azioni.js";
+import type { Ambiente } from "./contenuti.js";
 import type { Configurazione } from "./config.js";
+import { estraiOrdineDelGiorno } from "./proposte.js";
+import { creaCasuale } from "./rng.js";
 import type { Fase, Partita } from "./tipi.js";
 
 /** Fase successiva a quella attuale; null se la partita è finita. */
 export function faseSuccessiva(partita: Partita, config: Configurazione): { fase: Fase; trimestre: number } | null {
   const { fase, trimestre } = partita;
-  const votazioniDelTrimestre = config.votazioniPerTrimestre[trimestre - 1] ?? 0;
+  const votazioniDelTrimestre = partita.proposteTrimestre.length;
 
   switch (fase.nome) {
     case "RAPPORTO":
-      return { fase: { nome: "DISCUSSIONE", votazione: 1 }, trimestre };
+      return votazioniDelTrimestre > 0
+        ? { fase: { nome: "DISCUSSIONE", votazione: 1 }, trimestre }
+        : { fase: { nome: "MOSSA_PRIVATA" }, trimestre };
     case "DISCUSSIONE":
       return { fase: { nome: "VOTAZIONE", votazione: fase.votazione }, trimestre };
     case "VOTAZIONE":
@@ -41,15 +47,43 @@ export function faseSuccessiva(partita: Partita, config: Configurazione): { fase
   }
 }
 
-/** Cosa succede automaticamente all'ingresso in una fase. Modifica la copia ricevuta. */
-export function entraNellaFase(partita: Partita, config: Configurazione): void {
-  if (partita.fase.nome === "RAPPORTO") {
-    // Nuovo trimestre: la quota messaggi riparte, non si accumula (GDD §10.1, §13.2).
-    for (const g of partita.giocatori) {
-      g.quotaMessaggi =
-        g.stato === "DEMANSIONATO" ? config.messaggi.perTrimestreDemansionato : config.messaggi.perTrimestre;
-    }
+/** Cosa succede automaticamente all'ingresso in una fase. Modifica la copia ricevuta e restituisce gli eventi. */
+export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
+  const { config } = ambiente;
+  if (partita.fase.nome !== "RAPPORTO") return [];
+
+  const eventi: Evento[] = [];
+  const unita = config.cassa.unita;
+
+  // Cassa: arriva il budget del trimestre, che si somma all'avanzo fino al tetto (D-018).
+  const prima = partita.azienda.cassa;
+  const dopo = Math.min(prima + config.cassa.perTrimestre, config.cassa.massima);
+  partita.azienda.cassa = dopo;
+  const tetto = prima + config.cassa.perTrimestre > config.cassa.massima ? ` (tetto massimo ${config.cassa.massima} ${unita})` : "";
+  eventi.push({
+    tipo: "CASSA_RICARICATA",
+    cassa: dopo,
+    causa: `Budget del trimestre: +${config.cassa.perTrimestre} ${unita}. In cassa ${dopo} ${unita}${tetto}.`,
+  });
+
+  // Quota messaggi: riparte, non si accumula (GDD §10.1, §13.2).
+  for (const g of partita.giocatori) {
+    g.quotaMessaggi = g.stato === "DEMANSIONATO" ? config.messaggi.perTrimestreDemansionato : config.messaggi.perTrimestre;
   }
+
+  // Ordine del giorno: estratto e annunciato subito, nell'ordine in cui si voterà (D-008).
+  const casuale = creaCasuale(partita.statoCasuale);
+  partita.proposteTrimestre = estraiOrdineDelGiorno(partita, ambiente, casuale);
+  partita.statoCasuale = casuale.stato();
+  eventi.push({
+    tipo: "ORDINE_DEL_GIORNO",
+    proposte: partita.proposteTrimestre.map((p) => ({ id: p.id, titolo: p.titolo, costo: p.costo })),
+    causa:
+      "Ordine del giorno: " +
+      partita.proposteTrimestre.map((p, i) => `${i + 1}) ${p.titolo} (${p.costo} ${unita})`).join(" · "),
+  });
+
+  return eventi;
 }
 
 /** Descrizione leggibile della fase, da mostrare in TV. */
