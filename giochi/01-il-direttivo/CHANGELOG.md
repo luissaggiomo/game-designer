@@ -14,6 +14,7 @@ Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
 ### Aggiunto
 - Quinto report (docs/simulazioni/2026-11-22-simulazione-05.md): con l'esito del 4° trimestre nascosto le spie vengono scoperte meno (con 4 giocatori dal 65% al 52%), perché anche gli indizi dell'ultimo trimestre (segreti finiti al concorrente) arrivano dopo il finale.
+- Sesto report con la variante B (docs/simulazioni/2026-11-22-simulazione-06.md): spie scoperte di nuovo al 65% con 4 giocatori; vittoria della spia con 4 giocatori e 1 spia 26%.
 
 ## 2026-11-22 — 0.2.9
 

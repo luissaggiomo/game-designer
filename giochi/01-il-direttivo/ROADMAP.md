@@ -23,8 +23,8 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Demansionamento/promozione, finale, punteggio (senza obiettivi personali, D-022)
 - ✅ Viste filtrate + test di riservatezza (partite casuali da 4 a 8 giocatori, controllo a ogni passo)
 - 🔄 Contenuti minimi in JSON — quesiti: 40 con 7 schemi di effetto (D-023), titoli e frasi provvisori; segreti: 10 segnaposto; obiettivi: da fare
-- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-22-simulazione-05.md (2 avvisi)
-- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-029 — in corso (quinto report fatto)
+- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-22-simulazione-06.md (2 avvisi)
+- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-029 — in corso (sesto report fatto)
 
 ## Fase 3 · Prototipo locale giocabile
 - ⬜ Scelta hosting (DG-006)
