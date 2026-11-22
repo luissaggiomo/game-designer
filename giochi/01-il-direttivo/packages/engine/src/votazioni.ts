@@ -11,6 +11,7 @@
  */
 import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
+import { verificaSegretiInTempo } from "./segreti.js";
 import type { EsitoVotazione, Giocatore, Partita, PropostaIstanza, Voto } from "./tipi.js";
 
 const pesoDi = (proposta: PropostaIstanza, g: Giocatore): number => proposta.pesi[g.repartoId] ?? 0;
@@ -83,6 +84,7 @@ export function chiudiVotazione(partita: Partita, ambiente: Ambiente): Evento[] 
   if (!proposta) return [];
   const esito = calcolaEsito(partita, proposta, ambiente.config.cassa.unita);
   proposta.esito = esito;
+  verificaSegretiInTempo(partita, proposta);
   if (esito.approvata) partita.azienda.cassa -= proposta.costo;
   const voti: Partial<Record<string, Voto | "TEMPO_SCADUTO">> = {};
   for (const g of partita.giocatori) {

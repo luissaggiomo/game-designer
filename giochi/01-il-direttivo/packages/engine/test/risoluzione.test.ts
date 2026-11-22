@@ -15,7 +15,7 @@ function ambienteFisso(modifiche: { autogestione?: Partial<Ambiente["config"]["a
       ...base.config,
       mossaPrivata: { ...base.config.mossaPrivata, rumore: [0] },
       concorrenti: { ...base.config.concorrenti, eventoCasuale: [0] },
-      autogestione: { ...base.config.autogestione, partecipaMossaPrivata: false, ...modifiche.autogestione },
+      autogestione: { ...base.config.autogestione, mossaPrivataDemansionati: false, ...modifiche.autogestione },
     },
   };
 }
@@ -94,11 +94,15 @@ describe("mossa privata (GDD §9)", () => {
     expect(applica(p, { tipo: "MOSSA_PRIVATA", da: idDi(p, "VENDITE"), scelta: "AZIENDA" }, amb).ok).toBe(false);
   });
 
-  it("i reparti in autogestione partecipano se previsto (punto aperto 28)", () => {
-    const conAutogestione = ambienteFisso({ autogestione: { partecipaMossaPrivata: true, probabilitaMossaAzienda: 1 } });
-    // 4 giocatori → 4 reparti vacanti, che giocano tutti per l'azienda.
-    const { partita } = risolvi(inMossaPrivata(4, conAutogestione), conAutogestione);
-    expect(partita.azienda.quota).toBe(4 + 4);
+  it("i reparti vacanti non fanno la mossa privata; quello del demansionato sì, scelta dal computer (D-020)", () => {
+    const conAutogestione = ambienteFisso({ autogestione: { mossaPrivataDemansionati: true, probabilitaMossaAzienda: 1 } });
+    // 4 giocatori (4 reparti vacanti): contano solo le 4 mosse "azienda" predefinite.
+    expect(risolvi(inMossaPrivata(4, conAutogestione), conAutogestione).partita.azienda.quota).toBe(4);
+    // Un demansionato: il suo reparto gioca comunque per l'azienda, guidato dal computer.
+    const p = inMossaPrivata(4, conAutogestione);
+    p.giocatori.find((g) => g.repartoId === "VENDITE")!.stato = "DEMANSIONATO";
+    p.reparti.find((r) => r.id === "VENDITE")!.autogestione = true;
+    expect(risolvi(p, conAutogestione).partita.azienda.quota).toBe(4);
   });
 });
 

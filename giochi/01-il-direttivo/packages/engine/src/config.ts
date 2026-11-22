@@ -34,9 +34,21 @@ export interface Configurazione {
     crescitaBase: number;
     eventoCasuale: number[];
   };
-  messaggi: { perTrimestre: number; perTrimestreDemansionato: number; caratteriTestoLibero: number };
+  messaggi: {
+    perTrimestre: number;
+    perTrimestreDemansionato: number;
+    caratteriTestoLibero: number;
+    costoAnonimo: number;
+    quando: "DAL_RAPPORTO_ALLE_VOTAZIONI" | "TUTTO_IL_TRIMESTRE";
+  };
+  segreti: {
+    perTrimestre: number;
+    penalitaFalsoConcorrente: number;
+    puntiSpiaPerSegretoUsato: number;
+    fattoreFonteInEccesso: number;
+  };
   quesitiConAstensione: { quotaDelMazzo: number };
-  autogestione: { partecipaMossaPrivata: boolean; probabilitaMossaAzienda: number; fattoreEffetti: number };
+  autogestione: { mossaPrivataDemansionati: boolean; probabilitaMossaAzienda: number; fattoreEffetti: number };
 }
 
 /** Controlla che la configurazione sia coerente; restituisce l'elenco dei problemi (vuoto = tutto ok). */
@@ -71,6 +83,12 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   }
   if (c.concorrenti.eventoCasuale.length === 0) problemi.push("L'evento casuale dei concorrenti non può essere vuoto");
   probabilita("autogestione.fattoreEffetti", c.autogestione.fattoreEffetti);
+  probabilita("segreti.fattoreFonteInEccesso", c.segreti.fattoreFonteInEccesso);
+  if (!["DAL_RAPPORTO_ALLE_VOTAZIONI", "TUTTO_IL_TRIMESTRE"].includes(c.messaggi.quando)) {
+    problemi.push('messaggi.quando deve essere "DAL_RAPPORTO_ALLE_VOTAZIONI" o "TUTTO_IL_TRIMESTRE"');
+  }
+  if (c.messaggi.costoAnonimo < 1) problemi.push("Il costo del messaggio anonimo deve essere almeno 1");
+  if (c.segreti.perTrimestre < 0) problemi.push("I segreti per trimestre non possono essere negativi");
   const maxConcorrenti = Math.max(c.concorrenti.finoA7Giocatori, c.concorrenti.con8Giocatori);
   if (c.concorrenti.nomi.length < maxConcorrenti) {
     problemi.push(`Servono almeno ${maxConcorrenti} nomi di concorrenti`);

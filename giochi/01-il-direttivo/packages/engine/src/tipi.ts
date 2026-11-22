@@ -110,4 +110,70 @@ export interface Partita {
   conteggioFavoriti: Partial<Record<RepartoId, number>>;
   /** Mosse private del trimestre: SEGRETE, la TV ne mostra solo l'esito complessivo (GDD §9). */
   mossePrivate: Partial<Record<GiocatoreId, SceltaMossa>>;
+  /** Segreti originali generati dal gioco (solo server). */
+  segreti: SegretoIstanza[];
+  /** Chi possiede quale versione di quale segreto (solo server: "falsa" e "catena" non vanno mai ai telefoni). */
+  copieSegreto: CopiaSegreto[];
+  messaggi: Messaggio[];
+  /** Segreti consegnati dalle spie ai concorrenti, con effetto ai Risultati del trimestre. */
+  segretiPassati: SegretoPassato[];
+  /** Quante volte ogni reparto ha ricevuto segreti come fonte (D-005). */
+  conteggioFontiSegreti: Partial<Record<RepartoId, number>>;
+  /** Numeratore per creare identificativi unici in modo riproducibile. */
+  contatore: number;
+}
+
+export type ValoreCampo = string | number;
+
+export interface SegretoIstanza {
+  id: string;
+  modelloId: string;
+  titolo: string;
+  /** Valori veri. */
+  campi: Record<string, ValoreCampo>;
+  fonte: RepartoId;
+  utile: RepartoId;
+  /** Vale se arriva al reparto utile prima della chiusura di questa votazione (D-021). */
+  propostaCollegataId: string;
+  valoreAzienda: number;
+  valoreConcorrente: number;
+  trimestre: number;
+  arrivatoInTempo: boolean;
+}
+
+export interface CopiaSegreto {
+  id: string;
+  segretoId: string;
+  possessore: GiocatoreId;
+  /** Possono differire dai valori veri, se qualcuno li ha modificati. */
+  campi: Record<string, ValoreCampo>;
+  /** Vero se i campi differiscono dall'originale. MAI visibile al possessore. */
+  falsa: boolean;
+  /** Ciò che il possessore vede della provenienza (D-015). */
+  provenienza: { tipo: "GIOCO" } | { tipo: "GIOCATORE"; da: GiocatoreId; anonimo: boolean };
+  /** Percorso completo dei passaggi (solo server, lettura finale e poteri d'indagine). */
+  catena: GiocatoreId[];
+}
+
+export type ModelloMessaggio = "SEGRETO" | "CHIEDI_DATO" | "PATTO" | "SOLO_TESTO";
+
+export interface Messaggio {
+  id: string;
+  trimestre: number;
+  da: GiocatoreId;
+  a: GiocatoreId;
+  anonimo: boolean;
+  modello: ModelloMessaggio;
+  testo?: string;
+  copiaSegretoId?: string;
+}
+
+export interface SegretoPassato {
+  copiaId: string;
+  segretoId: string;
+  spia: GiocatoreId;
+  concorrente: ConcorrenteId;
+  trimestre: number;
+  /** Calcolato ai Risultati: vero se la copia era vera. */
+  riuscito?: boolean;
 }

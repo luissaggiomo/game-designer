@@ -5,6 +5,7 @@
   "exports": {
     "./config.json": "./config.json",
     "./proposte.json": "./proposte.json",
-    "./pesi.json": "./pesi.json"
+    "./pesi.json": "./pesi.json",
+    "./segreti.json": "./segreti.json"
   }
 }

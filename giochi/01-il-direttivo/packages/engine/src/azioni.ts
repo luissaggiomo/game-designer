@@ -2,7 +2,7 @@
  * Azioni: le "intenzioni" che arrivano al motore (Architettura §7).
  * I telefoni non decidono nulla: chiedono, e il motore controlla e applica.
  */
-import type { Fase, GiocatoreId, Partita, SceltaMossa, Voto } from "./tipi.js";
+import type { Fase, GiocatoreId, ModelloMessaggio, Partita, SceltaMossa, ValoreCampo, Voto } from "./tipi.js";
 
 /** Azioni di sistema, inviate dal server (per esempio allo scadere di un timer). */
 export type AzioneSistema = { tipo: "AVANZA_FASE" };
@@ -14,6 +14,18 @@ export type AzioneSistema = { tipo: "AVANZA_FASE" };
 export type AzioneGiocatore = { da: GiocatoreId } & (
   | { tipo: "VOTA"; voto: Voto }
   | { tipo: "MOSSA_PRIVATA"; scelta: SceltaMossa }
+  | {
+      tipo: "INVIA_MESSAGGIO";
+      a: GiocatoreId;
+      anonimo: boolean;
+      modello: ModelloMessaggio;
+      testo?: string;
+      /** Per inoltrare un segreto: la propria copia. */
+      copiaSegretoId?: string;
+      /** Per inoltrarlo modificato: i campi cambiati (il gioco registrerà la copia come falsa). */
+      campi?: Record<string, ValoreCampo>;
+    }
+  | { tipo: "PASSA_AL_CONCORRENTE"; copiaSegretoId: string }
   | { tipo: "PROPONI_DEMANSIONAMENTO"; bersaglio: GiocatoreId }
   | { tipo: "VOTA_DEMANSIONAMENTO"; voto: "SI" | "NO" }
   | { tipo: "PROPONI_PROMOZIONE"; bersaglio: GiocatoreId }
@@ -22,8 +34,7 @@ export type AzioneGiocatore = { da: GiocatoreId } & (
 
 export type Azione = AzioneSistema | AzioneGiocatore;
 
-/** Eventi da mostrare: ognuno porta una causa leggibile (regola 2 del gioco). */
-export type Evento =
+type ContenutoEvento =
   | { tipo: "FASE_INIZIATA"; fase: Fase; trimestre: number; causa: string }
   | { tipo: "CASSA_RICARICATA"; cassa: number; causa: string }
   | { tipo: "ORDINE_DEL_GIORNO"; proposte: { id: string; titolo: string; costo: number }[]; causa: string }
@@ -46,7 +57,23 @@ export type Evento =
   /** Effetto reale di una proposta approvata sull'azienda (GDD §8.2). */
   | { tipo: "EFFETTO_PROPOSTA"; propostaId: string; effettoAzienda: number; causa: string }
   | { tipo: "MOSSA_CONCORRENTE"; concorrente: string; variazione: number; causa: string }
-  | { tipo: "CORSA_DI_MERCATO"; azienda: number; concorrenti: Record<string, number>; causa: string };
+  | { tipo: "CORSA_DI_MERCATO"; azienda: number; concorrenti: Record<string, number>; causa: string }
+  /** Riservato alla fonte: dato ufficiale del suo reparto (D-015). */
+  | { tipo: "SEGRETO_RICEVUTO"; copiaId: string; causa: string }
+  /** Riservato al destinatario. */
+  | { tipo: "MESSAGGIO_RICEVUTO"; messaggioId: string; causa: string }
+  /** Riservato alla spia. */
+  | { tipo: "SEGRETO_CONSEGNATO"; copiaId: string; causa: string }
+  /** Pubblico, senza dire quale segreto (D-021, S2). */
+  | { tipo: "SEGRETO_IN_TEMPO"; variazione: number; causa: string }
+  /** Pubblico: quale segreto ha usato il concorrente, e se era falso (GDD §11.3–11.4). */
+  | { tipo: "SEGRETO_USATO"; concorrente: string; segretoId: string; falso: boolean; variazione: number; causa: string };
+
+/**
+ * Evento da mostrare: ognuno porta una causa leggibile (regola 2 del gioco).
+ * Se "riservatoA" è presente, l'evento va SOLO a quei giocatori; altrimenti è pubblico (TV).
+ */
+export type Evento = ContenutoEvento & { riservatoA?: GiocatoreId[] };
 
 export type Esito =
   | { ok: true; partita: Partita; eventi: Evento[] }

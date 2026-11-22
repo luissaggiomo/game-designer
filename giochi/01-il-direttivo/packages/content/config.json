@@ -24,7 +24,7 @@
     "rumore": [-1, 0, 1],
     "sceltaPredefinita": "AZIENDA"
   },
-  "_mossaPrivata": "GDD §9, Architettura §10.4. sceltaPredefinita = chi non sceglie in tempo (Architettura §7.4, proposta da confermare).",
+  "_mossaPrivata": "GDD §9, Architettura §10.4. sceltaPredefinita = chi non sceglie in tempo gioca per l'azienda (D-020).",
   "spie": {
     "probabilitaNessunaSpia": 0.15,
     "con8Giocatori": { "probabilitaDueSpie": 0.4, "probabilitaStessoConcorrente": 0.5 }
@@ -38,10 +38,23 @@
     "eventoCasuale": [-1, 0, 1, 2]
   },
   "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6).",
-  "messaggi": { "perTrimestre": 2, "perTrimestreDemansionato": 1, "caratteriTestoLibero": 80 },
-  "_messaggi": "GDD §10, §13.2",
+  "messaggi": {
+    "perTrimestre": 2,
+    "perTrimestreDemansionato": 1,
+    "caratteriTestoLibero": 80,
+    "costoAnonimo": 2,
+    "quando": "DAL_RAPPORTO_ALLE_VOTAZIONI"
+  },
+  "_messaggi": "GDD §10, §13.2. costoAnonimo: l'anonimo costa entrambi i messaggi; il demansionato non può mandare anonimi (D-021). quando: DAL_RAPPORTO_ALLE_VOTAZIONI oppure TUTTO_IL_TRIMESTRE (D-021, da valutare giocando).",
+  "segreti": {
+    "perTrimestre": 2,
+    "penalitaFalsoConcorrente": 2,
+    "puntiSpiaPerSegretoUsato": 2,
+    "fattoreFonteInEccesso": 0.1
+  },
+  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso, punti alla spia per segreto usato (GDD §16). fattoreFonteInEccesso: bilancia quante volte ogni reparto riceve segreti come fonte (D-005).",
   "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
   "_quesitiConAstensione": "D-013",
-  "autogestione": { "partecipaMossaPrivata": true, "probabilitaMossaAzienda": 0.8, "fattoreEffetti": 0.5 },
-  "_autogestione": "Architettura §10.7. partecipaMossaPrivata: i reparti in autogestione fanno la mossa privata (punto aperto 28). fattoreEffetti: gli effetti delle proposte sui reparti in autogestione sono ridotti ('rende poco, non fa disastri'), arrotondati verso lo zero. SEGNAPOSTO."
+  "autogestione": { "mossaPrivataDemansionati": true, "probabilitaMossaAzienda": 0.8, "fattoreEffetti": 0.5 },
+  "_autogestione": "Architettura §10.7. mossaPrivataDemansionati: il reparto di un demansionato fa la mossa privata scelta dal computer; i reparti vacanti no (D-020). fattoreEffetti: gli effetti delle proposte sui reparti in autogestione sono ridotti ('rende poco, non fa disastri'), arrotondati verso lo zero. SEGNAPOSTO."
 }

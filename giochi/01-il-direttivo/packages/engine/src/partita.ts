@@ -77,6 +77,12 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     proposteUscite: [],
     conteggioFavoriti: {},
     mossePrivate: {},
+    segreti: [],
+    copieSegreto: [],
+    messaggi: [],
+    segretiPassati: [],
+    conteggioFontiSegreti: {},
+    contatore: 0,
   };
 
   // Ingresso nel Rapporto del trimestre 1: budget, quota messaggi, ordine del giorno.

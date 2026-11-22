@@ -311,8 +311,8 @@
 
 ✅ Il sabotaggio della spia e l'egoismo di un onesto **si confondono**: è l'ambiguità voluta.
 
-🟡 Chi non sceglie entro il tempo gioca **per l'azienda** (proposta dell'architettura §7.4, da confermare).
-🔴 Da definire (punto aperto 28): i **reparti in autogestione** (vacanti e demansionati) fanno anch'essi una mossa privata, scelta dal computer (architettura §10.7: "azienda" all'80%)? Con pochi giocatori i reparti vacanti sono molti e la loro mossa "diluisce" sia l'egoismo sia il sabotaggio della spia. Nel motore, per ora, partecipano (parametro modificabile).
+✅ *(provvisorio, da verificare col simulatore — D-020)* Chi non sceglie entro il tempo gioca **per l'azienda**.
+✅ *(provvisorio — D-020)* Il reparto di un **demansionato** fa la mossa privata guidato dal computer (⚖️ "azienda" all'80%); i **reparti vacanti non la fanno** (coerente con D-006: i vacanti non entrano nei conti).
 
 ⚖️ I valori sono una prima ipotesi. Contano soprattutto il **rapporto tra guadagno personale e valore della vittoria aziendale** e quanto è combattuta la corsa con i concorrenti.
 
@@ -327,6 +327,8 @@
 ✅ I messaggi sono **limitati**: 🟡 2 per giocatore a trimestre, non accumulabili.
 ✅ **Messaggio anonimo**: costa entrambi i messaggi del trimestre.
 ✅ **A fine partita tutti i messaggi vengono resi leggibili a tutti**, anonimi compresi (con il nome del mittente).
+✅ *(provvisorio — D-021)* Il **demansionato non può mandare messaggi anonimi** (ha un solo messaggio, l'anonimo ne costa due).
+✅ *(provvisorio, da valutare giocando — D-021)* **Quando si scrive:** dal Rapporto alla chiusura dell'ultima votazione del trimestre. Alternativa pronta nel motore (un parametro): in tutto il trimestre.
 
 ### 10.2 Formato
 🟡 Messaggi **a modello** più un breve testo libero:
@@ -371,8 +373,13 @@
 ✅ Se la spia passa al concorrente un segreto falso, **il concorrente sbaglia mossa e perde punti**, e in TV si vede.
 ✅ **Trappola del canarino:** dare versioni diverse dello stesso dato a persone diverse. La versione usata dal concorrente indica chi ha parlato.
 
-### 11.5 Da definire
-🔴 Quanti segreti per trimestre, a chi arrivano, quanto valgono.
+### 11.5 Regole di dettaglio
+✅ *(provvisorio, da verificare col simulatore — D-021)* Ogni segreto è **collegato a una proposta del trimestre**: vale per l'azienda se arriva (in versione vera) al reparto a cui serve **prima che quella votazione si chiuda**.
+✅ *(provvisorio — D-021)* Quando succede, la TV dice solo *"Un'informazione è arrivata in tempo al reparto giusto: +N"*, **senza dire quale** (da riconsiderare dopo le simulazioni).
+✅ *(provvisorio — D-021)* La spia può passare un segreto al concorrente **solo nel trimestre in cui è uscito**; l'effetto si vede ai Risultati, e la TV dice quale segreto il concorrente ha usato (§11.3).
+✅ *(D-005)* I segreti arrivano come fonte ai vari reparti in numero equilibrato nell'arco della partita.
+⚖️ Segnaposto da tarare: 2 segreti a trimestre, penalità 2 per il concorrente che usa un dato falso, 2 punti alla spia per segreto usato.
+🔴 Lista dei segreti e loro valore (punto aperto 2).
 ✅ *(provvisorio, da verificare col simulatore — D-015)* **Provenienza visibile:**
 - un segreto distribuito dal gioco porta l'etichetta **"dato ufficiale del tuo reparto"**: chi lo riceve sa che è vero (serve per falsificare e per la trappola del canarino);
 - un segreto ricevuto da un altro giocatore mostra **solo il mittente diretto** ("da Marco", oppure "anonimo"). Non si vede se il mittente è la fonte o un passaggio intermedio, né la catena.
@@ -596,7 +603,7 @@ Dettagli tecnici nel documento di architettura.
 | 25 | 💡 Idea da valutare (sviluppo successivo): mini-sfide sul telefono con bonus/penalità (quiz, giochini a tema: "evita ostacoli", "evadi pratiche"…) contro noia e ripetitività | 🔴 da valutare |
 | 26 | Cassa non spesa: si accumula nel trimestre successivo o si azzera? | ✅ provvisorio (D-018) |
 | 27 | Voto palese: voti mostrati man mano o tutti alla chiusura; voto modificabile prima della chiusura? | ✅ provvisorio (D-019) |
-| 28 | Mossa privata dei reparti in autogestione (sì/no, con quale probabilità) e scelta predefinita a tempo scaduto | 🔴 |
+| 28 | Mossa privata dei reparti in autogestione (sì/no, con quale probabilità) e scelta predefinita a tempo scaduto | ✅ provvisorio (D-020) |
 
 ---
 

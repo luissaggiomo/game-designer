@@ -255,3 +255,34 @@ Modello di voce:
   "al buio"; ogni chiusura è un momento di scena.
 - Verifica nelle serate: voti cambiati, "no" per tempo scaduto, discussione dopo la rivelazione.
 - Rif.: GDD §8.5 · Architettura §10.3
+
+## D-020 — Mossa privata: autogestione e scelta predefinita
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Alternative: A) partecipano tutti i reparti in autogestione · B) nessuno · C) solo i reparti dei demansionati.
+- Scelta: **C**; inoltre chi non sceglie in tempo gioca **per l'azienda**.
+- Motivo: coerente con D-006 (i vacanti non entrano nei conti); evita che con pochi giocatori
+  l'azienda riceva una spinta gratuita e il sabotaggio si diluisca (equilibrio per numero di
+  giocatori); una spia demansionata non sabota più con la mossa privata; chi si distrae non
+  danneggia l'azienda e la distrazione non fa da copertura alla spia.
+- Verifica col simulatore: vittorie di onesti e spie per numero di giocatori; deducibilità
+  dell'andamento "in calo" per numero di giocatori.
+- Rif.: GDD §9 · Architettura §7.4, §10.4, §10.7
+
+## D-021 — Segreti e messaggi: regole di dettaglio
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Scelte:
+  - S1: ogni segreto è collegato a una proposta del trimestre e vale se arriva vero al reparto
+    utile prima della chiusura di quella votazione (scartato: entro fine trimestre);
+  - S2: la TV annuncia il segreto arrivato in tempo **senza dire quale** (si può cambiare dopo
+    le simulazioni);
+  - S3: messaggi dal Rapporto alla chiusura dell'ultima votazione; in alternativa in tutto il
+    trimestre — **parametro** `messaggi.quando`, da valutare giocando;
+  - S4: il demansionato non può mandare messaggi anonimi;
+  - S5: la spia passa un segreto solo nel trimestre in cui è uscito.
+- In aggiunta (applicazione di D-005): fonti dei segreti bilanciate tra i reparti.
+- Motivo: urgenza dentro i cicli discussione → voto; meno indizi pubblici sui possessori;
+  regole semplici e coerenti con i costi dei messaggi.
+- Verifica: % segreti arrivati in tempo per reparto; % segreti usati dalle spie e falsi;
+  segreti ricevuti come fonte per reparto; nelle serate, ritmo dei messaggi con le due
+  impostazioni di S3.
+- Rif.: GDD §10, §11 · Architettura §10.5

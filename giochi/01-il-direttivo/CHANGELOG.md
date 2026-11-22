@@ -3,6 +3,17 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.4
+
+### Aggiunto
+- Segreti: distribuzione alla fonte come "dato ufficiale", fonti bilanciate tra i reparti, inoltro (anche modificato = copia falsa), valore per l'azienda se arrivano in tempo, uso da parte delle spie con effetti ai Risultati.
+- Messaggi privati: quota per trimestre, anonimi (costano 2, vietati ai demansionati), testo libero di massimo 80 caratteri, fasi ammesse regolabili.
+- Eventi riservati: gli avvisi privati (segreto ricevuto, messaggio, consegna al concorrente) vanno solo al diretto interessato.
+- Mazzo segnaposto di 10 segreti. 97 test automatici.
+
+### Design
+- D-020 e D-021 (provvisorie): mossa privata in autogestione solo per i demansionati; regole di dettaglio di segreti e messaggi.
+
 ## 2026-11-22 — 0.2.3
 
 ### Aggiunto
@@ -12,7 +23,7 @@ Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 - 79 test automatici.
 
 ### Design
-- Nuovo punto aperto: mossa privata dei reparti in autogestione e scelta predefinita a tempo scaduto (n. 28).
+- D-020 (provvisoria): la mossa privata automatica la fa solo il reparto di un demansionato, non i vacanti; chi non sceglie in tempo gioca per l'azienda.
 
 ## 2026-11-22 — 0.2.2
 

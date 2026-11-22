@@ -14,6 +14,7 @@ import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import type { Casuale } from "./rng.js";
 import { creaCasuale } from "./rng.js";
+import { risolviSegreti } from "./segreti.js";
 import type { Partita, SceltaMossa } from "./tipi.js";
 
 export function registraMossa(partita: Partita, azione: Extract<AzioneGiocatore, { tipo: "MOSSA_PRIVATA" }>): Esito {
@@ -34,6 +35,7 @@ export function risolviTrimestre(partita: Partita, ambiente: Ambiente): Evento[]
 
   eventi.push(risolviMossePrivate(partita, ambiente, casuale));
   eventi.push(...applicaEffettiProposte(partita, ambiente));
+  eventi.push(...risolviSegreti(partita, ambiente));
   eventi.push(...muoviConcorrenti(partita, ambiente, casuale));
 
   const concorrenti: Record<string, number> = {};
@@ -64,9 +66,9 @@ function risolviMossePrivate(partita: Partita, ambiente: Ambiente, casuale: Casu
     delta += v.deltaAzienda;
   }
 
-  // Reparti in autogestione (vacanti o demansionati): sceglie il computer (Architettura §10.7, punto aperto 28).
-  if (config.autogestione.partecipaMossaPrivata) {
-    for (const r of partita.reparti.filter((x) => x.autogestione)) {
+  // Reparti dei demansionati: sceglie il computer. I reparti vacanti non partecipano (D-020).
+  if (config.autogestione.mossaPrivataDemansionati) {
+    for (const r of partita.reparti.filter((x) => x.autogestione && x.occupatoDa)) {
       const scelta: SceltaMossa = casuale.probabilita(config.autogestione.probabilitaMossaAzienda) ? "AZIENDA" : "REPARTO";
       const v = scelta === "REPARTO" ? valori.reparto : valori.azienda;
       const direttore = partita.giocatori.find((g) => g.id === r.occupatoDa);

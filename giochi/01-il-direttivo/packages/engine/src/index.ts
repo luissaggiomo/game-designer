@@ -7,6 +7,7 @@ export {
   type Ambiente,
   type ModelloProposta,
   type TabellaPesi,
+  type ModelloSegreto,
 } from "./contenuti.js";
 export type * from "./tipi.js";
 export type { Azione, AzioneGiocatore, AzioneSistema, Esito, Evento } from "./azioni.js";

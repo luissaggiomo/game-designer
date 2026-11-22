@@ -9,6 +9,7 @@ import type { Ambiente } from "./contenuti.js";
 import { descriviFase, entraNellaFase, faseSuccessiva } from "./fasi.js";
 import type { Partita } from "./tipi.js";
 import { registraMossa } from "./risoluzione.js";
+import { inviaMessaggio, passaAlConcorrente } from "./segreti.js";
 import { chiudiVotazione, registraVoto } from "./votazioni.js";
 
 export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): Esito {
@@ -19,6 +20,10 @@ export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): E
       return registraVoto(partita, azione);
     case "MOSSA_PRIVATA":
       return registraMossa(partita, azione);
+    case "INVIA_MESSAGGIO":
+      return inviaMessaggio(partita, azione, ambiente);
+    case "PASSA_AL_CONCORRENTE":
+      return passaAlConcorrente(partita, azione);
     default:
       return { ok: false, errore: `Azione "${azione.tipo}" non ancora gestita dal motore` };
   }

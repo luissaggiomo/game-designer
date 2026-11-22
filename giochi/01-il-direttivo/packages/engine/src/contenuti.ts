@@ -5,8 +5,9 @@
  */
 import datiPesi from "@il-direttivo/content/pesi.json" with { type: "json" };
 import datiProposte from "@il-direttivo/content/proposte.json" with { type: "json" };
+import datiSegreti from "@il-direttivo/content/segreti.json" with { type: "json" };
 import { caricaConfigurazione, type Configurazione } from "./config.js";
-import type { Peso, RepartoId } from "./tipi.js";
+import type { Peso, RepartoId, ValoreCampo } from "./tipi.js";
 
 export type PesiReparti = Partial<Record<RepartoId, Peso>>;
 
@@ -36,10 +37,41 @@ export interface ModelloProposta {
   effettoAzienda: { base: number };
 }
 
+export interface ModelloSegreto {
+  id: string;
+  titolo: string;
+  campi: Record<string, ValoreCampo>;
+  fonte: RepartoId;
+  utile: RepartoId;
+  valoreAzienda: number;
+  valoreConcorrente: number;
+  trimestri: number[];
+}
+
 export interface Ambiente {
   config: Configurazione;
   mazzo: ModelloProposta[];
   pesi: TabellaPesi;
+  segreti: ModelloSegreto[];
+}
+
+export function controllaSegreti(segreti: ModelloSegreto[], config: Configurazione): string[] {
+  const problemi: string[] = [];
+  const repartiValidi = new Set<string>([...config.reparti.base, ...config.reparti.aggiuntiviInOrdine]);
+  const visti = new Set<string>();
+  for (const s of segreti) {
+    const dove = `Segreto "${s.id}"`;
+    if (visti.has(s.id)) problemi.push(`${dove}: identificativo ripetuto`);
+    visti.add(s.id);
+    if (!repartiValidi.has(s.fonte)) problemi.push(`${dove}: reparto fonte sconosciuto`);
+    if (!repartiValidi.has(s.utile)) problemi.push(`${dove}: reparto utile sconosciuto`);
+    if (s.fonte === s.utile) problemi.push(`${dove}: fonte e reparto utile devono essere diversi`);
+    if (Object.keys(s.campi).length === 0) problemi.push(`${dove}: servono dei campi`);
+    if (s.trimestri.length === 0 || s.trimestri.some((t) => !Number.isInteger(t) || t < 1 || t > config.trimestri)) {
+      problemi.push(`${dove}: trimestri non validi`);
+    }
+  }
+  return problemi;
 }
 
 /** Pesi di un quesito secondo i dati (prima di togliere i reparti vacanti). */
@@ -85,7 +117,8 @@ export function caricaAmbiente(): Ambiente {
   const config = caricaConfigurazione();
   const mazzo = datiProposte.proposte as ModelloProposta[];
   const pesi = datiPesi as TabellaPesi;
-  const problemi = controllaContenuti(mazzo, pesi, config);
+  const segreti = datiSegreti.segreti as ModelloSegreto[];
+  const problemi = [...controllaContenuti(mazzo, pesi, config), ...controllaSegreti(segreti, config)];
   if (problemi.length > 0) throw new Error("Contenuti non validi:\n- " + problemi.join("\n- "));
-  return { config, mazzo, pesi };
+  return { config, mazzo, pesi, segreti };
 }

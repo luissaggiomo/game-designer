@@ -8,6 +8,7 @@ import type { Ambiente } from "./contenuti.js";
 import type { Configurazione } from "./config.js";
 import { estraiOrdineDelGiorno } from "./proposte.js";
 import { risolviTrimestre } from "./risoluzione.js";
+import { distribuisciSegreti } from "./segreti.js";
 import { creaCasuale } from "./rng.js";
 import type { Fase, Partita } from "./tipi.js";
 
@@ -77,6 +78,7 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
   // Ordine del giorno: estratto e annunciato subito, nell'ordine in cui si voterà (D-008).
   const casuale = creaCasuale(partita.statoCasuale);
   partita.proposteTrimestre = estraiOrdineDelGiorno(partita, ambiente, casuale);
+  const eventiSegreti = distribuisciSegreti(partita, ambiente, casuale);
   partita.statoCasuale = casuale.stato();
   eventi.push({
     tipo: "ORDINE_DEL_GIORNO",
@@ -85,6 +87,7 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
       "Ordine del giorno: " +
       partita.proposteTrimestre.map((p, i) => `${i + 1}) ${p.titolo} (${p.costo} ${unita})`).join(" · "),
   });
+  eventi.push(...eventiSegreti);
 
   return eventi;
 }
