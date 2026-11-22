@@ -21,20 +21,27 @@
   "mossaPrivata": {
     "reparto": { "puntiReparto": 1, "deltaAzienda": -1 },
     "azienda": { "puntiReparto": 0, "deltaAzienda": 1 },
-    "rumore": [-1, 0, 1]
+    "rumore": [-1, 0, 1],
+    "sceltaPredefinita": "AZIENDA"
   },
-  "_mossaPrivata": "GDD §9, Architettura §10.4",
+  "_mossaPrivata": "GDD §9, Architettura §10.4. sceltaPredefinita = chi non sceglie in tempo (Architettura §7.4, proposta da confermare).",
   "spie": {
     "probabilitaNessunaSpia": 0.15,
     "con8Giocatori": { "probabilitaDueSpie": 0.4, "probabilitaStessoConcorrente": 0.5 }
   },
   "_spie": "GDD §4.2, Architettura §10.1. SEGNAPOSTO da tarare: con 8 giocatori, se ci sono spie, probabilità che siano 2 e che servano lo stesso concorrente.",
-  "concorrenti": { "finoA7Giocatori": 1, "con8Giocatori": 2, "nomi": ["Concorrente A", "Concorrente B"] },
-  "_concorrenti": "D-011. I nomi sono segnaposto (tono ironico da definire, GDD §19).",
+  "concorrenti": {
+    "finoA7Giocatori": 1,
+    "con8Giocatori": 2,
+    "nomi": ["Concorrente A", "Concorrente B"],
+    "crescitaBase": 1,
+    "eventoCasuale": [-1, 0, 1, 2]
+  },
+  "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6).",
   "messaggi": { "perTrimestre": 2, "perTrimestreDemansionato": 1, "caratteriTestoLibero": 80 },
   "_messaggi": "GDD §10, §13.2",
   "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
   "_quesitiConAstensione": "D-013",
-  "autogestione": { "probabilitaMossaAzienda": 0.8 },
-  "_autogestione": "Architettura §10.7"
+  "autogestione": { "partecipaMossaPrivata": true, "probabilitaMossaAzienda": 0.8, "fattoreEffetti": 0.5 },
+  "_autogestione": "Architettura §10.7. partecipaMossaPrivata: i reparti in autogestione fanno la mossa privata (punto aperto 28). fattoreEffetti: gli effetti delle proposte sui reparti in autogestione sono ridotti ('rende poco, non fa disastri'), arrotondati verso lo zero. SEGNAPOSTO."
 }

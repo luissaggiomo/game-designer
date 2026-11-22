@@ -18,6 +18,7 @@ export type GiocatoreId = string;
 export type ConcorrenteId = string;
 export type Peso = 0 | 1 | 2;
 export type Voto = "SI" | "NO" | "ASTENUTO";
+export type SceltaMossa = "REPARTO" | "AZIENDA";
 
 export type Fazione = { tipo: "ONESTO" } | { tipo: "SPIA"; concorrente: ConcorrenteId };
 
@@ -107,4 +108,6 @@ export interface Partita {
   proposteUscite: string[];
   /** Quante volte ogni reparto è stato "favorito" da un quesito estratto (D-014). */
   conteggioFavoriti: Partial<Record<RepartoId, number>>;
+  /** Mosse private del trimestre: SEGRETE, la TV ne mostra solo l'esito complessivo (GDD §9). */
+  mossePrivate: Partial<Record<GiocatoreId, SceltaMossa>>;
 }

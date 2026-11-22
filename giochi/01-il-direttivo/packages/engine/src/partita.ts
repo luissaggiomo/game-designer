@@ -76,6 +76,7 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     proposteTrimestre: [],
     proposteUscite: [],
     conteggioFavoriti: {},
+    mossePrivate: {},
   };
 
   // Ingresso nel Rapporto del trimestre 1: budget, quota messaggi, ordine del giorno.

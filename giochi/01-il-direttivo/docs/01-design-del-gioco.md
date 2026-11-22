@@ -285,7 +285,7 @@
 
 ### 8.5 Voto palese
 ✅ Il voto è **palese**: in TV si vede chi ha votato cosa. Le votazioni sono il cuore delle discussioni.
-🔴 Da definire (punto aperto 27): i voti si vedono in TV **man mano** che arrivano o **tutti insieme** alla chiusura? Si può cambiare voto prima della chiusura? (Nel motore, per ora, l'ultimo voto sostituisce il precedente.)
+✅ *(provvisorio, da verificare nelle serate — D-019)* Durante la votazione la TV mostra solo **chi ha già votato**, non cosa. Il voto si può **cambiare fino alla chiusura**. Alla chiusura la TV **rivela tutti i voti insieme** (chi ha votato cosa): un momento di scena.
 ✅ Rarissime eccezioni con voto segreto, legate a eventi speciali (per esempio "votazione anonima del consiglio").
 
 ### 8.6 Numero di proposte
@@ -310,6 +310,9 @@
 ✅ **La TV mostra solo l'esito complessivo**: *in calo*, *stabile* o *in crescita*. Non il totale numerico, che rivelerebbe esattamente quanti hanno fatto gli egoisti.
 
 ✅ Il sabotaggio della spia e l'egoismo di un onesto **si confondono**: è l'ambiguità voluta.
+
+🟡 Chi non sceglie entro il tempo gioca **per l'azienda** (proposta dell'architettura §7.4, da confermare).
+🔴 Da definire (punto aperto 28): i **reparti in autogestione** (vacanti e demansionati) fanno anch'essi una mossa privata, scelta dal computer (architettura §10.7: "azienda" all'80%)? Con pochi giocatori i reparti vacanti sono molti e la loro mossa "diluisce" sia l'egoismo sia il sabotaggio della spia. Nel motore, per ora, partecipano (parametro modificabile).
 
 ⚖️ I valori sono una prima ipotesi. Contano soprattutto il **rapporto tra guadagno personale e valore della vittoria aziendale** e quanto è combattuta la corsa con i concorrenti.
 
@@ -592,7 +595,8 @@ Dettagli tecnici nel documento di architettura.
 | 24 | Poteri di IT e Risorse Umane (chi scrive a chi): valgono anche per i messaggi anonimi? Da decidere con i punti 5–6 | 🔴 |
 | 25 | 💡 Idea da valutare (sviluppo successivo): mini-sfide sul telefono con bonus/penalità (quiz, giochini a tema: "evita ostacoli", "evadi pratiche"…) contro noia e ripetitività | 🔴 da valutare |
 | 26 | Cassa non spesa: si accumula nel trimestre successivo o si azzera? | ✅ provvisorio (D-018) |
-| 27 | Voto palese: voti mostrati man mano o tutti alla chiusura; voto modificabile prima della chiusura? | 🔴 |
+| 27 | Voto palese: voti mostrati man mano o tutti alla chiusura; voto modificabile prima della chiusura? | ✅ provvisorio (D-019) |
+| 28 | Mossa privata dei reparti in autogestione (sì/no, con quale probabilità) e scelta predefinita a tempo scaduto | 🔴 |
 
 ---
 

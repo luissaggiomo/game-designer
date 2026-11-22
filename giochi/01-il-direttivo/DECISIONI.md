@@ -244,3 +244,14 @@ Modello di voce:
 - Verifica col simulatore: cassa media a inizio trimestre; frequenza del tetto raggiunto;
   frequenza di cassa esaurita prima dell'ultimo voto; % approvazione per posizione e per trimestre.
 - Rif.: GDD §6 · Architettura §10.3
+
+## D-019 — Quando si vedono i voti
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate** (il simulatore misura poco)
+- Alternative: A) voti mostrati man mano, definitivi · B) mostrati man mano, modificabili ·
+  C) nascosti fino alla chiusura, poi rivelati tutti insieme.
+- Scelta: **C**. Durante il voto la TV mostra solo chi ha già votato; voto modificabile fino
+  alla chiusura; alla chiusura rivelazione di tutti i voti (resta voto palese).
+- Motivo: niente vantaggio per chi vota per ultimo; voto più sincero; spie costrette a esporsi
+  "al buio"; ogni chiusura è un momento di scena.
+- Verifica nelle serate: voti cambiati, "no" per tempo scaduto, discussione dopo la rivelazione.
+- Rif.: GDD §8.5 · Architettura §10.3

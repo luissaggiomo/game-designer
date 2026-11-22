@@ -11,7 +11,7 @@
  */
 import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
-import type { EsitoVotazione, Giocatore, Partita, PropostaIstanza } from "./tipi.js";
+import type { EsitoVotazione, Giocatore, Partita, PropostaIstanza, Voto } from "./tipi.js";
 
 const pesoDi = (proposta: PropostaIstanza, g: Giocatore): number => proposta.pesi[g.repartoId] ?? 0;
 
@@ -31,7 +31,7 @@ export function registraVoto(partita: Partita, azione: Extract<AzioneGiocatore, 
     return { ok: false, errore: "In questa votazione non è ammessa l'astensione" };
   }
 
-  // Per ora l'ultimo voto sostituisce il precedente fino alla chiusura (punto aperto 27).
+  // Il voto si può cambiare fino alla chiusura: vale l'ultimo (D-019).
   const nuova = structuredClone(partita);
   const p = propostaInVotazione(nuova)!;
   p.voti[g.id] = azione.voto;
@@ -39,7 +39,6 @@ export function registraVoto(partita: Partita, azione: Extract<AzioneGiocatore, 
     tipo: "VOTO_REGISTRATO",
     da: g.id,
     propostaId: p.id,
-    voto: azione.voto,
     causa: `${g.nome} ha votato`,
   };
   return { ok: true, partita: nuova, eventi: [evento] };
@@ -85,6 +84,10 @@ export function chiudiVotazione(partita: Partita, ambiente: Ambiente): Evento[] 
   const esito = calcolaEsito(partita, proposta, ambiente.config.cassa.unita);
   proposta.esito = esito;
   if (esito.approvata) partita.azienda.cassa -= proposta.costo;
+  const voti: Partial<Record<string, Voto | "TEMPO_SCADUTO">> = {};
+  for (const g of partita.giocatori) {
+    if (g.stato === "ATTIVO" && pesoDi(proposta, g) > 0) voti[g.id] = proposta.voti[g.id] ?? "TEMPO_SCADUTO";
+  }
   return [
     {
       tipo: "VOTAZIONE_CHIUSA",
@@ -92,6 +95,7 @@ export function chiudiVotazione(partita: Partita, ambiente: Ambiente): Evento[] 
       approvata: esito.approvata,
       si: esito.si,
       soglia: esito.soglia,
+      voti,
       causa: `${proposta.titolo} — ${esito.motivo}`,
     },
   ];

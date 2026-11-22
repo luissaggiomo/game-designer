@@ -19,7 +19,7 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 ## Fase 2 · Motore e simulazione
 - ✅ Impianto del codice (pacchetti, test, controllo tipi) — 22/11/2026
 - ✅ Motore: stato, azioni, macchina a stati delle fasi — 22/11/2026 (sotto-fasi del finale insieme alle regole del finale)
-- 🔄 Regole: ✅ votazione pesata, cassa, ordine del giorno · ⬜ mossa privata, risoluzione (effetti), segreti, concorrenti, autogestione
+- 🔄 Regole: ✅ votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (segnaposto) · ⬜ segreti e messaggi
 - ⬜ Demansionamento/promozione, finale, punteggio
 - ⬜ Viste filtrate + test di riservatezza
 - ⬜ Contenuti minimi (proposte, segreti, obiettivi) in JSON
@@ -45,7 +45,7 @@ Riferimento: tabella §20 del GDD. Da chiudere prima o durante la fase 2.
 
 | # GDD | Tema | Blocca |
 |---|---|---|
-| 27 | Voto palese: voti mostrati man mano o alla chiusura; voto modificabile? | votazione, viste |
+| 28 | Mossa privata dei reparti in autogestione; scelta predefinita a tempo scaduto (oggi: partecipano, "azienda") | mossa privata, equilibrio spie |
 | 7 | Reparti aggiunti con 6, 7, 8 giocatori (nel motore c'è un ordine segnaposto in config.json) | assegnazione definitiva |
 | 1–4 | Liste di proposte, segreti, obiettivi, comportamento concorrenti | contenuti e simulatore (bastano versioni minime) |
 
@@ -64,4 +64,4 @@ D-006 reparti vacanti nella soglia · D-007 astensione · D-008 ordine delle fas
 D-009 voto di demansionamento · D-010 promozione · D-011 numero di concorrenti ·
 D-012 soglia di demansionamento e promozione · D-013 dettagli dei quesiti con astensione ·
 D-014 numero di votazioni, bilanciamento dei favoriti, mazzo · D-015 provenienza dei segreti ·
-D-018 cassa: 100 K a trimestre, accumulo con tetto 150 K.
+D-018 cassa: 100 K a trimestre, accumulo con tetto 150 K · D-019 voti rivelati alla chiusura.

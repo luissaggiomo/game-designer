@@ -3,7 +3,7 @@
  * I numeri non si scrivono mai nel codice: si cambiano nel file JSON (regola 4 del gioco).
  */
 import datiConfig from "@il-direttivo/content/config.json" with { type: "json" };
-import type { RepartoId } from "./tipi.js";
+import type { RepartoId, SceltaMossa } from "./tipi.js";
 
 export interface Configurazione {
   giocatori: { minimo: number; massimo: number };
@@ -21,15 +21,22 @@ export interface Configurazione {
     reparto: { puntiReparto: number; deltaAzienda: number };
     azienda: { puntiReparto: number; deltaAzienda: number };
     rumore: number[];
+    sceltaPredefinita: SceltaMossa;
   };
   spie: {
     probabilitaNessunaSpia: number;
     con8Giocatori: { probabilitaDueSpie: number; probabilitaStessoConcorrente: number };
   };
-  concorrenti: { finoA7Giocatori: number; con8Giocatori: number; nomi: string[] };
+  concorrenti: {
+    finoA7Giocatori: number;
+    con8Giocatori: number;
+    nomi: string[];
+    crescitaBase: number;
+    eventoCasuale: number[];
+  };
   messaggi: { perTrimestre: number; perTrimestreDemansionato: number; caratteriTestoLibero: number };
   quesitiConAstensione: { quotaDelMazzo: number };
-  autogestione: { probabilitaMossaAzienda: number };
+  autogestione: { partecipaMossaPrivata: boolean; probabilitaMossaAzienda: number; fattoreEffetti: number };
 }
 
 /** Controlla che la configurazione sia coerente; restituisce l'elenco dei problemi (vuoto = tutto ok). */
@@ -59,6 +66,11 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   if (c.cassa.perTrimestre <= 0) problemi.push("Il budget per trimestre deve essere positivo");
   if (c.cassa.massima < c.cassa.perTrimestre) problemi.push("Il tetto della cassa non può essere inferiore al budget per trimestre");
   if (c.mossaPrivata.rumore.length === 0) problemi.push("Il rumore della mossa privata non può essere vuoto");
+  if (!["REPARTO", "AZIENDA"].includes(c.mossaPrivata.sceltaPredefinita)) {
+    problemi.push('La scelta predefinita della mossa privata deve essere "REPARTO" o "AZIENDA"');
+  }
+  if (c.concorrenti.eventoCasuale.length === 0) problemi.push("L'evento casuale dei concorrenti non può essere vuoto");
+  probabilita("autogestione.fattoreEffetti", c.autogestione.fattoreEffetti);
   const maxConcorrenti = Math.max(c.concorrenti.finoA7Giocatori, c.concorrenti.con8Giocatori);
   if (c.concorrenti.nomi.length < maxConcorrenti) {
     problemi.push(`Servono almeno ${maxConcorrenti} nomi di concorrenti`);

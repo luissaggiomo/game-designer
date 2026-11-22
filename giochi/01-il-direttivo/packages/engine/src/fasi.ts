@@ -7,6 +7,7 @@ import type { Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import type { Configurazione } from "./config.js";
 import { estraiOrdineDelGiorno } from "./proposte.js";
+import { risolviTrimestre } from "./risoluzione.js";
 import { creaCasuale } from "./rng.js";
 import type { Fase, Partita } from "./tipi.js";
 
@@ -50,9 +51,11 @@ export function faseSuccessiva(partita: Partita, config: Configurazione): { fase
 /** Cosa succede automaticamente all'ingresso in una fase. Modifica la copia ricevuta e restituisce gli eventi. */
 export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
   const { config } = ambiente;
+  if (partita.fase.nome === "RISOLUZIONE") return risolviTrimestre(partita, ambiente);
   if (partita.fase.nome !== "RAPPORTO") return [];
 
   const eventi: Evento[] = [];
+  partita.mossePrivate = {};
   const unita = config.cassa.unita;
 
   // Cassa: arriva il budget del trimestre, che si somma all'avanzo fino al tetto (D-018).

@@ -104,7 +104,7 @@ describe("macchina a stati delle fasi", () => {
 
   it("le azioni dei giocatori non ancora gestite vengono rifiutate senza toccare la partita", () => {
     const p = nuova();
-    const esito = applica(p, { tipo: "MOSSA_PRIVATA", da: "g1", scelta: "AZIENDA" }, ambiente);
+    const esito = applica(p, { tipo: "PROPONI_DEMANSIONAMENTO", da: "g1", bersaglio: "g2" }, ambiente);
     expect(esito.ok).toBe(false);
   });
 });

@@ -3,6 +3,17 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.3
+
+### Aggiunto
+- Voti nascosti fino alla chiusura e poi rivelati tutti insieme (D-019).
+- Mossa privata: scelta segreta, modificabile fino alla chiusura; la TV vede solo "in calo / stabile / in crescita".
+- Risultati del trimestre: effetti delle proposte approvate (punti di reparto privati, effetto reale sull'azienda pubblico), effetti ridotti per i reparti in autogestione, avanzamento dei concorrenti (segnaposto), corsa di mercato.
+- 79 test automatici.
+
+### Design
+- Nuovo punto aperto: mossa privata dei reparti in autogestione e scelta predefinita a tempo scaduto (n. 28).
+
 ## 2026-11-22 — 0.2.2
 
 ### Aggiunto
@@ -13,7 +24,7 @@ Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 - 67 test automatici.
 
 ### Design
-- Nuovo punto aperto: voti mostrati man mano o alla chiusura, voto modificabile (n. 27).
+- D-019 (provvisoria): durante il voto si vede solo chi ha già votato; voto modificabile; tutti i voti rivelati alla chiusura.
 
 ## 2026-11-22 — 0.2.1
 
