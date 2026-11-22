@@ -683,6 +683,9 @@ il-direttivo/
 │  │  │  ├─ fasi.ts    # macchina a stati delle fasi
 │  │  │  ├─ motore.ts  # applica(partita, azione)
 │  │  │  ├─ config.ts  # lettura e controllo dei parametri
+│  │  │  ├─ contenuti.ts # mazzo, pesi, segreti + controlli
+│  │  │  ├─ proposte.ts  # estrazione dell'ordine del giorno
+│  │  │  ├─ votazioni.ts · risoluzione.ts · segreti.ts · personali.ts · finale.ts · punteggio.ts
 │  │  │  ├─ rules/     # votazioni, segreti, concorrenti, autogestione, finale
 │  │  │  ├─ views.ts   # proiezione per TV e per giocatore
 │  │  │  └─ rng.ts     # generatore casuale con seme

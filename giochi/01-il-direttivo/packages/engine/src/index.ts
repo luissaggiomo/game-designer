@@ -15,3 +15,12 @@ export { creaPartita, type NuovoGiocatore, type EsitoCreazione } from "./partita
 export { applica } from "./motore.js";
 export { faseSuccessiva, descriviFase } from "./fasi.js";
 export { calcolaEsito, propostaInVotazione } from "./votazioni.js";
+export {
+  vista,
+  vistaTV,
+  vistaGiocatore,
+  eventiPer,
+  type Destinatario,
+  type VistaTV,
+  type VistaGiocatore,
+} from "./viste.js";

@@ -21,9 +21,9 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Motore: stato, azioni, macchina a stati delle fasi — 22/11/2026 (sotto-fasi del finale insieme alle regole del finale)
 - ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (segnaposto), segreti e messaggi
 - ✅ Demansionamento/promozione, finale, punteggio (senza obiettivi personali, D-022)
-- 🔄 Viste filtrate + test di riservatezza — prossimo passo
-- ⬜ Contenuti minimi (proposte, segreti, obiettivi) in JSON
-- ⬜ Simulatore con robot e report
+- ✅ Viste filtrate + test di riservatezza (partite casuali da 4 a 8 giocatori, controllo a ogni passo)
+- 🔄 Contenuti minimi (proposte, segreti, obiettivi) in JSON — oggi segnaposto: 16 quesiti, 10 segreti, nessun obiettivo
+- ⬜ Simulatore con robot e report — prossimo passo
 - ⬜ Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-015
 
 ## Fase 3 · Prototipo locale giocabile

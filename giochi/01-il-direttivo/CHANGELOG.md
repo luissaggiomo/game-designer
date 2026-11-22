@@ -3,6 +3,14 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.6
+
+### Aggiunto
+- Viste filtrate: una vista per la TV e una per ogni giocatore, con solo ciò che ciascuno può vedere; filtro degli eventi riservati.
+- Test di riservatezza obbligatorio: centinaia di partite con azioni casuali (4–8 giocatori), controllo di tutte le viste e di tutti gli eventi a ogni passo. Verificato che scatta se si introduce una fuga di dati.
+- Dalla fase del punteggio tutti i ruoli diventano visibili; nella lettura finale si vedono tutti i messaggi, compresi mittenti degli anonimi e segreti falsi.
+- 122 test automatici.
+
 ## 2026-11-22 — 0.2.5
 
 ### Aggiunto
