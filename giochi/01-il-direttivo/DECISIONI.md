@@ -28,6 +28,13 @@ Modello di voce:
 - Data: 2026-11-20 · Stato: 🟡 (raccomandata nell'architettura, da confermare)
 - Rif.: Architettura §2, §3
 
+## D-005 — Pari opportunità tra reparti
+- Data: 2026-11-22 · Stato: ✅
+- Scelta: ogni giocatore, a prescindere dal reparto, deve avere le stesse possibilità e
+  opportunità. Tutte le decisioni su regole e numeri sono calibrate e verificate con test
+  e simulazioni (metriche per reparto nel simulatore).
+- Rif.: GDD §1, Architettura §14
+
 ## D-004 — Libreria per l'interfaccia: Svelte o React
 - Data: — · Stato: 🔴 da decidere prima della fase 3 (non blocca il motore)
 - Alternative: A) Svelte — più leggero e semplice da leggere. B) React — più diffuso, più esempi in rete.

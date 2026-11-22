@@ -54,6 +54,7 @@
 | Nessuno resta a guardare | Nessuna eliminazione durante la partita. |
 | Gli errori si possono rimediare | Il demansionamento è reversibile. |
 | Onesti ambigui | Anche un onesto ha motivi legittimi per comportarsi in modo sospetto, quindi il sospetto è reale e non solo bluff. |
+| ✅ Pari opportunità tra reparti | Ogni giocatore, **a prescindere dal reparto**, deve avere le stesse possibilità di vincere e di incidere. I reparti sono diversi per tipo di influenza, non per quantità. Verificato con il simulatore. |
 
 **Obiettivi pratici:**
 - ✅ da 4 a 8 giocatori;

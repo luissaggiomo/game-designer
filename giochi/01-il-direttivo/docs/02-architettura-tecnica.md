@@ -593,7 +593,10 @@ I contenuti si possono tradurre o cambiare di ambientazione senza toccare il cod
   - frequenza di onesti licenziati per errore;
   - quanto spesso conviene la mossa "reparto" rispetto alla mossa "azienda";
   - distribuzione dei punteggi finali;
-  - quanto spesso la cassa si esaurisce.
+  - quanto spesso la cassa si esaurisce;
+  - **equità tra reparti:** percentuale di vittoria personale, punteggio medio, peso di voto
+    totale disponibile nell'anno, segreti ricevuti e utilità dei poteri, **per ciascun reparto**
+    e per ogni numero di giocatori (principio "pari opportunità", GDD §1).
 - **Uscita:** report in CSV e grafici.
 
 Limite: i robot non mentono e non persuadono come le persone. Il simulatore trova gli squilibri numerici evidenti, ma il divertimento si misura solo con le prove reali.

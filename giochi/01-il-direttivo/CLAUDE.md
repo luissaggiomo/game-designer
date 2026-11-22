@@ -32,6 +32,12 @@
 4. **Tutti i numeri sono parametri** in `content/config.json`, mai scritti nel codice.
 5. **Il simulatore viene prima del prototipo:** nessun numero ⚖️ si considera tarato senza un report del simulatore.
 6. **Fase online (audio) separata:** il prototipo audio si sviluppa in modo indipendente dal gioco.
+7. **Pari opportunità tra reparti** (D-005): nessun reparto deve essere più forte o più
+   debole degli altri. Ogni regola o numero che tocca pesi, informazioni, segreti o poteri
+   va valutato anche per il suo effetto sull'equilibrio tra reparti.
+8. **Decisioni prese prima delle simulazioni = provvisorie.** Le scelte su regole e numeri
+   si registrano con la nota "da verificare col simulatore" finché un report non le conferma.
+   Se il simulatore mostra uno squilibrio, si torna da Luis con le alternative.
 
 ## Eccezioni agli standard generali
 Nessuna.
