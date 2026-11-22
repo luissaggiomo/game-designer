@@ -1,244 +1,511 @@
 {
-  "_nota": "SEGNAPOSTO per il motore e i test: 16 quesiti di prova. La lista vera (40-50 quesiti, D-014) è il punto aperto 1 e va decisa con Luis. Strati: 10 solo reparti base, 4 con Finanza, 2 con reparti aggiuntivi. Costi in K€ (D-018).",
+  "_nota": "Mazzo dei quesiti (D-023, modello B): ogni quesito ha uno schema di effetto; i ruoli si assegnano ai reparti al momento dell'estrazione. Titoli PROVVISORI, generici per adattarsi a qualsiasi reparto. 'testi' (facoltativo) permette frasi su misura per reparto; altrimenti si usano le frasi di frasi.json. Costi in K€ (D-018).",
   "proposte": [
     {
-      "id": "nuovo-macchinario",
-      "titolo": "Nuovo macchinario per la linea 2",
+      "id": "nuovo-gestionale-aziendale",
+      "titolo": "Nuovo gestionale aziendale (l'ennesimo)",
       "categoria": "INVESTIMENTI",
-      "costo": 40,
-      "riguarda": ["PRODUZIONE"],
-      "trimestri": [1, 2, 3],
-      "pesi": { "PRODUZIONE": 2, "ACQUISTI": 1, "VENDITE": 1, "MARKETING": 1 },
-      "effettiPrivati": {
-        "PRODUZIONE": { "punti": -2, "testo": "Più costi di gestione per il tuo reparto" },
-        "VENDITE": { "punti": 3, "testo": "Più merce da vendere" },
-        "ACQUISTI": { "punti": 1, "testo": "Ordini più grandi, sconti migliori" },
-        "MARKETING": { "testo": "Il mercato è in calo: effetto sull'azienda minore del previsto" }
-      },
-      "effettoAzienda": { "base": 2 }
+      "costo": 60,
+      "schema": "PROTAGONISTA",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
     },
     {
-      "id": "campagna-influencer",
-      "titolo": "Campagna con un influencer di gatti",
+      "id": "riorganizzazione-degli-uffici-in-open-sp",
+      "titolo": "Riorganizzazione degli uffici in open space",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 45,
+      "schema": "COPPIA",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "taglio-del-10-alle-spese-generali",
+      "titolo": "Taglio del 10% alle spese generali",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 25,
+      "schema": "SACRIFICIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "progetto-pilota-con-un-cliente-important",
+      "titolo": "Progetto pilota con un cliente importante",
       "categoria": "CAMPAGNE",
-      "costo": 50,
-      "riguarda": ["MARKETING"],
-      "trimestri": [1, 2, 3, 4],
-      "pesi": { "MARKETING": 2, "VENDITE": 2, "ACQUISTI": 1, "PRODUZIONE": 0 },
-      "effettiPrivati": {
-        "MARKETING": { "punti": 3, "testo": "Visibilità enorme per il tuo reparto" },
-        "VENDITE": { "punti": 1, "testo": "Qualche contatto in più" },
-        "PRODUZIONE": { "punti": -2, "testo": "Picchi di ordini difficili da gestire" }
-      },
-      "effettoAzienda": { "base": 1 }
+      "costo": 80,
+      "schema": "RISCHIO",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
     },
     {
-      "id": "fornitore-low-cost",
-      "titolo": "Cambio di fornitore: costa meno, consegna quando vuole",
-      "categoria": "FORNITURE",
-      "costo": 20,
-      "riguarda": ["ACQUISTI"],
-      "trimestri": [1, 2, 3, 4],
-      "pesi": { "ACQUISTI": 2, "PRODUZIONE": 1, "VENDITE": 1, "MARKETING": 1 },
-      "effettiPrivati": {
-        "ACQUISTI": { "punti": 3, "testo": "Risparmio record sul tuo budget" },
-        "PRODUZIONE": { "punti": -2, "testo": "Linee ferme in attesa dei pezzi" },
-        "VENDITE": { "punti": -1, "testo": "Consegne in ritardo ai clienti" }
-      },
-      "effettoAzienda": { "base": 0 }
+      "id": "consulenza-strategica-di-una-societa-fam",
+      "titolo": "Consulenza strategica di una società famosa",
+      "categoria": "INVESTIMENTI",
+      "costo": 70,
+      "schema": "PAREGGIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
-      "id": "gara-ministero",
-      "titolo": "Partecipazione alla gara del Ministero",
+      "id": "certificazione-di-qualita-internazionale",
+      "titolo": "Certificazione di qualità internazionale",
+      "categoria": "INVESTIMENTI",
+      "costo": 55,
+      "schema": "AZIENDALE",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "budget-extra-per-il-reparto-piu-convince",
+      "titolo": "Budget extra per il reparto più convincente",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 40,
+      "schema": "EGOISTICO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "fiera-di-settore-a-milano",
+      "titolo": "Fiera di settore a Milano",
       "categoria": "CAMPAGNE",
       "costo": 60,
-      "riguarda": ["VENDITE"],
-      "trimestri": [2, 3, 4],
-      "pesi": { "VENDITE": 2, "MARKETING": 1, "PRODUZIONE": 1, "ACQUISTI": 1 },
-      "effettiPrivati": {
-        "VENDITE": { "punti": 4, "testo": "Il contratto dell'anno, se va bene" },
-        "PRODUZIONE": { "punti": -1, "testo": "Specifiche ministeriali complicate" },
-        "MARKETING": { "punti": -1, "testo": "Niente pubblicità: gara riservata" }
-      },
-      "effettoAzienda": { "base": 3 }
+      "schema": "PROTAGONISTA",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
     },
     {
-      "id": "manutenzione-straordinaria",
-      "titolo": "Manutenzione straordinaria del capannone",
+      "id": "fusione-di-due-reparti-per-un-anno",
+      "titolo": "Fusione di due reparti per un anno",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 35,
+      "schema": "COPPIA",
+      "trimestri": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "nuova-sede-di-rappresentanza-in-centro",
+      "titolo": "Nuova sede di rappresentanza in centro",
       "categoria": "INVESTIMENTI",
-      "costo": 30,
-      "riguarda": ["PRODUZIONE"],
-      "trimestri": [1, 2, 3, 4],
-      "pesi": { "PRODUZIONE": 2, "ACQUISTI": 1, "VENDITE": 1, "MARKETING": 0 },
-      "effettiPrivati": {
-        "PRODUZIONE": { "punti": 2, "testo": "Meno guasti nel tuo reparto" },
-        "ACQUISTI": { "punti": -1, "testo": "Budget ricambi prosciugato" },
-        "MARKETING": { "punti": -1, "testo": "Rinviata la nuova insegna" }
-      },
-      "effettoAzienda": { "base": 1 }
+      "costo": 95,
+      "schema": "RISCHIO",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
     },
     {
-      "id": "fiera-internazionale",
-      "titolo": "Stand alla fiera internazionale di Francoforte",
-      "categoria": "CAMPAGNE",
-      "costo": 45,
-      "riguarda": ["MARKETING", "VENDITE"],
-      "trimestri": [1, 2, 3],
-      "pesi": { "MARKETING": 2, "VENDITE": 1, "ACQUISTI": 1, "PRODUZIONE": 1 },
-      "effettiPrivati": {
-        "MARKETING": { "punti": 2, "testo": "Il tuo stand sarà il più fotografato" },
-        "VENDITE": { "punti": 2, "testo": "Nuovi clienti esteri" },
-        "ACQUISTI": { "punti": -2, "testo": "Trasferte pagate dal tuo budget" }
-      },
-      "effettoAzienda": { "base": 2 }
+      "id": "settimana-corta-sperimentale",
+      "titolo": "Settimana corta sperimentale",
+      "categoria": "PERSONALE",
+      "costo": 40,
+      "schema": "PAREGGIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "astensioneAmmessa": true
     },
     {
-      "id": "magazzino-automatico",
-      "titolo": "Magazzino automatico con robot",
-      "categoria": "FORNITURE",
-      "costo": 70,
-      "riguarda": ["ACQUISTI", "PRODUZIONE"],
-      "trimestri": [2, 3],
-      "pesi": { "ACQUISTI": 2, "PRODUZIONE": 2, "VENDITE": 1, "MARKETING": 0 },
-      "effettiPrivati": {
-        "ACQUISTI": { "punti": 2, "testo": "Scorte sempre sotto controllo" },
-        "PRODUZIONE": { "punti": 1, "testo": "Rifornimenti più rapidi" },
-        "VENDITE": { "punti": -2, "testo": "Sei mesi di cantiere: consegne rallentate" }
-      },
-      "effettoAzienda": { "base": 3 }
-    },
-    {
-      "id": "sconti-fine-anno",
-      "titolo": "Sconti aggressivi di fine anno",
-      "categoria": "CAMPAGNE",
+      "id": "corso-di-formazione-obbligatorio-per-tut",
+      "titolo": "Corso di formazione obbligatorio per tutti",
+      "categoria": "PERSONALE",
       "costo": 25,
-      "riguarda": ["VENDITE"],
-      "trimestri": [3, 4],
-      "pesi": { "VENDITE": 2, "MARKETING": 2, "ACQUISTI": 0, "PRODUZIONE": 1 },
-      "effettiPrivati": {
-        "VENDITE": { "punti": 2, "testo": "Obiettivi di vendita centrati" },
-        "MARKETING": { "punti": -1, "testo": "Il marchio sembra da discount" },
-        "PRODUZIONE": { "punti": 1, "testo": "Magazzino finalmente svuotato" }
-      },
-      "effettoAzienda": { "base": 0 }
+      "schema": "AZIENDALE",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "astensioneAmmessa": true
     },
     {
-      "id": "corso-sicurezza",
-      "titolo": "Corso obbligatorio di sicurezza per tutti",
+      "id": "auto-aziendale-nuova",
+      "titolo": "Auto aziendale nuova (una sola)",
+      "categoria": "PERSONALE",
+      "costo": 45,
+      "schema": "EGOISTICO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "accordo-quadro-con-un-fornitore-unico",
+      "titolo": "Accordo quadro con un fornitore unico",
+      "categoria": "FORNITURE",
+      "costo": 55,
+      "schema": "SACRIFICIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "campagna-pubblicitaria-in-televisione",
+      "titolo": "Campagna pubblicitaria in televisione",
+      "categoria": "CAMPAGNE",
+      "costo": 90,
+      "schema": "PROTAGONISTA",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "digitalizzazione-di-tutti-gli-archivi",
+      "titolo": "Digitalizzazione di tutti gli archivi",
+      "categoria": "INVESTIMENTI",
+      "costo": 60,
+      "schema": "COPPIA",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "assunzione-di-un-super-esperto",
+      "titolo": "Assunzione di un super-esperto (carissimo)",
+      "categoria": "PERSONALE",
+      "costo": 75,
+      "schema": "RISCHIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "nuove-regole-sulle-trasferte",
+      "titolo": "Nuove regole sulle trasferte",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 20,
+      "schema": "PAREGGIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "piano-di-risparmio-energetico",
+      "titolo": "Piano di risparmio energetico",
+      "categoria": "INVESTIMENTI",
+      "costo": 55,
+      "schema": "AZIENDALE",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "premio-di-produzione-per-un-solo-reparto",
+      "titolo": "Premio di produzione per un solo reparto",
+      "categoria": "PERSONALE",
+      "costo": 40,
+      "schema": "EGOISTICO",
+      "trimestri": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "partecipazione-a-una-gara-d-appalto-pubb",
+      "titolo": "Partecipazione a una gara d'appalto pubblica",
+      "categoria": "CAMPAGNE",
+      "costo": 70,
+      "schema": "SACRIFICIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "sistema-di-videosorveglianza",
+      "titolo": "Sistema di videosorveglianza (anche in mensa)",
+      "categoria": "INVESTIMENTI",
+      "costo": 45,
+      "schema": "PROTAGONISTA",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "astensioneAmmessa": true
+    },
+    {
+      "id": "spostamento-del-magazzino-fuori-citta",
+      "titolo": "Spostamento del magazzino fuori città",
+      "categoria": "FORNITURE",
+      "costo": 80,
+      "schema": "COPPIA",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "lancio-di-una-linea-di-prodotti-economic",
+      "titolo": "Lancio di una linea di prodotti economici",
+      "categoria": "CAMPAGNE",
+      "costo": 75,
+      "schema": "RISCHIO",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "riunione-settimanale-obbligatoria-del-lu",
+      "titolo": "Riunione settimanale obbligatoria del lunedì",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 15,
+      "schema": "PAREGGIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "astensioneAmmessa": true
+    },
+    {
+      "id": "revisione-completa-dei-contratti-con-i-c",
+      "titolo": "Revisione completa dei contratti con i clienti",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 35,
+      "schema": "AZIENDALE",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "sponsorizzazione-della-squadra-di-calcio",
+      "titolo": "Sponsorizzazione della squadra di calcio locale",
+      "categoria": "CAMPAGNE",
+      "costo": 55,
+      "schema": "EGOISTICO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "rinnovo-dei-computer-di-tutta-l-azienda",
+      "titolo": "Rinnovo dei computer di tutta l'azienda",
+      "categoria": "INVESTIMENTI",
+      "costo": 70,
+      "schema": "SACRIFICIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "programma-di-benessere-aziendale",
+      "titolo": "Programma di benessere aziendale (yoga alle 7)",
+      "categoria": "PERSONALE",
+      "costo": 35,
+      "schema": "PROTAGONISTA",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "esternalizzazione-dei-servizi-interni",
+      "titolo": "Esternalizzazione dei servizi interni",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 40,
+      "schema": "COPPIA",
+      "trimestri": [
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "apertura-di-un-ufficio-all-estero",
+      "titolo": "Apertura di un ufficio all'estero",
+      "categoria": "INVESTIMENTI",
+      "costo": 95,
+      "schema": "RISCHIO",
+      "trimestri": [
+        1,
+        2
+      ]
+    },
+    {
+      "id": "codice-di-abbigliamento-aziendale",
+      "titolo": "Codice di abbigliamento aziendale",
       "categoria": "PERSONALE",
       "costo": 15,
-      "riguarda": [],
-      "trimestri": [1, 2, 3, 4],
-      "astensioneAmmessa": true,
-      "effettiPrivati": {
-        "PRODUZIONE": { "punti": 1, "testo": "Meno infortuni nel tuo reparto" },
-        "VENDITE": { "punti": -1, "testo": "Due giorni lontano dai clienti" },
-        "MARKETING": { "punti": -1, "testo": "Due giorni senza campagne" },
-        "ACQUISTI": { "punti": 0, "testo": "Nessun effetto rilevante" }
-      },
-      "effettoAzienda": { "base": 1 }
+      "schema": "PAREGGIO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "astensioneAmmessa": true
     },
     {
-      "id": "packaging-ecologico",
-      "titolo": "Packaging ecologico (che costa il doppio)",
+      "id": "controllo-di-gestione-mensile-su-tutti-i",
+      "titolo": "Controllo di gestione mensile su tutti i reparti",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 40,
+      "schema": "AZIENDALE",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "ufficio-nuovo-per-un-solo-direttore",
+      "titolo": "Ufficio nuovo per un solo direttore",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 40,
+      "schema": "EGOISTICO",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "id": "scorte-di-sicurezza-per-sei-mesi",
+      "titolo": "Scorte di sicurezza per sei mesi",
       "categoria": "FORNITURE",
-      "costo": 35,
-      "riguarda": ["MARKETING"],
-      "trimestri": [1, 2, 3, 4],
-      "pesi": { "ACQUISTI": 2, "MARKETING": 1, "PRODUZIONE": 1, "VENDITE": 1 },
-      "effettiPrivati": {
-        "MARKETING": { "punti": 3, "testo": "Finalmente una storia da raccontare" },
-        "ACQUISTI": { "punti": -2, "testo": "Fornitori nuovi e più cari" },
-        "VENDITE": { "punti": 1, "testo": "Piace ai clienti giovani" }
-      },
-      "effettoAzienda": { "base": 1 }
+      "costo": 60,
+      "schema": "SACRIFICIO",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
     },
     {
-      "id": "software-contabile",
-      "titolo": "Nuovo software contabile (di nuovo)",
-      "categoria": "INVESTIMENTI",
-      "costo": 30,
-      "riguarda": ["FINANZA"],
-      "trimestri": [1, 2, 3, 4],
-      "effettiPrivati": {
-        "FINANZA": { "punti": 3, "testo": "Chiusure di bilancio in metà tempo" },
-        "VENDITE": { "punti": -1, "testo": "Fatture bloccate durante la migrazione" },
-        "PRODUZIONE": { "punti": -1, "testo": "Altre procedure da imparare" },
-        "ACQUISTI": { "punti": 1, "testo": "Ordini approvati più in fretta" }
-      },
-      "effettoAzienda": { "base": 1 }
-    },
-    {
-      "id": "taglio-trasferte",
-      "titolo": "Taglio drastico delle trasferte",
-      "categoria": "PERSONALE",
-      "costo": 10,
-      "riguarda": ["FINANZA"],
-      "trimestri": [2, 3, 4],
-      "astensioneAmmessa": true,
-      "effettiPrivati": {
-        "FINANZA": { "punti": 2, "testo": "Conti più puliti" },
-        "VENDITE": { "punti": -2, "testo": "Clienti visitati solo in videochiamata" },
-        "MARKETING": { "punti": -1, "testo": "Addio fiere minori" },
-        "PRODUZIONE": { "punti": 1, "testo": "Più fondi per le linee" }
-      },
-      "effettoAzienda": { "base": 0 }
-    },
-    {
-      "id": "rinegoziazione-prestito",
-      "titolo": "Rinegoziazione del prestito con la banca",
-      "categoria": "INVESTIMENTI",
-      "costo": 20,
-      "riguarda": ["FINANZA"],
-      "trimestri": [1, 2, 3],
-      "effettiPrivati": {
-        "FINANZA": { "punti": 2, "testo": "Interessi più bassi" },
-        "ACQUISTI": { "punti": -1, "testo": "Pagamenti ai fornitori rimandati" },
-        "MARKETING": { "punti": 1, "testo": "Si libera budget per le campagne" }
-      },
-      "effettoAzienda": { "base": 2 }
-    },
-    {
-      "id": "assicurazione-crediti",
-      "titolo": "Assicurazione sui crediti verso clienti",
+      "id": "concorso-a-premi-per-i-clienti",
+      "titolo": "Concorso a premi per i clienti",
       "categoria": "CAMPAGNE",
-      "costo": 25,
-      "riguarda": ["FINANZA", "VENDITE"],
-      "trimestri": [2, 3, 4],
-      "effettiPrivati": {
-        "FINANZA": { "punti": 1, "testo": "Meno rischi di insoluti" },
-        "VENDITE": { "punti": 2, "testo": "Puoi vendere anche ai clienti incerti" },
-        "MARKETING": { "punti": -1, "testo": "Budget campagne ridotto" }
-      },
-      "effettoAzienda": { "base": 1 }
+      "costo": 45,
+      "schema": "PROTAGONISTA",
+      "trimestri": [
+        2,
+        3,
+        4
+      ]
     },
     {
-      "id": "team-building",
-      "titolo": "Team building in montagna (obbligatorio, con canti)",
+      "id": "turni-di-lavoro-anche-il-sabato",
+      "titolo": "Turni di lavoro anche il sabato",
       "categoria": "PERSONALE",
-      "costo": 30,
-      "riguarda": ["RISORSE_UMANE"],
-      "trimestri": [1, 2, 3, 4],
-      "effettiPrivati": {
-        "RISORSE_UMANE": { "punti": 3, "testo": "Clima aziendale alle stelle (forse)" },
-        "PRODUZIONE": { "punti": -1, "testo": "Due giorni di linee ferme" },
-        "FINANZA": { "punti": -1, "testo": "Spesa difficile da giustificare" }
-      },
-      "effettoAzienda": { "base": 0 }
+      "costo": 25,
+      "schema": "COPPIA",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
-      "id": "prototipo-segreto",
-      "titolo": "Prototipo del prodotto segreto",
+      "id": "acquisto-di-un-piccolo-concorrente-in-cr",
+      "titolo": "Acquisto di un piccolo concorrente in crisi",
       "categoria": "INVESTIMENTI",
-      "costo": 65,
-      "riguarda": ["RICERCA_SVILUPPO"],
-      "trimestri": [1, 2, 3],
-      "effettiPrivati": {
-        "RICERCA_SVILUPPO": { "punti": 4, "testo": "Il tuo progetto prende vita" },
-        "PRODUZIONE": { "punti": -1, "testo": "Linea di prova da allestire" },
-        "VENDITE": { "punti": 1, "testo": "Qualcosa di nuovo da proporre" }
-      },
-      "effettoAzienda": { "base": 3 }
+      "costo": 95,
+      "schema": "RISCHIO",
+      "trimestri": [
+        2,
+        3
+      ]
+    },
+    {
+      "id": "app-aziendale-per-i-clienti",
+      "titolo": "App aziendale per i clienti",
+      "categoria": "INVESTIMENTI",
+      "costo": 75,
+      "schema": "PAREGGIO",
+      "trimestri": [
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "id": "bilancio-sociale-e-di-sostenibilita",
+      "titolo": "Bilancio sociale e di sostenibilità",
+      "categoria": "ORGANIZZAZIONE",
+      "costo": 25,
+      "schema": "AZIENDALE",
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     }
   ]
 }

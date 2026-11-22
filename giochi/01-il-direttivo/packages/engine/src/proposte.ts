@@ -1,117 +1,96 @@
 /**
- * Estrazione dell'ordine del giorno del trimestre (Architettura §10.2, D-006, D-013, D-014).
+ * Estrazione dell'ordine del giorno del trimestre (Architettura §10.2 · D-008, D-013, D-014, D-023).
  *
- * Regole applicate:
- * - solo quesiti ammessi nel trimestre e non ancora usciti;
- * - mai quesiti che riguardano reparti in autogestione (vacanti o demansionati);
- * - raramente quesiti in cui i reparti vacanti avrebbero un peso rilevante (D-006);
- * - preferenza per categorie diverse nello stesso trimestre;
- * - bilanciamento dei "favoriti": si evita di favorire ancora un reparto già favorito
- *   più degli altri (D-014);
- * - pesi effettivi: i vacanti non pesano (D-006); nei quesiti con astensione tutti i reparti
- *   occupati pesano 1 (D-013).
+ * Modello B (D-023): si estraggono i quesiti (ammessi nel trimestre, non ancora usciti, preferendo
+ * categorie diverse); poi i RUOLI dello schema si assegnano ai reparti occupati e non in
+ * autogestione. Il ruolo migliore va al reparto finora meno "favorito" (D-014), gli altri a caso:
+ * così tutti i reparti sono uguali per costruzione, e i vacanti non ricevono mai un ruolo (D-006).
+ *
+ * Pesi effettivi: i ruoli hanno il loro peso, gli altri reparti occupati (anche demansionati, la
+ * cui assenza pesa sulla soglia, §8.4) hanno "pesoAltri"; i vacanti 0. Nei quesiti con astensione
+ * tutti i reparti occupati pesano 1 (D-013).
  */
-import { pesiDelModello, type Ambiente, type ModelloProposta } from "./contenuti.js";
+import type { Ambiente, ModelloProposta } from "./contenuti.js";
 import type { Casuale } from "./rng.js";
 import type { Partita, Peso, PropostaIstanza, RepartoId } from "./tipi.js";
 
 export function estraiOrdineDelGiorno(partita: Partita, ambiente: Ambiente, casuale: Casuale): PropostaIstanza[] {
-  const { config, mazzo, pesi } = ambiente;
+  const { config, mazzo, schemi, frasi } = ambiente;
   const quante = config.votazioniPerTrimestre[partita.trimestre - 1] ?? 0;
   const occupati = partita.reparti.filter((r) => r.occupatoDa).map((r) => r.id);
-  const vacanti = new Set(partita.reparti.filter((r) => !r.occupatoDa).map((r) => r.id));
-  const inAutogestione = new Set(partita.reparti.filter((r) => r.autogestione).map((r) => r.id));
-
-  const pesiEffettivi = (m: ModelloProposta): Partial<Record<RepartoId, Peso>> => {
-    const risultato: Partial<Record<RepartoId, Peso>> = {};
-    if (m.astensioneAmmessa) {
-      for (const r of occupati) risultato[r] = 1;
-    } else {
-      const base = pesiDelModello(m, pesi);
-      for (const r of occupati) {
-        const p = base[r] ?? 0;
-        if (p > 0) risultato[r] = p;
-      }
-    }
-    return risultato;
-  };
-
-  const pesoTotaleOccupati = (m: ModelloProposta) =>
-    Object.values(pesiEffettivi(m)).reduce<number>((a, b) => a + (b ?? 0), 0);
-
-  const quotaVacanti = (m: ModelloProposta): number => {
-    if (m.astensioneAmmessa) return 0;
-    const base = pesiDelModello(m, pesi);
-    let totale = 0;
-    let vacante = 0;
-    for (const [r, p] of Object.entries(base) as [RepartoId, number][]) {
-      totale += p;
-      if (vacanti.has(r)) vacante += p;
-    }
-    return totale > 0 ? vacante / totale : 0;
-  };
-
-  /** Reparti occupati con l'effetto privato migliore (se positivo). */
-  const favoriti = (m: ModelloProposta): RepartoId[] => {
-    let migliore = 0;
-    let elenco: RepartoId[] = [];
-    for (const r of occupati) {
-      const punti = m.effettiPrivati[r]?.punti;
-      if (punti === undefined || punti <= 0) continue;
-      if (punti > migliore) {
-        migliore = punti;
-        elenco = [r];
-      } else if (punti === migliore) {
-        elenco.push(r);
-      }
-    }
-    return elenco;
-  };
+  const conRuolo = partita.reparti.filter((r) => r.occupatoDa && !r.autogestione).map((r) => r.id);
 
   const ammissibile = (m: ModelloProposta, ammettiRipetuti: boolean) =>
-    m.trimestri.includes(partita.trimestre) &&
-    (ammettiRipetuti || !partita.proposteUscite.includes(m.id)) &&
-    !m.riguarda.some((r) => inAutogestione.has(r)) &&
-    pesoTotaleOccupati(m) > 0; // un quesito che nessuno può votare non ha senso
-
+    m.trimestri.includes(partita.trimestre) && (ammettiRipetuti || !partita.proposteUscite.includes(m.id));
   let candidati = mazzo.filter((m) => ammissibile(m, false));
-  // Mazzo troppo piccolo per questa partita: si ammettono quesiti già usciti piuttosto che saltare votazioni.
   if (candidati.length < quante) candidati = mazzo.filter((m) => ammissibile(m, true));
 
+  // 1. Quesiti del trimestre, preferendo categorie diverse.
   const scelti: ModelloProposta[] = [];
-  const conteggio = { ...partita.conteggioFavoriti };
-
   for (let i = 0; i < quante && candidati.length > 0; i++) {
-    const minimo = Math.min(...occupati.map((r) => conteggio[r] ?? 0));
-    const fattori = candidati.map((m) => {
-      let f = 1;
-      if (quotaVacanti(m) > config.selezione.sogliaPesoVacanti) f *= config.selezione.fattoreVacantiPesanti;
-      if (scelti.some((s) => s.categoria === m.categoria)) f *= config.selezione.fattoreStessaCategoria;
-      const fav = favoriti(m);
-      if (fav.length > 0 && fav.every((r) => (conteggio[r] ?? 0) > minimo)) {
-        f *= config.selezione.fattoreFavoritoInEccesso;
-      }
-      return f;
-    });
+    const fattori = candidati.map((m) => (scelti.some((s) => s.categoria === m.categoria) ? config.selezione.fattoreStessaCategoria : 1));
     const scelto = casuale.scegliPesato(candidati, fattori);
     scelti.push(scelto);
     candidati = candidati.filter((m) => m !== scelto);
-    for (const r of favoriti(scelto)) conteggio[r] = (conteggio[r] ?? 0) + 1;
   }
-
-  partita.conteggioFavoriti = conteggio;
   partita.proposteUscite.push(...scelti.map((m) => m.id));
 
-  return scelti.map((m, i) => ({
-    id: `T${partita.trimestre}-${i + 1}-${m.id}`,
-    modelloId: m.id,
-    titolo: m.titolo,
-    categoria: m.categoria,
-    costo: m.costo,
-    astensioneAmmessa: m.astensioneAmmessa ?? false,
-    pesi: pesiEffettivi(m),
-    effettiPrivati: structuredClone(m.effettiPrivati),
-    effettoAzienda: m.effettoAzienda.base,
-    voti: {},
-  }));
+  // 2. Assegnazione dei ruoli ai reparti.
+  return scelti.map((m, i) => {
+    const schema = schemi[m.schema]!;
+    const ruoli = [...schema.ruoli].sort((a, b) => b.punti - a.punti);
+    const puntiMigliori = ruoli[0]?.punti ?? 0;
+    const liberi = casuale.mescola(conRuolo);
+    const assegnati = new Map<RepartoId, { punti: number; peso: Peso }>();
+    for (const ruolo of ruoli) {
+      if (liberi.length === 0) break; // pochi reparti disponibili: i ruoli minori restano vuoti
+      let reparto: RepartoId;
+      if (ruolo.punti === puntiMigliori && ruolo.punti > 0) {
+        // I ruoli migliori ai reparti meno favoriti finora (a parità, a caso: l'elenco è già mescolato).
+        const minimo = Math.min(...liberi.map((r) => partita.conteggioFavoriti[r] ?? 0));
+        reparto = liberi.find((r) => (partita.conteggioFavoriti[r] ?? 0) === minimo)!;
+      } else {
+        reparto = liberi[0]!;
+      }
+      liberi.splice(liberi.indexOf(reparto), 1);
+      assegnati.set(reparto, ruolo);
+    }
+
+    // Favoriti: i reparti con l'effetto migliore, se positivo (D-014).
+    const migliore = Math.max(0, ...[...assegnati.values()].map((r) => r.punti));
+    if (migliore > 0) {
+      for (const [r, ruolo] of assegnati) if (ruolo.punti === migliore) partita.conteggioFavoriti[r] = (partita.conteggioFavoriti[r] ?? 0) + 1;
+    }
+
+    const pesi: Partial<Record<RepartoId, Peso>> = {};
+    for (const r of occupati) {
+      const p: Peso = m.astensioneAmmessa ? 1 : (assegnati.get(r)?.peso ?? schema.pesoAltri);
+      if (p > 0) pesi[r] = p;
+    }
+
+    const effettiPrivati: PropostaIstanza["effettiPrivati"] = {};
+    for (const r of occupati) {
+      const ruolo = assegnati.get(r);
+      if (!ruolo || ruolo.punti === 0) {
+        effettiPrivati[r] = { punti: 0, testo: frasi.neutro };
+        continue;
+      }
+      const segno = ruolo.punti > 0 ? "positivo" : "negativo";
+      const testo = m.testi?.[r]?.[segno] ?? casuale.scegli(frasi.reparti[r][segno]);
+      effettiPrivati[r] = { punti: ruolo.punti, testo };
+    }
+
+    return {
+      id: `T${partita.trimestre}-${i + 1}-${m.id}`,
+      modelloId: m.id,
+      titolo: m.titolo,
+      categoria: m.categoria,
+      costo: m.costo,
+      astensioneAmmessa: m.astensioneAmmessa ?? false,
+      pesi,
+      effettiPrivati,
+      effettoAzienda: schema.effettoAzienda,
+      voti: {},
+    };
+  });
 }

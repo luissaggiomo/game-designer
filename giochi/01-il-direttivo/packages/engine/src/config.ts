@@ -11,12 +11,7 @@ export interface Configurazione {
   reparti: { base: RepartoId[]; aggiuntiviInOrdine: RepartoId[] };
   votazioniPerTrimestre: number[];
   cassa: { perTrimestre: number; massima: number; unita: string };
-  selezione: {
-    sogliaPesoVacanti: number;
-    fattoreVacantiPesanti: number;
-    fattoreStessaCategoria: number;
-    fattoreFavoritoInEccesso: number;
-  };
+  selezione: { fattoreStessaCategoria: number };
   mossaPrivata: {
     reparto: { puntiReparto: number; deltaAzienda: number };
     azienda: { puntiReparto: number; deltaAzienda: number };
@@ -32,6 +27,7 @@ export interface Configurazione {
     con8Giocatori: number;
     nomi: string[];
     crescitaBase: number;
+    crescitaPerGiocatore: number;
     eventoCasuale: number[];
   };
   messaggi: {
@@ -45,7 +41,6 @@ export interface Configurazione {
     perTrimestre: number;
     penalitaFalsoConcorrente: number;
     puntiSpiaPerSegretoUsato: number;
-    fattoreFonteInEccesso: number;
   };
   quesitiConAstensione: { quotaDelMazzo: number };
   finale: { rispostaVerificaPredefinita: "SI" | "NO" };
@@ -98,7 +93,6 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   }
   if (c.concorrenti.eventoCasuale.length === 0) problemi.push("L'evento casuale dei concorrenti non può essere vuoto");
   probabilita("autogestione.fattoreEffetti", c.autogestione.fattoreEffetti);
-  probabilita("segreti.fattoreFonteInEccesso", c.segreti.fattoreFonteInEccesso);
   if (!["DAL_RAPPORTO_ALLE_VOTAZIONI", "TUTTO_IL_TRIMESTRE"].includes(c.messaggi.quando)) {
     problemi.push('messaggi.quando deve essere "DAL_RAPPORTO_ALLE_VOTAZIONI" o "TUTTO_IL_TRIMESTRE"');
   }
@@ -116,10 +110,7 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("spie.con8Giocatori.probabilitaStessoConcorrente", c.spie.con8Giocatori.probabilitaStessoConcorrente);
   probabilita("quesitiConAstensione.quotaDelMazzo", c.quesitiConAstensione.quotaDelMazzo);
   probabilita("autogestione.probabilitaMossaAzienda", c.autogestione.probabilitaMossaAzienda);
-  probabilita("selezione.sogliaPesoVacanti", c.selezione.sogliaPesoVacanti);
-  probabilita("selezione.fattoreVacantiPesanti", c.selezione.fattoreVacantiPesanti);
   probabilita("selezione.fattoreStessaCategoria", c.selezione.fattoreStessaCategoria);
-  probabilita("selezione.fattoreFavoritoInEccesso", c.selezione.fattoreFavoritoInEccesso);
   return problemi;
 }
 

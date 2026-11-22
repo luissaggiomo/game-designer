@@ -2,7 +2,8 @@
  * Segreti e messaggi privati (GDD §10, §11 · Architettura §10.5 · D-015, D-021).
  *
  * - Distribuzione nel Rapporto: ogni segreto va al reparto "fonte" (≠ reparto utile), come
- *   "dato ufficiale del tuo reparto"; le fonti sono bilanciate tra i reparti (D-005).
+ *   "dato ufficiale del tuo reparto"; fonte e reparto utile si scelgono al momento (D-023) e le
+ *   fonti sono bilanciate tra i reparti (D-005). Chi possiede una copia sa a quale reparto serve.
  * - Messaggi: quota per trimestre, anonimo = costa entrambi i messaggi (vietato ai demansionati),
  *   testo libero breve; si possono inoltrare segreti, anche modificati (copia falsa).
  * - Un segreto vale per l'azienda se il reparto utile ne ha una copia VERA prima della chiusura
@@ -25,28 +26,28 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
   const { config } = ambiente;
   if (partita.proposteTrimestre.length === 0) return [];
 
-  const direttoreAttivo = (r: string) => partita.giocatori.find((g) => g.repartoId === r && g.stato === "ATTIVO");
+  // Modello B anche per i segreti (D-023): fonte e reparto utile si scelgono ora, tra i reparti con
+  // un direttore attivo. La fonte è il reparto finora meno servito (D-005), il reparto utile un altro a caso.
+  const attivi = partita.giocatori.filter((g) => g.stato === "ATTIVO");
+  if (attivi.length < 2) return [];
   const usciti = new Set(partita.segreti.map((s) => s.modelloId));
   const ammissibile = (m: ModelloSegreto, ammettiRipetuti: boolean) =>
-    m.trimestri.includes(partita.trimestre) &&
-    (ammettiRipetuti || !usciti.has(m.id)) &&
-    direttoreAttivo(m.fonte) !== undefined && // la fonte deve avere un direttore attivo
-    direttoreAttivo(m.utile) !== undefined; // altrimenti nessuno potrebbe usarlo
+    m.trimestri.includes(partita.trimestre) && (ammettiRipetuti || !usciti.has(m.id));
 
   let candidati = ambiente.segreti.filter((m) => ammissibile(m, false));
   if (candidati.length < config.segreti.perTrimestre) candidati = ambiente.segreti.filter((m) => ammissibile(m, true));
 
-  const fontiPossibili = partita.giocatori.filter((g) => g.stato === "ATTIVO").map((g) => g.repartoId);
   const eventi: Evento[] = [];
 
   for (let i = 0; i < config.segreti.perTrimestre && candidati.length > 0; i++) {
-    const minimo = Math.min(...fontiPossibili.map((r) => partita.conteggioFontiSegreti[r] ?? 0));
-    const fattori = candidati.map((m) =>
-      (partita.conteggioFontiSegreti[m.fonte] ?? 0) > minimo ? config.segreti.fattoreFonteInEccesso : 1,
-    );
-    const modello = casuale.scegliPesato(candidati, fattori);
+    const modello = casuale.scegli(candidati);
     candidati = candidati.filter((m) => m !== modello);
-    partita.conteggioFontiSegreti[modello.fonte] = (partita.conteggioFontiSegreti[modello.fonte] ?? 0) + 1;
+
+    const mescolati = casuale.mescola(attivi);
+    const minimo = Math.min(...mescolati.map((g) => partita.conteggioFontiSegreti[g.repartoId] ?? 0));
+    const fonte = mescolati.find((g) => (partita.conteggioFontiSegreti[g.repartoId] ?? 0) === minimo)!;
+    const utile = mescolati.find((g) => g.id !== fonte.id)!;
+    partita.conteggioFontiSegreti[fonte.repartoId] = minimo + 1;
 
     const collegata: PropostaIstanza = casuale.scegli(partita.proposteTrimestre);
     const segretoId = nuovoId(partita, "S");
@@ -55,8 +56,8 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
       modelloId: modello.id,
       titolo: modello.titolo,
       campi: { ...modello.campi },
-      fonte: modello.fonte,
-      utile: modello.utile,
+      fonte: fonte.repartoId,
+      utile: utile.repartoId,
       propostaCollegataId: collegata.id,
       valoreAzienda: modello.valoreAzienda,
       valoreConcorrente: modello.valoreConcorrente,
@@ -64,7 +65,6 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
       arrivatoInTempo: false,
     });
 
-    const fonte = direttoreAttivo(modello.fonte)!;
     const copia: CopiaSegreto = {
       id: nuovoId(partita, "C"),
       segretoId,
@@ -78,7 +78,7 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
     eventi.push({
       tipo: "SEGRETO_RICEVUTO",
       copiaId: copia.id,
-      causa: `Dato ufficiale del tuo reparto: ${modello.titolo}`,
+      causa: `Dato ufficiale del tuo reparto: ${modello.titolo} (serve al reparto ${utile.repartoId})`,
       riservatoA: [fonte.id],
     });
   }

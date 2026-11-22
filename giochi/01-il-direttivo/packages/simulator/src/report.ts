@@ -43,6 +43,34 @@ export function creaReport(partite: DatiPartita[], intestazione: string): { mark
   }
   sezioni.push(tabella(["Giocatori", "Spie", "Partite", "Vince l'azienda", "Vince un concorrente", "Pareggio"], righeMercato));
 
+  // 1b. Scelte aziendaliste e vittoria (richiesta di Luis: per vincere servono circa 2/3 di scelte aziendaliste).
+  sezioni.push("\n### Scelte aziendaliste e vittoria dell'azienda (partite senza spie)\n\nQuota di mosse private \"per l'azienda\" sul totale della partita, e quante volte l'azienda vince in ciascuna fascia. La **soglia** è la quota oltre la quale l'azienda vince più spesso di quanto perde.\n");
+  const senzaSpie = partite.filter((p) => p.spie === 0 && p.mosse.totali > 0);
+  const fasce = [0.3, 0.4, 0.5, 0.6, 0.67, 0.75, 0.85, 1.01];
+  const righeFasce: (string | number)[][] = [];
+  let da = 0;
+  for (const a of fasce) {
+    const g = senzaSpie.filter((p) => p.mosse.aziendaliste / p.mosse.totali >= da && p.mosse.aziendaliste / p.mosse.totali < a);
+    if (g.length > 0) righeFasce.push([`${(da * 100).toFixed(0)}–${Math.min(100, a * 100).toFixed(0)}%`, g.length, pct(g.filter((p) => p.mercato === "AZIENDA").length, g.length)]);
+    da = a;
+  }
+  sezioni.push(tabella(["Scelte aziendaliste", "Partite", "Vince l'azienda"], righeFasce));
+  const sogliaStimata = stimaSoglia(senzaSpie);
+  sezioni.push(`\nQuota media di scelte aziendaliste: ${pct(senzaSpie.reduce((s, p) => s + p.mosse.aziendaliste, 0), senzaSpie.reduce((s, p) => s + p.mosse.totali, 0))}. Soglia stimata: ${sogliaStimata === null ? "—" : `${(sogliaStimata * 100).toFixed(0)}%`}.`);
+
+  // 1c. Chi vince tra onesti e spie (benchmark di Luis).
+  sezioni.push("\n### Chi vince tra onesti e spie (partite con spie)\n\nVince la spia se il suo concorrente supera l'azienda **e** lei non è stata scoperta (non licenziata); altrimenti vincono gli onesti. Riferimento indicato da Luis: con 4 giocatori e 1 spia, **circa 20% spia, 80% onesti**.\n");
+  const righeFazione: (string | number)[][] = [];
+  for (const n of numeri) {
+    for (const conf of ["1", "2 alleate", "2 rivali"] as const) {
+      const g = perN(n).filter((p) => p.configurazioneSpie === conf);
+      if (g.length === 0) continue;
+      const spieVincono = g.filter((p) => p.vincitoreFazione === "SPIE").length;
+      righeFazione.push([n, conf, g.length, pct(g.length - spieVincono, g.length), pct(spieVincono, g.length)]);
+    }
+  }
+  sezioni.push(tabella(["Giocatori", "Spie", "Partite", "Vincono gli onesti", "Vince la spia"], righeFazione));
+
   // 2. Spie.
   sezioni.push("\n## 2. Spie: scoperte ed errori\n");
   sezioni.push(
@@ -151,6 +179,15 @@ export function creaReport(partite: DatiPartita[], intestazione: string): { mark
     "\n## 8. Limiti\n\n- I robot non parlano, non mentono a voce e non persuadono: la parte \"psicologica\" si misura solo nelle serate di prova.\n- I contenuti (16 quesiti, 10 segreti, pesi) sono **segnaposto**: i risultati valgono per il motore e le regole, non ancora per il gioco finale.\n- Gli obiettivi personali non esistono ancora (punto aperto 3), quindi i punteggi sono incompleti.\n- Il comportamento dei robot (soglie di voto, sospetti, accuse) è una semplificazione descritta in packages/simulator/src/robot.ts.",
   );
   return { markdown: sezioni.join("\n"), avvisi };
+}
+
+/** Quota di scelte aziendaliste oltre la quale l'azienda vince almeno metà delle volte (stima a scaglioni del 5%). */
+export function stimaSoglia(partite: DatiPartita[]): number | null {
+  for (let s = 0.2; s <= 1; s += 0.05) {
+    const g = partite.filter((p) => p.mosse.totali > 0 && Math.abs(p.mosse.aziendaliste / p.mosse.totali - s) < 0.05);
+    if (g.length >= 20 && g.filter((p) => p.mercato === "AZIENDA").length / g.length >= 0.5) return Math.round(s * 100) / 100;
+  }
+  return null;
 }
 
 export function creaCsv(partite: DatiPartita[]): { partite: string; giocatori: string } {

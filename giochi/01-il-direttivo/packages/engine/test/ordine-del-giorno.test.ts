@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { caricaAmbiente, type Ambiente, type ModelloProposta } from "../src/contenuti.js";
+import { caricaAmbiente, type Ambiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
 import { creaPartita } from "../src/partita.js";
 import type { Partita, RepartoId } from "../src/tipi.js";
@@ -7,16 +7,12 @@ import type { Partita, RepartoId } from "../src/tipi.js";
 const ambiente = caricaAmbiente();
 
 function crea(n: number, seme: number, amb: Ambiente = ambiente): Partita {
-  const esito = creaPartita(
-    Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })),
-    seme,
-    amb,
-  );
+  const esito = creaPartita(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, amb);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }
 
-/** Avanza (senza voti: tutti "no" per tempo scaduto) finché la condizione è vera. */
+/** Avanza (senza azioni: tutti "no" per tempo scaduto) finché la condizione è vera. */
 function avanzaFinche(p: Partita, condizione: (p: Partita) => boolean, amb: Ambiente = ambiente): Partita {
   let attuale = p;
   for (let i = 0; i < 300 && condizione(attuale); i++) {
@@ -28,6 +24,7 @@ function avanzaFinche(p: Partita, condizione: (p: Partita) => boolean, amb: Ambi
 }
 
 const finoAlTrimestre = (t: number) => (p: Partita) => !(p.trimestre === t && p.fase.nome === "RAPPORTO");
+const reparti = (p: Partita) => new Set(p.reparti.filter((r) => r.occupatoDa).map((r) => r.id));
 
 describe("cassa (D-018)", () => {
   it("trimestre 1: 100 K", () => {
@@ -35,19 +32,18 @@ describe("cassa (D-018)", () => {
   });
 
   it("niente speso nel T1 → T2 con 150 K (tetto), non 200", () => {
-    const p = avanzaFinche(crea(5, 1), finoAlTrimestre(2));
-    expect(p.azienda.cassa).toBe(150);
+    expect(avanzaFinche(crea(5, 1), finoAlTrimestre(2)).azienda.cassa).toBe(150);
   });
 
   it("60 K spesi nel T1 → T2 con 40 + 100 = 140 K", () => {
     const p = crea(5, 1);
-    p.azienda.cassa = 40; // come se nel T1 fossero stati spesi 60 K
+    p.azienda.cassa = 40;
     expect(avanzaFinche(p, finoAlTrimestre(2)).azienda.cassa).toBe(140);
   });
 });
 
-describe("ordine del giorno (D-006, D-008, D-014)", () => {
-  it("ogni trimestre il numero di quesiti previsto dalla scaletta, annunciato nel Rapporto", () => {
+describe("ordine del giorno, modello B (D-008, D-014, D-023)", () => {
+  it("ogni trimestre il numero di quesiti previsto dalla scaletta", () => {
     let p = crea(5, 3);
     for (let t = 1; t <= 4; t++) {
       p = avanzaFinche(p, finoAlTrimestre(t));
@@ -62,74 +58,74 @@ describe("ordine del giorno (D-006, D-008, D-014)", () => {
     }
   });
 
-  it("con 4 giocatori: mai quesiti che riguardano reparti vacanti, mai pesi ai vacanti", () => {
-    for (let seme = 0; seme < 100; seme++) {
+  it("effetti e pesi solo per i reparti occupati: i vacanti non contano mai (D-006)", () => {
+    for (let seme = 0; seme < 60; seme++) {
       let p = crea(4, seme);
-      const occupati = new Set(p.reparti.filter((r) => r.occupatoDa).map((r) => r.id));
+      const occupati = reparti(p);
       for (let t = 1; t <= 4; t++) {
         p = avanzaFinche(p, finoAlTrimestre(t));
         for (const q of p.proposteTrimestre) {
-          const modello = ambiente.mazzo.find((m) => m.id === q.modelloId)!;
-          for (const r of modello.riguarda) expect(occupati.has(r)).toBe(true);
           for (const r of Object.keys(q.pesi)) expect(occupati.has(r as RepartoId)).toBe(true);
+          for (const r of Object.keys(q.effettiPrivati)) expect(occupati.has(r as RepartoId)).toBe(true);
+          // Ogni reparto occupato vede un effetto (anche neutro) sul proprio telefono.
+          expect(Object.keys(q.effettiPrivati).length).toBe(occupati.size);
         }
       }
     }
   });
 
-  it("un reparto demansionato: dal trimestre dopo nessun quesito lo riguarda", () => {
-    for (let seme = 0; seme < 50; seme++) {
+  it("un reparto demansionato non riceve ruoli, ma il suo peso resta (soglia, §8.4)", () => {
+    for (let seme = 0; seme < 40; seme++) {
       let p = crea(5, seme);
       p.giocatori.find((g) => g.repartoId === "PRODUZIONE")!.stato = "DEMANSIONATO";
       p.reparti.find((r) => r.id === "PRODUZIONE")!.autogestione = true;
       p = avanzaFinche(p, finoAlTrimestre(2));
       for (const q of p.proposteTrimestre) {
-        expect(ambiente.mazzo.find((m) => m.id === q.modelloId)!.riguarda).not.toContain("PRODUZIONE");
+        expect(q.effettiPrivati.PRODUZIONE?.punti ?? 0).toBe(0);
+        const schema = ambiente.schemi[ambiente.mazzo.find((m) => m.id === q.modelloId)!.schema]!;
+        expect(q.pesi.PRODUZIONE ?? 0).toBe(q.astensioneAmmessa ? 1 : schema.pesoAltri);
       }
     }
   });
 
-  it("i quesiti con vacanti pesanti escono raramente (D-006)", () => {
-    // Mazzo di prova: 10 quesiti solo reparti base e 10 con molto peso su reparti vacanti a 4 giocatori.
-    const base = (i: number): ModelloProposta => ({
-      id: `base-${i}`, titolo: `Base ${i}`, categoria: "X", costo: 10, riguarda: [], trimestri: [1, 2, 3, 4],
-      pesi: { ACQUISTI: 1, PRODUZIONE: 1, VENDITE: 1, MARKETING: 1 }, effettiPrivati: {}, effettoAzienda: { base: 0 },
-    });
-    const pesante = (i: number): ModelloProposta => ({
-      ...base(i), id: `pesante-${i}`, titolo: `Pesante ${i}`,
-      pesi: { ACQUISTI: 1, PRODUZIONE: 1, FINANZA: 2, RICERCA_SVILUPPO: 2 },
-    });
-    const amb: Ambiente = { ...ambiente, mazzo: [...Array.from({ length: 10 }, (_, i) => base(i)), ...Array.from({ length: 10 }, (_, i) => pesante(i))] };
-    let pesanti = 0;
-    let totale = 0;
+  it("gli effetti assegnati sono esattamente quelli dello schema del quesito", () => {
+    const p = crea(8, 7);
+    for (const q of p.proposteTrimestre) {
+      const schema = ambiente.schemi[ambiente.mazzo.find((m) => m.id === q.modelloId)!.schema]!;
+      const assegnati = Object.values(q.effettiPrivati).map((e) => e!.punti ?? 0).filter((x) => x !== 0).sort();
+      expect(assegnati).toEqual(schema.ruoli.map((r) => r.punti).filter((x) => x !== 0).sort());
+      expect(q.effettoAzienda).toBe(schema.effettoAzienda);
+    }
+  });
+
+  it("uguaglianza tra reparti: a fine partita ogni reparto è stato favorito lo stesso numero di volte (±1)", () => {
+    for (const n of [4, 5, 6, 7, 8]) {
+      for (let seme = 0; seme < 40; seme++) {
+        const fine = avanzaFinche(crea(n, seme), (p) => p.fase.nome !== "FINE");
+        const conteggi = [...reparti(fine)].map((r) => fine.conteggioFavoriti[r] ?? 0);
+        expect(Math.max(...conteggi) - Math.min(...conteggi), `${n} giocatori, seme ${seme}`).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it("su molte partite ogni reparto riceve in media gli stessi punti potenziali dai quesiti", () => {
+    const somma = new Map<string, number>();
+    let partite = 0;
     for (let seme = 0; seme < 300; seme++) {
-      for (const q of crea(4, seme, amb).proposteTrimestre) {
-        totale++;
-        if (q.modelloId.startsWith("pesante")) pesanti++;
+      let p = crea(6, seme);
+      for (let t = 1; t <= 4; t++) {
+        p = avanzaFinche(p, finoAlTrimestre(t));
+        for (const q of p.proposteTrimestre) for (const [r, e] of Object.entries(q.effettiPrivati)) somma.set(r, (somma.get(r) ?? 0) + (e!.punti ?? 0));
       }
+      partite++;
     }
-    expect(pesanti / totale).toBeLessThan(0.2); // senza regola sarebbe circa 0,5
+    const medie = [...somma.values()].map((v) => v / partite);
+    // Variabilità del caso con 300 partite: circa ±0,25 per reparto; uno squilibrio vero (come col
+    // vecchio mazzo segnaposto) darebbe differenze di diversi punti.
+    expect(Math.max(...medie) - Math.min(...medie)).toBeLessThan(1.2);
   });
 
-  it("il bilanciamento dei favoriti riduce lo squilibrio tra reparti (D-014)", () => {
-    const squilibrioMedio = (amb: Ambiente) => {
-      let somma = 0;
-      for (let seme = 0; seme < 200; seme++) {
-        const fine = avanzaFinche(crea(5, seme, amb), (p) => p.fase.nome !== "FINE", amb);
-        const occupati = fine.reparti.filter((r) => r.occupatoDa).map((r) => r.id);
-        const conteggi = occupati.map((r) => fine.conteggioFavoriti[r] ?? 0);
-        somma += Math.max(...conteggi) - Math.min(...conteggi);
-      }
-      return somma / 200;
-    };
-    const senzaBilanciamento: Ambiente = {
-      ...ambiente,
-      config: { ...ambiente.config, selezione: { ...ambiente.config.selezione, fattoreFavoritoInEccesso: 1 } },
-    };
-    expect(squilibrioMedio(ambiente)).toBeLessThan(squilibrioMedio(senzaBilanciamento));
-  });
-
-  it("stesso seme → stessa partita intera (estrazioni comprese)", () => {
+  it("stesso seme → stessa partita intera (estrazioni e ruoli compresi)", () => {
     const a = avanzaFinche(crea(6, 77), (p) => p.fase.nome !== "FINE");
     const b = avanzaFinche(crea(6, 77), (p) => p.fase.nome !== "FINE");
     expect(a).toEqual(b);
@@ -137,7 +133,8 @@ describe("ordine del giorno (D-006, D-008, D-014)", () => {
 });
 
 describe("controllo dei contenuti", () => {
-  it("il mazzo e i pesi predefiniti sono validi", () => {
+  it("mazzo, schemi, frasi e segreti predefiniti sono validi", () => {
     expect(() => caricaAmbiente()).not.toThrow();
+    expect(ambiente.mazzo.length).toBeGreaterThanOrEqual(40);
   });
 });

@@ -6,7 +6,8 @@ export {
   controllaContenuti,
   type Ambiente,
   type ModelloProposta,
-  type TabellaPesi,
+  type Schema,
+  type Frasi,
   type ModelloSegreto,
 } from "./contenuti.js";
 export type * from "./tipi.js";

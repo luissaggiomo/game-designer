@@ -3,6 +3,34 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.9
+
+### Design
+- D-024 (provvisoria): bonus "l'azienda batte i concorrenti" da +10 a +20; costi dei quesiti +35%; segreti con fonte e reparto utile scelti alla distribuzione; nuovo criterio di vittoria per fazione (vince la spia solo se il suo concorrente vince e lei non è scoperta).
+- Nuovo punto aperto: la spia scoperta conserva il bonus "concorrente vince"? (n. 30).
+
+### Modificato
+- Crescita dei concorrenti con arrotondamento casuale (niente più salti a gradini tra un numero di giocatori e l'altro); taratura provvisoria 2,25 + 0,2 × giocatori.
+
+### Aggiunto
+- Simulatore: tabella "chi vince tra onesti e spie".
+- Secondo studio sui concorrenti e terzo report (docs/simulazioni/2026-11-22-studio-concorrenti-02.md, docs/simulazioni/2026-11-22-simulazione-03.md).
+
+## 2026-11-22 — 0.2.8
+
+### Design
+- D-023 (provvisoria): quesiti costruiti dall'effetto; i ruoli si assegnano ai reparti al momento dell'estrazione (uguaglianza per costruzione).
+- Nuovo punto aperto: informazioni di contesto dei reparti con i quesiti generici (n. 29).
+
+### Aggiunto
+- Nuovo mazzo: 40 quesiti con 7 schemi di effetto, frasi predefinite per reparto (titoli e frasi provvisori).
+- Simulatore: misura delle scelte aziendaliste e della soglia di vittoria; modalità "studio" per tarare i concorrenti.
+- Studio di taratura (docs/simulazioni/2026-11-22-studio-concorrenti.md) e secondo report (docs/simulazioni/2026-11-22-simulazione-02.md).
+
+### Modificato
+- Concorrenti più forti, con crescita legata al numero di giocatori (taratura provvisoria: 2 + 0,25 × giocatori).
+- Rimossa la tabella dei pesi per categoria (superata dagli schemi).
+
 ## 2026-11-22 — 0.2.7
 
 ### Aggiunto

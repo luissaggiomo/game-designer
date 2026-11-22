@@ -1,0 +1,134 @@
+{
+  "_nota": "Schemi di effetto (D-023). Ogni ruolo ha punti per il reparto e peso di voto; i ruoli si assegnano AL MOMENTO DELL'ESTRAZIONE ai reparti occupati e non in autogestione, quindi tutti i reparti sono uguali per costruzione. 'pesoAltri' = peso dei reparti occupati senza ruolo. effettoAzienda = effetto reale sull'azienda se approvata. SEGNAPOSTO da tarare col simulatore.",
+  "schemi": {
+    "PROTAGONISTA": {
+      "descrizione": "Un reparto guadagna molto, due perdono poco",
+      "ruoli": [
+        {
+          "punti": 3,
+          "peso": 2
+        },
+        {
+          "punti": -1,
+          "peso": 1
+        },
+        {
+          "punti": -1,
+          "peso": 1
+        }
+      ],
+      "pesoAltri": 1,
+      "effettoAzienda": 2
+    },
+    "COPPIA": {
+      "descrizione": "Due reparti guadagnano, uno perde molto",
+      "ruoli": [
+        {
+          "punti": 2,
+          "peso": 2
+        },
+        {
+          "punti": 2,
+          "peso": 1
+        },
+        {
+          "punti": -3,
+          "peso": 2
+        }
+      ],
+      "pesoAltri": 1,
+      "effettoAzienda": 1
+    },
+    "SACRIFICIO": {
+      "descrizione": "Un reparto paga, tre guadagnano un poco",
+      "ruoli": [
+        {
+          "punti": 1,
+          "peso": 1
+        },
+        {
+          "punti": 1,
+          "peso": 1
+        },
+        {
+          "punti": 1,
+          "peso": 1
+        },
+        {
+          "punti": -2,
+          "peso": 2
+        }
+      ],
+      "pesoAltri": 1,
+      "effettoAzienda": 2
+    },
+    "RISCHIO": {
+      "descrizione": "Grande guadagno per un reparto, perdita sicura per un altro",
+      "ruoli": [
+        {
+          "punti": 4,
+          "peso": 1
+        },
+        {
+          "punti": -2,
+          "peso": 2
+        }
+      ],
+      "pesoAltri": 1,
+      "effettoAzienda": 0
+    },
+    "PAREGGIO": {
+      "descrizione": "Due guadagnano poco, due perdono poco",
+      "ruoli": [
+        {
+          "punti": 1,
+          "peso": 1
+        },
+        {
+          "punti": 1,
+          "peso": 1
+        },
+        {
+          "punti": -1,
+          "peso": 1
+        },
+        {
+          "punti": -1,
+          "peso": 1
+        }
+      ],
+      "pesoAltri": 1,
+      "effettoAzienda": 1
+    },
+    "AZIENDALE": {
+      "descrizione": "Buono per l'azienda, costa a due reparti",
+      "ruoli": [
+        {
+          "punti": -1,
+          "peso": 2
+        },
+        {
+          "punti": -1,
+          "peso": 1
+        }
+      ],
+      "pesoAltri": 1,
+      "effettoAzienda": 3
+    },
+    "EGOISTICO": {
+      "descrizione": "Buono per un reparto, cattivo per l'azienda",
+      "ruoli": [
+        {
+          "punti": 3,
+          "peso": 2
+        },
+        {
+          "punti": -1,
+          "peso": 1
+        }
+      ],
+      "pesoAltri": 1,
+      "effettoAzienda": -1
+    }
+  }
+}

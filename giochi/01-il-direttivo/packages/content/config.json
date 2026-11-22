@@ -11,13 +11,8 @@
   "_votazioniPerTrimestre": "Scaletta T1-T4 (D-014)",
   "cassa": { "perTrimestre": 100, "massima": 150, "unita": "K" },
   "_cassa": "K€ (migliaia di euro). Ogni trimestre: cassa = minimo tra avanzo + perTrimestre e massima (D-018)",
-  "selezione": {
-    "sogliaPesoVacanti": 0.25,
-    "fattoreVacantiPesanti": 0.1,
-    "fattoreStessaCategoria": 0.3,
-    "fattoreFavoritoInEccesso": 0.1
-  },
-  "_selezione": "Estrazione dell'ordine del giorno (D-006, D-014). Un quesito è 'con vacanti pesanti' se i reparti vacanti hanno più di sogliaPesoVacanti del suo peso totale; i fattori riducono la probabilità di estrazione (1 = nessuna riduzione).",
+  "selezione": { "fattoreStessaCategoria": 0.3 },
+  "_selezione": "Estrazione dell'ordine del giorno (D-023): riduce la probabilità di due quesiti della stessa categoria nello stesso trimestre (1 = nessuna riduzione). I ruoli si assegnano ai reparti al momento dell'estrazione.",
   "mossaPrivata": {
     "reparto": { "puntiReparto": 1, "deltaAzienda": -1 },
     "azienda": { "puntiReparto": 0, "deltaAzienda": 1 },
@@ -34,10 +29,11 @@
     "finoA7Giocatori": 1,
     "con8Giocatori": 2,
     "nomi": ["Concorrente A", "Concorrente B"],
-    "crescitaBase": 1,
+    "crescitaBase": 2.25,
+    "crescitaPerGiocatore": 0.2,
     "eventoCasuale": [-1, 0, 1, 2]
   },
-  "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6).",
+  "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6). Crescita a trimestre = crescitaBase + crescitaPerGiocatore × numero di giocatori (la parte decimale diventa +1 con quella probabilità) + evento casuale: la parte per giocatore compensa il fatto che le mosse private pesano di più con più giocatori.",
   "messaggi": {
     "perTrimestre": 2,
     "perTrimestreDemansionato": 1,
@@ -49,16 +45,15 @@
   "segreti": {
     "perTrimestre": 2,
     "penalitaFalsoConcorrente": 2,
-    "puntiSpiaPerSegretoUsato": 2,
-    "fattoreFonteInEccesso": 0.1
+    "puntiSpiaPerSegretoUsato": 2
   },
-  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso, punti alla spia per segreto usato (GDD §16). fattoreFonteInEccesso: bilancia quante volte ogni reparto riceve segreti come fonte (D-005).",
+  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso, punti alla spia per segreto usato (GDD §16). Fonte e reparto utile si scelgono alla distribuzione, con fonti bilanciate tra i reparti (D-023, D-005).",
   "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
   "_quesitiConAstensione": "D-013",
   "finale": { "rispostaVerificaPredefinita": "NO" },
   "_finale": "Chi non risponde in tempo alla domanda di verifica vale 'no' (D-007: tempo scaduto = no). Chi non nomina nessuno non conta.",
   "punteggio": {
-    "aziendaVince": 10,
+    "aziendaVince": 20,
     "concorrenteVince": 10,
     "tuttiSiNessunaSpia": 3,
     "tuttiSiConSpia": 8,

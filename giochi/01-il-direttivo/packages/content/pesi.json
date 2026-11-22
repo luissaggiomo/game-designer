@@ -1,9 +1,0 @@
-{
-  "_nota": "SEGNAPOSTO per il motore e i test. Pesi di voto (0, 1, 2) per categoria e reparto (GDD §8.3). Un quesito può indicare pesi propri al posto di quelli della sua categoria. Da definire con Luis insieme alla lista dei quesiti (punto aperto 1), verificando l'equilibrio tra reparti (D-005).",
-  "categorie": {
-    "INVESTIMENTI": { "ACQUISTI": 1, "PRODUZIONE": 2, "VENDITE": 1, "MARKETING": 0, "FINANZA": 2, "RISORSE_UMANE": 0, "RICERCA_SVILUPPO": 1, "IT_SICUREZZA": 1 },
-    "CAMPAGNE":     { "ACQUISTI": 0, "PRODUZIONE": 0, "VENDITE": 2, "MARKETING": 2, "FINANZA": 1, "RISORSE_UMANE": 1, "RICERCA_SVILUPPO": 1, "IT_SICUREZZA": 1 },
-    "PERSONALE":    { "ACQUISTI": 1, "PRODUZIONE": 1, "VENDITE": 0, "MARKETING": 1, "FINANZA": 1, "RISORSE_UMANE": 2, "RICERCA_SVILUPPO": 1, "IT_SICUREZZA": 1 },
-    "FORNITURE":    { "ACQUISTI": 2, "PRODUZIONE": 1, "VENDITE": 1, "MARKETING": 1, "FINANZA": 0, "RISORSE_UMANE": 1, "RICERCA_SVILUPPO": 1, "IT_SICUREZZA": 1 }
-  }
-}

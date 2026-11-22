@@ -249,6 +249,9 @@
 
 ✅ Le scelte **non devono mai essere ovvie**: ogni proposta deve avere vincitori e perdenti tra i reparti.
 
+✅ *(provvisorio, da rivalutare dopo le serate di prova — D-023)* **I quesiti nascono dall'effetto.** Ogni quesito ha uno **schema** (per esempio "un reparto guadagna molto, due perdono poco"); **i ruoli si assegnano ai reparti al momento dell'estrazione**, solo tra i reparti occupati e non in autogestione, dando i ruoli migliori ai reparti finora meno favoriti. Così tutti i reparti sono uguali per costruzione, a qualsiasi numero di giocatori. Il significato (testo) per ciascun reparto viene da frasi su misura del quesito, se ci sono, o da frasi predefinite del reparto.
+🔴 Da ripensare (punto aperto 29): le **informazioni di contesto** di alcuni reparti (es. il Marketing vede l'andamento del mercato) con i quesiti generici, insieme all'identità dei reparti (punto 5).
+
 ### 8.3 Pesi
 ✅ Ogni reparto ha un **peso diverso a seconda del tipo di votazione**: 2, 1 oppure 0.
 ✅ Peso 0 significa che non vota, ma può influenzare gli altri a voce.
@@ -294,7 +297,7 @@
 
 ✅ *(provvisorio, da verificare col simulatore — D-006)* **Selezione dell'ordine del giorno:** l'estrattore privilegia i quesiti che interessano soprattutto i reparti **occupati** (compresi i demansionati) e scarta quelli con molti reparti vacanti o in cui i vacanti avrebbero un peso rilevante. Il mazzo dei quesiti va costruito in modo che un quesito in cui un vacante "avrebbe" pesato esca solo raramente.
 ✅ *(provvisorio — D-014)* **Bilanciamento dei favoriti:** nel corso della partita ogni reparto occupato risulta "favorito" (l'effetto privato migliore) in un numero di quesiti simile agli altri, con tolleranza ±1 (D-005).
-✅ *(provvisorio — D-014)* **Mazzo:** 30 quesiti nella versione minima per il simulatore, 40–50 per le serate. Composizione a strati: ⚖️ ~60% solo reparti base, ~25% anche Finanza, ~15% reparti aggiuntivi. Ogni quesito indica nei dati trimestri ammessi, categoria ed eventuale astensione.
+✅ *(provvisorio — D-014)* **Mazzo:** 30 quesiti nella versione minima per il simulatore, 40–50 per le serate. Ogni quesito indica nei dati trimestri ammessi, categoria, schema di effetto ed eventuale astensione. *(La composizione "a strati" per reparto non serve più con D-023.)*
 
 ---
 
@@ -377,7 +380,7 @@
 ✅ *(provvisorio, da verificare col simulatore — D-021)* Ogni segreto è **collegato a una proposta del trimestre**: vale per l'azienda se arriva (in versione vera) al reparto a cui serve **prima che quella votazione si chiuda**.
 ✅ *(provvisorio — D-021)* Quando succede, la TV dice solo *"Un'informazione è arrivata in tempo al reparto giusto: +N"*, **senza dire quale** (da riconsiderare dopo le simulazioni).
 ✅ *(provvisorio — D-021)* La spia può passare un segreto al concorrente **solo nel trimestre in cui è uscito**; l'effetto si vede ai Risultati, e la TV dice quale segreto il concorrente ha usato (§11.3).
-✅ *(D-005)* I segreti arrivano come fonte ai vari reparti in numero equilibrato nell'arco della partita.
+✅ *(D-005, D-024)* **Fonte e reparto utile di ogni segreto si scelgono al momento della distribuzione**, tra i reparti con un direttore attivo (come i quesiti, D-023); le fonti si distribuiscono in modo equilibrato. Chi possiede una copia vede a quale reparto serve.
 ⚖️ Segnaposto da tarare: 2 segreti a trimestre, penalità 2 per il concorrente che usa un dato falso, 2 punti alla spia per segreto usato.
 🔴 Lista dei segreti e loro valore (punto aperto 2).
 ✅ *(provvisorio, da verificare col simulatore — D-015)* **Provenienza visibile:**
@@ -487,7 +490,7 @@
 
 | Voce | Chi | Punti (indicativi) |
 |---|---|---|
-| Azienda batte i concorrenti | ogni onesto | +10 |
+| Azienda batte i concorrenti | ogni onesto | +20 *(D-024: il bonus comune deve valere più del guadagno egoistico)* |
 | Concorrente della spia vince (supera l'azienda, D-011) | spia | +10 |
 | Punti di reparto | tutti | accumulati in partita |
 | Obiettivo personale facile / difficile | tutti | +2 / +5 |
@@ -608,6 +611,8 @@ Dettagli tecnici nel documento di architettura.
 | 26 | Cassa non spesa: si accumula nel trimestre successivo o si azzera? | ✅ provvisorio (D-018) |
 | 27 | Voto palese: voti mostrati man mano o tutti alla chiusura; voto modificabile prima della chiusura? | ✅ provvisorio (D-019) |
 | 28 | Mossa privata dei reparti in autogestione (sì/no, con quale probabilità) e scelta predefinita a tempo scaduto | ✅ provvisorio (D-020) |
+| 29 | Informazioni di contesto dei reparti (es. Marketing e mercato) con i quesiti generici di D-023 | 🔴 |
+| 30 | Spia scoperta (licenziata): conserva il bonus "il suo concorrente vince"? Oggi sì (+10, poi −5); il criterio di vittoria indicato da Luis dice che una spia scoperta ha perso | 🔴 |
 
 ---
 

@@ -95,7 +95,6 @@ export class Robot {
       case "RAPPORTO":
       case "DISCUSSIONE": {
         for (const copia of v.mieiSegreti.filter((c) => c.trimestre === v.trimestre)) {
-          const modello = this.ambiente.segreti.find((s) => s.titolo === copia.titolo);
           // Consegna al concorrente (spie).
           if (spia && !this.consegnati.has(copia.id)) {
             const ricevutoDaAltri = copia.provenienza.tipo === "GIOCATORE";
@@ -105,9 +104,9 @@ export class Robot {
             }
           }
           // Condivisione con il reparto a cui serve (solo i dati del proprio reparto, una volta).
-          if (copia.provenienza.tipo !== "GIOCO" || this.condivisi.has(copia.id) || !modello) continue;
+          if (copia.provenienza.tipo !== "GIOCO" || this.condivisi.has(copia.id)) continue;
           this.condivisi.add(copia.id);
-          const utile = v.giocatori.find((g) => g.repartoId === modello.utile && g.stato === "ATTIVO");
+          const utile = v.giocatori.find((g) => g.repartoId === copia.utileA && g.stato === "ATTIVO");
           if (!utile || utile.id === this.id || !r.probabilita(p.condivisione)) continue;
           const falsifica = spia && r.probabilita(p.sabotaggio);
           const campo = Object.keys(copia.campi)[0];

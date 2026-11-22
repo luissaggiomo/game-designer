@@ -1,105 +1,157 @@
 {
-  "_nota": "SEGNAPOSTO per il motore e i test: 10 segreti di prova. La lista vera e i valori sono il punto aperto 2. 'fonte' = reparto che riceve il dato dal gioco; 'utile' = reparto a cui serve (diverso dalla fonte, così condividere ha senso, Architettura §10.5).",
+  "_nota": "SEGNAPOSTO per il motore e i test: 10 segreti di prova (punto aperto 2). Fonte e reparto utile NON sono fissi: si scelgono alla distribuzione tra i reparti con un direttore attivo (D-023), quindi i titoli devono adattarsi a qualsiasi reparto.",
   "segreti": [
     {
       "id": "offerta-gara-ospedale",
       "titolo": "Gara dell'ospedale: offerta del concorrente",
-      "campi": { "offerta": "118.000 €" },
-      "fonte": "MARKETING",
-      "utile": "VENDITE",
+      "campi": {
+        "offerta": "118.000 €"
+      },
       "valoreAzienda": 2,
       "valoreConcorrente": 2,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "prezzo-acciaio",
       "titolo": "Prezzo dell'acciaio del prossimo trimestre",
-      "campi": { "variazione": "+12%" },
-      "fonte": "ACQUISTI",
-      "utile": "PRODUZIONE",
+      "campi": {
+        "variazione": "+12%"
+      },
       "valoreAzienda": 1,
       "valoreConcorrente": 2,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "data-campagna",
       "titolo": "Data di lancio della nostra campagna",
-      "campi": { "trimestre": "T3", "canale": "televisione" },
-      "fonte": "MARKETING",
-      "utile": "PRODUZIONE",
+      "campi": {
+        "trimestre": "T3",
+        "canale": "televisione"
+      },
       "valoreAzienda": 1,
       "valoreConcorrente": 3,
-      "trimestri": [1, 2]
+      "trimestri": [
+        1,
+        2
+      ]
     },
     {
       "id": "costo-reale-linea",
       "titolo": "Costo reale di un pezzo della linea 2",
-      "campi": { "costo": "14,20 €" },
-      "fonte": "PRODUZIONE",
-      "utile": "VENDITE",
+      "campi": {
+        "costo": "14,20 €"
+      },
       "valoreAzienda": 2,
       "valoreConcorrente": 2,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "cliente-in-uscita",
       "titolo": "Grande cliente pronto a cambiare fornitore",
-      "campi": { "cliente": "Rossi Arredi", "motivo": "ritardi nelle consegne" },
-      "fonte": "VENDITE",
-      "utile": "PRODUZIONE",
+      "campi": {
+        "cliente": "Rossi Arredi",
+        "motivo": "ritardi nelle consegne"
+      },
       "valoreAzienda": 2,
       "valoreConcorrente": 2,
-      "trimestri": [2, 3, 4]
+      "trimestri": [
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "fornitore-in-crisi",
       "titolo": "Fornitore principale in difficoltà",
-      "campi": { "fornitore": "Metalli Sud", "rischio": "alto" },
-      "fonte": "ACQUISTI",
-      "utile": "FINANZA",
+      "campi": {
+        "fornitore": "Metalli Sud",
+        "rischio": "alto"
+      },
       "valoreAzienda": 1,
       "valoreConcorrente": 1,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "sconto-segreto",
       "titolo": "Sconto massimo concedibile ai clienti",
-      "campi": { "sconto": "18%" },
-      "fonte": "VENDITE",
-      "utile": "MARKETING",
+      "campi": {
+        "sconto": "18%"
+      },
       "valoreAzienda": 1,
       "valoreConcorrente": 2,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "fido-bancario",
       "titolo": "Fido bancario disponibile",
-      "campi": { "importo": "350 K" },
-      "fonte": "FINANZA",
-      "utile": "ACQUISTI",
+      "campi": {
+        "importo": "350 K"
+      },
       "valoreAzienda": 1,
       "valoreConcorrente": 1,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "guasto-previsto",
       "titolo": "Manutenzione programmata che fermerà la linea",
-      "campi": { "settimana": "38", "durata": "5 giorni" },
-      "fonte": "PRODUZIONE",
-      "utile": "MARKETING",
+      "campi": {
+        "settimana": "38",
+        "durata": "5 giorni"
+      },
       "valoreAzienda": 1,
       "valoreConcorrente": 2,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     },
     {
       "id": "tendenza-mercato",
       "titolo": "Tendenza del mercato nel prossimo trimestre",
-      "campi": { "tendenza": "in calo", "settore": "arredo" },
-      "fonte": "MARKETING",
-      "utile": "ACQUISTI",
+      "campi": {
+        "tendenza": "in calo",
+        "settore": "arredo"
+      },
       "valoreAzienda": 1,
       "valoreConcorrente": 2,
-      "trimestri": [1, 2, 3, 4]
+      "trimestri": [
+        1,
+        2,
+        3,
+        4
+      ]
     }
   ]
 }

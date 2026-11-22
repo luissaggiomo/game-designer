@@ -12,7 +12,7 @@ const amb: Ambiente = {
   config: {
     ...base.config,
     mossaPrivata: { ...base.config.mossaPrivata, rumore: [0] },
-    concorrenti: { ...base.config.concorrenti, eventoCasuale: [0], crescitaBase: 0 },
+    concorrenti: { ...base.config.concorrenti, eventoCasuale: [0], crescitaBase: 0, crescitaPerGiocatore: 0 },
     autogestione: { ...base.config.autogestione, mossaPrivataDemansionati: false },
   },
 };

@@ -110,6 +110,8 @@ export interface CopiaVisibile {
   campi: Record<string, ValoreCampo>;
   /** D-015: "dato ufficiale del tuo reparto", oppure solo il mittente diretto (nascosto se anonimo). */
   provenienza: { tipo: "GIOCO" } | { tipo: "GIOCATORE"; da?: GiocatoreId; anonimo: boolean };
+  /** Il reparto a cui il dato serve (GDD §11.2: vale solo se arriva al reparto giusto). */
+  utileA: RepartoId;
   trimestre: number;
 }
 
@@ -274,7 +276,7 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId): VistaGiocatore {
           : c.provenienza.anonimo
             ? { tipo: "GIOCATORE", anonimo: true }
             : { tipo: "GIOCATORE", da: c.provenienza.da, anonimo: false };
-      return { id: c.id, titolo: s.titolo, campi: { ...c.campi }, provenienza, trimestre: s.trimestre };
+      return { id: c.id, titolo: s.titolo, campi: { ...c.campi }, provenienza, utileA: s.utile, trimestre: s.trimestre };
     });
 
   const mieiMessaggi: MessaggioVisibile[] = p.messaggi

@@ -307,3 +307,40 @@ Modello di voce:
   licenziamento; i demansionati licenziati a fine anno non danno bonus o penalità aggiuntive;
   una spia che fa licenziare una spia rivale prende il bonus "spia rivale".
 - Rif.: GDD §13, §15, §16 · Architettura §10.8–10.10
+
+## D-023 — Quesiti costruiti dall'effetto, ruoli assegnati all'estrazione
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da rivalutare dopo le serate di prova** e col simulatore
+- Contesto: il primo report del simulatore mostrava squilibri tra reparti dovuti ai quesiti
+  segnaposto. Indicazione di Luis: costruire i quesiti partendo dall'effetto, poi attaccare il
+  significato per ciascun reparto, così tutti i reparti sono uguali.
+- Alternative: A) schemi fissi ruotati nel mazzo (testi solo per i reparti coinvolti) ·
+  B) ruoli assegnati al momento dell'estrazione (uguaglianza perfetta, testi per ogni reparto).
+- Scelta: **B**. Ogni quesito ha uno schema (ruoli con punti e peso, peso degli altri reparti,
+  effetto sull'azienda); all'estrazione i ruoli vanno ai reparti occupati e non in autogestione,
+  i migliori ai reparti meno favoriti finora. Testi: frasi su misura del quesito o frasi
+  predefinite per reparto (positive/negative/neutre).
+- Conseguenze: la parte di D-006 sulla selezione dei quesiti con "vacanti pesanti" e gli strati
+  del mazzo di D-014 diventano superflui (i vacanti non ricevono mai ruoli); restano la soglia
+  senza vacanti (D-006), la scaletta e il bilanciamento dei favoriti (D-014). Il controllo
+  automatico "bilancio per reparto" è garantito dalla costruzione e verificato dai test.
+- Punto aperto generato: GDD §20 n. 29 (informazioni di contesto dei reparti).
+- Verifica: equità tra reparti nel report del simulatore; nelle serate, se i titoli generici
+  rendono il tema meno vivo (in quel caso si valuta il modello A).
+- Rif.: GDD §8.2, §8.6 · Architettura §10.2
+
+## D-024 — Prima taratura dopo il secondo report del simulatore
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore** (terzo report)
+- Scelte di Luis:
+  - concorrenti tarati perché l'azienda vinca **circa il 60%** senza spie, con una **soglia di
+    circa 2/3** di scelte aziendaliste per vincere; crescita dei concorrenti legata al numero di
+    giocatori, con arrotondamento "a probabilità" (niente gradini) — valori dallo studio;
+  - forza delle spie: il valore attuale va probabilmente bene; nuovo **benchmark**: vince la spia
+    se il suo concorrente supera l'azienda **e** lei non è stata scoperta, altrimenti vincono gli
+    onesti; atteso con 4 giocatori e 1 spia **circa 20% spia, 80% onesti**;
+  - egoismo: **bonus "l'azienda vince" da +10 a +20** (alternativa A);
+  - costi dei quesiti **+35%** (cassa che "morde"), budget e tetto invariati (D-018);
+  - segreti con il modello B: fonte e reparto utile scelti alla distribuzione.
+- Punto aperto generato: GDD §20 n. 30 (bonus della spia scoperta).
+- Verifica: terzo report — vittoria dell'azienda per numero di giocatori, soglia, chi vince
+  tra onesti e spie, cooperativi contro egoisti, cassa, segreti per reparto.
+- Rif.: GDD §6, §11, §12, §16 · docs/simulazioni/

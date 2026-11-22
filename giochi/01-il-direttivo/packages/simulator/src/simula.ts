@@ -18,8 +18,8 @@ import {
 import { PROFILI, Robot, type Profilo } from "./robot.js";
 
 export interface OpzioniSimulazione {
-  /** Quota di onesti cooperativi (gli altri sono egoisti). */
-  quotaCooperativi: number;
+  /** Quota di onesti cooperativi (gli altri sono egoisti); "VARIABILE" = estratta a caso per ogni partita. */
+  quotaCooperativi: number | "VARIABILE";
   /** Quota di spie prudenti (le altre sono aggressive). */
   quotaSpiePrudenti: number;
 }
@@ -51,6 +51,14 @@ export interface DatiPartita {
   tettoRaggiunto: number;
   demansionamenti: { trimestre: number; spia: boolean }[];
   segreti: { totali: number; inTempo: number; passati: number; passatiFalsi: number };
+  /**
+   * Esito per fazione (benchmark di Luis, 22/11/2026): vince la spia se il suo concorrente supera
+   * l'azienda E lei non è stata scoperta (non licenziata); altrimenti vincono gli onesti.
+   * Presente solo nelle partite con spie.
+   */
+  vincitoreFazione?: "ONESTI" | "SPIE";
+  /** Mosse private scelte dai direttori attivi (non quelle automatiche dell'autogestione). */
+  mosse: { totali: number; aziendaliste: number };
   spieLicenziate: number;
   onestiLicenziatiNelFinale: number;
   dettaglio: DatiGiocatore[];
@@ -63,15 +71,16 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
   const casuale = creaCasuale(seme * 7919 + 13);
 
   const robot = new Map<string, Robot>();
+  const quotaCooperativi = opzioni.quotaCooperativi === "VARIABILE" ? casuale.numero() : opzioni.quotaCooperativi;
   for (const g of p.giocatori) {
     const profilo =
       g.fazione.tipo === "SPIA"
         ? casuale.probabilita(opzioni.quotaSpiePrudenti) ? PROFILI.SPIA_PRUDENTE : PROFILI.SPIA_AGGRESSIVA
-        : casuale.probabilita(opzioni.quotaCooperativi) ? PROFILI.COOPERATIVO : PROFILI.EGOISTA;
+        : casuale.probabilita(quotaCooperativi) ? PROFILI.COOPERATIVO : PROFILI.EGOISTA;
     robot.set(g.id, new Robot(g.id, profilo, ambiente, creaCasuale(casuale.intero(1, 2 ** 31))));
   }
 
-  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale"> = {
+  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale"> & { mosse: DatiPartita["mosse"] } = {
     giocatori: n,
     seme,
     spie: 0,
@@ -80,6 +89,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     cassaInizioTrimestre: [p.azienda.cassa],
     tettoRaggiunto: 0,
     demansionamenti: [],
+    mosse: { totali: 0, aziendaliste: 0 },
   };
   const pesoVoto = new Map<RepartoId, number>();
   const registraPesi = (q: Partita) => {
@@ -138,6 +148,13 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       }
     }
     const primaDiAvanzare = p;
+    if (fase === "MOSSA_PRIVATA") {
+      // Il simulatore fa da server: conta le scelte (chi non sceglie gioca per l'azienda, D-020).
+      for (const g of p.giocatori.filter((x) => x.stato === "ATTIVO")) {
+        dati.mosse.totali++;
+        if ((p.mossePrivate[g.id] ?? ambiente.config.mossaPrivata.sceltaPredefinita) === "AZIENDA") dati.mosse.aziendaliste++;
+      }
+    }
     prova({ tipo: "AVANZA_FASE" });
     if (p.fase.nome === "RAPPORTO" && primaDiAvanzare.fase.nome !== "RAPPORTO") registraPesi(p);
   }
@@ -157,6 +174,16 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     spie: spie.length,
     configurazioneSpie: spie.length === 0 ? "0" : spie.length === 1 ? "1" : concorrentiSpie.size === 1 ? "2 alleate" : "2 rivali",
     mercato,
+    ...(spie.length > 0
+      ? {
+          vincitoreFazione: spie.some((s) => {
+            const concorrente = p.concorrenti.find((c) => s.fazione.tipo === "SPIA" && c.id === s.fazione.concorrente)!;
+            return concorrente.quota > quota && s.stato !== "LICENZIATO";
+          })
+            ? ("SPIE" as const)
+            : ("ONESTI" as const),
+        }
+      : {}),
     segreti: {
       totali: p.segreti.length,
       inTempo: p.segreti.filter((s) => s.arrivatoInTempo).length,

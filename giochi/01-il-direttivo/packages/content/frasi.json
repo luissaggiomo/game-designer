@@ -1,0 +1,102 @@
+{
+  "_nota": "Frasi predefinite per reparto (D-023), usate quando un quesito non ha testi su misura. Si sceglie una variante a caso (in modo riproducibile). PROVVISORIE.",
+  "neutro": "Nessun effetto rilevante per il tuo reparto",
+  "reparti": {
+    "ACQUISTI": {
+      "positivo": [
+        "Ordini più grandi e sconti migliori per il tuo reparto",
+        "Il tuo budget acquisti respira",
+        "Fornitori più disponibili con il tuo reparto"
+      ],
+      "negativo": [
+        "Fornitori da cambiare in corsa: più lavoro e più costi",
+        "Budget acquisti tagliato",
+        "Prezzi d'acquisto in salita per il tuo reparto"
+      ]
+    },
+    "PRODUZIONE": {
+      "positivo": [
+        "Linee più efficienti nel tuo reparto",
+        "Meno guasti e meno straordinari",
+        "Il tuo reparto produce di più con meno"
+      ],
+      "negativo": [
+        "Più costi di gestione per il tuo reparto",
+        "Linee ferme per giorni",
+        "Turni pesanti e ritardi nel tuo reparto"
+      ]
+    },
+    "VENDITE": {
+      "positivo": [
+        "Più occasioni di vendita per il tuo reparto",
+        "Clienti più contenti, obiettivi più vicini",
+        "Nuovi contatti per i tuoi venditori"
+      ],
+      "negativo": [
+        "Clienti scontenti e consegne in ritardo",
+        "I tuoi venditori perdono tempo prezioso",
+        "Obiettivi di vendita più lontani"
+      ]
+    },
+    "MARKETING": {
+      "positivo": [
+        "Visibilità enorme per il tuo reparto",
+        "Una storia perfetta da raccontare",
+        "Il marchio cresce grazie a te"
+      ],
+      "negativo": [
+        "Budget campagne ridotto",
+        "Il marchio ne esce male",
+        "Campagne rimandate a data da destinarsi"
+      ]
+    },
+    "FINANZA": {
+      "positivo": [
+        "Conti più puliti e meno rischi",
+        "Il tuo reparto chiude il bilancio in anticipo",
+        "Interessi più bassi, merito tuo"
+      ],
+      "negativo": [
+        "Spesa difficile da giustificare in bilancio",
+        "Più controlli e più lavoro per il tuo reparto",
+        "Flussi di cassa sotto pressione"
+      ]
+    },
+    "RISORSE_UMANE": {
+      "positivo": [
+        "Clima aziendale alle stelle",
+        "Meno dimissioni, più candidati",
+        "Il tuo reparto diventa indispensabile"
+      ],
+      "negativo": [
+        "Proteste e malumori da gestire",
+        "Più colloqui, più lamentele",
+        "Il tuo reparto passa per il cattivo"
+      ]
+    },
+    "RICERCA_SVILUPPO": {
+      "positivo": [
+        "Il tuo progetto prende vita",
+        "Nuove idee finanziate",
+        "Brevetti in arrivo"
+      ],
+      "negativo": [
+        "Progetti congelati",
+        "Laboratorio senza fondi",
+        "I tuoi ricercatori guardano altrove"
+      ]
+    },
+    "IT_SICUREZZA": {
+      "positivo": [
+        "Sistemi più moderni e sicuri",
+        "Meno emergenze notturne",
+        "Il tuo reparto finalmente ascoltato"
+      ],
+      "negativo": [
+        "Sistemi da migrare in fretta",
+        "Più rischi informatici da coprire",
+        "Emergenze a ripetizione per il tuo reparto"
+      ]
+    }
+  }
+}

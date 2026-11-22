@@ -111,17 +111,21 @@ function applicaEffettiProposte(partita: Partita, ambiente: Ambiente): Evento[] 
 }
 
 function muoviConcorrenti(partita: Partita, ambiente: Ambiente, casuale: Casuale): Evento[] {
-  const { crescitaBase, eventoCasuale } = ambiente.config.concorrenti;
+  const { crescitaBase, crescitaPerGiocatore, eventoCasuale } = ambiente.config.concorrenti;
+  // Crescita attesa = base + per giocatore × giocatori; la parte decimale diventa +1 con quella probabilità
+  // (arrotondamento "a probabilità": niente gradini tra un numero di giocatori e l'altro).
+  const attesa = crescitaBase + crescitaPerGiocatore * partita.giocatori.length;
   return partita.concorrenti.map((c) => {
+    const crescita = Math.floor(attesa) + (casuale.probabilita(attesa - Math.floor(attesa)) ? 1 : 0);
     const evento = casuale.scegli(eventoCasuale);
-    const variazione = crescitaBase + evento;
+    const variazione = crescita + evento;
     c.quota += variazione;
     const segno = variazione >= 0 ? `+${variazione}` : `${variazione}`;
     return {
       tipo: "MOSSA_CONCORRENTE",
       concorrente: c.id,
       variazione,
-      causa: `${c.nome}: ${segno} (crescita ${crescitaBase}, imprevisti ${evento >= 0 ? "+" : ""}${evento}).`,
+      causa: `${c.nome}: ${segno} (crescita ${crescita}, imprevisti ${evento >= 0 ? "+" : ""}${evento}).`,
     };
   });
 }

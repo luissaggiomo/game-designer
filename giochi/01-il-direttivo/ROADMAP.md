@@ -22,9 +22,9 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (segnaposto), segreti e messaggi
 - ✅ Demansionamento/promozione, finale, punteggio (senza obiettivi personali, D-022)
 - ✅ Viste filtrate + test di riservatezza (partite casuali da 4 a 8 giocatori, controllo a ogni passo)
-- 🔄 Contenuti minimi (proposte, segreti, obiettivi) in JSON — oggi segnaposto: 16 quesiti, 10 segreti, nessun obiettivo
-- ✅ Simulatore con robot e report — primo report: docs/simulazioni/2026-11-22-simulazione-01.md (11 avvisi)
-- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-022 — prossimo passo
+- 🔄 Contenuti minimi in JSON — quesiti: 40 con 7 schemi di effetto (D-023), titoli e frasi provvisori; segreti: 10 segnaposto; obiettivi: da fare
+- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-22-simulazione-03.md (5 avvisi)
+- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-024 — in corso (terzo report fatto)
 
 ## Fase 3 · Prototipo locale giocabile
 - ⬜ Scelta hosting (DG-006)
@@ -45,6 +45,8 @@ Riferimento: tabella §20 del GDD. Da chiudere prima o durante la fase 2.
 
 | # GDD | Tema | Blocca |
 |---|---|---|
+| 30 | Spia scoperta: conserva il bonus "concorrente vince"? (coerenza col criterio di vittoria per fazione) | punteggio |
+| 29 | Informazioni di contesto dei reparti con i quesiti generici (D-023) | identità dei reparti (non blocca il motore) |
 | 7 | Reparti aggiunti con 6, 7, 8 giocatori (nel motore c'è un ordine segnaposto in config.json) | assegnazione definitiva |
 | 1–4 | Liste di proposte, segreti, obiettivi, comportamento concorrenti | contenuti e simulatore (bastano versioni minime) |
 
