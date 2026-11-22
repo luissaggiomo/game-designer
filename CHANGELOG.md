@@ -8,6 +8,10 @@ Formato: voci più recenti in alto. Categorie: **Aggiunto**, **Modificato**, **R
 ## 2026-11-22
 
 ### Aggiunto
+- Standard grafico e di usabilità (`docs/STANDARD-GRAFICO.md`).
+- Sessione di lavoro tipo in `docs/PROCEDURE.md`.
+- Permessi automatici per comandi di sola lettura e test (`.claude/settings.json`).
+- Copia di sicurezza su GitHub personale (DG-007).
 - Struttura iniziale del progetto: regolamento (`CLAUDE.md`), procedure, standard tecnici,
   test e verifiche, glossario, decisioni generali.
 - Modelli per nuovi giochi in `templates/gioco/`.

@@ -30,6 +30,7 @@
 - [ ] `CHANGELOG.md` e `ROADMAP.md` aggiornati
 - [ ] decisioni nuove registrate in `DECISIONI.md`
 - [ ] se l'interfaccia è cambiata: provata almeno su un telefono (o simulazione mobile del browser)
+      e conforme a [STANDARD-GRAFICO.md](STANDARD-GRAFICO.md)
 
 ## 4. Resoconto a Luis
 

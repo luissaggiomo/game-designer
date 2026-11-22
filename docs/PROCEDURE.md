@@ -53,6 +53,34 @@ Un eventuale rilascio pubblico si valuta separatamente.
 
 ---
 
+## Sessione di lavoro tipo
+
+**Apertura**
+1. In VS Code si apre sempre la **cartella principale** `Game Designer` (mai quella del
+   singolo gioco): così Claude ha regolamento generale, comandi rapidi e archivio Git.
+2. Si dichiara su cosa si lavora ("Lavoriamo su Il Direttivo") oppure si lancia
+   `/stato-lavori <gioco>`. Claude risponde con fase, ultimo lavoro, prossimo passo e
+   decisioni in attesa.
+
+**Durante**
+
+3. Prima il design, poi il codice:
+   - cambiare una regola → si aggiorna il GDD, poi il codice si adegua;
+   - più strade valide → `/decisione`, la scelta va in `DECISIONI.md`;
+   - sviluppo → Claude scrive codice e test; se trova un buco nelle regole si ferma e chiede.
+4. Si lavora su **un gioco alla volta**: non si modificano altri giochi nella stessa attività.
+
+**Chiusura**
+
+5. `/verifica` → test e controlli, esito in parole semplici.
+6. `/registra-modifica` → changelog e roadmap aggiornati, proposta di messaggio di commit.
+7. Luis approva → commit e caricamento su GitHub (copia di sicurezza).
+
+**Dopo una serata di prova**
+
+8. Luis racconta com'è andata → Claude compila `docs/playtest/AAAA-MM-GG.md` →
+   le osservazioni diventano modifiche al GDD.
+
 ## Procedure ricorrenti
 
 ### Avviare un nuovo gioco

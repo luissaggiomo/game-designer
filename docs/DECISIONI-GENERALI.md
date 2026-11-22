@@ -40,6 +40,15 @@ Modello di voce:
 - Scelta: un unico progetto "contenitore"; ogni gioco ha dipendenze, test e changelog propri.
   Codice comune estratto in `shared/` solo quando serve ad almeno due giochi.
 
+## DG-007 — Copia di sicurezza e identità
+- Data: 2026-11-22 · Stato: ✅
+- Scelta: archivio privato sull'account GitHub **personale** `luissaggiomo/game-designer`,
+  separato dal GitHub dell'ufficio. Autore dei commit: Luis Saggiomo, email privata,
+  impostati solo per questo progetto.
+- Accorgimento: l'indirizzo dell'archivio contiene il nome utente personale, così il
+  portachiavi di Windows tiene una chiave separata e non tocca quella dell'ufficio.
+  Il comando `gh` (collegato all'ufficio) non si usa in questo progetto.
+
 ## DG-006 — Hosting
 - Data: 2026-11-22 · Stato: 🔴 rinviata
 - Da decidere all'arrivo del primo gioco in fase 3. Nessun hosting attivo al momento.

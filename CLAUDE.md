@@ -47,6 +47,7 @@ Game Designer/
 Documenti comuni da conoscere:
 - [docs/PROCEDURE.md](docs/PROCEDURE.md) — le fasi di vita di un gioco e i "cancelli" tra una fase e l'altra
 - [docs/STANDARD-TECNICI.md](docs/STANDARD-TECNICI.md) — tecnologie e architettura di riferimento
+- [docs/STANDARD-GRAFICO.md](docs/STANDARD-GRAFICO.md) — leggibilità TV, usabilità telefono, colori, testi
 - [docs/TEST-E-VERIFICHE.md](docs/TEST-E-VERIFICHE.md) — cosa verificare prima di dire "fatto"
 - [docs/GLOSSARIO.md](docs/GLOSSARIO.md) — termini tecnici spiegati semplici
 - [docs/DECISIONI-GENERALI.md](docs/DECISIONI-GENERALI.md) — scelte valide per tutti i giochi
@@ -85,6 +86,11 @@ Se qualcosa non è verificato, va detto esplicitamente.
 - Messaggi di commit in italiano, con prefisso del gioco: `[il-direttivo] aggiunta votazione pesata`.
   Per modifiche generali: `[progetto] ...`.
 - Claude fa commit **solo quando Luis lo chiede** o approva.
+- Copia di sicurezza su GitHub **personale** di Luis (`luissaggiomo/game-designer`, privato).
+  Autore dei commit: profilo privato di Luis, impostato solo in questo progetto.
+- **Mai usare il comando `gh`** in questo progetto: sul PC è collegato all'account
+  dell'ufficio. Il collegamento a GitHub avviene solo tramite l'indirizzo dell'archivio
+  con il nome utente personale.
 - Mai salvare in Git password, chiavi o file `.env`.
 
 ## 8. Sicurezza e privacy
