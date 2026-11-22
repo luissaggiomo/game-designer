@@ -3,6 +3,13 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.1
+
+### Aggiunto
+- Impianto del codice: pacchetto del motore (`packages/engine`) e dei contenuti (`packages/content`), controllo dei tipi e test automatici.
+- Generatore casuale con seme (stessa partita a parità di seme) e file dei parametri `config.json`, controllato all'avvio.
+- Primi 13 test automatici (generatore casuale, validità dei parametri).
+
 ## 2026-11-22 — 0.2.0
 
 ### Modificato

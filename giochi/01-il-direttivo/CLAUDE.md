@@ -16,9 +16,14 @@
 ## Comandi
 | Azione | Comando (dalla cartella del gioco) |
 |---|---|
-| Installare le dipendenze | *(da definire in fase 2)* |
-| Eseguire i test | *(da definire)* |
+| Installare le dipendenze | `corepack pnpm install` |
+| Controllo tipi + test (da usare prima di dire "fatto") | `corepack pnpm verifica` |
+| Solo i test | `corepack pnpm test` |
 | Avviare il simulatore | *(da definire)* |
+
+pnpm si usa tramite `corepack` (incluso in Node 22), senza installazioni di sistema.
+Versione fissata in `package.json` (`packageManager`): pnpm 10, perché pnpm 12 non è
+compatibile con il corepack di Node 22.17.
 
 ## Regole specifiche
 

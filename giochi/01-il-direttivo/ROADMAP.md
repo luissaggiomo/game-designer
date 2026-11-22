@@ -17,8 +17,8 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Cancello fase 1 → 2 (22/11/2026)
 
 ## Fase 2 · Motore e simulazione
-- 🔄 Impianto del codice (pacchetti, test, controllo tipi) — prossimo passo
-- ⬜ Motore: stato, azioni, macchina a stati delle fasi
+- ✅ Impianto del codice (pacchetti, test, controllo tipi) — 22/11/2026
+- 🔄 Motore: stato, azioni, macchina a stati delle fasi — prossimo passo
 - ⬜ Regole: votazione pesata, mossa privata, segreti, concorrenti, autogestione
 - ⬜ Demansionamento/promozione, finale, punteggio
 - ⬜ Viste filtrate + test di riservatezza

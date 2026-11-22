@@ -1,0 +1,25 @@
+{
+  "_nota": "Parametri del gioco. Tutti i numeri sono da tarare col simulatore. Le chiavi che iniziano con _ sono note con i riferimenti al GDD e alle decisioni.",
+  "giocatori": { "minimo": 4, "massimo": 8 },
+  "trimestri": 4,
+  "votazioniPerTrimestre": [2, 3, 3, 2],
+  "_votazioniPerTrimestre": "Scaletta T1-T4 (D-014)",
+  "cassaPerTrimestre": 10,
+  "_cassaPerTrimestre": "GDD §6",
+  "mossaPrivata": {
+    "reparto": { "puntiReparto": 1, "deltaAzienda": -1 },
+    "azienda": { "puntiReparto": 0, "deltaAzienda": 1 },
+    "rumore": [-1, 0, 1]
+  },
+  "_mossaPrivata": "GDD §9, Architettura §10.4",
+  "spie": { "probabilitaNessunaSpia": 0.15 },
+  "_spie": "GDD §4.2; probabilità di 1 o 2 spie con 8 giocatori da definire",
+  "concorrenti": { "finoA7Giocatori": 1, "con8Giocatori": 2 },
+  "_concorrenti": "D-011",
+  "messaggi": { "perTrimestre": 2, "perTrimestreDemansionato": 1, "caratteriTestoLibero": 80 },
+  "_messaggi": "GDD §10, §13.2",
+  "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
+  "_quesitiConAstensione": "D-013",
+  "autogestione": { "probabilitaMossaAzienda": 0.8 },
+  "_autogestione": "Architettura §10.7"
+}

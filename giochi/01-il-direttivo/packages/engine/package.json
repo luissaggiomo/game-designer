@@ -1,0 +1,10 @@
+{
+  "name": "@il-direttivo/engine",
+  "private": true,
+  "type": "module",
+  "description": "Motore puro del gioco: stato, azioni, regole, viste. Niente rete, niente grafica.",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": {
+    "@il-direttivo/content": "workspace:*"
+  }
+}
