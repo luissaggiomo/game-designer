@@ -1,157 +1,475 @@
 {
-  "_nota": "SEGNAPOSTO per il motore e i test: 10 segreti di prova (punto aperto 2). Fonte e reparto utile NON sono fissi: si scelgono alla distribuzione tra i reparti con un direttore attivo (D-023), quindi i titoli devono adattarsi a qualsiasi reparto.",
+  "_nota": "Lista dei segreti (punto aperto 2, bozza D-035…D-039 in docs/contenuti/segreti.md). Titoli senza nomi di reparto né riferimenti a proposte (D-035): fonte e reparto utile si scelgono alla distribuzione. 'versioni': valori possibili, il gioco estrae ogni campo separatamente a ogni partita, quindi tutte le combinazioni devono avere senso (D-036 e aggiunta a D-037, richiede modifica al motore); 'campi' = prima versione, tenuto solo per compatibilità con il motore attuale finché non legge 'versioni'. 'tipo' a bilancia (D-038): DA_FAR_GIRARE +2/+1, NORMALE +1/+2, DA_CUSTODIRE +1/+3; punti alla spia per tipo 1/2/3 (aggiunta a D-038, in config). Valori ⚖️ da verificare col simulatore.",
   "segreti": [
+    {
+      "id": "fido-bancario",
+      "titolo": "Fido che la banca è pronta a concedere",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "importo": "300 K€" },
+      "versioni": [{ "importo": "300 K€" }, { "importo": "250 K€" }, { "importo": "350 K€" }, { "importo": "400 K€" }],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "ispezione-sicurezza",
+      "titolo": "Ispezione della sicurezza a sorpresa",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "quando": "tra 10 giorni", "controllo": "estintori" },
+      "versioni": [
+        { "quando": "tra 10 giorni", "controllo": "estintori" },
+        { "quando": "tra 3 settimane", "controllo": "uscite di emergenza" },
+        { "quando": "tra 6 settimane", "controllo": "impianto elettrico" },
+        { "quando": "tra 2 mesi", "controllo": "magazzino" }
+      ],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "bando-contributi",
+      "titolo": "Bando regionale a fondo perduto in scadenza",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "contributo": "40% della spesa", "scadenza": "tra 15 giorni" },
+      "versioni": [
+        { "contributo": "40% della spesa", "scadenza": "tra 15 giorni" },
+        { "contributo": "30% della spesa", "scadenza": "tra 30 giorni" },
+        { "contributo": "50% della spesa", "scadenza": "tra 10 giorni" },
+        { "contributo": "25% della spesa", "scadenza": "tra 45 giorni" }
+      ],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "sconto-pronta-cassa",
+      "titolo": "Sconto del fornitore se paghiamo subito",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "sconto": "5%" },
+      "versioni": [{ "sconto": "5%" }, { "sconto": "3%" }, { "sconto": "7%" }, { "sconto": "4%" }],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "dimissioni-capoturno",
+      "titolo": "Il capoturno più esperto sta per dimettersi",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "preavviso": "1 mese", "motivo": "stipendio" },
+      "versioni": [
+        { "preavviso": "1 mese", "motivo": "stipendio" },
+        { "preavviso": "2 mesi", "motivo": "orari" },
+        { "preavviso": "3 settimane", "motivo": "trasloco" },
+        { "preavviso": "6 settimane", "motivo": "lite con il suo capo" }
+      ],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "tasso-finanziamento",
+      "titolo": "Tasso del finanziamento per i nuovi macchinari",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "tasso": "3,2%" },
+      "versioni": [{ "tasso": "3,2%" }, { "tasso": "4,1%" }, { "tasso": "2,8%" }, { "tasso": "3,7%" }],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "scorte-reali",
+      "titolo": "Scorte reali in magazzino (non quelle a sistema)",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "bastano per": "5 settimane" },
+      "versioni": [
+        { "bastano per": "5 settimane" },
+        { "bastano per": "2 settimane" },
+        { "bastano per": "3 settimane" },
+        { "bastano per": "8 settimane" }
+      ],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "budget-assunzioni",
+      "titolo": "Budget delle assunzioni approvato per l'anno",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "nuovi posti": "4 persone" },
+      "versioni": [
+        { "nuovi posti": "4 persone" },
+        { "nuovi posti": "7 persone" },
+        { "nuovi posti": "2 persone" },
+        { "nuovi posti": "5 persone" }
+      ],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2]
+    },
+    {
+      "id": "accordo-ex-dipendente",
+      "titolo": "Causa di un ex dipendente: cifra per chiuderla",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "accordo": "25.000 €" },
+      "versioni": [{ "accordo": "25.000 €" }, { "accordo": "18.000 €" }, { "accordo": "32.000 €" }, { "accordo": "12.000 €" }],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "premio-fine-anno",
+      "titolo": "Premio di fine anno ai dipendenti già deciso",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "premio": "800 € a testa", "condizione": "se si chiude in utile" },
+      "versioni": [
+        { "premio": "800 € a testa", "condizione": "se si chiude in utile" },
+        { "premio": "1.200 € a testa", "condizione": "se si supera il budget" },
+        { "premio": "500 € a testa", "condizione": "per tutti" },
+        { "premio": "1.500 € a testa", "condizione": "solo ai reparti in attivo" }
+      ],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [3, 4]
+    },
+    {
+      "id": "contratto-energia",
+      "titolo": "Risparmio in bolletta col nuovo contratto energia",
+      "tipo": "DA_FAR_GIRARE",
+      "campi": { "risparmio": "12%", "da quando": "tra 2 mesi" },
+      "versioni": [
+        { "risparmio": "12%", "da quando": "tra 2 mesi" },
+        { "risparmio": "8%", "da quando": "tra 1 mese" },
+        { "risparmio": "15%", "da quando": "tra 3 mesi" },
+        { "risparmio": "6%", "da quando": "tra 6 settimane" }
+      ],
+      "valoreAzienda": 2,
+      "valoreConcorrente": 1,
+      "trimestri": [1, 2, 3, 4]
+    },
     {
       "id": "offerta-gara-ospedale",
       "titolo": "Gara dell'ospedale: offerta del concorrente",
-      "campi": {
-        "offerta": "118.000 €"
-      },
-      "valoreAzienda": 2,
+      "tipo": "NORMALE",
+      "campi": { "offerta": "118.000 €" },
+      "versioni": [{ "offerta": "118.000 €" }, { "offerta": "112.000 €" }, { "offerta": "124.000 €" }, { "offerta": "131.000 €" }],
+      "valoreAzienda": 1,
       "valoreConcorrente": 2,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "trimestri": [1, 2, 3, 4]
     },
     {
       "id": "prezzo-acciaio",
-      "titolo": "Prezzo dell'acciaio del prossimo trimestre",
-      "campi": {
-        "variazione": "+12%"
-      },
+      "titolo": "Prezzo dell'acciaio nel prossimo trimestre",
+      "tipo": "NORMALE",
+      "campi": { "variazione": "+12%" },
+      "versioni": [{ "variazione": "+12%" }, { "variazione": "+6%" }, { "variazione": "−4%" }, { "variazione": "+18%" }],
       "valoreAzienda": 1,
       "valoreConcorrente": 2,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
-    },
-    {
-      "id": "data-campagna",
-      "titolo": "Data di lancio della nostra campagna",
-      "campi": {
-        "trimestre": "T3",
-        "canale": "televisione"
-      },
-      "valoreAzienda": 1,
-      "valoreConcorrente": 3,
-      "trimestri": [
-        1,
-        2
-      ]
-    },
-    {
-      "id": "costo-reale-linea",
-      "titolo": "Costo reale di un pezzo della linea 2",
-      "campi": {
-        "costo": "14,20 €"
-      },
-      "valoreAzienda": 2,
-      "valoreConcorrente": 2,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "trimestri": [1, 2, 3, 4]
     },
     {
       "id": "cliente-in-uscita",
       "titolo": "Grande cliente pronto a cambiare fornitore",
-      "campi": {
-        "cliente": "Rossi Arredi",
-        "motivo": "ritardi nelle consegne"
-      },
-      "valoreAzienda": 2,
+      "tipo": "NORMALE",
+      "campi": { "cliente": "Rossi Arredi", "ordini all'anno": "90.000 €" },
+      "versioni": [
+        { "cliente": "Rossi Arredi", "ordini all'anno": "90.000 €" },
+        { "cliente": "Studio Ferri", "ordini all'anno": "60.000 €" },
+        { "cliente": "Hotel Belvedere", "ordini all'anno": "120.000 €" },
+        { "cliente": "Coop Valle Verde", "ordini all'anno": "75.000 €" }
+      ],
+      "valoreAzienda": 1,
       "valoreConcorrente": 2,
-      "trimestri": [
-        2,
-        3,
-        4
-      ]
+      "trimestri": [1, 2, 3, 4]
     },
     {
       "id": "fornitore-in-crisi",
-      "titolo": "Fornitore principale in difficoltà",
-      "campi": {
-        "fornitore": "Metalli Sud",
-        "rischio": "alto"
-      },
+      "titolo": "Fornitore principale vicino al fallimento",
+      "tipo": "NORMALE",
+      "campi": { "fornitore": "Metalli Sud", "resiste ancora": "3 mesi" },
+      "versioni": [
+        { "fornitore": "Metalli Sud", "resiste ancora": "3 mesi" },
+        { "fornitore": "Ferrotecnica", "resiste ancora": "6 mesi" },
+        { "fornitore": "Laminati Po", "resiste ancora": "2 mesi" },
+        { "fornitore": "Acciai Riuniti", "resiste ancora": "4 mesi" }
+      ],
       "valoreAzienda": 1,
-      "valoreConcorrente": 1,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
     },
     {
-      "id": "sconto-segreto",
+      "id": "andamento-mercato",
+      "titolo": "Andamento del mercato nel prossimo trimestre",
+      "tipo": "NORMALE",
+      "campi": { "settore": "arredo ufficio", "variazione": "−8%" },
+      "versioni": [
+        { "settore": "arredo ufficio", "variazione": "−8%" },
+        { "settore": "alberghi", "variazione": "+5%" },
+        { "settore": "edilizia", "variazione": "−3%" },
+        { "settore": "scuole", "variazione": "+11%" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "costo-reale-pezzo",
+      "titolo": "Costo reale di un pezzo della linea principale",
+      "tipo": "NORMALE",
+      "campi": { "costo": "14,20 €" },
+      "versioni": [{ "costo": "14,20 €" }, { "costo": "11,80 €" }, { "costo": "16,50 €" }, { "costo": "13,10 €" }],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "stand-fiera",
+      "titolo": "Stand alla fiera di settore: posto e prezzo",
+      "tipo": "NORMALE",
+      "campi": { "posizione": "padiglione 3", "costo": "22.000 €" },
+      "versioni": [
+        { "posizione": "padiglione 3", "costo": "22.000 €" },
+        { "posizione": "padiglione 7", "costo": "15.000 €" },
+        { "posizione": "padiglione 1", "costo": "30.000 €" },
+        { "posizione": "padiglione 5", "costo": "18.000 €" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2]
+    },
+    {
+      "id": "brevetto-concorrente",
+      "titolo": "Il concorrente sta per depositare un brevetto",
+      "tipo": "NORMALE",
+      "campi": { "entro": "60 giorni", "su cosa": "cerniere" },
+      "versioni": [
+        { "entro": "60 giorni", "su cosa": "cerniere" },
+        { "entro": "30 giorni", "su cosa": "vernici" },
+        { "entro": "90 giorni", "su cosa": "imballi" },
+        { "entro": "15 giorni", "su cosa": "sensori" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "agente-doppio",
+      "titolo": "Il nostro agente migliore lavora anche per il concorrente",
+      "tipo": "NORMALE",
+      "campi": { "per il concorrente": "20% del tempo" },
+      "versioni": [
+        { "per il concorrente": "20% del tempo" },
+        { "per il concorrente": "40% del tempo" },
+        { "per il concorrente": "10% del tempo" },
+        { "per il concorrente": "30% del tempo" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "listino-concorrente",
+      "titolo": "Nuovo listino del concorrente in arrivo",
+      "tipo": "NORMALE",
+      "campi": { "aumento": "+4%", "da quando": "tra 1 mese" },
+      "versioni": [
+        { "aumento": "+4%", "da quando": "tra 1 mese" },
+        { "aumento": "+7%", "da quando": "tra 2 settimane" },
+        { "aumento": "+2%", "da quando": "tra 6 settimane" },
+        { "aumento": "+9%", "da quando": "tra 10 giorni" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "gara-comune",
+      "titolo": "Gara del Comune: punteggio minimo per vincere",
+      "tipo": "NORMALE",
+      "campi": { "punteggio": "72 su 100" },
+      "versioni": [{ "punteggio": "72 su 100" }, { "punteggio": "78 su 100" }, { "punteggio": "81 su 100" }, { "punteggio": "68 su 100" }],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "sciopero-trasporti",
+      "titolo": "Sciopero dei trasporti che bloccherà le consegne",
+      "tipo": "NORMALE",
+      "campi": { "quando": "tra 3 settimane", "durata": "2 giorni" },
+      "versioni": [
+        { "quando": "tra 3 settimane", "durata": "2 giorni" },
+        { "quando": "tra 2 settimane", "durata": "3 giorni" },
+        { "quando": "tra 5 settimane", "durata": "1 giorno" },
+        { "quando": "tra 4 settimane", "durata": "4 giorni" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "distributore-estero",
+      "titolo": "Distributore estero pronto a un primo ordine",
+      "tipo": "NORMALE",
+      "campi": { "paese": "Germania", "primo ordine": "60.000 €" },
+      "versioni": [
+        { "paese": "Germania", "primo ordine": "60.000 €" },
+        { "paese": "Polonia", "primo ordine": "45.000 €" },
+        { "paese": "Spagna", "primo ordine": "80.000 €" },
+        { "paese": "Austria", "primo ordine": "35.000 €" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "prova-rivista",
+      "titolo": "Prova comparativa della rivista di settore",
+      "tipo": "NORMALE",
+      "campi": { "il nostro voto": "7,5" },
+      "versioni": [{ "il nostro voto": "7,5" }, { "il nostro voto": "6" }, { "il nostro voto": "8" }, { "il nostro voto": "5,5" }],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [3, 4]
+    },
+    {
+      "id": "budget-pubblicita-concorrente",
+      "titolo": "Budget pubblicitario del concorrente per l'anno",
+      "tipo": "NORMALE",
+      "campi": { "budget": "150 K€" },
+      "versioni": [{ "budget": "150 K€" }, { "budget": "220 K€" }, { "budget": "90 K€" }, { "budget": "300 K€" }],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2]
+    },
+    {
+      "id": "macchinario-usato",
+      "titolo": "Macchinario usato ceduto da un'azienda che chiude",
+      "tipo": "NORMALE",
+      "campi": { "prezzo": "38.000 €" },
+      "versioni": [{ "prezzo": "38.000 €" }, { "prezzo": "52.000 €" }, { "prezzo": "29.000 €" }, { "prezzo": "45.000 €" }],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "ritardo-impianto",
+      "titolo": "Il nuovo impianto arriverà in ritardo",
+      "tipo": "NORMALE",
+      "campi": { "ritardo": "3 settimane" },
+      "versioni": [{ "ritardo": "3 settimane" }, { "ritardo": "2 mesi" }, { "ritardo": "5 settimane" }, { "ritardo": "10 giorni" }],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "bilancio-concorrente",
+      "titolo": "Bilancio di fine anno del concorrente (in anteprima)",
+      "tipo": "NORMALE",
+      "campi": { "risultato": "−120 K€" },
+      "versioni": [{ "risultato": "−120 K€" }, { "risultato": "+80 K€" }, { "risultato": "+15 K€" }, { "risultato": "−40 K€" }],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 2,
+      "trimestri": [3, 4]
+    },
+    {
+      "id": "lancio-campagna",
+      "titolo": "Lancio della nostra campagna pubblicitaria",
+      "tipo": "DA_CUSTODIRE",
+      "campi": { "lancio": "tra 5 settimane", "canale": "televisione" },
+      "versioni": [
+        { "lancio": "tra 5 settimane", "canale": "televisione" },
+        { "lancio": "tra 3 settimane", "canale": "social" },
+        { "lancio": "tra 2 mesi", "canale": "radio" },
+        { "lancio": "tra 6 settimane", "canale": "cartelloni" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 3,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "prezzo-minimo-gara",
+      "titolo": "Il nostro prezzo minimo per la gara della scuola",
+      "tipo": "DA_CUSTODIRE",
+      "campi": { "prezzo minimo": "96.000 €" },
+      "versioni": [
+        { "prezzo minimo": "96.000 €" },
+        { "prezzo minimo": "104.000 €" },
+        { "prezzo minimo": "89.000 €" },
+        { "prezzo minimo": "110.000 €" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 3,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "sconto-massimo",
       "titolo": "Sconto massimo concedibile ai clienti",
-      "campi": {
-        "sconto": "18%"
-      },
+      "tipo": "DA_CUSTODIRE",
+      "campi": { "sconto": "18%" },
+      "versioni": [{ "sconto": "18%" }, { "sconto": "12%" }, { "sconto": "22%" }, { "sconto": "15%" }],
       "valoreAzienda": 1,
-      "valoreConcorrente": 2,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "valoreConcorrente": 3,
+      "trimestri": [1, 2, 3, 4]
     },
     {
-      "id": "fido-bancario",
-      "titolo": "Fido bancario disponibile",
-      "campi": {
-        "importo": "350 K"
-      },
+      "id": "materiale-nuovo-prodotto",
+      "titolo": "Il materiale segreto del nuovo prodotto",
+      "tipo": "DA_CUSTODIRE",
+      "campi": { "materiale": "bambù pressato", "costo al kg": "4,20 €" },
+      "versioni": [
+        { "materiale": "bambù pressato", "costo al kg": "4,20 €" },
+        { "materiale": "alluminio riciclato", "costo al kg": "6,80 €" },
+        { "materiale": "sughero tecnico", "costo al kg": "3,50 €" },
+        { "materiale": "fibra di lino", "costo al kg": "5,10 €" }
+      ],
       "valoreAzienda": 1,
-      "valoreConcorrente": 1,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "valoreConcorrente": 3,
+      "trimestri": [1, 2, 3, 4]
     },
     {
-      "id": "guasto-previsto",
-      "titolo": "Manutenzione programmata che fermerà la linea",
-      "campi": {
-        "settimana": "38",
-        "durata": "5 giorni"
-      },
+      "id": "trattativa-acquisizione",
+      "titolo": "Trattativa riservata per comprare un'azienda rivale",
+      "tipo": "DA_CUSTODIRE",
+      "campi": { "azienda": "Mobilificio Arno", "prezzo offerto": "1,2 milioni €" },
+      "versioni": [
+        { "azienda": "Mobilificio Arno", "prezzo offerto": "1,2 milioni €" },
+        { "azienda": "Linea Uno", "prezzo offerto": "900.000 €" },
+        { "azienda": "Tecnosedie", "prezzo offerto": "1,5 milioni €" },
+        { "azienda": "Arredi Mare", "prezzo offerto": "750.000 €" }
+      ],
       "valoreAzienda": 1,
-      "valoreConcorrente": 2,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "valoreConcorrente": 3,
+      "trimestri": [1, 2]
     },
     {
-      "id": "tendenza-mercato",
-      "titolo": "Tendenza del mercato nel prossimo trimestre",
-      "campi": {
-        "tendenza": "in calo",
-        "settore": "arredo"
-      },
+      "id": "condizioni-cliente-principale",
+      "titolo": "Condizioni segrete del nostro cliente più grande",
+      "tipo": "DA_CUSTODIRE",
+      "campi": { "sconto": "25%", "pagamento": "a 90 giorni" },
+      "versioni": [
+        { "sconto": "25%", "pagamento": "a 90 giorni" },
+        { "sconto": "30%", "pagamento": "a 120 giorni" },
+        { "sconto": "20%", "pagamento": "a 60 giorni" },
+        { "sconto": "35%", "pagamento": "a 30 giorni" }
+      ],
       "valoreAzienda": 1,
-      "valoreConcorrente": 2,
-      "trimestri": [
-        1,
-        2,
-        3,
-        4
-      ]
+      "valoreConcorrente": 3,
+      "trimestri": [1, 2, 3, 4]
+    },
+    {
+      "id": "chiusura-stabilimento",
+      "titolo": "Piano per chiudere il secondo stabilimento",
+      "tipo": "DA_CUSTODIRE",
+      "campi": { "entro": "9 mesi", "esuberi": "12 persone" },
+      "versioni": [
+        { "entro": "9 mesi", "esuberi": "12 persone" },
+        { "entro": "6 mesi", "esuberi": "20 persone" },
+        { "entro": "1 anno", "esuberi": "8 persone" },
+        { "entro": "18 mesi", "esuberi": "15 persone" }
+      ],
+      "valoreAzienda": 1,
+      "valoreConcorrente": 3,
+      "trimestri": [3, 4]
     }
   ]
 }

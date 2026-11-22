@@ -11,7 +11,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Dopo tre mesi di lamentele il gestionale funziona: ordini più rapidi, meno errori",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Il gestionale lo configuri tu: ordini automatici e fornitori sotto controllo",
+          "negativo": "Tutti i codici dei fornitori da reinserire a mano: settimane perse"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il nuovo gestionale pianifica le tue linee: addio fogli Excel volanti",
+          "negativo": "Gli operai registrano ogni pezzo su un tablet: produzione rallentata"
+        },
+        "VENDITE": {
+          "positivo": "Preventivi in un clic: i tuoi venditori arrivano prima dei concorrenti",
+          "negativo": "Il listino nel nuovo sistema è sbagliato: offerte da rifare ai clienti"
+        },
+        "MARKETING": {
+          "positivo": "Finalmente i dati dei clienti in un posto solo: campagne mirate per te",
+          "negativo": "Il sistema non dialoga con i tuoi strumenti: report fatti a mano"
+        },
+        "FINANZA": {
+          "positivo": "Bilanci in tempo reale: il tuo reparto diventa la torre di controllo",
+          "negativo": "Due sistemi in parallelo per un anno: doppia contabilità sulle tue spalle"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Ferie e presenze gestite dal sistema: il tuo reparto si libera della carta",
+          "negativo": "Il corso sul nuovo gestionale lo organizzi tu, e nessuno vuole farlo"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il gestionale traccia i tuoi progetti: finalmente il tuo lavoro si vede",
+          "negativo": "Ogni ora di laboratorio va registrata su una commessa: burocrazia per te"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il progetto lo guidi tu: budget, fornitore e gloria al tuo reparto",
+          "negativo": "Migrazione dei dati nel weekend: il tuo reparto non dorme per un mese"
+        }
+      }
     },
     {
       "id": "riorganizzazione-degli-uffici-in-open-sp",
@@ -24,7 +59,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Rumoroso ma vivace: l'open space fa circolare qualche idea in più",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Gli arredi li scegli tu: i fornitori ti fanno sconti anche sul resto",
+          "negativo": "Arredi da ordinare in tre settimane: prezzi d'urgenza e fornitori scontenti"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il tuo ufficio si sposta accanto all'ufficio tecnico: problemi risolti in metà tempo",
+          "negativo": "L'ufficio di produzione finisce nel capannone, accanto alla pressa"
+        },
+        "VENDITE": {
+          "positivo": "I tuoi venditori siedono vicino a chi produce: risposte ai clienti più veloci",
+          "negativo": "Telefonate con i clienti nel rumore dell'open space: trattative saltate"
+        },
+        "MARKETING": {
+          "positivo": "Le pareti nuove diventano la vetrina del marchio, e le firmi tu",
+          "negativo": "Le tue riunioni creative ora le sentono tutti (e tutti dicono la loro)"
+        },
+        "FINANZA": {
+          "positivo": "Meno metri quadri, affitto più basso: il tuo bilancio ringrazia",
+          "negativo": "Documenti riservati su scrivanie condivise: armadi blindati a carico tuo"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "La gente si parla di più: meno conflitti tra reparti da gestire",
+          "negativo": "Lamentele su rumore, aria condizionata e posti a sedere: tutte da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il tuo laboratorio ottiene lo spazio liberato dai vecchi uffici",
+          "negativo": "Impossibile concentrarsi: i tuoi progetti rallentano di settimane"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Rete e cablaggi rifatti da zero: finalmente un impianto come dici tu",
+          "negativo": "Cento postazioni da spostare e ricablare in un weekend: tocca a te"
+        }
+      }
     },
     {
       "id": "taglio-del-10-alle-spese-generali",
@@ -37,7 +107,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Il taglio regge: conti più snelli e prezzi più competitivi",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Rinegozi pulizie e cancelleria: parte del risparmio resta al tuo reparto",
+          "negativo": "Il taglio colpisce le forniture: contratti da rifare tutti, e in fretta"
+        },
+        "PRODUZIONE": {
+          "positivo": "Meno burocrazia da pagare: recuperi budget per la manutenzione",
+          "negativo": "Il taglio colpisce la manutenzione: macchine più vecchie e più fermi"
+        },
+        "VENDITE": {
+          "positivo": "Meno riunioni e meno moduli: i tuoi venditori stanno più tempo dai clienti",
+          "negativo": "Tagliati trasferte e pranzi con i clienti: lavori a mani legate"
+        },
+        "MARKETING": {
+          "positivo": "Addio gadget inutili: il risparmio va nella tua prossima campagna",
+          "negativo": "Il primo taglio è sempre la pubblicità: la tua campagna salta"
+        },
+        "FINANZA": {
+          "positivo": "Spese sotto controllo: chiudi il bilancio con meno affanno",
+          "negativo": "Devi approvare ogni spesa sopra i 50 euro: settimane di lavoro e nemici ovunque"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Via i consulenti esterni: le selezioni tornano al tuo reparto, con il budget",
+          "negativo": "Tagliati buoni pasto e formazione: le proteste arrivano tutte da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Si taglia altrove: il tuo laboratorio viene dichiarato intoccabile",
+          "negativo": "La ricerca «non rende subito»: il tuo budget è il primo a saltare"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Disdette le licenze software mai usate: i soldi passano al tuo reparto",
+          "negativo": "Rinviato il rinnovo dei server: tiri avanti con macchine di dieci anni"
+        }
+      }
     },
     {
       "id": "progetto-pilota-con-un-cliente-important",
@@ -49,7 +154,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Il cliente è soddisfatto ma pretende lo sconto: tanto lavoro, guadagno zero",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Il cliente ti apre i suoi fornitori: prezzi da grande gruppo anche per te",
+          "negativo": "Il cliente impone materiali certificati: costano il doppio e li compri tu"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il pilota si fa sulle tue linee: se va bene, ordini per tre anni",
+          "negativo": "Pezzi su misura, tolleranze impossibili: la tua linea ferma per le prove"
+        },
+        "VENDITE": {
+          "positivo": "Il contratto lo firmi tu: il cliente più grosso dell'anno è tuo",
+          "negativo": "Il cliente pretende un referente fisso: ti porta via il venditore migliore"
+        },
+        "MARKETING": {
+          "positivo": "Il caso di successo lo racconti tu: il marchio cresce col nome del cliente",
+          "negativo": "Il cliente vieta di citarlo: niente comunicazione, e budget bloccato"
+        },
+        "FINANZA": {
+          "positivo": "Pagamento anticipato del cliente: la tua cassa respira",
+          "negativo": "Il cliente paga a 180 giorni: il buco in cassa lo copri tu"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il pilota attira talenti: i candidati migliori ora scrivono a te",
+          "negativo": "Squadra dedicata da formare in un mese: straordinari e malumori per te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il cliente finanzia il tuo prototipo e lo prova sul campo",
+          "negativo": "Il cliente vuole modifiche ogni settimana: i tuoi progetti fermi"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il pilota usa i tuoi sistemi: il cliente vuole comprarli anche lui",
+          "negativo": "Il cliente vuole accedere ai nostri sistemi: controlli infiniti per te"
+        }
+      }
     },
     {
       "id": "consulenza-strategica-di-una-societa-fam",
@@ -62,7 +202,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Duecento slide, tre idee buone: qualcosa migliora davvero",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "I consulenti confermano che spendi bene: lo scrivono anche nelle slide",
+          "negativo": "I consulenti propongono di centralizzare gli acquisti, a tue spese"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il rapporto chiede più investimenti sulle tue linee",
+          "negativo": "I consulenti cronometrano i tuoi operai: clima pessimo in reparto"
+        },
+        "VENDITE": {
+          "positivo": "I consulenti indicano il tuo reparto come motore della crescita",
+          "negativo": "Nuovo metodo di vendita imposto dalle slide: i tuoi venditori smarriti"
+        },
+        "MARKETING": {
+          "positivo": "La parola chiave della consulenza è «marchio»: il budget pende verso di te",
+          "negativo": "I consulenti rifanno il logo senza chiederti nulla"
+        },
+        "FINANZA": {
+          "positivo": "Il rapporto premia il rigore dei tuoi conti",
+          "negativo": "Tre mesi di dati da preparare per i consulenti, più la loro fattura"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "La consulenza raccomanda più formazione: budget in arrivo per te",
+          "negativo": "Le slide parlano di «ottimizzare l'organico»: tutti vengono a chiedere a te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "I consulenti scoprono il tuo progetto e lo mettono nella prima slide",
+          "negativo": "La ricerca «va resa più efficiente»: obiettivi trimestrali per te"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Raccomandazione numero uno: investire nei sistemi. Cioè in te",
+          "negativo": "I consulenti vogliono tutti i dati entro venerdì: estrazioni notturne per te"
+        }
+      }
     },
     {
       "id": "certificazione-di-qualita-internazionale",
@@ -74,11 +249,46 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Con il bollino internazionale si aprono mercati nuovi: grande passo avanti",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Fornitori certificati: meno controlli e meno contestazioni per te",
+          "negativo": "Ogni fornitore va qualificato di nuovo: mesi di moduli per il tuo reparto"
+        },
+        "PRODUZIONE": {
+          "positivo": "Processi scritti e chiari: meno scarti sulle tue linee",
+          "negativo": "Ogni passaggio di produzione va documentato: linee più lente"
+        },
+        "VENDITE": {
+          "positivo": "Con il bollino internazionale entri in gare prima vietate",
+          "negativo": "I tuoi venditori compilano un questionario dopo ogni visita"
+        },
+        "MARKETING": {
+          "positivo": "Un bollino da mettere ovunque: materiale perfetto per le tue campagne",
+          "negativo": "Brochure e sito da rifare per citare la norma esatta"
+        },
+        "FINANZA": {
+          "positivo": "Le banche apprezzano la certificazione: condizioni migliori per te",
+          "negativo": "Ispettori che chiedono ogni fattura degli ultimi tre anni"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Ruoli e mansioni finalmente scritti: meno discussioni da gestire",
+          "negativo": "Formazione obbligatoria sulla norma: la organizzi tu, la odiano tutti"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "I tuoi metodi di prova diventano lo standard aziendale",
+          "negativo": "Ogni esperimento va verbalizzato: il laboratorio affoga nelle carte"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "La norma richiede sistemi sicuri: arriva il budget che chiedevi",
+          "negativo": "Backup, accessi e registri da dimostrare agli ispettori: tocca a te"
+        }
+      }
     },
     {
       "id": "budget-extra-per-il-reparto-piu-convince",
-      "titolo": "Budget extra per il reparto più convincente",
+      "titolo": "Fondo per l'innovazione interna",
       "categoria": "ORGANIZZAZIONE",
       "costo": 40,
       "schema": "EGOISTICO",
@@ -87,7 +297,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Il fondo finisce in un progetto che interessa solo a chi l'ha voluto: soldi bruciati",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Il fondo va al tuo reparto: compri gli strumenti che aspettavi da anni",
+          "negativo": "I soldi del fondo vengono tolti dal tuo budget"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il fondo finanzia il tuo macchinario: la tua linea diventa la più moderna",
+          "negativo": "Per finanziare il fondo si rinvia la manutenzione delle tue linee"
+        },
+        "VENDITE": {
+          "positivo": "Il fondo finanzia la tua idea: un nuovo servizio tutto da vendere",
+          "negativo": "Il fondo si mangia gli incentivi dei tuoi venditori"
+        },
+        "MARKETING": {
+          "positivo": "Il fondo premia il tuo progetto: campagna sperimentale firmata da te",
+          "negativo": "La tua campagna dell'anno viene rinviata per pagare il fondo"
+        },
+        "FINANZA": {
+          "positivo": "Il fondo lo gestisci tu: decidi tu chi spende e quanto",
+          "negativo": "Un fondo senza regole chiare: le spese le devi giustificare tu"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il fondo finanzia la tua accademia interna: il tuo reparto brilla",
+          "negativo": "Chi non ha vinto il fondo protesta, e lo fa nel tuo ufficio"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il fondo va al tuo laboratorio: un progetto nuovo tutto tuo",
+          "negativo": "Il fondo fa concorrenza ai tuoi progetti: idee finanziate altrove"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il fondo finanzia la tua piattaforma: il tuo reparto al centro",
+          "negativo": "Ogni idea finanziata vuole un'app entro un mese: e la fai tu"
+        }
+      }
     },
     {
       "id": "fiera-di-settore-a-milano",
@@ -99,11 +344,46 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Stand affollato per tre giorni: contatti nuovi e marchio in vista",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "In fiera incontri tre fornitori nuovi: listini più bassi per il tuo reparto",
+          "negativo": "Lo stand va comprato in fretta e a prezzo pieno: lo paga il tuo budget"
+        },
+        "PRODUZIONE": {
+          "positivo": "In fiera esponete il vostro macchinario: i clienti chiedono di visitare la linea",
+          "negativo": "Il pezzo da esporre va costruito in tre settimane, fermando una linea"
+        },
+        "VENDITE": {
+          "positivo": "Stand pieno di clienti, e i contatti li raccolgono i tuoi venditori",
+          "negativo": "I tuoi venditori bloccati tre giorni allo stand invece che dai clienti"
+        },
+        "MARKETING": {
+          "positivo": "Lo stand lo progetti tu: è la vetrina del tuo reparto",
+          "negativo": "La fiera la organizza un'agenzia esterna: il tuo budget eventi finisce lì"
+        },
+        "FINANZA": {
+          "positivo": "In fiera incontri due banche: ti offrono un finanziamento a tasso agevolato",
+          "negativo": "Note spese della fiera da controllare una per una (ristoranti compresi)"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "In fiera fai colloqui a raffica: trovi i candidati che cercavi da mesi",
+          "negativo": "Chi presidia lo stand nel weekend? Proteste e straordinari da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Presenti il tuo prototipo: un'università propone una collaborazione",
+          "negativo": "Il tuo prototipo va reso presentabile prima del tempo: due mesi persi"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "In fiera si lancia l'app che hai sviluppato: il tuo reparto sotto i riflettori",
+          "negativo": "Wi-fi, schermi e app dello stand: tre giorni di emergenze per il tuo reparto"
+        }
+      }
     },
     {
       "id": "fusione-di-due-reparti-per-un-anno",
-      "titolo": "Fusione di due reparti per un anno",
+      "titolo": "Prestito di personale tra reparti per un anno",
       "categoria": "ORGANIZZAZIONE",
       "costo": 35,
       "schema": "COPPIA",
@@ -111,7 +391,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Qualche attrito, ma lo scambio di persone sblocca un paio di colli di bottiglia",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Ti arrivano rinforzi esperti: gli ordini arretrati spariscono",
+          "negativo": "Ti portano via il buyer migliore: ordini in ritardo per mesi"
+        },
+        "PRODUZIONE": {
+          "positivo": "Persone in più sulle tue linee: aggiungi un turno senza assumere",
+          "negativo": "I tuoi tecnici prestati altrove: linee scoperte e straordinari"
+        },
+        "VENDITE": {
+          "positivo": "Rinforzi in arrivo: i tuoi venditori seguono più clienti",
+          "negativo": "I tuoi venditori prestati ad altri: i clienti chiamano e nessuno risponde"
+        },
+        "MARKETING": {
+          "positivo": "Gente nuova, idee nuove: la tua campagna prende quota",
+          "negativo": "Il tuo grafico prestato a un altro reparto: campagne ferme"
+        },
+        "FINANZA": {
+          "positivo": "Ti arriva un analista in più: chiusure mensili più rapide",
+          "negativo": "La tua contabile migliore passa ad altri: chiusure in ritardo"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Gli scambi li organizzi tu: il tuo reparto diventa la regia dell'azienda",
+          "negativo": "Ogni spostamento è un litigio, e i litigi finiscono da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Un tecnico di produzione nel tuo laboratorio: prototipi più realistici",
+          "negativo": "I tuoi ricercatori finiscono a fare assistenza: progetti fermi"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Ti prestano persone esperte: smaltisci le richieste arretrate",
+          "negativo": "Il tuo sistemista prestato altrove: le emergenze restano tutte a te"
+        }
+      }
     },
     {
       "id": "nuova-sede-di-rappresentanza-in-centro",
@@ -123,7 +438,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Bella sede, belle foto, stessi clienti di prima: l'affitto si mangia tutto",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Ricevi i fornitori in centro: davanti a quella sede trattano meglio",
+          "negativo": "Arredi di lusso da comprare in fretta: il conto passa dal tuo budget"
+        },
+        "PRODUZIONE": {
+          "positivo": "La sede in centro libera spazio in fabbrica: le tue linee si allargano",
+          "negativo": "Clienti portati a visitare la fabbrica: linee ferme per fare bella figura"
+        },
+        "VENDITE": {
+          "positivo": "Clienti ricevuti in centro, con vista: le tue trattative volano",
+          "negativo": "I tuoi venditori devono presidiare la sede: meno visite ai clienti"
+        },
+        "MARKETING": {
+          "positivo": "La sede diventa il simbolo del marchio: eventi e foto li curi tu",
+          "negativo": "Il budget della sede si mangia la tua campagna"
+        },
+        "FINANZA": {
+          "positivo": "L'immobile acquista valore: in bilancio è un colpo da maestro tuo",
+          "negativo": "Affitto in centro altissimo: tocca a te farlo quadrare"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Una sede in centro attira candidati: le selezioni diventano facili",
+          "negativo": "Chi va in centro e chi resta in periferia? Invidie da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il tuo laboratorio si sposta nei vecchi uffici, più grandi",
+          "negativo": "Il tuo laboratorio resta in periferia, dimenticato da tutti"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "La nuova sede nasce con i sistemi che hai progettato tu",
+          "negativo": "Nuova sede da collegare in un mese: il tuo reparto in trincea"
+        }
+      }
     },
     {
       "id": "settimana-corta-sperimentale",
@@ -137,7 +487,42 @@
         3,
         4
       ],
-      "astensioneAmmessa": true
+      "astensioneAmmessa": true,
+      "spiegazione": "Personale più riposato e meno assenze: piccolo guadagno di produttività",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Ordini concentrati in quattro giorni: i fornitori si adeguano e tu respiri",
+          "negativo": "I fornitori lavorano il venerdì, tu no: consegne perse"
+        },
+        "PRODUZIONE": {
+          "positivo": "Turni più lunghi ma meno avviamenti: le tue linee rendono di più",
+          "negativo": "Le linee non si fermano il venerdì: turni da riorganizzare tutti"
+        },
+        "VENDITE": {
+          "positivo": "Venditori riposati, clienti più contenti",
+          "negativo": "I clienti chiamano il venerdì e trovano la segreteria"
+        },
+        "MARKETING": {
+          "positivo": "«L'azienda della settimana corta»: una storia perfetta per il marchio",
+          "negativo": "Le campagne escono il venerdì e nessuno le segue"
+        },
+        "FINANZA": {
+          "positivo": "Uffici chiusi un giorno in più: bollette più basse in bilancio",
+          "negativo": "Le scadenze fiscali non fanno la settimana corta: copri tu il venerdì"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Candidati in fila per lavorare qui: il tuo reparto vince",
+          "negativo": "Chi ha la settimana corta e chi no? Le proteste arrivano da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Giornate lunghe e senza interruzioni: i tuoi progetti avanzano",
+          "negativo": "Gli esperimenti non si fermano il venerdì: turni di guardia per te"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il venerdì i sistemi sono liberi: aggiornamenti senza disturbare nessuno",
+          "negativo": "Il venerdì c'è sempre un guasto, e il reperibile sei tu"
+        }
+      }
     },
     {
       "id": "corso-di-formazione-obbligatorio-per-tut",
@@ -151,11 +536,46 @@
         3,
         4
       ],
-      "astensioneAmmessa": true
+      "astensioneAmmessa": true,
+      "spiegazione": "Il corso funziona davvero: errori dimezzati in tutta l'azienda",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Il corso insegna a trattare: i tuoi buyer tornano più agguerriti",
+          "negativo": "Una settimana di corso: ordini fermi e fornitori in attesa"
+        },
+        "PRODUZIONE": {
+          "positivo": "Operai formati, meno errori sulle tue linee",
+          "negativo": "Gli operai in aula invece che in linea: produzione ferma"
+        },
+        "VENDITE": {
+          "positivo": "Il corso è sulla negoziazione: i tuoi venditori ne escono più forti",
+          "negativo": "Due giorni d'aula: i tuoi venditori perdono appuntamenti"
+        },
+        "MARKETING": {
+          "positivo": "Il corso parla di comunicazione: il tuo reparto fa da docente",
+          "negativo": "Tutto il tuo reparto in aula proprio durante il lancio"
+        },
+        "FINANZA": {
+          "positivo": "Tutti imparano a leggere un bilancio: meno domande assurde per te",
+          "negativo": "Il corso usa fondi pubblici: carte su carte da rendicontare"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il corso lo organizzi tu, ed è un successo",
+          "negativo": "Calendari, aule e lamentele: il corso pesa tutto sul tuo reparto"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il docente è un tuo contatto universitario: collaborazione in vista",
+          "negativo": "Un corso su cose che il tuo laboratorio sa già: tempo perso"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Finalmente tutti sanno cos'è una password sicura",
+          "negativo": "Piattaforma del corso da installare e cento password da reimpostare"
+        }
+      }
     },
     {
       "id": "auto-aziendale-nuova",
-      "titolo": "Auto aziendale nuova (una sola)",
+      "titolo": "Auto di rappresentanza per le visite ai clienti",
       "categoria": "PERSONALE",
       "costo": 45,
       "schema": "EGOISTICO",
@@ -164,7 +584,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "L'auto si vede più spesso al bar che dai clienti: spesa senza ritorno",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "L'auto la usi tu per visitare i fornitori: trattative di persona",
+          "negativo": "L'auto va comprata in fretta: niente gara, prezzo pieno, budget tuo"
+        },
+        "PRODUZIONE": {
+          "positivo": "L'auto va al tuo reparto: porti i clienti in fabbrica con stile",
+          "negativo": "L'auto si prende il posto coperto dei tuoi carrelli elevatori"
+        },
+        "VENDITE": {
+          "positivo": "L'auto va ai tuoi venditori: più visite, più contratti",
+          "negativo": "L'auto va a un altro reparto: i tuoi venditori restano in treno"
+        },
+        "MARKETING": {
+          "positivo": "L'auto la decori tu col marchio: un cartellone che gira per la città",
+          "negativo": "L'auto gira col logo vecchio, e la gente la vede"
+        },
+        "FINANZA": {
+          "positivo": "L'auto la prendi tu in leasing: tasse più leggere a merito tuo",
+          "negativo": "Carburante, bollo, multe: ogni ricevuta passa da te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "L'auto diventa il premio del mese che gestisci tu: tutti più motivati",
+          "negativo": "«Perché lui sì e io no?»: la lite sull'auto finisce da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "L'auto ti serve per portare i prototipi dai clienti: test sul posto",
+          "negativo": "Il tuo furgone per le prove viene venduto per pagare l'auto"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Auto connessa: la flotta digitale la progetti tu",
+          "negativo": "L'auto connessa va integrata nei sistemi, e il navigatore non va mai"
+        }
+      }
     },
     {
       "id": "accordo-quadro-con-un-fornitore-unico",
@@ -177,7 +632,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Prezzi bloccati e consegne puntuali: l'accordo quadro ripaga",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Un solo contratto da gestire invece di trenta: meno lavoro per te",
+          "negativo": "Il fornitore unico detta legge: perdi ogni margine di trattativa"
+        },
+        "PRODUZIONE": {
+          "positivo": "Materiali sempre uguali: meno regolazioni sulle tue linee",
+          "negativo": "Se il fornitore unico ritarda, le tue linee si fermano"
+        },
+        "VENDITE": {
+          "positivo": "Consegne prevedibili: puoi promettere date sicure ai clienti",
+          "negativo": "Il fornitore unico serve anche un concorrente, e i tuoi clienti lo sanno"
+        },
+        "MARKETING": {
+          "positivo": "Il fornitore co-finanzia le tue campagne: il suo logo accanto al nostro",
+          "negativo": "Il fornitore unico ha una pessima fama: tocca a te difendere il marchio"
+        },
+        "FINANZA": {
+          "positivo": "Prezzi bloccati per due anni: il tuo budget diventa prevedibile",
+          "negativo": "Penali enormi se usciamo dal contratto: un rischio che pesa su di te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il fornitore forma il personale gratis: un costo in meno per te",
+          "negativo": "Chi seguiva i vecchi fornitori resta senza lavoro: tocca a te ricollocarlo"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il fornitore ti dà in anteprima i suoi materiali nuovi",
+          "negativo": "Il fornitore unico non ha il materiale per il tuo prototipo"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Ordini automatici con un solo fornitore: integrazione semplice per te",
+          "negativo": "Il fornitore pretende accesso diretto ai nostri sistemi: rischi da coprire"
+        }
+      }
     },
     {
       "id": "campagna-pubblicitaria-in-televisione",
@@ -189,7 +679,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Lo spot fa parlare di noi: il marchio guadagna terreno sui concorrenti",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Gli spazi TV li compri tu, all'asta: grande sconto e grande merito",
+          "negativo": "Scorte da aumentare in fretta per reggere la campagna: prezzi d'urgenza"
+        },
+        "PRODUZIONE": {
+          "positivo": "Lo spot è girato nella tua fabbrica: il tuo reparto in prima serata",
+          "negativo": "Dopo lo spot gli ordini esplodono: turni doppi sulle tue linee"
+        },
+        "VENDITE": {
+          "positivo": "Lo spot porta clienti nuovi, e li chiudono i tuoi venditori",
+          "negativo": "Lo spot promette uno sconto che devono onorare i tuoi venditori"
+        },
+        "MARKETING": {
+          "positivo": "Lo spot lo firmi tu: il tuo reparto in prima serata",
+          "negativo": "Lo spot lo fa un'agenzia scelta dal direttivo: a te tocca solo pagare"
+        },
+        "FINANZA": {
+          "positivo": "Lo spot attira un investitore: la tua cassa ringrazia",
+          "negativo": "Una spesa enorme da giustificare in bilancio, prima dei risultati"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Lo spot mostra i dipendenti veri: orgoglio e candidature per te",
+          "negativo": "I dipendenti apparsi nello spot vogliono un compenso: trattative da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Lo spot mostra il tuo prototipo: ora il direttivo lo finanzia volentieri",
+          "negativo": "Lo spot promette un prodotto che il tuo laboratorio non ha finito"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Lo spot lancia il nuovo sito che hai costruito tu",
+          "negativo": "Dopo lo spot il sito crolla sotto le visite: notte in bianco per te"
+        }
+      }
     },
     {
       "id": "digitalizzazione-di-tutti-gli-archivi",
@@ -201,7 +726,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Qualche file perso, ma ora tutti trovano le cose un po' più in fretta",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Contratti dei fornitori trovati in un secondo: rinnovi più convenienti",
+          "negativo": "Trent'anni di ordini da scansionare: il tuo reparto sepolto dalla carta"
+        },
+        "PRODUZIONE": {
+          "positivo": "Schede tecniche sempre a portata di tablet: meno errori in linea",
+          "negativo": "I disegni tecnici scansionati sono illeggibili: errori in linea"
+        },
+        "VENDITE": {
+          "positivo": "Lo storico di ogni cliente in un clic: offerte su misura",
+          "negativo": "Le vecchie offerte spariscono nella migrazione: clienti da richiamare"
+        },
+        "MARKETING": {
+          "positivo": "L'archivio storico diventa materiale per le tue campagne",
+          "negativo": "I tuoi materiali creativi archiviati con nomi assurdi: introvabili"
+        },
+        "FINANZA": {
+          "positivo": "Basta faldoni: i controlli fiscali diventano una passeggiata",
+          "negativo": "Le fatture vanno tenute anche su carta: doppio archivio per te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Fascicoli del personale finalmente in ordine e al sicuro",
+          "negativo": "Dati personali da digitalizzare a norma di privacy: mesi di lavoro"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Vecchi brevetti ritrovati in archivio ispirano il tuo nuovo progetto",
+          "negativo": "I tuoi quaderni di laboratorio vanno trascritti uno per uno"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il progetto lo guidi tu: archivio moderno e budget al tuo reparto",
+          "negativo": "Montagne di scansioni da custodire: spazio e sicurezza a carico tuo"
+        }
+      }
     },
     {
       "id": "assunzione-di-un-super-esperto",
@@ -214,7 +774,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "L'esperto porta idee brillanti e costa una fortuna: alla fine si va in pari",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "L'esperto viene assegnato a te: rinegozia tutti i contratti",
+          "negativo": "L'esperto vuole materiali di prima scelta, e li compri tu"
+        },
+        "PRODUZIONE": {
+          "positivo": "L'esperto lavora sulle tue linee: produttività alle stelle",
+          "negativo": "L'esperto rivoluziona le tue linee in un mese: caos totale"
+        },
+        "VENDITE": {
+          "positivo": "L'esperto porta con sé i suoi clienti, e li affida a te",
+          "negativo": "L'esperto si prende i clienti migliori, anche i tuoi"
+        },
+        "MARKETING": {
+          "positivo": "L'esperto è famoso: il tuo reparto lo usa come testimonial",
+          "negativo": "L'esperto rilascia interviste sul marchio senza consultarti"
+        },
+        "FINANZA": {
+          "positivo": "L'esperto ottiene un finanziamento che porta il tuo nome",
+          "negativo": "Lo stipendio dell'esperto va giustificato, e lo chiedono a te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "L'esperto l'hai trovato tu: il merito è del tuo reparto",
+          "negativo": "Lo stipendio dell'esperto trapela, e tutti chiedono un aumento a te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "L'esperto entra nel tuo laboratorio: il progetto fa un salto",
+          "negativo": "L'esperto boccia il tuo progetto davanti a tutti"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "L'esperto ti modernizza i sistemi in tre mesi",
+          "negativo": "L'esperto vuole strumenti speciali, compatibili con niente: tocca a te"
+        }
+      }
     },
     {
       "id": "nuove-regole-sulle-trasferte",
@@ -227,7 +822,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Meno viaggi, meno spese, quasi nessun cliente perso: piccolo risparmio",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Le visite ai fornitori diventano videochiamate: meno spese per te",
+          "negativo": "Niente più visite ai fornitori: i problemi li scopri a merce arrivata"
+        },
+        "PRODUZIONE": {
+          "positivo": "Basta tecnici in viaggio: le tue linee ritrovano il personale",
+          "negativo": "Il tecnico del fornitore non può più venire: guasti più lunghi"
+        },
+        "VENDITE": {
+          "positivo": "Trasferte pagate a risultato: i tuoi venditori migliori ci guadagnano",
+          "negativo": "Tetto alle trasferte: i tuoi venditori visitano meno clienti"
+        },
+        "MARKETING": {
+          "positivo": "Le fiere restano fuori dai tagli: il tuo calendario è salvo",
+          "negativo": "Niente più eventi fuori sede: la tua agenda si svuota"
+        },
+        "FINANZA": {
+          "positivo": "Note spese con regole chiare: meno discussioni per te",
+          "negativo": "Nuove regole, nuove eccezioni: ogni nota spesa diventa una trattativa"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Regole uguali per tutti: meno favoritismi da gestire",
+          "negativo": "Chi viaggiava in prima classe protesta, e protesta da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Niente congressi inutili: più tempo per il tuo laboratorio",
+          "negativo": "Niente più congressi: il tuo reparto resta indietro sulle novità"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Videochiamate al posto dei viaggi: il tuo sistema diventa indispensabile",
+          "negativo": "Tutti in videochiamata, e ogni microfono che non va è un problema tuo"
+        }
+      }
     },
     {
       "id": "piano-di-risparmio-energetico",
@@ -240,11 +870,46 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Bollette giù di un terzo: un risparmio che si sente su tutti i prezzi",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Rinegozi il contratto della luce: bel colpo per il tuo reparto",
+          "negativo": "Lampade, sensori, pannelli: cento ordini nuovi da gestire in fretta"
+        },
+        "PRODUZIONE": {
+          "positivo": "Motori nuovi ed efficienti sulle tue linee",
+          "negativo": "Le macchine più energivore lavorano solo di notte: turni da rifare"
+        },
+        "VENDITE": {
+          "positivo": "«Prodotto a basso consumo»: un argomento in più per i tuoi venditori",
+          "negativo": "Riscaldamento abbassato nello showroom: clienti col cappotto"
+        },
+        "MARKETING": {
+          "positivo": "Un'azienda verde: storia perfetta per le tue campagne",
+          "negativo": "Insegne luminose spente la sera: il marchio sparisce"
+        },
+        "FINANZA": {
+          "positivo": "Incentivi statali sull'efficienza: il merito in bilancio è tuo",
+          "negativo": "Gli incentivi arrivano tra due anni: intanto la spesa la copri tu"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Uffici più confortevoli: meno lamentele da gestire",
+          "negativo": "Aria condizionata a 27 gradi: le proteste arrivano tutte da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il tuo laboratorio progetta il sistema di recupero del calore",
+          "negativo": "Le tue apparecchiature di prova consumano troppo: orari ridotti"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Server nuovi e a basso consumo: finalmente",
+          "negativo": "Server spenti di notte per risparmiare: e i backup?"
+        }
+      }
     },
     {
       "id": "premio-di-produzione-per-un-solo-reparto",
-      "titolo": "Premio di produzione per un solo reparto",
+      "titolo": "Premio di risultato legato agli obiettivi",
       "categoria": "PERSONALE",
       "costo": 40,
       "schema": "EGOISTICO",
@@ -252,7 +917,43 @@
         2,
         3,
         4
-      ]
+      ],
+      "astensioneAmmessa": true,
+      "spiegazione": "Il premio scatena invidie e la corsa agli obiettivi facili: l'azienda ci perde",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Il premio va al tuo reparto per i risparmi sugli acquisti",
+          "negativo": "Il premio lo paga un taglio al tuo budget"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il premio va alle tue linee: record di produzione e squadra motivata",
+          "negativo": "Gli obiettivi ignorano i guasti: il tuo reparto resta senza premio"
+        },
+        "VENDITE": {
+          "positivo": "Il premio va ai tuoi venditori: corrono come mai",
+          "negativo": "Obiettivi impossibili per i tuoi venditori: premio mancato e morale a terra"
+        },
+        "MARKETING": {
+          "positivo": "Il premio va al tuo reparto per la campagna dell'anno",
+          "negativo": "«Il marketing non ha numeri misurabili»: niente premio per te"
+        },
+        "FINANZA": {
+          "positivo": "Il premio va al tuo reparto per i conti in ordine",
+          "negativo": "Calcolare i premi tocca a te, e ognuno contesta la cifra"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il premio va al tuo reparto per il clima migliorato",
+          "negativo": "Chi non ha preso il premio protesta, e lo fa da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il premio va al tuo laboratorio per il brevetto depositato",
+          "negativo": "Obiettivi trimestrali per la ricerca? Il tuo reparto resta a secco"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il premio va al tuo reparto: un anno senza blocchi dei sistemi",
+          "negativo": "Il calcolo dei premi va programmato in una settimana: lo fai tu"
+        }
+      }
     },
     {
       "id": "partecipazione-a-una-gara-d-appalto-pubb",
@@ -265,7 +966,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Gara vinta: un cliente pubblico che paga sempre e porta prestigio",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "La gara premia i fornitori locali: trattative più semplici per te",
+          "negativo": "Preventivi di tutti i fornitori da allegare entro venerdì"
+        },
+        "PRODUZIONE": {
+          "positivo": "La gara garantisce lavoro alle tue linee per un anno",
+          "negativo": "Capitolato rigidissimo: le tue linee vanno adattate"
+        },
+        "VENDITE": {
+          "positivo": "Un cliente pubblico in portafoglio: il tuo reparto ci guadagna",
+          "negativo": "Ribasso d'asta: i tuoi venditori lavorano per margini ridicoli"
+        },
+        "MARKETING": {
+          "positivo": "«Fornitore della pubblica amministrazione»: ottimo per il marchio",
+          "negativo": "Niente pubblicità durante la gara: la tua campagna è sospesa"
+        },
+        "FINANZA": {
+          "positivo": "Un cliente che paga sempre: la tua cassa diventa prevedibile",
+          "negativo": "Garanzie bancarie, fideiussioni, certificati: la gara pesa su di te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il bando premia la formazione: i tuoi corsi valgono punti in graduatoria",
+          "negativo": "Curriculum e certificati di ogni dipendente da allegare: tocca a te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il bando premia l'innovazione: il tuo progetto vale punti preziosi",
+          "negativo": "La gara vuole il prodotto vecchio: il tuo progetto nuovo resta nel cassetto"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "La piattaforma della gara la conosci solo tu: il merito è tuo",
+          "negativo": "Il portale della gara va in crash il giorno della scadenza: panico da te"
+        }
+      }
     },
     {
       "id": "sistema-di-videosorveglianza",
@@ -279,7 +1015,42 @@
         3,
         4
       ],
-      "astensioneAmmessa": true
+      "astensioneAmmessa": true,
+      "spiegazione": "Furti azzerati e assicurazione più bassa: le telecamere si ripagano",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Le telecamere le scegli tu: contratto ricco e fornitore riconoscente",
+          "negativo": "Telecamere comprate in fretta dal fornitore più caro: le paga il tuo budget"
+        },
+        "PRODUZIONE": {
+          "positivo": "Le telecamere sorvegliano il magazzino: spariscono i furti di materiale",
+          "negativo": "Operai filmati tutto il giorno: tensione altissima sulle tue linee"
+        },
+        "VENDITE": {
+          "positivo": "Showroom sorvegliato: i clienti lasciano lì la merce in prova",
+          "negativo": "I clienti in visita trovano telecamere ovunque: brutta impressione"
+        },
+        "MARKETING": {
+          "positivo": "Le riprese della fabbrica diventano un tuo video promozionale",
+          "negativo": "Il giornale locale titola «telecamere in mensa»: il marchio ne soffre"
+        },
+        "FINANZA": {
+          "positivo": "L'assicurazione abbassa il premio: risparmio a merito tuo",
+          "negativo": "Manutenzione carissima con rinnovo automatico: la paghi tu"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Le telecamere chiudono una vecchia lite sui furti: il merito è tuo",
+          "negativo": "Sindacati in rivolta per le telecamere in mensa: tutto da te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il laboratorio finalmente protetto: i tuoi prototipi al sicuro",
+          "negativo": "Telecamere nel laboratorio: i tuoi ricercatori si sentono spiati"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il sistema lo gestisci tu: il tuo reparto controlla tutto",
+          "negativo": "Mille ore di video da archiviare e proteggere: a carico tuo"
+        }
+      }
     },
     {
       "id": "spostamento-del-magazzino-fuori-citta",
@@ -291,7 +1062,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Il trasloco costa fatica, ma le consegne lontane ora sono più veloci",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Magazzino più grande: compri in grandi quantità, a prezzi migliori",
+          "negativo": "I fornitori vogliono più soldi per consegnare fuori città"
+        },
+        "PRODUZIONE": {
+          "positivo": "Lo spazio del vecchio magazzino va alle tue linee",
+          "negativo": "I materiali arrivano dal nuovo magazzino con ore di ritardo"
+        },
+        "VENDITE": {
+          "positivo": "Il nuovo magazzino è vicino all'autostrada: consegne più veloci",
+          "negativo": "Consegne più lente in città: i tuoi clienti si lamentano"
+        },
+        "MARKETING": {
+          "positivo": "Il vecchio magazzino diventa uno spazio eventi, e lo gestisci tu",
+          "negativo": "Il materiale promozionale ora è a 40 km: ogni evento è una spedizione"
+        },
+        "FINANZA": {
+          "positivo": "Affitto fuori città a metà prezzo: il tuo bilancio migliora",
+          "negativo": "Trasloco, assicurazioni, trasporti: costi nascosti che emergono da te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il nuovo magazzino porta assunzioni sul territorio: bella figura tua",
+          "negativo": "I magazzinieri non vogliono trasferirsi: trattative difficili per te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il vecchio magazzino diventa il tuo nuovo laboratorio",
+          "negativo": "I campioni per le tue prove ora arrivano dopo giorni"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il magazzino nuovo nasce automatizzato: il tuo progetto più bello",
+          "negativo": "Collegare il nuovo magazzino alla rete: cantiere infinito per te"
+        }
+      }
     },
     {
       "id": "lancio-di-una-linea-di-prodotti-economic",
@@ -303,7 +1109,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Le vendite salgono ma i margini spariscono: la linea economica va in pari",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Materiali economici in grandi quantità: il tuo reparto fa il colpo",
+          "negativo": "Trovare materiali così economici è un incubo, e tocca a te"
+        },
+        "PRODUZIONE": {
+          "positivo": "La nuova linea riempie i tuoi impianti fermi: costi fissi ripagati",
+          "negativo": "Due linee di prodotto sugli stessi impianti: cambi continui e fermi"
+        },
+        "VENDITE": {
+          "positivo": "Un prodotto che si vende da solo: i tuoi venditori ci guadagnano",
+          "negativo": "I clienti chiedono lo sconto anche sul prodotto di qualità"
+        },
+        "MARKETING": {
+          "positivo": "Un marchio nuovo da lanciare da zero: il progetto lo firmi tu",
+          "negativo": "Il marchio «di qualità» ora vende roba economica: difenderlo tocca a te"
+        },
+        "FINANZA": {
+          "positivo": "Grandi volumi, cassa che gira: il tuo bilancio respira",
+          "negativo": "Margini minimi: devi dimostrare che ci guadagniamo davvero"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "La nuova linea porta assunzioni: il tuo reparto diventa centrale",
+          "negativo": "Assunzioni a tempo per la nuova linea: contratti e lamentele da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Progettare economico è una sfida, e il tuo laboratorio la vince",
+          "negativo": "Il tuo progetto di punta viene sospeso per la linea economica"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "La nuova linea si vende online: il negozio digitale lo fai tu",
+          "negativo": "Nuovi codici, nuovo listino, nuovo sito: tutto entro un mese, tutto tuo"
+        }
+      }
     },
     {
       "id": "riunione-settimanale-obbligatoria-del-lu",
@@ -317,7 +1158,42 @@
         3,
         4
       ],
-      "astensioneAmmessa": true
+      "astensioneAmmessa": true,
+      "spiegazione": "Le riunioni del lunedì evitano qualche lavoro doppio: guadagno modesto",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Al lunedì scopri in anticipo cosa serve: ordini meno urgenti",
+          "negativo": "Due ore di riunione mentre i fornitori ti cercano"
+        },
+        "PRODUZIONE": {
+          "positivo": "Ogni lunedì sai cosa produrre: basta cambi di programma",
+          "negativo": "Il lunedì le tue linee ripartono senza capo reparto"
+        },
+        "VENDITE": {
+          "positivo": "Al lunedì presenti i tuoi risultati, e tutti ti ascoltano",
+          "negativo": "Lunedì mattina in riunione invece che dai clienti"
+        },
+        "MARKETING": {
+          "positivo": "La riunione diventa la tua vetrina: presentazioni applaudite",
+          "negativo": "Ogni lunedì qualcuno ha un'idea sulla tua campagna"
+        },
+        "FINANZA": {
+          "positivo": "Ogni lunedì tutti sanno quanto c'è in cassa: meno richieste assurde",
+          "negativo": "Il verbale lo scrivi tu, ogni lunedì"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Le lamentele escono in riunione invece che nel tuo ufficio",
+          "negativo": "Ogni lunedì un litigio in riunione, e a ricucire ci pensi tu"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il lunedì il direttivo vede i tuoi progressi e ti dà fiducia",
+          "negativo": "Ogni lunedì ti chiedono «quando è pronto?»"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Riunione in videochiamata: il tuo sistema diventa indispensabile",
+          "negativo": "Il proiettore non funziona mai, e ogni lunedì chiamano te"
+        }
+      }
     },
     {
       "id": "revisione-completa-dei-contratti-con-i-c",
@@ -330,7 +1206,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Contratti nuovi, pagamenti puntuali: l'azienda respira come non mai",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Contratti chiari con i clienti: ordini ai fornitori più prevedibili",
+          "negativo": "Nuove clausole sui materiali: fornitori da riqualificare tutti"
+        },
+        "PRODUZIONE": {
+          "positivo": "Basta personalizzazioni gratuite: le tue linee lavorano in serie",
+          "negativo": "Le nuove clausole di qualità ricadono tutte sulle tue linee"
+        },
+        "VENDITE": {
+          "positivo": "Contratti più solidi: i clienti pagano puntuali",
+          "negativo": "Ogni cliente va rivisitato per firmare: i tuoi venditori in trincea"
+        },
+        "MARKETING": {
+          "positivo": "Condizioni chiare per i clienti: un argomento per le tue campagne",
+          "negativo": "Le promozioni della tua campagna violano i nuovi contratti: da rifare"
+        },
+        "FINANZA": {
+          "positivo": "Penali per i ritardi di pagamento: la tua cassa ringrazia",
+          "negativo": "Ogni contratto va ricontrollato con gli avvocati, e le parcelle a te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Clausole chiare: meno discussioni tra personale e clienti",
+          "negativo": "I contratti nuovi vogliono personale formato: corsi da organizzare"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Nei contratti entra la proprietà dei progetti: i tuoi brevetti protetti",
+          "negativo": "I clienti chiedono garanzie sui prodotti futuri: prove extra per te"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Firma digitale per tutti i contratti: il progetto è tuo",
+          "negativo": "Mille contratti da caricare in un sistema che non esiste ancora"
+        }
+      }
     },
     {
       "id": "sponsorizzazione-della-squadra-di-calcio",
@@ -343,7 +1254,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "La squadra retrocede: il nostro logo su ogni sconfitta",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Lo sponsor tecnico della squadra è un tuo fornitore: sconti sulle forniture",
+          "negativo": "Maglie, striscioni e gadget da ordinare: li paga il tuo budget"
+        },
+        "PRODUZIONE": {
+          "positivo": "In cambio dello sponsor il comune sblocca l'ampliamento del tuo capannone",
+          "negativo": "Il tuo reparto deve produrre 500 pezzi omaggio per i tifosi"
+        },
+        "VENDITE": {
+          "positivo": "In tribuna d'onore porti i tuoi clienti migliori: contratti firmati all'intervallo",
+          "negativo": "I clienti del paese vicino tifano la squadra rivale: qualche disdetta per te"
+        },
+        "MARKETING": {
+          "positivo": "Il marchio sulle maglie l'hai voluto tu: visibilità a ogni partita",
+          "negativo": "Il logo sulle maglie è stato scelto senza di te, e si vede"
+        },
+        "FINANZA": {
+          "positivo": "La sponsorizzazione si scarica dalle tasse: il tuo bilancio migliora",
+          "negativo": "La squadra vuole tutto in anticipo: buco nella tua cassa del trimestre"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Biglietti gratis ai dipendenti: il clima migliora e il merito è tuo",
+          "negativo": "Biglietti gratis solo per alcuni: liti e invidie da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "La squadra prova il tuo nuovo materiale: test gratuiti sul campo",
+          "negativo": "I soldi dello sponsor arrivano da un tuo progetto congelato"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "La squadra adotta la tua app per i biglietti: il tuo reparto in vetrina",
+          "negativo": "Il sito della squadra sotto attacco ogni domenica: ora tocca a te difenderlo"
+        }
+      }
     },
     {
       "id": "rinnovo-dei-computer-di-tutta-l-azienda",
@@ -356,7 +1302,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Computer nuovi, meno blocchi: tutta l'azienda lavora più veloce",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Un ordine enorme: il fornitore ti regala anche i telefoni",
+          "negativo": "Mille computer da ordinare, consegnare e collaudare: tutto a te"
+        },
+        "PRODUZIONE": {
+          "positivo": "Computer nuovi a bordo linea: meno blocchi",
+          "negativo": "I nuovi computer non leggono il software delle tue macchine"
+        },
+        "VENDITE": {
+          "positivo": "Portatili leggeri per i tuoi venditori: offerte fatte dal cliente",
+          "negativo": "I tuoi venditori restano senza portatile per una settimana"
+        },
+        "MARKETING": {
+          "positivo": "Computer potenti: la grafica la fate in casa, senza agenzia",
+          "negativo": "I tuoi programmi di grafica non girano sui nuovi computer"
+        },
+        "FINANZA": {
+          "positivo": "Computer in leasing: costo spalmato e tasse più leggere",
+          "negativo": "Mille beni da registrare e ammortizzare: il lavoro è tuo"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Computer nuovi a tutti: il clima migliora",
+          "negativo": "«Perché a lui il portatile e a me il fisso?»: liti da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Computer potenti per le simulazioni: i tuoi progetti accelerano",
+          "negativo": "Dati di ricerca persi nel passaggio ai nuovi computer"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Finalmente macchine tutte uguali: assistenza dimezzata",
+          "negativo": "Mille computer da configurare in un weekend: tocca al tuo reparto"
+        }
+      }
     },
     {
       "id": "programma-di-benessere-aziendale",
@@ -369,7 +1350,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Meno assenze, più energia: lo yoga alle 7 funziona (nessuno lo ammetterà)",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "La palestra convenzionata la trovi tu: sconto e merito al tuo reparto",
+          "negativo": "Tappetini, frutta fresca, istruttori: cento acquisti strani da gestire"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il programma riduce mal di schiena e infortuni sulle tue linee",
+          "negativo": "Yoga alle 7: il turno del mattino arriva in linea già stanco"
+        },
+        "VENDITE": {
+          "positivo": "I tuoi venditori in forma: più energia con i clienti",
+          "negativo": "Yoga alle 7, primo cliente alle 8: i tuoi venditori arrivano tardi"
+        },
+        "MARKETING": {
+          "positivo": "«L'azienda che si prende cura di te»: il racconto lo firmi tu",
+          "negativo": "Le foto dello yoga girano sui social, e non in senso buono"
+        },
+        "FINANZA": {
+          "positivo": "Meno assenze per malattia: il risparmio in bilancio lo mostri tu",
+          "negativo": "Il programma costa più del previsto e nessuno sa dire quanto rende"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il programma l'hai voluto tu: clima alle stelle, merito tuo",
+          "negativo": "Chi non va allo yoga si sente escluso: lamentele da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il tuo laboratorio studia la postura ideale: progetto pubblicato",
+          "negativo": "La sala yoga è il tuo vecchio laboratorio"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "L'app del benessere l'hai fatta tu: la usano tutti",
+          "negativo": "Braccialetti contapassi da collegare ai sistemi: privacy e problemi per te"
+        }
+      }
     },
     {
       "id": "esternalizzazione-dei-servizi-interni",
@@ -381,7 +1397,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Servizi esterni un po' più lenti ma più economici: piccolo vantaggio",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "I contratti con le ditte esterne li gestisci tu: potere e sconti",
+          "negativo": "Cinque ditte esterne da controllare: il lavoro ricade su di te"
+        },
+        "PRODUZIONE": {
+          "positivo": "Pulizie e manutenzione a una ditta esterna: i tuoi operai solo in linea",
+          "negativo": "La ditta esterna di manutenzione arriva in due giorni, non in due ore"
+        },
+        "VENDITE": {
+          "positivo": "Assistenza clienti affidata a esterni: i tuoi venditori vendono e basta",
+          "negativo": "Il centralino esterno risponde male ai tuoi clienti"
+        },
+        "MARKETING": {
+          "positivo": "La grafica a un'agenzia brava: le tue campagne fanno il salto",
+          "negativo": "Il tuo reparto rischia di essere il prossimo a finire fuori"
+        },
+        "FINANZA": {
+          "positivo": "Costi fissi che diventano variabili: il tuo bilancio diventa flessibile",
+          "negativo": "Buste paga a uno studio esterno: gli errori li correggi tu"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Meno personale da gestire: ti concentri sui talenti",
+          "negativo": "Personale da ricollocare o salutare: il compito più duro tocca a te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Le prove a un centro esterno: tu ti concentri sulle idee",
+          "negativo": "Il centro esterno vede i tuoi progetti: rischio di fuga di idee"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "L'assistenza ai computer va fuori: tu ti dedichi ai progetti veri",
+          "negativo": "Gli esterni vogliono accedere ai sistemi: password e rischi da gestire"
+        }
+      }
     },
     {
       "id": "apertura-di-un-ufficio-all-estero",
@@ -392,7 +1443,42 @@
       "trimestri": [
         1,
         2
-      ]
+      ],
+      "spiegazione": "L'ufficio estero vende, ma costa altrettanto: per ora si va in pari",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "All'estero trovi fornitori molto più economici",
+          "negativo": "Dazi, dogane e fornitori nuovi da gestire: il lavoro ricade su di te"
+        },
+        "PRODUZIONE": {
+          "positivo": "L'ufficio estero porta ordini grossi: le tue linee lavorano a pieno ritmo",
+          "negativo": "Prodotti da adattare alle norme straniere: mesi di modifiche alle tue linee"
+        },
+        "VENDITE": {
+          "positivo": "Un mercato nuovo, tutto per i tuoi venditori",
+          "negativo": "I tuoi venditori migliori trasferiti all'estero: in Italia resti scoperto"
+        },
+        "MARKETING": {
+          "positivo": "Lanci il marchio in un paese nuovo: la campagna la firmi tu",
+          "negativo": "Il marchio va tradotto e adattato: il tuo budget se ne va in traduzioni"
+        },
+        "FINANZA": {
+          "positivo": "Agevolazioni fiscali per la nuova sede: il merito in bilancio è tuo",
+          "negativo": "Due valute, due fisci, due bilanci: il tuo lavoro raddoppia"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Selezioni tu il personale estero: il tuo reparto diventa centrale",
+          "negativo": "Contratti stranieri, trasferimenti e famiglie scontente: tutto sulla tua scrivania"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Apri un piccolo laboratorio accanto a un'università straniera",
+          "negativo": "Il budget per l'estero viene preso dai tuoi progetti"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il nuovo ufficio nasce con i tuoi sistemi: un modello per tutta l'azienda",
+          "negativo": "Collegare l'ufficio estero alla rete: fusi orari ed emergenze notturne per te"
+        }
+      }
     },
     {
       "id": "codice-di-abbigliamento-aziendale",
@@ -406,7 +1492,42 @@
         3,
         4
       ],
-      "astensioneAmmessa": true
+      "astensioneAmmessa": true,
+      "spiegazione": "Un'aria più professionale: i clienti notano la differenza, un po'",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Divise per tutti: un ordine ricco e un fornitore riconoscente",
+          "negativo": "Taglie sbagliate, divise da cambiare: il caos è nel tuo ufficio"
+        },
+        "PRODUZIONE": {
+          "positivo": "Abbigliamento tecnico uguale per tutti: più sicurezza sulle tue linee",
+          "negativo": "Le divise nuove non sono adatte alle macchine: proteste in linea"
+        },
+        "VENDITE": {
+          "positivo": "Venditori eleganti: i clienti ti prendono più sul serio",
+          "negativo": "Giacca e cravatta anche ad agosto: i tuoi venditori protestano"
+        },
+        "MARKETING": {
+          "positivo": "Le divise col marchio le disegni tu",
+          "negativo": "Le divise col logo sbagliato sono già stampate"
+        },
+        "FINANZA": {
+          "positivo": "Basta rimborsi di abiti «da lavoro»: spese più chiare per te",
+          "negativo": "Chi paga le divise? La domanda arriva a te ogni giorno"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Regole chiare: basta discussioni su ciabatte e bermuda",
+          "negativo": "Ogni giorno qualcuno viola il codice, e richiamarlo tocca a te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il laboratorio è esentato: i tuoi ricercatori ti adorano",
+          "negativo": "Camici nuovi obbligatori, scomodi e brutti"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il tuo reparto ottiene l'esenzione «felpa»: morale alle stelle",
+          "negativo": "Il badge nelle divise nuove non funziona, e chiamano te"
+        }
+      }
     },
     {
       "id": "controllo-di-gestione-mensile-su-tutti-i",
@@ -419,11 +1540,46 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "I numeri mensili scovano sprechi ovunque: grande recupero di efficienza",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "I numeri mensili dimostrano quanto risparmi: il tuo reparto brilla",
+          "negativo": "Un report mensile su ogni ordine: tempo perso"
+        },
+        "PRODUZIONE": {
+          "positivo": "Costi delle linee misurati: finalmente si vede quanto rendi",
+          "negativo": "Ogni fermo macchina va spiegato in un report mensile"
+        },
+        "VENDITE": {
+          "positivo": "Margini per cliente visibili: puoi lasciare i clienti in perdita",
+          "negativo": "I tuoi venditori compilano report invece di vendere"
+        },
+        "MARKETING": {
+          "positivo": "Finalmente si misura quanto rende una campagna, e la tua rende",
+          "negativo": "«Quanto rende questa campagna?» Ogni mese, la stessa domanda"
+        },
+        "FINANZA": {
+          "positivo": "Il controllo lo guidi tu: il tuo reparto diventa centrale",
+          "negativo": "Report mensili per tutti i reparti: li prepari tu, ogni mese"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Dati chiari sui carichi di lavoro: assunzioni più facili da ottenere",
+          "negativo": "Il costo del personale sotto la lente ogni mese: pressione su di te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "I numeri mostrano quanto valgono i tuoi brevetti",
+          "negativo": "La ricerca non ha risultati mensili, e ti trattano da spreco"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il cruscotto mensile lo costruisci tu: tutti lo guardano",
+          "negativo": "Dati da estrarre da sei sistemi diversi, ogni mese, a mano"
+        }
+      }
     },
     {
       "id": "ufficio-nuovo-per-un-solo-direttore",
-      "titolo": "Ufficio nuovo per un solo direttore",
+      "titolo": "Ristrutturazione del piano direzionale",
       "categoria": "ORGANIZZAZIONE",
       "costo": 40,
       "schema": "EGOISTICO",
@@ -432,7 +1588,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Piano direzionale splendido, clienti mai visti: soldi spesi per pochi",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Il tuo reparto si trasferisce al piano nuovo: fornitori ricevuti con stile",
+          "negativo": "Arredi del piano nuovo comprati senza gara: il conto passa da te"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il piano nuovo ospita il tuo ufficio tecnico, lontano dal rumore",
+          "negativo": "I lavori al piano di sopra fanno vibrare le tue macchine di precisione"
+        },
+        "VENDITE": {
+          "positivo": "Il piano nuovo ospita la tua sala clienti: trattative in un ambiente top",
+          "negativo": "Mesi di cantiere: niente clienti in visita per i tuoi venditori"
+        },
+        "MARKETING": {
+          "positivo": "Il piano nuovo lo arredi tu: diventa la vetrina del marchio",
+          "negativo": "Il piano nuovo è arredato con i colori opposti al marchio"
+        },
+        "FINANZA": {
+          "positivo": "Il tuo reparto sale al piano nuovo, accanto alla sala del direttivo",
+          "negativo": "Lavori sempre più cari del preventivo, e il bilancio lo difendi tu"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il piano nuovo ospita la tua area colloqui: candidati colpiti",
+          "negativo": "«Perché loro al piano nuovo e noi no?»: invidie da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il tuo laboratorio si sposta al piano nuovo: spazio e luce",
+          "negativo": "Il cantiere si prende il deposito dei tuoi prototipi"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il piano nuovo ospita la tua sala server, moderna e sicura",
+          "negativo": "Il piano nuovo va cablato da zero: lavoro tutto tuo"
+        }
+      }
     },
     {
       "id": "scorte-di-sicurezza-per-sei-mesi",
@@ -444,7 +1635,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "Arriva la crisi delle forniture: i concorrenti restano a secco, noi no",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Un ordine gigante: prezzi bloccati e fornitore riconoscente",
+          "negativo": "Sei mesi di scorte da comprare subito: il tuo budget prosciugato"
+        },
+        "PRODUZIONE": {
+          "positivo": "Materiali sempre disponibili: le tue linee non si fermano più",
+          "negativo": "Le scorte occupano lo spazio delle tue linee"
+        },
+        "VENDITE": {
+          "positivo": "Consegne garantite anche in crisi: promesse sicure ai clienti",
+          "negativo": "Le scorte sono del modello vecchio, e i clienti vogliono il nuovo"
+        },
+        "MARKETING": {
+          "positivo": "«Mai senza prodotto»: una promessa perfetta per le tue campagne",
+          "negativo": "Scorte da smaltire: promozioni forzate che rovinano il marchio"
+        },
+        "FINANZA": {
+          "positivo": "Prezzi bloccati prima dei rincari: il tuo bilancio è protetto",
+          "negativo": "Sei mesi di soldi fermi in magazzino: la tua cassa soffre"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Linee sempre attive: niente cassa integrazione da gestire",
+          "negativo": "Servono magazzinieri in più: assunzioni urgenti da fare"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Materiali in abbondanza: prove senza limiti per te",
+          "negativo": "Scorte di materiali vecchi: il tuo nuovo progetto deve usarle"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Nuovo gestionale di magazzino: il progetto lo guidi tu",
+          "negativo": "Sei mesi di inventario da tracciare: sistemi al limite"
+        }
+      }
     },
     {
       "id": "concorso-a-premi-per-i-clienti",
@@ -456,7 +1682,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Migliaia di partecipanti al concorso: clienti nuovi e marchio più noto",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "I premi li compri tu: sconto enorme dal fornitore",
+          "negativo": "Mille premi da comprare, uno diverso dall'altro: incubo per te"
+        },
+        "PRODUZIONE": {
+          "positivo": "Il primo premio è una visita alla tua fabbrica: il tuo reparto in vetrina",
+          "negativo": "Confezioni speciali col codice del concorso: linee da riadattare"
+        },
+        "VENDITE": {
+          "positivo": "Il concorso riporta i vecchi clienti, e li chiudi tu",
+          "negativo": "Clienti che chiedono solo del concorso: i tuoi venditori fanno da centralino"
+        },
+        "MARKETING": {
+          "positivo": "Il concorso è un'idea tua, e funziona",
+          "negativo": "Il concorso lo gestisce un'agenzia: il tuo budget se ne va lì"
+        },
+        "FINANZA": {
+          "positivo": "Il concorso fa girare la cassa: incassi in anticipo",
+          "negativo": "Regolamento, notaio, garanzie al ministero: la burocrazia è tua"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "I dipendenti fanno da testimonial: orgoglio aziendale, merito tuo",
+          "negativo": "I dipendenti vogliono partecipare al concorso: dire di no tocca a te"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il premio è il tuo prototipo: test gratuito con mille clienti",
+          "negativo": "Il tuo prototipo dato come premio prima di essere pronto"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "La piattaforma del concorso è tua, ed è un successo",
+          "negativo": "Il sito del concorso crolla il primo giorno, e chiamano te"
+        }
+      }
     },
     {
       "id": "turni-di-lavoro-anche-il-sabato",
@@ -469,7 +1730,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "I turni del sabato smaltiscono gli arretrati: qualche ordine in più",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Consegne anche il sabato: i fornitori ti fanno prezzi migliori",
+          "negativo": "Ordini da gestire anche il sabato: il tuo weekend sparisce"
+        },
+        "PRODUZIONE": {
+          "positivo": "Linee attive sei giorni su sette: produci di più senza nuove macchine",
+          "negativo": "Turni del sabato: i tuoi operai minacciano lo sciopero"
+        },
+        "VENDITE": {
+          "positivo": "Aperti il sabato: i clienti piccoli possono finalmente venire",
+          "negativo": "Venditori di turno il sabato, e il lunedì sono stanchi"
+        },
+        "MARKETING": {
+          "positivo": "«Aperti anche il sabato»: uno slogan per le tue campagne",
+          "negativo": "Le tue campagne del weekend vanno rifatte da zero"
+        },
+        "FINANZA": {
+          "positivo": "Più produzione con gli stessi impianti: il tuo bilancio migliora",
+          "negativo": "Straordinari del sabato da pagare: buco nel tuo budget"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Turni del sabato volontari e pagati bene: tutti contenti, merito tuo",
+          "negativo": "Turni del sabato da assegnare: nessuno li vuole, la colpa è tua"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "Il sabato il laboratorio è silenzioso: i tuoi esperimenti più lunghi",
+          "negativo": "Il sabato ti chiedono di fare assistenza alla produzione"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "Il sabato fai gli aggiornamenti in pace",
+          "negativo": "Sistemi accesi anche il sabato: reperibilità per il tuo reparto"
+        }
+      }
     },
     {
       "id": "acquisto-di-un-piccolo-concorrente-in-cr",
@@ -480,7 +1776,42 @@
       "trimestri": [
         2,
         3
-      ]
+      ],
+      "spiegazione": "Clienti in più, debiti in più: l'acquisizione va in pari",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Il concorrente aveva fornitori migliori: ora sono tuoi",
+          "negativo": "Due elenchi di fornitori da unificare: mesi di trattative per te"
+        },
+        "PRODUZIONE": {
+          "positivo": "Ti arrivano macchinari a prezzo di saldo",
+          "negativo": "Gli impianti del concorrente sono un rottame: sistemarli tocca a te"
+        },
+        "VENDITE": {
+          "positivo": "I clienti del concorrente passano ai tuoi venditori",
+          "negativo": "I clienti del concorrente pagano male, e li segui tu"
+        },
+        "MARKETING": {
+          "positivo": "Un marchio storico da rilanciare: il progetto è tuo",
+          "negativo": "Il marchio del concorrente ha una pessima fama: ora ce l'abbiamo noi"
+        },
+        "FINANZA": {
+          "positivo": "Comprato a prezzo di saldo: l'affare del decennio lo firmi tu",
+          "negativo": "Nei conti del concorrente spuntano debiti nascosti: gestirli tocca a te"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Ottimi tecnici in arrivo dal concorrente: il tuo reparto ci guadagna",
+          "negativo": "Due squadre che si odiano da anni da far convivere"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "I brevetti del concorrente arrivano nel tuo laboratorio",
+          "negativo": "I progetti del concorrente doppiano i tuoi: il tuo viene chiuso"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "I sistemi del concorrente sono più moderni: li adotti e brilli",
+          "negativo": "Due sistemi incompatibili da unire: un anno di emergenze per te"
+        }
+      }
     },
     {
       "id": "app-aziendale-per-i-clienti",
@@ -492,7 +1823,42 @@
         1,
         2,
         3
-      ]
+      ],
+      "spiegazione": "L'app funziona (venerdì sera a parte): qualche ordine in più",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "L'app mostra la domanda in tempo reale: ordini più precisi",
+          "negativo": "L'app promette disponibilità immediata: scorte sempre piene da tenere"
+        },
+        "PRODUZIONE": {
+          "positivo": "Gli ordini dall'app arrivano già completi: meno errori in linea",
+          "negativo": "L'app permette ordini personalizzati: cambi continui sulle tue linee"
+        },
+        "VENDITE": {
+          "positivo": "I clienti ordinano dall'app, e le provvigioni restano tue",
+          "negativo": "I clienti ordinano dall'app senza passare dai tuoi venditori"
+        },
+        "MARKETING": {
+          "positivo": "Notifiche dirette ai clienti: le tue promozioni arrivano a tutti",
+          "negativo": "Recensioni dell'app da una stella: il marchio ne soffre"
+        },
+        "FINANZA": {
+          "positivo": "Pagamenti dall'app, incassi immediati",
+          "negativo": "Commissioni sui pagamenti digitali da far quadrare"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Meno telefonate: il centralino si libera",
+          "negativo": "Centralinisti da riqualificare: corsi e malumori da gestire"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "I dati dell'app ti dicono cosa vogliono i clienti",
+          "negativo": "I clienti chiedono dall'app funzioni che non esistono ancora"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "L'app la sviluppi tu: il progetto più visibile dell'anno",
+          "negativo": "L'app si blocca ogni venerdì sera, e il reperibile sei tu"
+        }
+      }
     },
     {
       "id": "bilancio-sociale-e-di-sostenibilita",
@@ -505,7 +1871,42 @@
         2,
         3,
         4
-      ]
+      ],
+      "spiegazione": "Il bilancio sociale conquista banche e grandi clienti: salto di reputazione",
+      "testi": {
+        "ACQUISTI": {
+          "positivo": "Fornitori sostenibili: contratti premiati dalle banche",
+          "negativo": "Ogni fornitore deve dimostrare di essere «sostenibile»: moduli a te"
+        },
+        "PRODUZIONE": {
+          "positivo": "Meno scarti e meno sprechi: le tue linee diventano un esempio",
+          "negativo": "Ogni chilo di scarto delle tue linee va misurato e spiegato"
+        },
+        "VENDITE": {
+          "positivo": "I grandi clienti chiedono il bilancio sociale: ora ce l'hai",
+          "negativo": "I clienti leggono il bilancio e chiedono sconti «verdi»"
+        },
+        "MARKETING": {
+          "positivo": "Il bilancio sociale è materiale d'oro per le tue campagne",
+          "negativo": "Il bilancio sociale rivela dati imbarazzanti: addolcirli tocca a te"
+        },
+        "FINANZA": {
+          "positivo": "Investitori attenti alla sostenibilità: finanziamenti migliori",
+          "negativo": "Un secondo bilancio da preparare, e lo prepari tu"
+        },
+        "RISORSE_UMANE": {
+          "positivo": "Il bilancio racconta il buon clima aziendale: candidature in aumento",
+          "negativo": "Questionari a tutti i dipendenti, e qualcuno risponde male"
+        },
+        "RICERCA_SVILUPPO": {
+          "positivo": "I tuoi progetti verdi finiscono in prima pagina",
+          "negativo": "Il tuo laboratorio consuma troppo, e ora è scritto nero su bianco"
+        },
+        "IT_SICUREZZA": {
+          "positivo": "I dati raccolti dai tuoi sistemi diventano il cuore del bilancio",
+          "negativo": "Dati ambientali da raccogliere da ogni reparto, a mano"
+        }
+      }
     }
   ]
 }
