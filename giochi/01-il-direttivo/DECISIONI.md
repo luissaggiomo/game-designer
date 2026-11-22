@@ -503,3 +503,12 @@ Modello di voce:
 - Scelta di Luis: **36 segreti**: 28 escono in qualsiasi trimestre, 4 solo a inizio anno (T1–T2), 4 solo a fine anno (T3–T4). Il gioco **non estrae due "da custodire" nello stesso trimestre** (parametro `massimoPerTrimestre`).
 - Effetto: in una partita esce poco più di un quinto della lista; meno partite "fortunate" per le spie.
 - Rif.: GDD §11.5
+
+## D-045 — Quesiti con due versioni: l'effetto non si impara a memoria
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: con lo schema fisso per quesito, dopo poche serate i giocatori abituali ricordano quali proposte convengono all'azienda (rischio segnalato in D-031).
+- Alternative: A) lasciare così · B) due schemi per quesito, estratti a ogni partita · C) schema fisso con effetto che oscilla di ±1 · D) qualsiasi schema per qualsiasi quesito.
+- Scelta di Luis: **B**, con probabilità ⚖️ **50%** (`selezione.probabilitaAlternativa` in config.json).
+- Regole: l'alternativa ha un effetto sull'azienda **diverso** (i quesiti "buoni" diventano deboli o dannosi e viceversa) e una **propria frase di spiegazione** (rivede D-033: una frase per versione); nel mazzo ogni schema compare come alternativa tante volte quante come principale, così la media degli effetti non cambia. Titoli, costi, categorie, frasi dei reparti e astensione restano uguali.
+- Effetto: chi gioca spesso non ha vantaggi di memoria; la spia non può contare sul ricordo per spingere i quesiti dannosi, e gli onesti esperti non possono smascherare un bluff solo ricordando il titolo. Reparti: nessun effetto (i ruoli restano estratti a caso).
+- Tabella delle 40 coppie: [docs/contenuti/quesiti.md](docs/contenuti/quesiti.md) · Rif.: GDD §8.2 · D-023, D-031, D-033

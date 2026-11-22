@@ -6,6 +6,9 @@
  * autogestione. Il ruolo migliore va al reparto finora meno "favorito" (D-014), gli altri a caso:
  * così tutti i reparti sono uguali per costruzione, e i vacanti non ricevono mai un ruolo (D-006).
  *
+ * Versioni (D-045): un quesito può uscire con il suo schema alternativo (probabilità in config), così
+ * l'effetto sull'azienda non si impara a memoria tra una serata e l'altra.
+ *
  * Pesi effettivi: i ruoli hanno il loro peso, gli altri reparti occupati (anche demansionati, la
  * cui assenza pesa sulla soglia, §8.4) hanno "pesoAltri"; i vacanti 0. Nei quesiti con astensione
  * tutti i reparti occupati pesano 1 (D-013).
@@ -35,9 +38,10 @@ export function estraiOrdineDelGiorno(partita: Partita, ambiente: Ambiente, casu
   }
   partita.proposteUscite.push(...scelti.map((m) => m.id));
 
-  // 2. Assegnazione dei ruoli ai reparti.
+  // 2. Versione del quesito: principale o alternativa (D-045), poi assegnazione dei ruoli ai reparti.
   return scelti.map((m, i) => {
-    const schema = schemi[m.schema]!;
+    const alternativa = m.alternativa && casuale.probabilita(config.selezione.probabilitaAlternativa) ? m.alternativa : undefined;
+    const schema = schemi[alternativa?.schema ?? m.schema]!;
     const ruoli = [...schema.ruoli].sort((a, b) => b.punti - a.punti);
     const puntiMigliori = ruoli[0]?.punti ?? 0;
     const liberi = casuale.mescola(conRuolo);
@@ -87,7 +91,7 @@ export function estraiOrdineDelGiorno(partita: Partita, ambiente: Ambiente, casu
       categoria: m.categoria,
       costo: m.costo,
       astensioneAmmessa: m.astensioneAmmessa ?? false,
-      spiegazione: m.spiegazione,
+      spiegazione: alternativa?.spiegazione ?? m.spiegazione,
       pesi,
       effettiPrivati,
       effettoAzienda: schema.effettoAzienda,

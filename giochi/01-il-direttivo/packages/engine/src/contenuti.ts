@@ -37,6 +37,8 @@ export interface ModelloProposta {
   astensioneAmmessa?: boolean;
   /** Frase per la TV che spiega l'effetto reale sull'azienda (D-033). */
   spiegazione: string;
+  /** Secondo schema possibile, con la sua spiegazione, estratto a ogni partita (D-045). */
+  alternativa?: { schema: string; spiegazione: string };
   /** Frasi su misura per reparto e segno dell'effetto (D-030, D-032). */
   testi?: Partial<Record<RepartoId, { positivo?: string; negativo?: string }>>;
 }
@@ -99,6 +101,14 @@ export function controllaContenuti(
     if (!m.spiegazione) problemi.push(`${dove}: manca la frase di spiegazione (D-033)`);
     if (!(m.costo > 0)) problemi.push(`${dove}: il costo deve essere positivo`);
     if (!schemi[m.schema]) problemi.push(`${dove}: schema "${m.schema}" inesistente`);
+    if (m.alternativa) {
+      const alt = schemi[m.alternativa.schema];
+      if (!alt) problemi.push(`${dove}: schema alternativo "${m.alternativa.schema}" inesistente`);
+      else if (schemi[m.schema] && alt.effettoAzienda === schemi[m.schema]!.effettoAzienda) {
+        problemi.push(`${dove}: lo schema alternativo deve avere un effetto sull'azienda diverso (D-045)`);
+      }
+      if (!m.alternativa.spiegazione) problemi.push(`${dove}: manca la spiegazione dello schema alternativo`);
+    }
     if (m.trimestri.length === 0 || m.trimestri.some((t) => !Number.isInteger(t) || t < 1 || t > config.trimestri)) {
       problemi.push(`${dove}: trimestri non validi`);
     }

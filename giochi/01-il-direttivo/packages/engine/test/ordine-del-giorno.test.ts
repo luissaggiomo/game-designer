@@ -88,10 +88,11 @@ describe("ordine del giorno, modello B (D-008, D-014, D-023)", () => {
     }
   });
 
-  it("gli effetti assegnati sono esattamente quelli dello schema del quesito", () => {
+  it("gli effetti assegnati sono esattamente quelli dello schema del quesito (versione estratta, D-045)", () => {
     const p = crea(8, 7);
     for (const q of p.proposteTrimestre) {
-      const schema = ambiente.schemi[ambiente.mazzo.find((m) => m.id === q.modelloId)!.schema]!;
+      const m = ambiente.mazzo.find((x) => x.id === q.modelloId)!;
+      const schema = ambiente.schemi[q.spiegazione === m.alternativa?.spiegazione ? m.alternativa.schema : m.schema]!;
       const assegnati = Object.values(q.effettiPrivati).map((e) => e!.punti ?? 0).filter((x) => x !== 0).sort();
       expect(assegnati).toEqual(schema.ruoli.map((r) => r.punti).filter((x) => x !== 0).sort());
       expect(q.effettoAzienda).toBe(schema.effettoAzienda);
@@ -136,5 +137,49 @@ describe("controllo dei contenuti", () => {
   it("mazzo, schemi, frasi e segreti predefiniti sono validi", () => {
     expect(() => caricaAmbiente()).not.toThrow();
     expect(ambiente.mazzo.length).toBeGreaterThanOrEqual(40);
+  });
+});
+
+describe("versioni dei quesiti: schema principale o alternativo (D-045)", () => {
+  const conProbabilita = (probabilita: number): Ambiente => ({
+    ...ambiente,
+    config: { ...ambiente.config, selezione: { ...ambiente.config.selezione, probabilitaAlternativa: probabilita } },
+  });
+  /** Effetto sull'azienda e spiegazione di ogni quesito estratto nel 1° trimestre, su molti semi. */
+  const estratti = (amb: Ambiente) =>
+    Array.from({ length: 60 }, (_, i) => crea(5, i + 1, amb)).flatMap((p) =>
+      p.proposteTrimestre.map((x) => ({ modello: amb.mazzo.find((m) => m.id === x.modelloId)!, effetto: x.effettoAzienda, spiegazione: x.spiegazione })),
+    );
+
+  it("ogni quesito del mazzo ha un'alternativa con un effetto sull'azienda diverso", () => {
+    for (const m of ambiente.mazzo) {
+      expect(m.alternativa).toBeDefined();
+      expect(ambiente.schemi[m.alternativa!.schema]!.effettoAzienda).not.toBe(ambiente.schemi[m.schema]!.effettoAzienda);
+    }
+  });
+
+  it("nel mazzo ogni schema compare tante volte come alternativa quante come principale (taratura invariata)", () => {
+    const conta = (f: (m: Ambiente["mazzo"][number]) => string) =>
+      ambiente.mazzo.reduce<Record<string, number>>((acc, m) => ({ ...acc, [f(m)]: (acc[f(m)] ?? 0) + 1 }), {});
+    expect(conta((m) => m.alternativa!.schema)).toEqual(conta((m) => m.schema));
+  });
+
+  it("con probabilità 0 esce sempre la versione principale, con 1 sempre l'alternativa, ognuna con la sua spiegazione", () => {
+    for (const e of estratti(conProbabilita(0))) {
+      expect(e.effetto).toBe(ambiente.schemi[e.modello.schema]!.effettoAzienda);
+      expect(e.spiegazione).toBe(e.modello.spiegazione);
+    }
+    for (const e of estratti(conProbabilita(1))) {
+      expect(e.effetto).toBe(ambiente.schemi[e.modello.alternativa!.schema]!.effettoAzienda);
+      expect(e.spiegazione).toBe(e.modello.alternativa!.spiegazione);
+    }
+  });
+
+  it("con la probabilità predefinita escono entrambe le versioni, in modo riproducibile col seme", () => {
+    const tutti = estratti(ambiente);
+    const alternative = tutti.filter((e) => e.spiegazione === e.modello.alternativa!.spiegazione).length;
+    expect(alternative).toBeGreaterThan(tutti.length * 0.3);
+    expect(alternative).toBeLessThan(tutti.length * 0.7);
+    expect(crea(5, 7).proposteTrimestre).toEqual(crea(5, 7).proposteTrimestre);
   });
 });

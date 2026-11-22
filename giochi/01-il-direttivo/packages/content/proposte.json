@@ -1,5 +1,5 @@
 {
-  "_nota": "Mazzo dei quesiti (D-023, modello B): ogni quesito ha uno schema di effetto; i ruoli si assegnano ai reparti al momento dell'estrazione. Titoli PROVVISORI, generici per adattarsi a qualsiasi reparto. 'testi' (facoltativo) permette frasi su misura per reparto; altrimenti si usano le frasi di frasi.json. Costi in K€ (D-018).",
+  "_nota": "Mazzo dei quesiti (D-023, modello B): ogni quesito ha uno schema di effetto; i ruoli si assegnano ai reparti al momento dell'estrazione. Titoli 'a doppia faccia' (D-030, D-031); 'testi': frasi su misura per ogni reparto e segno (D-032); 'spiegazione': frase per la TV sull'effetto reale (D-033). 'alternativa' (D-045): secondo schema con la sua spiegazione, estratto a ogni partita con la probabilità in config.json (selezione.probabilitaAlternativa), così l'effetto non si impara a memoria. Costi in K€ (D-018).",
   "proposte": [
     {
       "id": "nuovo-gestionale-aziendale",
@@ -13,6 +13,10 @@
         3
       ],
       "spiegazione": "Dopo tre mesi di lamentele il gestionale funziona: ordini più rapidi, meno errori",
+      "alternativa": {
+        "schema": "RISCHIO",
+        "spiegazione": "Il gestionale funziona, ma tra licenze e consulenti si mangia tutto il risparmio"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Il gestionale lo configuri tu: ordini automatici e fornitori sotto controllo",
@@ -61,6 +65,10 @@
         4
       ],
       "spiegazione": "Rumoroso ma vivace: l'open space fa circolare qualche idea in più",
+      "alternativa": {
+        "schema": "RISCHIO",
+        "spiegazione": "Più idee, ma anche più chiacchiere: l'open space non cambia nulla"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Gli arredi li scegli tu: i fornitori ti fanno sconti anche sul resto",
@@ -109,6 +117,10 @@
         4
       ],
       "spiegazione": "Il taglio regge: conti più snelli e prezzi più competitivi",
+      "alternativa": {
+        "schema": "COPPIA",
+        "spiegazione": "Il taglio fa risparmiare, ma qualche servizio peggiora: guadagno piccolo"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Rinegozi pulizie e cancelleria: parte del risparmio resta al tuo reparto",
@@ -156,6 +168,10 @@
         3
       ],
       "spiegazione": "Il cliente è soddisfatto ma pretende lo sconto: tanto lavoro, guadagno zero",
+      "alternativa": {
+        "schema": "PROTAGONISTA",
+        "spiegazione": "Il pilota riesce: il cliente firma un contratto di tre anni"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Il cliente ti apre i suoi fornitori: prezzi da grande gruppo anche per te",
@@ -204,6 +220,10 @@
         4
       ],
       "spiegazione": "Duecento slide, tre idee buone: qualcosa migliora davvero",
+      "alternativa": {
+        "schema": "PROTAGONISTA",
+        "spiegazione": "Una delle tre idee dei consulenti si rivela d'oro: bel passo avanti"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "I consulenti confermano che spendi bene: lo scrivono anche nelle slide",
@@ -251,6 +271,10 @@
         3
       ],
       "spiegazione": "Con il bollino internazionale si aprono mercati nuovi: grande passo avanti",
+      "alternativa": {
+        "schema": "EGOISTICO",
+        "spiegazione": "Mesi di moduli per un bollino che nessun cliente guarda: soldi buttati"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Fornitori certificati: meno controlli e meno contestazioni per te",
@@ -299,6 +323,10 @@
         4
       ],
       "spiegazione": "Il fondo finisce in un progetto che interessa solo a chi l'ha voluto: soldi bruciati",
+      "alternativa": {
+        "schema": "AZIENDALE",
+        "spiegazione": "Dal fondo esce un'idea brillante che migliora tutta l'azienda: colpo grosso"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Il fondo va al tuo reparto: compri gli strumenti che aspettavi da anni",
@@ -346,6 +374,10 @@
         3
       ],
       "spiegazione": "Stand affollato per tre giorni: contatti nuovi e marchio in vista",
+      "alternativa": {
+        "schema": "COPPIA",
+        "spiegazione": "Tre giorni di strette di mano: qualche contatto buono, niente di più"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "In fiera incontri tre fornitori nuovi: listini più bassi per il tuo reparto",
@@ -393,6 +425,10 @@
         4
       ],
       "spiegazione": "Qualche attrito, ma lo scambio di persone sblocca un paio di colli di bottiglia",
+      "alternativa": {
+        "schema": "SACRIFICIO",
+        "spiegazione": "Le persone prestate portano metodi nuovi: l'azienda ne guadagna parecchio"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Ti arrivano rinforzi esperti: gli ordini arretrati spariscono",
@@ -440,6 +476,10 @@
         3
       ],
       "spiegazione": "Bella sede, belle foto, stessi clienti di prima: l'affitto si mangia tutto",
+      "alternativa": {
+        "schema": "PAREGGIO",
+        "spiegazione": "La sede in centro attira qualche cliente importante: guadagno modesto"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Ricevi i fornitori in centro: davanti a quella sede trattano meglio",
@@ -489,6 +529,10 @@
       ],
       "astensioneAmmessa": true,
       "spiegazione": "Personale più riposato e meno assenze: piccolo guadagno di produttività",
+      "alternativa": {
+        "schema": "SACRIFICIO",
+        "spiegazione": "Quattro giorni, ma lavorati tutti: produttività in netta crescita"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Ordini concentrati in quattro giorni: i fornitori si adeguano e tu respiri",
@@ -538,6 +582,10 @@
       ],
       "astensioneAmmessa": true,
       "spiegazione": "Il corso funziona davvero: errori dimezzati in tutta l'azienda",
+      "alternativa": {
+        "schema": "EGOISTICO",
+        "spiegazione": "Una giornata di slide e sbadigli: ore di lavoro perse per niente"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Il corso insegna a trattare: i tuoi buyer tornano più agguerriti",
@@ -586,6 +634,10 @@
         4
       ],
       "spiegazione": "L'auto si vede più spesso al bar che dai clienti: spesa senza ritorno",
+      "alternativa": {
+        "schema": "AZIENDALE",
+        "spiegazione": "Con l'auto le visite raddoppiano e i clienti firmano: investimento azzeccato"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "L'auto la usi tu per visitare i fornitori: trattative di persona",
@@ -634,6 +686,10 @@
         4
       ],
       "spiegazione": "Prezzi bloccati e consegne puntuali: l'accordo quadro ripaga",
+      "alternativa": {
+        "schema": "PAREGGIO",
+        "spiegazione": "Prezzi bloccati, ma il fornitore unico se la prende comoda: piccolo vantaggio"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Un solo contratto da gestire invece di trenta: meno lavoro per te",
@@ -681,6 +737,10 @@
         3
       ],
       "spiegazione": "Lo spot fa parlare di noi: il marchio guadagna terreno sui concorrenti",
+      "alternativa": {
+        "schema": "RISCHIO",
+        "spiegazione": "Spot simpatico, tutti lo ricordano, pochi comprano: incassi pari alla spesa"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Gli spazi TV li compri tu, all'asta: grande sconto e grande merito",
@@ -728,6 +788,10 @@
         3
       ],
       "spiegazione": "Qualche file perso, ma ora tutti trovano le cose un po' più in fretta",
+      "alternativa": {
+        "schema": "PROTAGONISTA",
+        "spiegazione": "Archivi digitali e ricerche istantanee: l'azienda lavora molto più spedita"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Contratti dei fornitori trovati in un secondo: rinnovi più convenienti",
@@ -776,6 +840,10 @@
         4
       ],
       "spiegazione": "L'esperto porta idee brillanti e costa una fortuna: alla fine si va in pari",
+      "alternativa": {
+        "schema": "COPPIA",
+        "spiegazione": "L'esperto costa tanto ma risolve due problemi cronici: piccolo guadagno"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "L'esperto viene assegnato a te: rinegozia tutti i contratti",
@@ -824,6 +892,10 @@
         4
       ],
       "spiegazione": "Meno viaggi, meno spese, quasi nessun cliente perso: piccolo risparmio",
+      "alternativa": {
+        "schema": "SACRIFICIO",
+        "spiegazione": "Le videochiamate funzionano: viaggi dimezzati e clienti contenti lo stesso"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Le visite ai fornitori diventano videochiamate: meno spese per te",
@@ -872,6 +944,10 @@
         4
       ],
       "spiegazione": "Bollette giù di un terzo: un risparmio che si sente su tutti i prezzi",
+      "alternativa": {
+        "schema": "RISCHIO",
+        "spiegazione": "Bollette più basse, ma la rata degli impianti si mangia il risparmio"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Rinegozi il contratto della luce: bel colpo per il tuo reparto",
@@ -920,6 +996,10 @@
       ],
       "astensioneAmmessa": true,
       "spiegazione": "Il premio scatena invidie e la corsa agli obiettivi facili: l'azienda ci perde",
+      "alternativa": {
+        "schema": "AZIENDALE",
+        "spiegazione": "Tutti inseguono gli obiettivi e li superano: anno record per l'azienda"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Il premio va al tuo reparto per i risparmi sugli acquisti",
@@ -968,6 +1048,10 @@
         4
       ],
       "spiegazione": "Gara vinta: un cliente pubblico che paga sempre e porta prestigio",
+      "alternativa": {
+        "schema": "COPPIA",
+        "spiegazione": "Gara vinta col prezzo più basso: lavoro assicurato, margini sottili"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "La gara premia i fornitori locali: trattative più semplici per te",
@@ -1017,6 +1101,10 @@
       ],
       "astensioneAmmessa": true,
       "spiegazione": "Furti azzerati e assicurazione più bassa: le telecamere si ripagano",
+      "alternativa": {
+        "schema": "PAREGGIO",
+        "spiegazione": "Qualche furto in meno, qualche malumore in più: piccolo guadagno"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Le telecamere le scegli tu: contratto ricco e fornitore riconoscente",
@@ -1064,6 +1152,10 @@
         3
       ],
       "spiegazione": "Il trasloco costa fatica, ma le consegne lontane ora sono più veloci",
+      "alternativa": {
+        "schema": "PROTAGONISTA",
+        "spiegazione": "Affitto dimezzato e camion senza traffico: il nuovo magazzino ripaga presto"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Magazzino più grande: compri in grandi quantità, a prezzi migliori",
@@ -1111,6 +1203,10 @@
         3
       ],
       "spiegazione": "Le vendite salgono ma i margini spariscono: la linea economica va in pari",
+      "alternativa": {
+        "schema": "COPPIA",
+        "spiegazione": "La linea economica porta clienti nuovi senza rubare i vecchi: piccolo guadagno"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Materiali economici in grandi quantità: il tuo reparto fa il colpo",
@@ -1160,6 +1256,10 @@
       ],
       "astensioneAmmessa": true,
       "spiegazione": "Le riunioni del lunedì evitano qualche lavoro doppio: guadagno modesto",
+      "alternativa": {
+        "schema": "SACRIFICIO",
+        "spiegazione": "Le riunioni del lunedì allineano tutti: errori e lavori doppi in netto calo"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Al lunedì scopri in anticipo cosa serve: ordini meno urgenti",
@@ -1208,6 +1308,10 @@
         4
       ],
       "spiegazione": "Contratti nuovi, pagamenti puntuali: l'azienda respira come non mai",
+      "alternativa": {
+        "schema": "EGOISTICO",
+        "spiegazione": "Ai clienti le nuove clausole non piacciono: due se ne vanno sbattendo la porta"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Contratti chiari con i clienti: ordini ai fornitori più prevedibili",
@@ -1256,6 +1360,10 @@
         4
       ],
       "spiegazione": "La squadra retrocede: il nostro logo su ogni sconfitta",
+      "alternativa": {
+        "schema": "AZIENDALE",
+        "spiegazione": "La squadra vince il campionato: il nostro logo ovunque, e ordini a pioggia"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Lo sponsor tecnico della squadra è un tuo fornitore: sconti sulle forniture",
@@ -1304,6 +1412,10 @@
         4
       ],
       "spiegazione": "Computer nuovi, meno blocchi: tutta l'azienda lavora più veloce",
+      "alternativa": {
+        "schema": "PAREGGIO",
+        "spiegazione": "Computer veloci, ma metà del tempo va a imparare i programmi nuovi"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Un ordine enorme: il fornitore ti regala anche i telefoni",
@@ -1352,6 +1464,10 @@
         4
       ],
       "spiegazione": "Meno assenze, più energia: lo yoga alle 7 funziona (nessuno lo ammetterà)",
+      "alternativa": {
+        "schema": "PAREGGIO",
+        "spiegazione": "Lo yoga alle 7 lo fanno in tre, ma quei tre lavorano meglio: guadagno minimo"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "La palestra convenzionata la trovi tu: sconto e merito al tuo reparto",
@@ -1399,6 +1515,10 @@
         4
       ],
       "spiegazione": "Servizi esterni un po' più lenti ma più economici: piccolo vantaggio",
+      "alternativa": {
+        "schema": "SACRIFICIO",
+        "spiegazione": "I servizi esterni costano meno e funzionano meglio: buon risparmio"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "I contratti con le ditte esterne li gestisci tu: potere e sconti",
@@ -1445,6 +1565,10 @@
         2
       ],
       "spiegazione": "L'ufficio estero vende, ma costa altrettanto: per ora si va in pari",
+      "alternativa": {
+        "schema": "PAREGGIO",
+        "spiegazione": "L'ufficio estero trova i primi clienti: piccolo guadagno, per ora"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "All'estero trovi fornitori molto più economici",
@@ -1494,6 +1618,10 @@
       ],
       "astensioneAmmessa": true,
       "spiegazione": "Un'aria più professionale: i clienti notano la differenza, un po'",
+      "alternativa": {
+        "schema": "PROTAGONISTA",
+        "spiegazione": "Look professionale, clienti colpiti: diverse trattative chiuse in più"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Divise per tutti: un ordine ricco e un fornitore riconoscente",
@@ -1542,6 +1670,10 @@
         4
       ],
       "spiegazione": "I numeri mensili scovano sprechi ovunque: grande recupero di efficienza",
+      "alternativa": {
+        "schema": "EGOISTICO",
+        "spiegazione": "Più tempo a compilare report che a lavorare: il controllo costa più di quel che scova"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "I numeri mensili dimostrano quanto risparmi: il tuo reparto brilla",
@@ -1590,6 +1722,10 @@
         4
       ],
       "spiegazione": "Piano direzionale splendido, clienti mai visti: soldi spesi per pochi",
+      "alternativa": {
+        "schema": "AZIENDALE",
+        "spiegazione": "I grandi clienti ora vengono volentieri: trattative chiuse nella sala nuova"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Il tuo reparto si trasferisce al piano nuovo: fornitori ricevuti con stile",
@@ -1637,6 +1773,10 @@
         3
       ],
       "spiegazione": "Arriva la crisi delle forniture: i concorrenti restano a secco, noi no",
+      "alternativa": {
+        "schema": "EGOISTICO",
+        "spiegazione": "La crisi delle forniture non arriva: magazzino pieno e soldi fermi sugli scaffali"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Un ordine gigante: prezzi bloccati e fornitore riconoscente",
@@ -1684,6 +1824,10 @@
         4
       ],
       "spiegazione": "Migliaia di partecipanti al concorso: clienti nuovi e marchio più noto",
+      "alternativa": {
+        "schema": "COPPIA",
+        "spiegazione": "Partecipano soprattutto i clienti che avevamo già: piccolo ritorno"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "I premi li compri tu: sconto enorme dal fornitore",
@@ -1732,6 +1876,10 @@
         4
       ],
       "spiegazione": "I turni del sabato smaltiscono gli arretrati: qualche ordine in più",
+      "alternativa": {
+        "schema": "RISCHIO",
+        "spiegazione": "Straordinari pagati cari e stanchezza il lunedì: gli ordini in più si pagano da soli"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Consegne anche il sabato: i fornitori ti fanno prezzi migliori",
@@ -1778,6 +1926,10 @@
         3
       ],
       "spiegazione": "Clienti in più, debiti in più: l'acquisizione va in pari",
+      "alternativa": {
+        "schema": "AZIENDALE",
+        "spiegazione": "I clienti del concorrente passano a noi in blocco: affare dell'anno"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Il concorrente aveva fornitori migliori: ora sono tuoi",
@@ -1825,6 +1977,10 @@
         3
       ],
       "spiegazione": "L'app funziona (venerdì sera a parte): qualche ordine in più",
+      "alternativa": {
+        "schema": "PROTAGONISTA",
+        "spiegazione": "L'app piace: i clienti ordinano di più e più spesso"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "L'app mostra la domanda in tempo reale: ordini più precisi",
@@ -1873,6 +2029,10 @@
         4
       ],
       "spiegazione": "Il bilancio sociale conquista banche e grandi clienti: salto di reputazione",
+      "alternativa": {
+        "schema": "RISCHIO",
+        "spiegazione": "Bel documento, applausi al convegno, nessun contratto in più: si va in pari"
+      },
       "testi": {
         "ACQUISTI": {
           "positivo": "Fornitori sostenibili: contratti premiati dalle banche",

@@ -727,3 +727,50 @@ Verifiche: `corepack pnpm verifica` superato (controllo tipi + 135 test). Simula
 4. Gli id dei 5 quesiti rinominati restano i vecchi (es. `auto-aziendale-nuova`): funzionano, ma
    non corrispondono più al titolo. Rinominarli solo se nessun report o test li usa.
 5. Punto aperto 29 (informazioni di contesto, es. Marketing) non toccato.
+
+## D-045 — Seconda versione di ogni quesito (aggiunta del 22/11/2026)
+
+Scelta di Luis (B, probabilità 50%): a ogni partita ogni quesito esce con lo schema principale o con l'alternativa, ognuno con la sua frase per la TV. Registrata in DECISIONI.md.
+
+| # | Quesito | Principale | Alternativa | Frase in TV dell'alternativa |
+|---|---|---|---|---|
+| 1 | Nuovo gestionale aziendale (l'ennesimo) | PROTAGONISTA +2 | RISCHIO 0 | Il gestionale funziona, ma tra licenze e consulenti si mangia tutto il risparmio |
+| 2 | Riorganizzazione degli uffici in open space | COPPIA +1 | RISCHIO 0 | Più idee, ma anche più chiacchiere: l'open space non cambia nulla |
+| 3 | Taglio del 10% alle spese generali | SACRIFICIO +2 | COPPIA +1 | Il taglio fa risparmiare, ma qualche servizio peggiora: guadagno piccolo |
+| 4 | Progetto pilota con un cliente importante | RISCHIO 0 | PROTAGONISTA +2 | Il pilota riesce: il cliente firma un contratto di tre anni |
+| 5 | Consulenza strategica di una società famosa | PAREGGIO +1 | PROTAGONISTA +2 | Una delle tre idee dei consulenti si rivela d'oro: bel passo avanti |
+| 6 | Certificazione di qualità internazionale | AZIENDALE +3 | EGOISTICO -1 | Mesi di moduli per un bollino che nessun cliente guarda: soldi buttati |
+| 7 | Fondo per l'innovazione interna | EGOISTICO -1 | AZIENDALE +3 | Dal fondo esce un'idea brillante che migliora tutta l'azienda: colpo grosso |
+| 8 | Fiera di settore a Milano | PROTAGONISTA +2 | COPPIA +1 | Tre giorni di strette di mano: qualche contatto buono, niente di più |
+| 9 | Prestito di personale tra reparti per un anno | COPPIA +1 | SACRIFICIO +2 | Le persone prestate portano metodi nuovi: l'azienda ne guadagna parecchio |
+| 10 | Nuova sede di rappresentanza in centro | RISCHIO 0 | PAREGGIO +1 | La sede in centro attira qualche cliente importante: guadagno modesto |
+| 11 | Settimana corta sperimentale | PAREGGIO +1 | SACRIFICIO +2 | Quattro giorni, ma lavorati tutti: produttività in netta crescita |
+| 12 | Corso di formazione obbligatorio per tutti | AZIENDALE +3 | EGOISTICO -1 | Una giornata di slide e sbadigli: ore di lavoro perse per niente |
+| 13 | Auto di rappresentanza per le visite ai clienti | EGOISTICO -1 | AZIENDALE +3 | Con l'auto le visite raddoppiano e i clienti firmano: investimento azzeccato |
+| 14 | Accordo quadro con un fornitore unico | SACRIFICIO +2 | PAREGGIO +1 | Prezzi bloccati, ma il fornitore unico se la prende comoda: piccolo vantaggio |
+| 15 | Campagna pubblicitaria in televisione | PROTAGONISTA +2 | RISCHIO 0 | Spot simpatico, tutti lo ricordano, pochi comprano: incassi pari alla spesa |
+| 16 | Digitalizzazione di tutti gli archivi | COPPIA +1 | PROTAGONISTA +2 | Archivi digitali e ricerche istantanee: l'azienda lavora molto più spedita |
+| 17 | Assunzione di un super-esperto (carissimo) | RISCHIO 0 | COPPIA +1 | L'esperto costa tanto ma risolve due problemi cronici: piccolo guadagno |
+| 18 | Nuove regole sulle trasferte | PAREGGIO +1 | SACRIFICIO +2 | Le videochiamate funzionano: viaggi dimezzati e clienti contenti lo stesso |
+| 19 | Piano di risparmio energetico | AZIENDALE +3 | RISCHIO 0 | Bollette più basse, ma la rata degli impianti si mangia il risparmio |
+| 20 | Premio di risultato legato agli obiettivi | EGOISTICO -1 | AZIENDALE +3 | Tutti inseguono gli obiettivi e li superano: anno record per l'azienda |
+| 21 | Partecipazione a una gara d'appalto pubblica | SACRIFICIO +2 | COPPIA +1 | Gara vinta col prezzo più basso: lavoro assicurato, margini sottili |
+| 22 | Sistema di videosorveglianza (anche in mensa) | PROTAGONISTA +2 | PAREGGIO +1 | Qualche furto in meno, qualche malumore in più: piccolo guadagno |
+| 23 | Spostamento del magazzino fuori città | COPPIA +1 | PROTAGONISTA +2 | Affitto dimezzato e camion senza traffico: il nuovo magazzino ripaga presto |
+| 24 | Lancio di una linea di prodotti economici | RISCHIO 0 | COPPIA +1 | La linea economica porta clienti nuovi senza rubare i vecchi: piccolo guadagno |
+| 25 | Riunione settimanale obbligatoria del lunedì | PAREGGIO +1 | SACRIFICIO +2 | Le riunioni del lunedì allineano tutti: errori e lavori doppi in netto calo |
+| 26 | Revisione completa dei contratti con i clienti | AZIENDALE +3 | EGOISTICO -1 | Ai clienti le nuove clausole non piacciono: due se ne vanno sbattendo la porta |
+| 27 | Sponsorizzazione della squadra di calcio locale | EGOISTICO -1 | AZIENDALE +3 | La squadra vince il campionato: il nostro logo ovunque, e ordini a pioggia |
+| 28 | Rinnovo dei computer di tutta l'azienda | SACRIFICIO +2 | PAREGGIO +1 | Computer veloci, ma metà del tempo va a imparare i programmi nuovi |
+| 29 | Programma di benessere aziendale (yoga alle 7) | PROTAGONISTA +2 | PAREGGIO +1 | Lo yoga alle 7 lo fanno in tre, ma quei tre lavorano meglio: guadagno minimo |
+| 30 | Esternalizzazione dei servizi interni | COPPIA +1 | SACRIFICIO +2 | I servizi esterni costano meno e funzionano meglio: buon risparmio |
+| 31 | Apertura di un ufficio all'estero | RISCHIO 0 | PAREGGIO +1 | L'ufficio estero trova i primi clienti: piccolo guadagno, per ora |
+| 32 | Codice di abbigliamento aziendale | PAREGGIO +1 | PROTAGONISTA +2 | Look professionale, clienti colpiti: diverse trattative chiuse in più |
+| 33 | Controllo di gestione mensile su tutti i reparti | AZIENDALE +3 | EGOISTICO -1 | Più tempo a compilare report che a lavorare: il controllo costa più di quel che scova |
+| 34 | Ristrutturazione del piano direzionale | EGOISTICO -1 | AZIENDALE +3 | I grandi clienti ora vengono volentieri: trattative chiuse nella sala nuova |
+| 35 | Scorte di sicurezza per sei mesi | SACRIFICIO +2 | EGOISTICO -1 | La crisi delle forniture non arriva: magazzino pieno e soldi fermi sugli scaffali |
+| 36 | Concorso a premi per i clienti | PROTAGONISTA +2 | COPPIA +1 | Partecipano soprattutto i clienti che avevamo già: piccolo ritorno |
+| 37 | Turni di lavoro anche il sabato | COPPIA +1 | RISCHIO 0 | Straordinari pagati cari e stanchezza il lunedì: gli ordini in più si pagano da soli |
+| 38 | Acquisto di un piccolo concorrente in crisi | RISCHIO 0 | AZIENDALE +3 | I clienti del concorrente passano a noi in blocco: affare dell'anno |
+| 39 | App aziendale per i clienti | PAREGGIO +1 | PROTAGONISTA +2 | L'app piace: i clienti ordinano di più e più spesso |
+| 40 | Bilancio sociale e di sostenibilità | AZIENDALE +3 | RISCHIO 0 | Bel documento, applausi al convegno, nessun contratto in più: si va in pari |

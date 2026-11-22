@@ -11,8 +11,8 @@
   "_votazioniPerTrimestre": "Scaletta T1-T4 (D-014)",
   "cassa": { "perTrimestre": 100, "massima": 150, "unita": "K" },
   "_cassa": "K€ (migliaia di euro). Ogni trimestre: cassa = minimo tra avanzo + perTrimestre e massima (D-018)",
-  "selezione": { "fattoreStessaCategoria": 0.3 },
-  "_selezione": "Estrazione dell'ordine del giorno (D-023): riduce la probabilità di due quesiti della stessa categoria nello stesso trimestre (1 = nessuna riduzione). I ruoli si assegnano ai reparti al momento dell'estrazione.",
+  "selezione": { "fattoreStessaCategoria": 0.3, "probabilitaAlternativa": 0.5 },
+  "_selezione": "Estrazione dell'ordine del giorno (D-023): riduce la probabilità di due quesiti della stessa categoria nello stesso trimestre (1 = nessuna riduzione). I ruoli si assegnano ai reparti al momento dell'estrazione. 'probabilitaAlternativa' (D-045): probabilità che un quesito esca con il suo schema alternativo, così l'effetto sull'azienda non si impara a memoria.",
   "mossaPrivata": {
     "reparto": { "puntiReparto": 1, "deltaAzienda": -1 },
     "azienda": { "puntiReparto": 0, "deltaAzienda": 1 },

@@ -11,7 +11,7 @@ export interface Configurazione {
   reparti: { base: RepartoId[]; aggiuntiviInOrdine: RepartoId[] };
   votazioniPerTrimestre: number[];
   cassa: { perTrimestre: number; massima: number; unita: string };
-  selezione: { fattoreStessaCategoria: number };
+  selezione: { fattoreStessaCategoria: number; probabilitaAlternativa: number };
   mossaPrivata: {
     reparto: { puntiReparto: number; deltaAzienda: number };
     azienda: { puntiReparto: number; deltaAzienda: number };
@@ -131,6 +131,7 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("quesitiConAstensione.quotaDelMazzo", c.quesitiConAstensione.quotaDelMazzo);
   probabilita("autogestione.probabilitaMossaAzienda", c.autogestione.probabilitaMossaAzienda);
   probabilita("selezione.fattoreStessaCategoria", c.selezione.fattoreStessaCategoria);
+  probabilita("selezione.probabilitaAlternativa", c.selezione.probabilitaAlternativa);
   return problemi;
 }
 

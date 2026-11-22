@@ -3,6 +3,16 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.12
+
+### Design
+- D-045 (provvisoria): ogni quesito ha due versioni, principale e alternativa, con effetto sull'azienda diverso e una propria frase di spiegazione; a ogni partita se ne estrae una (⚖️ 50%), così l'effetto non si impara a memoria. Nel mazzo ogni schema compare lo stesso numero di volte nelle due versioni.
+
+### Aggiunto
+- 40 schemi alternativi con la loro frase per la TV (proposte.json, tabella in docs/contenuti/quesiti.md); parametro `selezione.probabilitaAlternativa` in config.json.
+- 4 test (145 in tutto): alternativa sempre con effetto diverso, frequenze degli schemi uguali, probabilità 0 / 1 rispettate, estrazione riproducibile col seme.
+- Ottavo report (docs/simulazioni/2026-11-22-simulazione-08.md).
+
 ## 2026-11-22 — 0.2.11
 
 ### Design
