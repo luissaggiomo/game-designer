@@ -214,15 +214,15 @@
 | Fase | Cosa succede | Dove |
 |---|---|---|
 | **1. Rapporto** | Ognuno vede l'effetto delle proposte sul proprio reparto ed eventuali segreti | Telefono |
-| **2. Discussione e messaggi** | Si discute a voce. Si mandano messaggi privati (quota limitata). | Voce + telefono |
-| **3. Votazioni** | 2–3 proposte del gioco, voto palese con pesi | TV + telefono |
+| **2–3. Ciclo per proposta** (ripetuto 2–3 volte) | **Discussione** a voce sulla proposta di turno, con messaggi privati (quota per trimestre, spesa quando si vuole), poi **votazione** palese con pesi. Il voto appare subito in TV. | Voce + TV + telefono |
 | **4. Mossa privata** | Scelta segreta: interesse personale o aziendale | Telefono |
 | **5. Risultati** | Corsa di mercato, mosse dei concorrenti, esito della mossa privata, effetto reale delle proposte | TV |
 | **6. Demansionamento** (facoltativo) | Votazione per demansionare un direttore | TV + telefono |
 
 ⚖️ Durata indicativa di un trimestre: 10–12 minuti, con timer gestiti dal gioco.
 
-🔴 Da definire: l'ordine esatto delle fasi 2 e 3 (si discute prima di tutte le votazioni o prima di ognuna?) e la durata dei timer.
+✅ *(provvisorio, da verificare col simulatore — D-008)* **Un ciclo discussione → voto per ogni proposta.** L'**ordine delle proposte è casuale** e viene **annunciato già nel Rapporto**, così il gruppo può pianificare la cassa e trattare "pacchetti" fin dal primo ciclo.
+⚖️ Durata dei timer (discussione per ciclo, voto, mossa privata): da tarare. Negli ultimi secondi del voto il telefono dà un preavviso chiaro (il tempo scaduto vale "no", D-007).
 
 ---
 
@@ -271,7 +271,13 @@
 
 🟡 In caso di pareggio la proposta **non passa**.
 
-🔴 Da definire: come si conta il peso dei reparti in autogestione per la soglia (vedi §14).
+✅ *(provvisorio, da verificare col simulatore — D-006)* I **reparti vacanti dall'inizio non contano** nella soglia; i **demansionati sì**. Vedi §14.
+
+### 8.4bis Astensione
+✅ *(provvisorio, da verificare col simulatore — D-007)* **Regola normale: solo SÌ / NO.** Chi non vota entro il tempo vale **"no"**; in TV: *"No (tempo scaduto)"*.
+✅ *(provvisorio — D-007)* **Eccezione: quesiti "con astensione".** Alcuni quesiti, indicati nel mazzo, mostrano anche il tasto **"Mi astengo"**. In quel caso l'astensione è **vera**: la soglia si calcola **solo sul peso di chi ha votato** (sì + no).
+✅ *(provvisorio — D-007)* Nei voti di **demansionamento e promozione** l'astensione **non esiste mai**: solo SÌ / NO, e il tempo scaduto vale "no".
+🔴 Da definire (punto aperto 19): nei quesiti con astensione, il peso dei demansionati entra nel calcolo? Il tempo scaduto vale "no" o astensione? Quanti e quali quesiti hanno l'astensione?
 
 ### 8.5 Voto palese
 ✅ Il voto è **palese**: in TV si vede chi ha votato cosa. Le votazioni sono il cuore delle discussioni.
@@ -280,6 +286,9 @@
 ### 8.6 Numero di proposte
 ⚖️ 2–3 proposte per trimestre.
 🔴 Da definire: la lista completa (indicativamente 20–30 proposte) con effetti e pesi.
+
+✅ *(provvisorio, da verificare col simulatore — D-006)* **Selezione dell'ordine del giorno:** l'estrattore privilegia i quesiti che interessano soprattutto i reparti **occupati** (compresi i demansionati) e scarta quelli con molti reparti vacanti o in cui i vacanti avrebbero un peso rilevante. Il mazzo dei quesiti va costruito in modo che un quesito in cui un vacante "avrebbe" pesato esca solo raramente.
+🔴 Da definire: quante votazioni avvengono in una partita e quanto deve essere grande il mazzo perché la selezione funzioni con ogni numero di giocatori (punto aperto 17).
 
 ---
 
@@ -364,9 +373,10 @@
 
 ✅ 1 o 2 concorrenti, **gestiti dal computer**, visibili in TV nella corsa di mercato.
 ✅ Avanzano grazie ai segreti ricevuti dalle spie, e perdono punti con i segreti falsi.
+✅ *(provvisorio, da verificare col simulatore — D-011)* **1 concorrente da 4 a 7 giocatori, 2 concorrenti con 8.** Il numero dipende solo dal numero di giocatori, così non rivela quante spie ci sono.
+✅ *(provvisorio — D-011)* **Il concorrente di una spia vince se a fine anno supera l'azienda**, anche se non supera l'altro concorrente. Con due spie rivali possono quindi vincere entrambe.
 
 🔴 Da definire:
-- quando ci sono 1 o 2 concorrenti (probabilmente 2 solo se sono possibili 2 spie di concorrenti diversi);
 - il comportamento di base: crescita propria, eventi, casualità;
 - quanto deve essere combattuta la corsa. ⚖️ È la "manopola" principale dell'equilibrio del gioco.
 
@@ -396,8 +406,14 @@
 🟡 Possibile regola correttiva, se le prove lo richiedono: **niente demansionamenti nel 4° trimestre**. Altrimenti una spia può togliere un onesto dal voto finale.
 
 ### 13.4 Da definire
-🔴 Il voto per demansionare: pesi uguali (1 a testa) o pesi di reparto? Proposta: 1 a testa.
-🔴 La promozione: solo tramite voto, oppure anche automatica dopo un periodo? Proposta: durata minima di un trimestre, poi promozione tramite voto.
+✅ *(provvisorio, da verificare col simulatore — D-009)* Il voto per demansionare è **1 a testa** tra i direttori attivi. **Il bersaglio non vota** sul proprio demansionamento. Solo SÌ/NO, il tempo scaduto vale "no" (D-007).
+🔴 Da definire (punto aperto 21): soglia esatta (metà più uno degli aventi diritto o dei votanti) e cosa succede con il pareggio.
+✅ *(provvisorio, da verificare col simulatore — D-010)* **Promozione: durata minima di un trimestre intero, poi solo a voto.** Chi è demansionato a fine T1 resta fuori per tutto T2 e può essere promosso dalla fine di T2; chi è demansionato a fine T3 ha come unica occasione il finale. Il trimestre minimo serve anche a osservare se le fughe di notizie si fermano (§13.2).
+✅ *(provvisorio — D-010)* Modalità:
+- si vota nella **fase 6**, **prima** dell'eventuale proposta di demansionamento;
+- la propone **qualsiasi direttore attivo** oppure la **richiede il demansionato** stesso;
+- voto **1 a testa** tra gli attivi, il demansionato non vota; solo SÌ/NO, tempo scaduto = "no" (D-007); soglia come il demansionamento (punto aperto 21);
+- al massimo **una richiesta di promozione a trimestre per persona**.
 
 ---
 
@@ -410,7 +426,7 @@
 ✅ Al tavolo non arrivano proposte specifiche per i reparti in autogestione.
 🟡 Regola di rendimento: **rende poco ma non fa disastri**. Il demansionamento costa al gruppo senza distruggerlo.
 
-🔴 Da definire: per i reparti vacanti dall'inizio, il loro peso conta nella soglia? Proposta: no, perché nessuno potrebbe mai votare con quel peso. Per i demansionati sì (§8.4).
+✅ *(provvisorio, da verificare col simulatore — D-006)* Il peso dei reparti **vacanti dall'inizio non conta** nella soglia, perché nessuno potrebbe mai votare con quel peso. Il peso dei **demansionati conta** (§8.4): il demansionamento è una scelta del gruppo e deve costare.
 
 ---
 
@@ -450,7 +466,7 @@
 | Voce | Chi | Punti (indicativi) |
 |---|---|---|
 | Azienda batte i concorrenti | ogni onesto | +10 |
-| Concorrente della spia vince | spia | +10 |
+| Concorrente della spia vince (supera l'azienda, D-011) | spia | +10 |
 | Punti di reparto | tutti | accumulati in partita |
 | Obiettivo personale facile / difficile | tutti | +2 / +5 |
 | Segreto passato al concorrente con successo | spia | 🔴 da definire |
@@ -549,15 +565,21 @@ Dettagli tecnici nel documento di architettura.
 | 5 | Poteri speciali dei reparti (riallineare al modello a tre numeri) | 🔴 |
 | 6 | Sovrapposizione Risorse Umane / IT | 🔴 |
 | 7 | Reparti da aggiungere con 6, 7 e 8 giocatori | 🔴 |
-| 8 | Voto per demansionare: pesi uguali o di reparto | 🔴 |
-| 9 | Promozione: durata minima, automatica o a voto | 🔴 |
-| 10 | Peso dei reparti vacanti nella soglia | 🔴 |
-| 11 | Ordine delle fasi e durata dei timer | 🔴 |
+| 8 | Voto per demansionare: pesi uguali o di reparto | ✅ provvisorio (D-009) |
+| 9 | Promozione: durata minima, automatica o a voto | ✅ provvisorio (D-010) |
+| 10 | Peso dei reparti vacanti nella soglia | ✅ provvisorio (D-006) |
+| 11 | Ordine delle fasi (✅ provvisorio, D-008) e durata dei timer (⚖️) | ⚖️ |
 | 12 | Mozione personale per giocatore | 🟡 |
 | 13 | Valori di mossa privata, cassa, bonus, penalità | ⚖️ |
 | 14 | Probabilità di partita senza spie | ⚖️ |
 | 15 | Equilibrio generale (simulatore) | ⚖️ |
 | 16 | Titolo definitivo del gioco | 🔴 |
+| 17 | Numero di votazioni per partita e dimensione del mazzo di quesiti, perché la selezione "reparti occupati" (D-006) funzioni con ogni numero di giocatori | 🔴 |
+| 18 | 💡 Idea da valutare: bot che occupano i reparti (anche con 3 umani), con livello da 1 = "solo interesse aziendale" a 5 = "solo interesse del reparto", e opzione d'avvio "i bot possono essere spie sì/no" | 🔴 da valutare |
+| 19 | Quesiti "con astensione vera" (D-007): peso dei demansionati, valore del tempo scaduto, quanti e quali quesiti | 🔴 |
+| 20 | 💡 Idea da valutare: "livello di fiducia" 1–5 mosso dalle mosse private; a 5 "scudo sociale" contro il demansionamento, che perde efficacia nel finale | 🔴 da valutare |
+| 21 | Soglia esatta del voto di demansionamento/promozione (aventi diritto o votanti) e pareggio | 🔴 |
+| 22 | 💡 Idea da valutare (da discutere quando si costruiscono i reparti): Risorse Umane con peso 2 nei voti di demansionamento/promozione e punti extra o penalità nel finale per spie scoperte o innocenti accusati. Da confrontare con D-009 (1 a testa) e D-005 | 🔴 da valutare |
 
 ---
 

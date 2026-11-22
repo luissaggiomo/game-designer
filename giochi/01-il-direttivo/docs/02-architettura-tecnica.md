@@ -200,8 +200,8 @@ Ogni azione viene controllata prima di passare al motore:
 
 ### 7.4 Timer
 - I timer stanno **sul server**. I client mostrano solo un conto alla rovescia basato sull'orario di scadenza ricevuto.
-- Alla scadenza, chi non ha agito riceve una **scelta predefinita** (🟡 voto: astensione, che vale come "no" ai fini della soglia; mossa privata: "azienda").
-- 🔴 da decidere: astensione = no, oppure astensione esplicita?
+- Alla scadenza, chi non ha agito riceve una **scelta predefinita**: voto → **"NO"** (D-007; in TV "No (tempo scaduto)"); mossa privata → "azienda".
+- Quesiti con `astensioneAmmessa: true`: valore del tempo scaduto 🔴 da definire (GDD §20 n. 19).
 
 ---
 
@@ -299,9 +299,11 @@ LOBBY
   └─► ASSEGNAZIONE (ruoli, spie, obiettivi)
         └─► TUTORIAL (facoltativo)
               └─► TRIMESTRE n (n = 1..4)
-                    ├─ RAPPORTO           (effetti privati, segreti distribuiti)
-                    ├─ DISCUSSIONE        (messaggi abilitati, timer)
-                    ├─ VOTAZIONE k        (k = 1..2–3, palese, timer)
+                    ├─ RAPPORTO           (effetti privati, segreti distribuiti,
+                    │                      ordine casuale delle proposte annunciato)
+                    ├─ per k = 1..2–3:    (D-008)
+                    │    ├─ DISCUSSIONE k (messaggi abilitati, timer)
+                    │    └─ VOTAZIONE k   (palese, timer, esito subito in TV)
                     ├─ MOSSA_PRIVATA      (timer)
                     ├─ RISOLUZIONE        (calcoli + animazioni TV)
                     └─ DEMANSIONAMENTO    (facoltativo: proposta → voto)
@@ -322,7 +324,7 @@ LOBBY
 ```
 
 - Ogni transizione è un'azione di sistema (`AVANZA_FASE`), attivata dal timer o dalla conferma di tutti i giocatori.
-- 🔴 Da decidere: discussione unica prima di tutte le votazioni, o una breve discussione prima di ognuna (§7.2 del design).
+- ✅ provvisorio (D-008): un ciclo DISCUSSIONE → VOTAZIONE per proposta; ordine estratto con il seme della partita e annunciato nel RAPPORTO. La quota messaggi resta per trimestre.
 
 ---
 
@@ -338,7 +340,7 @@ input: N giocatori (4..8), seme
 2. numero_spie:
      N in 4..7 → 0 con p0 (≈ 0,15), altrimenti 1
      N = 8     → 0 con p0, 1 con p1, 2 con p2
-3. numero_concorrenti = 2 se le spie possono essere 2 (N = 8), altrimenti 1   🔴
+3. numero_concorrenti = 2 se N = 8, altrimenti 1   (D-011, provvisorio)
 4. se 2 spie:
      stesso concorrente con probabilità q (si conoscono)
      concorrenti diversi con probabilità 1−q (non si conoscono)
@@ -350,6 +352,7 @@ input: N giocatori (4..8), seme
 ```
 1. mazzo = proposte compatibili con il trimestre corrente
 2. escludi le proposte con "riguarda" ∈ reparti in autogestione
+   e penalizza (estrazione rara) quelle in cui i reparti vacanti avrebbero peso rilevante (D-006)
 3. escludi le proposte già uscite
 4. estrai 2–3 proposte, preferendo categorie diverse (varietà dei pesi)
 5. per ognuna calcola:
@@ -361,9 +364,12 @@ input: N giocatori (4..8), seme
 ### 10.3 Risoluzione di una votazione
 ```
 pesoTotale = Σ pesi dei reparti OCCUPATI (anche se demansionati)
-             (i reparti vacanti dall'inizio non contano — 🔴 da confermare)
+             (i reparti vacanti dall'inizio non contano — D-006, provvisorio)
 soglia     = floor(pesoTotale / 2) + 1
 sì         = Σ pesi dei giocatori ATTIVI che hanno votato SÌ
+se proposta.astensioneAmmessa (D-007):
+  pesoVotanti = Σ pesi di chi ha votato SÌ o NO   (demansionati: 🔴 GDD §20 n. 19)
+  soglia      = floor(pesoVotanti / 2) + 1
 approvata  = (sì ≥ soglia) E (costo ≤ cassa)
 pareggio   → respinta
 se approvata: cassa −= costo; effetti privati e aziendale messi in coda per la RISOLUZIONE
@@ -431,11 +437,16 @@ proposte:      non vengono generate proposte che lo riguardano specificamente
 ```
 PROPOSTA: un giocatore attivo propone un bersaglio (limiti: 1 per trimestre,
           non lo stesso bersaglio due volte di fila — 🟡)
-VOTO:     1 a testa tra gli attivi (🔴 da confermare); soglia: maggioranza degli attivi
+VOTO:     1 a testa tra gli attivi, il bersaglio escluso (D-009); soglia: maggioranza (🔴 GDD §20 n. 21)
+          solo SÌ/NO, nessuna astensione; tempo scaduto = NO (D-007)
 EFFETTI:  stato = DEMANSIONATO; reparto in autogestione;
           revoca delle copie segreto del proprio reparto; quota messaggi = 1
           il ruolo NON viene rivelato
-PROMOZIONE: voto analogo; dopo una durata minima (🔴); stato = ATTIVO; reparto ripristinato
+PROMOZIONE (D-010): nella fase DEMANSIONAMENTO, PRIMA della proposta di demansionamento
+          ammessa se trimestre_corrente ≥ demansionatoDalTrimestre + 1 (un trimestre intero fuori)
+          proposta da un attivo o richiesta dal demansionato; max 1 richiesta/trimestre per persona
+          voto 1 a testa tra gli attivi (il demansionato non vota), solo SÌ/NO, tempo scaduto = NO
+          esito: stato = ATTIVO; reparto ripristinato
 ```
 
 ### 10.9 Finale
@@ -467,6 +478,7 @@ per ogni giocatore:
          + punti spia per segreti usati (🔴)
 ```
 L'esito "azienda vince" si calcola a fine anno: quota dell'azienda maggiore di quella di ogni concorrente.
+L'esito "concorrente X vince" (bonus alle spie di X): quota di X maggiore di quella dell'azienda, indipendentemente dall'altro concorrente (D-011).
 
 ---
 
@@ -547,6 +559,7 @@ Tutti i contenuti sono file JSON validati da uno schema all'avvio.
   "costo": 4,
   "riguarda": ["PRODUZIONE"],
   "trimestri": [1, 2, 3],
+  "astensioneAmmessa": false,
   "effettiPrivati": {
     "PRODUZIONE": { "punti": -2, "testo": "Più costi di gestione per il tuo reparto" },
     "VENDITE":    { "punti": 3,  "testo": "Più merce da vendere" },
