@@ -205,7 +205,7 @@ Modello di voce:
 - Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
 - Alternative (segreto ricevuto da un giocatore): A) solo il mittente diretto ·
   B) mittente + "di prima / seconda mano" · C) catena completa (scartata: distrugge la deduzione).
-- Scelta: segreto dal gioco con etichetta **"dato ufficiale del tuo reparto"**; segreto da un
+- Scelta: segreto dal gioco con etichetta **"dato ufficiale del tuo reparto"** *(dal 22/11/2026 "dato certo, arrivato al tuo reparto", D-035)*; segreto da un
   giocatore con **solo il mittente diretto** (o "anonimo"); la catena resta solo sul server.
 - Motivo: la fonte deve conoscere il valore vero per falsificare e usare il canarino; la
   massima ambiguità sui passaggi alimenta il dilemma "ci si può fidare?"; B darebbe ai reparti
@@ -425,3 +425,81 @@ Modello di voce:
 - Verifica: nomine fatte per partita, spie sopravvissute, onesti licenziati, egoisti contro
   cooperativi; nelle serate, se le accuse costano troppo e nessuno nomina più.
 - Rif.: GDD §8.4bis, §15, §16.2 · D-007, D-013, D-020, D-026…D-028
+
+## D-030 — Quesiti: titoli vivi e frasi su misura per ogni reparto
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Alternative: A) titoli generici · B) titoli vivi "a più facce" + frasi su misura per ogni reparto e segno · C) frasi su misura solo per i reparti "naturali".
+- Scelta di Luis: **B**. Ogni quesito ha 16 frasi (8 reparti × effetto positivo/negativo); `frasi.json` resta come rete di sicurezza.
+- Effetto: reparti uguali per costruzione (D-005); ogni direttore ha una storia credibile da raccontare (o da inventare).
+- Dettaglio e schede complete: [docs/contenuti/quesiti.md](docs/contenuti/quesiti.md) · Rif.: GDD §8.2 · D-023
+
+## D-031 — Il titolo non rivela l'effetto sull'azienda
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Alternative: A) titolo "sincero" · B) titolo "a doppia faccia" · C) misto.
+- Scelta di Luis: **B**. Ogni titolo deve reggere sia come buona idea sia come spreco: la discussione serve, e un onesto può difendere una proposta egoistica per motivi veri. Cinque titoli cambiati (identificativi interni invariati).
+- Rischio residuo: lo schema di effetto è fisso per quesito; dopo molte serate i giocatori possono imparare "titolo → effetto". Possibile rimedio da valutare: schema estratto tra due possibili.
+- Rif.: GDD §8.2, §1 (onesti ambigui)
+
+## D-032 — Forma e tono della frase privata
+- Data: 2026-11-22 · Stato: ✅ provvisoria (approvata da Luis sul campione)
+- Regole: seconda persona; massimo ~85 caratteri; dice cosa succede al tuo reparto e perché; tono ironico aziendale; vale per qualsiasi intensità (il numero lo mostra il telefono); con più vincitori la frase positiva non rivendica l'esclusiva; nessuna frase rivela l'effetto sull'azienda.
+- Rif.: GDD §8.2, §19
+
+## D-033 — Frase di spiegazione in TV per l'effetto reale
+- Data: 2026-11-22 · Stato: ✅ provvisoria
+- Alternative: A) nessuna frase · B) una frase su misura per quesito · C) frasi generiche per tipo di esito.
+- Scelta di Luis: **B**. Ai Risultati la TV mostra, per ogni proposta approvata, effetto reale **e** frase di spiegazione ("il computer nasconde i conti, mai il perché"). La frase parla solo dell'azienda, mai di un reparto; il tono segue il numero. Nel 4° trimestre esce al punteggio insieme al numero (D-029), perché il tono rivela il segno.
+- Motore: campo `spiegazione` dei quesiti, accodato alla causa dell'evento "effetto della proposta".
+- Rif.: GDD §7.2 fase 5, §8.2, §17
+
+## D-034 — Quali quesiti ammettono l'astensione
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Alternative: A) i 5 attuali · B) spostare l'astensione dal Corso al Premio di risultato · C) aggiungere il Premio di risultato mantenendo il Corso.
+- Scelta di Luis: **C**. 6 quesiti su 40 (15%), con due motivi legittimi: **coscienza** (Settimana corta, Videosorveglianza, Riunione del lunedì, Codice di abbigliamento, Corso obbligatorio) e **conflitto d'interesse** (Premio di risultato: chi ci guadagna può astenersi "per correttezza", e una spia può fare lo stesso per sembrare corretta).
+- Effetto: nel Premio tutti votano con peso 1 (D-013), il vincitore perde il peso 2.
+- Rif.: GDD §8.4bis · D-007, D-013
+
+## D-035 — Segreti: titoli "da corridoio" e nuova etichetta
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Alternative: A) notizie "da corridoio aziendale", senza reparti nel titolo · B) nomi dei reparti inseriti al momento · C) segreto agganciato alla proposta collegata.
+- Scelta di Luis: **A**. Il segreto distribuito dal gioco porta l'etichetta **"dato certo, arrivato al tuo reparto"** (sostituisce "dato ufficiale del tuo reparto" di D-015).
+- Effetto: neutro tra reparti e fazioni; il titolo non dà indizi sulla fonte né sulla votazione collegata.
+- Dettaglio e lista completa: [docs/contenuti/segreti.md](docs/contenuti/segreti.md) · Rif.: GDD §11.5 · D-015, D-021, D-024
+
+## D-036 — Valori dei segreti variabili tra le partite, con suggerimenti per falsificare
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Alternative: A) valori fissi · B) 3–4 versioni per segreto · C) valori generati da un intervallo.
+- Scelta di Luis: **B**, con **suggerimenti sul telefono**: chi inoltra una copia modificata può scegliere tra i valori possibili di ogni campo (o scriverne uno libero).
+- Effetto: chi gioca spesso non impara i valori veri; canarino e falsi restano credibili anche per i principianti.
+- Scelta tecnica di Claude: i suggerimenti sono **in ordine alfabetico** (non mescolati) e comprendono il valore della propria copia: l'elenco è identico qualunque sia il valore vero, quindi non lo rivela. Test dedicato.
+- Rif.: GDD §11.4
+
+## D-037 — Uno o due campi, dato vero estratto campo per campo
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Alternative: A) sempre un campo · B) uno o due · C) sempre due. Estrazione: A) campo per campo · B) riga intera · C) a scelta.
+- Scelte di Luis: **B** (almeno un campo è un numero o una data, per il confronto a voce "a te che cifra è arrivata?") e **estrazione campo per campo**: ogni combinazione dei valori deve avere senso, così un falso "mescolato" è indistinguibile da un vero.
+- Effetto: canarino possibile anche a 8 giocatori (fino a 16 combinazioni); neutro tra fazioni.
+- Rif.: GDD §11.4
+
+## D-038 — Tipi di segreto "a bilancia" e punti della spia
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **numeri ⚖️ da verificare col simulatore**
+- Alternative: A) tutti uguali · B) due fasce · C) tre tipi scritti a parole sulla scheda.
+- Scelta di Luis: **C**.
+
+  | Tipo (sulla scheda) | Azienda se arriva | Concorrente se esce | Punti alla spia | Segreti |
+  |---|---|---|---|---|
+  | Da far girare | +2 | +1 | 1 | 11 |
+  | Normale | +1 | +2 | 2 | 18 |
+  | Da custodire | +1 | +3 | 3 | 7 |
+
+- In aggiunta: la TV dice solo *"Un'informazione è arrivata in tempo al reparto giusto"*, **senza "+N"** (il numero rivelerebbe il tipo; modifica D-021).
+- Medie (1,3 per l'azienda, 1,9 per il concorrente, 1,9 punti alla spia) uguali ai vecchi segnaposto: la taratura D-024 dovrebbe restare valida.
+- Scelta tecnica di Claude: i valori dei tipi stanno in `config.json` (`segreti.tipi`), non ripetuti su ogni segreto: si tarano in un punto solo.
+- Effetto: la spia desidera i "da custodire" e ha motivo di chiederli; il reparto utile li chiede legittimamente (sospetto ambiguo).
+- Rif.: GDD §11.5, §16 · D-021, D-024
+
+## D-039 — 36 segreti, legati al periodo, mai due "da custodire" insieme
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Scelta di Luis: **36 segreti**: 28 escono in qualsiasi trimestre, 4 solo a inizio anno (T1–T2), 4 solo a fine anno (T3–T4). Il gioco **non estrae due "da custodire" nello stesso trimestre** (parametro `massimoPerTrimestre`).
+- Effetto: in una partita esce poco più di un quinto della lista; meno partite "fortunate" per le spie.
+- Rif.: GDD §11.5

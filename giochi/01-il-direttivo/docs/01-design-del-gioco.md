@@ -216,7 +216,7 @@
 | **1. Rapporto** | Ognuno vede l'effetto delle proposte sul proprio reparto ed eventuali segreti | Telefono |
 | **2–3. Ciclo per proposta** (ripetuto 2–3 volte) | **Discussione** a voce sulla proposta di turno, con messaggi privati (quota per trimestre, spesa quando si vuole), poi **votazione** palese con pesi. Il voto appare subito in TV. | Voce + TV + telefono |
 | **4. Mossa privata** | Scelta segreta: interesse personale o aziendale | Telefono |
-| **5. Risultati** | Corsa di mercato, mosse dei concorrenti, esito della mossa privata, effetto reale delle proposte. *(D-029: nel 4° trimestre i **numeri** del mercato restano nascosti e si scoprono solo al punteggio, dopo il finale; le fughe di notizie si annunciano subito, senza numeri: "un'informazione è finita a [concorrente]: «titolo»")* | TV |
+| **5. Risultati** | Corsa di mercato, mosse dei concorrenti, esito della mossa privata, effetto reale delle proposte con la frase che lo spiega *(D-033)*. *(D-029: nel 4° trimestre i **numeri** del mercato restano nascosti e si scoprono solo al punteggio, dopo il finale; le fughe di notizie si annunciano subito, senza numeri: "un'informazione è finita a [concorrente]: «titolo»")* | TV |
 | **6. Demansionamento** (facoltativo) | Votazione per demansionare un direttore | TV + telefono |
 
 ⚖️ Durata indicativa di un trimestre: 10–12 minuti, con timer gestiti dal gioco.
@@ -238,7 +238,7 @@
 ✅ **Sul proprio telefono ognuno vede solo l'effetto sul proprio reparto.**
 ✅ Alcuni reparti vedono invece informazioni di contesto (per esempio il Marketing vede l'andamento del mercato).
 ✅ Ognuno riferisce a voce cosa ha visto, e **può mentire o esagerare**.
-✅ A fine trimestre la TV mostra **l'effetto reale sull'azienda**, e si scopre chi aveva esagerato.
+✅ A fine trimestre la TV mostra **l'effetto reale sull'azienda**, con una **frase che spiega perché** *(D-033)*, e si scopre chi aveva esagerato.
 
 **Esempio:**
 > TV: *"Nuovo macchinario — costo 40 K"*
@@ -250,6 +250,7 @@
 ✅ Le scelte **non devono mai essere ovvie**: ogni proposta deve avere vincitori e perdenti tra i reparti.
 
 ✅ *(provvisorio, da rivalutare dopo le serate di prova — D-023)* **I quesiti nascono dall'effetto.** Ogni quesito ha uno **schema** (per esempio "un reparto guadagna molto, due perdono poco"); **i ruoli si assegnano ai reparti al momento dell'estrazione**, solo tra i reparti occupati e non in autogestione, dando i ruoli migliori ai reparti finora meno favoriti. Così tutti i reparti sono uguali per costruzione, a qualsiasi numero di giocatori. Il significato (testo) per ciascun reparto viene da frasi su misura del quesito, se ci sono, o da frasi predefinite del reparto.
+✅ *(provvisorio, da verificare nelle serate — D-030, D-031, D-032)* **Contenuti dei quesiti:** 40 quesiti con titoli vivi "a più facce" e **frasi su misura per tutti i reparti** (effetto positivo e negativo). Il titolo **non rivela l'effetto sull'azienda**: ogni proposta deve reggere sia come buona idea sia come spreco. Frase privata: seconda persona, ~85 caratteri, cosa succede al tuo reparto e perché, mai l'effetto sull'azienda. Schede complete: [contenuti/quesiti.md](contenuti/quesiti.md).
 🔴 Da ripensare (punto aperto 29): le **informazioni di contesto** di alcuni reparti (es. il Marketing vede l'andamento del mercato) con i quesiti generici, insieme all'identità dei reparti (punto 5).
 
 ### 8.3 Pesi
@@ -283,7 +284,7 @@
 ✅ *(provvisorio, da verificare col simulatore — D-013)* Dettagli dei quesiti con astensione:
 - il peso dei **demansionati conta come un "no" fisso**: soglia = metà più uno di (peso dei votanti + peso dei demansionati), così il demansionamento resta costoso (§8.4);
 - il **tempo scaduto vale astensione** *(D-029, rivede D-013)*;
-- sono **rari** (⚖️ circa il 15% del mazzo, in media 1–2 per partita), **segnalati in TV** dall'inizio della discussione con l'etichetta *"⚖️ Astensione ammessa"*, e riguardano temi in cui un onesto ha motivi legittimi per non schierarsi (conflitti di interesse, "votazione di coscienza");
+- sono **rari** (⚖️ circa il 15% del mazzo, in media 1–2 per partita), **segnalati in TV** dall'inizio della discussione con l'etichetta *"⚖️ Astensione ammessa"*, e riguardano temi in cui un onesto ha motivi legittimi per non schierarsi: **coscienza** (5 quesiti) o **conflitto d'interesse** (il Premio di risultato) *(D-034: 6 quesiti su 40)*;
 - in questi quesiti **tutti i reparti occupati hanno peso 1** ("votazione del consiglio"), per non dare ai reparti di peso 2 un'astensione più pesante (D-005).
 
 ### 8.5 Voto palese
@@ -375,18 +376,27 @@
 ✅ Chi riceve la scheda **non sa se è vera**.
 ✅ Se la spia passa al concorrente un segreto falso, **il concorrente sbaglia mossa e perde punti**, e in TV si vede.
 ✅ **Trappola del canarino:** dare versioni diverse dello stesso dato a persone diverse. La versione usata dal concorrente indica chi ha parlato.
+✅ *(provvisorio — D-036, D-037)* **Valori variabili:** ogni segreto ha uno o due campi (almeno uno è un numero o una data) e 3–4 valori possibili per campo; **il dato vero si estrae campo per campo a ogni partita**, quindi non si impara a memoria e un falso "mescolato" è indistinguibile da un vero. Chi inoltra una copia modificata trova sul telefono i **valori suggeriti** di ogni campo (o ne scrive uno libero); l'elenco non indica quale sia il vero.
 
 ### 11.5 Regole di dettaglio
 ✅ *(provvisorio, da verificare col simulatore — D-021)* Ogni segreto è **collegato a una proposta del trimestre**: vale per l'azienda se arriva (in versione vera) al reparto a cui serve **prima che quella votazione si chiuda**.
-✅ *(provvisorio — D-021)* Quando succede, la TV dice solo *"Un'informazione è arrivata in tempo al reparto giusto: +N"*, **senza dire quale** (da riconsiderare dopo le simulazioni).
+✅ *(provvisorio — D-021)* Quando succede, la TV dice solo *"Un'informazione è arrivata in tempo al reparto giusto"*, **senza dire quale e senza il numero** *(D-038: il "+N" rivelerebbe il tipo del segreto)*; la quota di mercato si aggiorna comunque.
 ✅ *(provvisorio — D-021)* La spia può passare un segreto al concorrente **solo nel trimestre in cui è uscito**; l'effetto si vede ai Risultati, e la TV dice quale segreto il concorrente ha usato (§11.3).
 ✅ *(D-005, D-024)* **Fonte e reparto utile di ogni segreto si scelgono al momento della distribuzione**, tra i reparti con un direttore attivo (come i quesiti, D-023); le fonti si distribuiscono in modo equilibrato. Chi possiede una copia vede a quale reparto serve.
-⚖️ Segnaposto da tarare: 2 segreti a trimestre, penalità 2 per il concorrente che usa un dato falso, 2 punti alla spia per segreto usato.
-🔴 Lista dei segreti e loro valore (punto aperto 2).
+⚖️ Da tarare: 2 segreti a trimestre, penalità 2 per il concorrente che usa un dato falso.
+✅ *(provvisorio, numeri ⚖️ da verificare col simulatore — D-035…D-039)* **Lista dei segreti e loro valore:** 36 segreti con titoli "da corridoio aziendale" (nessun reparto nel titolo); 28 escono in qualsiasi trimestre, 4 solo in T1–T2, 4 solo in T3–T4. Ogni scheda porta scritto il suo **tipo "a bilancia"**:
+
+| Tipo | Azienda se arriva in tempo | Concorrente se esce | Punti alla spia se usato |
+|---|---|---|---|
+| Da far girare | +2 | +1 | 1 |
+| Normale | +1 | +2 | 2 |
+| Da custodire | +1 | +3 | 3 |
+
+Mai due "da custodire" nello stesso trimestre. Lista completa: [contenuti/segreti.md](contenuti/segreti.md).
 ✅ *(provvisorio, da verificare col simulatore — D-015)* **Provenienza visibile:**
-- un segreto distribuito dal gioco porta l'etichetta **"dato ufficiale del tuo reparto"**: chi lo riceve sa che è vero (serve per falsificare e per la trappola del canarino);
+- un segreto distribuito dal gioco porta l'etichetta **"dato certo, arrivato al tuo reparto"** *(D-035)*: chi lo riceve sa che è vero (serve per falsificare e per la trappola del canarino);
 - un segreto ricevuto da un altro giocatore mostra **solo il mittente diretto** ("da Marco", oppure "anonimo"). Non si vede se il mittente è la fonte o un passaggio intermedio, né la catena.
-🔴 Quanti punti vale per la spia un segreto usato.
+✅ *(provvisorio, ⚖️ — D-038)* Punti alla spia per un segreto usato: secondo il tipo (1 / 2 / 3), vedi tabella sopra.
 
 ---
 
@@ -495,7 +505,7 @@
 | Concorrente della spia vince (supera l'azienda, D-011) | spia **non licenziata** *(D-025: una spia scoperta ha perso)* | +10 |
 | Punti di reparto | tutti | accumulati in partita |
 | Obiettivo personale facile / difficile | tutti | +2 / +5 |
-| Segreto passato al concorrente con successo | spia | 🔴 da definire |
+| Segreto passato al concorrente con successo | spia | +1 / +2 / +3 secondo il tipo *(D-038, ⚖️)* |
 | Crisi o sconfitta aziendale causata | spia | 🟡 +2 per evento |
 
 ### 16.2 Esiti del finale
@@ -579,7 +589,7 @@ Dettagli tecnici nel documento di architettura.
 
 🟡 **Ironia aziendale**: riunioni inutili, mail passivo-aggressive, eventi assurdi, "pausa caffè".
 🟡 Il gioco non deve "sembrare lavoro": pochi numeri, tanto racconto.
-🟡 Le proposte devono avere titoli coloriti e memorabili.
+✅ *(D-030, D-031)* Le proposte devono avere titoli coloriti e memorabili, "a doppia faccia" (non rivelano l'effetto sull'azienda).
 
 ---
 
@@ -587,8 +597,8 @@ Dettagli tecnici nel documento di architettura.
 
 | # | Tema | Stato |
 |---|---|---|
-| 1 | Lista proposte (20–30) con effetti privati e pesi | 🔴 |
-| 2 | Lista segreti e loro valore | 🔴 |
+| 1 | Lista proposte con effetti privati e pesi | ✅ provvisorio (D-030…D-034), da verificare nelle serate |
+| 2 | Lista segreti e loro valore | ✅ provvisorio (D-035…D-039), numeri ⚖️ |
 | 3 | Obiettivi segreti per reparto e per spie | 🔴 |
 | 4 | Comportamento dei concorrenti | 🔴 |
 | 5 | Poteri speciali dei reparti (riallineare al modello a tre numeri) | 🔴 |

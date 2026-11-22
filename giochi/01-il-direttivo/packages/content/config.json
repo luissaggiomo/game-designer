@@ -45,9 +45,13 @@
   "segreti": {
     "perTrimestre": 2,
     "penalitaFalsoConcorrente": 2,
-    "puntiSpiaPerSegretoUsato": 2
+    "tipi": {
+      "DA_FAR_GIRARE": { "azienda": 2, "concorrente": 1, "puntiSpia": 1 },
+      "NORMALE": { "azienda": 1, "concorrente": 2, "puntiSpia": 2 },
+      "DA_CUSTODIRE": { "azienda": 1, "concorrente": 3, "puntiSpia": 3, "massimoPerTrimestre": 1 }
+    }
   },
-  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso, punti alla spia per segreto usato (GDD §16). Fonte e reparto utile si scelgono alla distribuzione, con fonti bilanciate tra i reparti (D-023, D-005).",
+  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso. Tipi «a bilancia» (D-038): quanto vale il segreto per l'azienda se arriva in tempo al reparto utile, per il concorrente se esce, e i punti alla spia se il concorrente lo usa; 'massimoPerTrimestre' = mai due 'da custodire' nello stesso trimestre (D-039). Fonte e reparto utile si scelgono alla distribuzione, con fonti bilanciate tra i reparti (D-023, D-005).",
   "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
   "_quesitiConAstensione": "D-013",
   "finale": { "rispostaVerificaPredefinita": "SI" },

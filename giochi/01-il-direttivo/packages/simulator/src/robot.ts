@@ -109,7 +109,9 @@ export class Robot {
           const utile = v.giocatori.find((g) => g.repartoId === copia.utileA && g.stato === "ATTIVO");
           if (!utile || utile.id === this.id || !r.probabilita(p.condivisione)) continue;
           const falsifica = spia && r.probabilita(p.sabotaggio);
+          // Falso credibile: un altro dei valori suggeriti dal telefono (D-036).
           const campo = Object.keys(copia.campi)[0];
+          const alternativa = campo ? copia.valoriSuggeriti[campo]?.find((x) => x !== copia.campi[campo]) : undefined;
           azioni.push({
             tipo: "INVIA_MESSAGGIO",
             da: this.id,
@@ -117,7 +119,7 @@ export class Robot {
             anonimo: false,
             modello: "SEGRETO",
             copiaSegretoId: copia.id,
-            ...(falsifica && campo ? { campi: { [campo]: `${copia.campi[campo]} (ritoccato)` } } : {}),
+            ...(falsifica && campo ? { campi: { [campo]: alternativa ?? `${copia.campi[campo]} (ritoccato)` } } : {}),
           });
           this.inviati.push({ titolo: copia.titolo, a: utile.id });
         }

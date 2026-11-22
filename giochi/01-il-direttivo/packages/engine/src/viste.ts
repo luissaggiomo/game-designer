@@ -21,6 +21,7 @@ import type {
   Punteggio,
   RepartoId,
   SceltaMossa,
+  TipoSegreto,
   ValoreCampo,
   Voto,
 } from "./tipi.js";
@@ -108,7 +109,15 @@ export interface CopiaVisibile {
   titolo: string;
   /** I campi della PROPRIA copia: chi la riceve non sa se è vera (GDD §11.4). */
   campi: Record<string, ValoreCampo>;
-  /** D-015: "dato ufficiale del tuo reparto", oppure solo il mittente diretto (nascosto se anonimo). */
+  /** Tipo "a bilancia", scritto a parole sulla scheda (D-038); i numeri non si mostrano. */
+  tipo: TipoSegreto;
+  /**
+   * Valori suggeriti per ogni campo, per chi vuole inoltrare una copia modificata (D-036): i valori
+   * possibili più quello della propria copia, in ordine alfabetico, così l'elenco non indica quale
+   * sia il vero.
+   */
+  valoriSuggeriti: Record<string, ValoreCampo[]>;
+  /** D-015, D-035: "dato certo, arrivato al tuo reparto", oppure solo il mittente diretto (nascosto se anonimo). */
   provenienza: { tipo: "GIOCO" } | { tipo: "GIOCATORE"; da?: GiocatoreId; anonimo: boolean };
   /** Il reparto a cui il dato serve (GDD §11.2: vale solo se arriva al reparto giusto). */
   utileA: RepartoId;
@@ -277,7 +286,11 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId): VistaGiocatore {
           : c.provenienza.anonimo
             ? { tipo: "GIOCATORE", anonimo: true }
             : { tipo: "GIOCATORE", da: c.provenienza.da, anonimo: false };
-      return { id: c.id, titolo: s.titolo, campi: { ...c.campi }, provenienza, utileA: s.utile, trimestre: s.trimestre };
+      const valoriSuggeriti: Record<string, ValoreCampo[]> = {};
+      for (const [nome, valori] of Object.entries(s.valoriPossibili)) {
+        valoriSuggeriti[nome] = [...new Set([...valori, c.campi[nome]!])].sort((a, b) => String(a).localeCompare(String(b), "it", { numeric: true }));
+      }
+      return { id: c.id, titolo: s.titolo, tipo: s.tipo, campi: { ...c.campi }, valoriSuggeriti, provenienza, utileA: s.utile, trimestre: s.trimestre };
     });
 
   const mieiMessaggi: MessaggioVisibile[] = p.messaggi

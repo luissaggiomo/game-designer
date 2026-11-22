@@ -38,9 +38,11 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
     for (const g of spie.filter((s) => concorrenteDi(s.id) === c.id && s.stato !== "LICENZIATO")) aggiungi(g.id, `${c.nome} ha superato l'azienda`, v.concorrenteVince);
   }
 
-  // Segreti consegnati con successo.
-  const puntiSegreto = ambiente.config.segreti.puntiSpiaPerSegretoUsato;
-  for (const p of partita.segretiPassati.filter((x) => x.riuscito)) aggiungi(p.spia, "Segreto usato dal tuo concorrente", puntiSegreto);
+  // Segreti consegnati con successo: punti secondo il tipo del segreto (D-038).
+  for (const p of partita.segretiPassati.filter((x) => x.riuscito)) {
+    const tipo = partita.segreti.find((s) => s.id === p.segretoId)!.tipo;
+    aggiungi(p.spia, "Segreto usato dal tuo concorrente", ambiente.config.segreti.tipi[tipo].puntiSpia);
+  }
 
   // Domanda di verifica del finale.
   for (const e of partita.finale.esitiVerifica) {

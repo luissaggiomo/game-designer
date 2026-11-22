@@ -68,6 +68,8 @@ export interface PropostaIstanza {
   categoria: string;
   costo: number;
   astensioneAmmessa: boolean;
+  /** Frase che spiega in TV l'effetto reale, mostrata ai risultati (D-033): mai prima. */
+  spiegazione: string;
   /** Pesi effettivi: solo reparti occupati (D-006); tutti 1 nei quesiti con astensione (D-013). */
   pesi: Partial<Record<RepartoId, Peso>>;
   /** Effetti privati per reparto: SEGRETI, ognuno vede solo il proprio. */
@@ -184,12 +186,18 @@ export interface Punteggio {
 
 export type ValoreCampo = string | number;
 
+/** Tipo "a bilancia" di un segreto, scritto a parole sulla scheda (D-038). */
+export type TipoSegreto = "DA_FAR_GIRARE" | "NORMALE" | "DA_CUSTODIRE";
+
 export interface SegretoIstanza {
   id: string;
   modelloId: string;
   titolo: string;
-  /** Valori veri. */
+  tipo: TipoSegreto;
+  /** Valori veri, estratti campo per campo tra quelli possibili (D-036, D-037). */
   campi: Record<string, ValoreCampo>;
+  /** Valori possibili di ogni campo (dal modello): suggerimenti per chi falsifica (D-036). */
+  valoriPossibili: Record<string, ValoreCampo[]>;
   fonte: RepartoId;
   utile: RepartoId;
   /** Vale se arriva al reparto utile prima della chiusura di questa votazione (D-021). */

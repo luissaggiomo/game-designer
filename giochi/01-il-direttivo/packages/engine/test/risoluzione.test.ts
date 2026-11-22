@@ -109,7 +109,7 @@ describe("mossa privata (GDD §9)", () => {
 describe("effetti delle proposte approvate (GDD §8.2, §14)", () => {
   const amb = ambienteFisso();
   const approvata = (effetti: PropostaIstanza["effettiPrivati"], effettoAzienda: number, approvataSi = true): PropostaIstanza => ({
-    id: "p", modelloId: "p", titolo: "Prova", categoria: "X", costo: 10, astensioneAmmessa: false,
+    id: "p", modelloId: "p", titolo: "Prova", categoria: "X", costo: 10, astensioneAmmessa: false, spiegazione: "Spiegazione di prova",
     pesi: {}, effettiPrivati: effetti, effettoAzienda, voti: {},
     esito: { approvata: approvataSi, si: 0, soglia: 0, votiPerTempoScaduto: 0, motivo: "" },
   });
@@ -122,6 +122,7 @@ describe("effetti delle proposte approvate (GDD §8.2, §14)", () => {
     expect(punti(partita, "PRODUZIONE")).toBe(-2);
     expect(partita.azienda.quota).toBe(5 + 2); // 5 dalle mosse predefinite "azienda"
     expect(eventi.find((e) => e.tipo === "EFFETTO_PROPOSTA")?.causa).toContain("+2");
+    expect(eventi.find((e) => e.tipo === "EFFETTO_PROPOSTA")?.causa).toContain("Spiegazione di prova"); // D-033
   });
 
   it("le proposte respinte non hanno effetti", () => {

@@ -3,6 +3,21 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.11
+
+### Design
+- D-030…D-034 (provvisorie): contenuti veri dei quesiti — titoli vivi "a doppia faccia" che non rivelano l'effetto sull'azienda, frasi su misura per tutti i reparti (640), frase di spiegazione in TV per ogni proposta approvata, 6 quesiti con astensione (coscienza o conflitto d'interesse).
+- D-035…D-039 (provvisorie): contenuti veri dei segreti — 36 segreti "da corridoio aziendale", etichetta "dato certo, arrivato al tuo reparto", valori estratti campo per campo a ogni partita con suggerimenti per falsificare, tre tipi "a bilancia" (da far girare / normale / da custodire) con punti alla spia 1 / 2 / 3, mai due "da custodire" nello stesso trimestre.
+
+### Modificato
+- Motore: i segreti si leggono dalle versioni (dato vero estratto campo per campo), i valori dei tipi stanno in config.json (`segreti.tipi`, al posto di `puntiSpiaPerSegretoUsato`); la TV non mostra più il "+N" del segreto arrivato in tempo; il telefono riceve tipo e valori suggeriti (in ordine alfabetico, senza indizi sul vero).
+- Motore: la frase di spiegazione dei quesiti accompagna l'effetto reale ai Risultati (nel 4° trimestre al punteggio, D-029).
+- Robot: quando falsificano usano uno dei valori suggeriti.
+
+### Aggiunto
+- 6 test (141 in tutto): estrazione campo per campo riproducibile, valori per tipo, mai due "da custodire", suggerimenti che non rivelano il vero, punti della spia per tipo, niente numero in TV; controllo dei contenuti per versioni e spiegazioni.
+- Settimo report (docs/simulazioni/2026-11-22-simulazione-07.md): con i contenuti veri i risultati restano in linea col sesto (4 giocatori + 1 spia: onesti 76%, spia 24%; spie scoperte 64% con 4 giocatori).
+
 ## 2026-11-22 — 0.2.10
 
 ### Design

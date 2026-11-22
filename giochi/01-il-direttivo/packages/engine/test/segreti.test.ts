@@ -3,6 +3,8 @@ import type { AzioneGiocatore, Evento } from "../src/azioni.js";
 import { caricaAmbiente, type Ambiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
 import { creaPartita } from "../src/partita.js";
+import { calcolaPunteggi } from "../src/punteggio.js";
+import { vistaGiocatore, vistaTV } from "../src/viste.js";
 import type { Fazione, Giocatore, Partita, SegretoIstanza } from "../src/tipi.js";
 
 const base = caricaAmbiente();
@@ -53,7 +55,7 @@ function rendiSpia(p: Partita, g: Giocatore): void {
 }
 
 describe("distribuzione dei segreti (Rapporto)", () => {
-  it("ogni trimestre arrivano i segreti previsti, come dato ufficiale alla fonte", () => {
+  it("ogni trimestre arrivano i segreti previsti, come «dato certo, arrivato al tuo reparto» alla fonte (D-035)", () => {
     const p = nuova();
     const delTrimestre = p.segreti.filter((s) => s.trimestre === 1);
     expect(delTrimestre).toHaveLength(amb.config.segreti.perTrimestre);
@@ -278,5 +280,104 @@ describe("la spia passa un segreto al concorrente (GDD §11.3, D-021)", () => {
     while (!(t2.trimestre === 2 && t2.fase.nome === "RAPPORTO")) t2 = fai(t2, { tipo: "AVANZA_FASE" }).partita;
     expect(rifiutata(t2, { tipo: "PASSA_AL_CONCORRENTE", da: spia.id, copiaSegretoId: copia.id })).toBe(true);
     void s;
+  });
+});
+
+describe("contenuti veri dei segreti (D-035…D-039)", () => {
+  const semi = Array.from({ length: 40 }, (_, i) => i + 1);
+  /** Tutti i segreti di una partita, trimestre per trimestre (si avanza fino alla fine dell'anno). */
+  const segretiDellAnno = (seme: number): Partita => {
+    let p = nuova(seme, base);
+    for (let i = 0; i < 400 && p.trimestre < base.config.trimestri; i++) p = fai(p, { tipo: "AVANZA_FASE" }, base).partita;
+    return p;
+  };
+
+  it("il dato vero si estrae campo per campo tra i valori possibili, in modo riproducibile col seme", () => {
+    const combinazioniViste = new Set<string>();
+    for (const seme of semi) {
+      const p = nuova(seme, base);
+      for (const s of p.segreti) {
+        const modello = base.segreti.find((m) => m.id === s.modelloId)!;
+        for (const [nome, valore] of Object.entries(s.campi)) expect(modello.versioni.map((v) => v[nome])).toContain(valore);
+        // Una combinazione che non è nessuna delle righe scritte prova l'estrazione campo per campo.
+        if (!modello.versioni.some((v) => JSON.stringify(v) === JSON.stringify(s.campi))) combinazioniViste.add(s.modelloId);
+      }
+      expect(nuova(seme, base).segreti.map((s) => s.campi)).toEqual(p.segreti.map((s) => s.campi));
+    }
+    expect(combinazioniViste.size).toBeGreaterThan(0);
+  });
+
+  it("il valore per azienda e concorrente dipende dal tipo (config); mai due «da custodire» nello stesso trimestre", () => {
+    for (const seme of semi.slice(0, 15)) {
+      const p = segretiDellAnno(seme);
+      for (const s of p.segreti) {
+        expect(s.valoreAzienda).toBe(base.config.segreti.tipi[s.tipo].azienda);
+        expect(s.valoreConcorrente).toBe(base.config.segreti.tipi[s.tipo].concorrente);
+      }
+      for (let t = 1; t <= p.trimestre; t++) {
+        expect(p.segreti.filter((s) => s.trimestre === t && s.tipo === "DA_CUSTODIRE").length).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it("il possessore vede il tipo e i valori suggeriti; l'elenco non rivela il vero (D-036, D-038)", () => {
+    for (const seme of semi.slice(0, 10)) {
+      const p = nuova(seme, base);
+      for (const s of p.segreti) {
+        const fonte = giocatoreDi(p, s.fonte);
+        const copia = vistaGiocatore(p, fonte.id).mieiSegreti.find((c) => c.titolo === s.titolo)!;
+        expect(copia.tipo).toBe(s.tipo);
+        const modello = base.segreti.find((m) => m.id === s.modelloId)!;
+        for (const nome of Object.keys(s.campi)) {
+          // Stesso elenco qualunque sia il valore vero: tutti i valori possibili, in ordine alfabetico.
+          const attesi = [...new Set(modello.versioni.map((v) => v[nome]!))].sort((a, b) => String(a).localeCompare(String(b), "it", { numeric: true }));
+          expect(copia.valoriSuggeriti[nome]).toEqual(attesi);
+        }
+      }
+      // La TV non vede né i segreti né i loro valori.
+      expect(JSON.stringify(vistaTV(p))).not.toContain("valoriSuggeriti");
+    }
+  });
+
+  it("una copia falsificata con un valore libero compare tra i suggerimenti solo per chi la possiede", () => {
+    const p = nuova();
+    const s = p.segreti[0]!;
+    const fonte = giocatoreDi(p, s.fonte);
+    const altro = p.giocatori.find((g) => g.id !== fonte.id)!;
+    const campo = Object.keys(s.campi)[0]!;
+    const copia = copiaDi(p, s, fonte.id)!;
+    const q = fai(p, { tipo: "INVIA_MESSAGGIO", da: fonte.id, a: altro.id, anonimo: false, modello: "SEGRETO", copiaSegretoId: copia.id, campi: { [campo]: "valore inventato" } }).partita;
+    expect(vistaGiocatore(q, altro.id).mieiSegreti[0]!.valoriSuggeriti[campo]).toContain("valore inventato");
+    expect(vistaGiocatore(q, fonte.id).mieiSegreti.find((c) => c.titolo === s.titolo)!.valoriSuggeriti[campo]).not.toContain("valore inventato");
+  });
+
+  it("la spia prende i punti secondo il tipo del segreto usato (aggiunta a D-038)", () => {
+    for (const tipo of ["DA_FAR_GIRARE", "NORMALE", "DA_CUSTODIRE"] as const) {
+      const p = nuova();
+      const s = p.segreti[0]!;
+      s.tipo = tipo;
+      const spia = giocatoreDi(p, s.fonte);
+      rendiSpia(p, spia);
+      p.segretiPassati.push({ copiaId: copiaDi(p, s, spia.id)!.id, segretoId: s.id, spia: spia.id, concorrente: p.concorrenti[0]!.id, trimestre: 1, riuscito: true });
+      calcolaPunteggi(p, amb);
+      const voce = p.punteggi![spia.id]!.voci.find((v) => v.testo === "Segreto usato dal tuo concorrente")!;
+      expect(voce.punti).toBe(amb.config.segreti.tipi[tipo].puntiSpia);
+    }
+  });
+
+  it("il segreto arrivato in tempo non mostra il numero in TV (D-038)", () => {
+    const p = nuova();
+    const s = p.segreti[0]!;
+    s.arrivatoInTempo = true;
+    let q = p;
+    const eventi: Evento[] = [];
+    while (q.fase.nome !== "RISOLUZIONE") {
+      const r = fai(q, { tipo: "AVANZA_FASE" });
+      eventi.push(...r.eventi);
+      q = r.partita;
+    }
+    const e = eventi.find((x) => x.tipo === "SEGRETO_IN_TEMPO");
+    expect(e).toBeDefined();
+    expect(e!.causa).not.toMatch(/\d/);
   });
 });

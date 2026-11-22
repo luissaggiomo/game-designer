@@ -87,6 +87,7 @@ export function estraiOrdineDelGiorno(partita: Partita, ambiente: Ambiente, casu
       categoria: m.categoria,
       costo: m.costo,
       astensioneAmmessa: m.astensioneAmmessa ?? false,
+      spiegazione: m.spiegazione,
       pesi,
       effettiPrivati,
       effettoAzienda: schema.effettoAzienda,

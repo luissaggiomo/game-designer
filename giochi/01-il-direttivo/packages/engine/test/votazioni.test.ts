@@ -23,6 +23,7 @@ function inVotazione(proposta: Partial<PropostaIstanza> = {}): Partita {
       categoria: "INVESTIMENTI",
       costo: 40,
       astensioneAmmessa: false,
+      spiegazione: "Spiegazione di prova",
       pesi: { PRODUZIONE: 2, FINANZA: 2, ACQUISTI: 1, VENDITE: 1, MARKETING: 2 }, // totale 8 → soglia 5
       effettiPrivati: {},
       effettoAzienda: 1,

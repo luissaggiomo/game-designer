@@ -3,7 +3,7 @@
  * I numeri non si scrivono mai nel codice: si cambiano nel file JSON (regola 4 del gioco).
  */
 import datiConfig from "@il-direttivo/content/config.json" with { type: "json" };
-import type { RepartoId, SceltaMossa } from "./tipi.js";
+import type { RepartoId, SceltaMossa, TipoSegreto } from "./tipi.js";
 
 export interface Configurazione {
   giocatori: { minimo: number; massimo: number };
@@ -40,7 +40,20 @@ export interface Configurazione {
   segreti: {
     perTrimestre: number;
     penalitaFalsoConcorrente: number;
-    puntiSpiaPerSegretoUsato: number;
+    /** Tipi "a bilancia" (D-038, D-039). */
+    tipi: Record<
+      TipoSegreto,
+      {
+        /** Quota di mercato per l'azienda se arriva in tempo al reparto utile. */
+        azienda: number;
+        /** Quota di mercato per il concorrente se una spia glielo consegna (vero). */
+        concorrente: number;
+        /** Punti alla spia per un segreto di questo tipo usato dal suo concorrente. */
+        puntiSpia: number;
+        /** Quanti segreti di questo tipo al massimo nello stesso trimestre (assente = nessun limite). */
+        massimoPerTrimestre?: number;
+      }
+    >;
   };
   quesitiConAstensione: { quotaDelMazzo: number };
   finale: { rispostaVerificaPredefinita: "SI" | "NO" };
@@ -103,6 +116,11 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   }
   if (c.messaggi.costoAnonimo < 1) problemi.push("Il costo del messaggio anonimo deve essere almeno 1");
   if (c.segreti.perTrimestre < 0) problemi.push("I segreti per trimestre non possono essere negativi");
+  for (const t of TIPI_SEGRETO) {
+    const v = c.segreti.tipi?.[t];
+    if (!v) problemi.push(`segreti.tipi: manca il tipo ${t}`);
+    else if (v.massimoPerTrimestre !== undefined && v.massimoPerTrimestre < 1) problemi.push(`segreti.tipi.${t}.massimoPerTrimestre deve essere almeno 1`);
+  }
   const maxConcorrenti = Math.max(c.concorrenti.finoA7Giocatori, c.concorrenti.con8Giocatori);
   if (c.concorrenti.nomi.length < maxConcorrenti) {
     problemi.push(`Servono almeno ${maxConcorrenti} nomi di concorrenti`);
@@ -115,6 +133,8 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("selezione.fattoreStessaCategoria", c.selezione.fattoreStessaCategoria);
   return problemi;
 }
+
+export const TIPI_SEGRETO: TipoSegreto[] = ["DA_FAR_GIRARE", "NORMALE", "DA_CUSTODIRE"];
 
 /** Configurazione predefinita, controllata al caricamento: se è incoerente il gioco non parte. */
 export function caricaConfigurazione(): Configurazione {

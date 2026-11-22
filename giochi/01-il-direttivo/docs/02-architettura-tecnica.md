@@ -257,9 +257,11 @@ interface PropostaIstanza {
 
 interface Segreto {
   id: string; modelloId: string;
-  campi: Record<string, string | number>;         // es. { gara: "X", offerta: 118000 }
+  tipo: "DA_FAR_GIRARE" | "NORMALE" | "DA_CUSTODIRE"; // D-038, valori in config segreti.tipi
+  campi: Record<string, string | number>;         // dato vero, estratto campo per campo (D-036, D-037)
+  valoriPossibili: Record<string, (string | number)[]>; // suggerimenti per chi falsifica
   repartoUtile: RepartoId;                        // dove vale se arriva in tempo
-  valoreAzienda: number; valoreConcorrente: number;
+  valoreAzienda: number; valoreConcorrente: number; // copiati dal tipo alla distribuzione
   scadenzaTrimestre: number;
 }
 
@@ -395,18 +397,21 @@ TV mostra soltanto: deltaAzienda < 0 → "in calo" | = 0 → "stabile" | > 0 →
 DISTRIBUZIONE (fase RAPPORTO):
   per ogni segreto del trimestre → una CopiaSegreto (provenienza GIOCO)
   al reparto "fonte" (≠ repartoUtile, così condividere ha un senso)
+  ogni campo vero si estrae tra i valori delle versioni del modello (D-037)
+  al massimo segreti.tipi[tipo].massimoPerTrimestre dello stesso tipo (D-039)
 
 INOLTRO (messaggio con modello SEGRETO):
   nuova copia per il destinatario; campi = campi inviati
   falsa = (campi ≠ campi dell'originale)
   catena = catena del mittente + [mittente]
   il destinatario NON vede il flag "falsa"
-  vista del destinatario (D-015): provenienza GIOCO → "dato ufficiale del tuo reparto";
+  vista del destinatario (D-015): provenienza GIOCO → "dato certo, arrivato al tuo reparto" (D-035);
+  il possessore vede il tipo e i valori suggeriti (in ordine alfabetico, D-036);
   da giocatore → solo il mittente diretto ("anonimo" se anonimo); mai la catena
 
 VALORE PER L'AZIENDA (fase RISOLUZIONE):
   se il giocatore del repartoUtile possiede una copia VERA prima della votazione collegata
-    → quota azienda += valoreAzienda
+    → quota azienda += valoreAzienda (in TV senza il numero, D-038)
 
 USO DA PARTE DI UNA SPIA (PASSA_AL_CONCORRENTE):
   se copia vera  → quota concorrente += valoreConcorrente;

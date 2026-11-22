@@ -11,7 +11,7 @@ import datiProposte from "@il-direttivo/content/proposte.json" with { type: "jso
 import datiSchemi from "@il-direttivo/content/schemi.json" with { type: "json" };
 import datiSegreti from "@il-direttivo/content/segreti.json" with { type: "json" };
 import { caricaConfigurazione, type Configurazione } from "./config.js";
-import type { Peso, RepartoId, ValoreCampo } from "./tipi.js";
+import type { Peso, RepartoId, TipoSegreto, ValoreCampo } from "./tipi.js";
 
 export interface Ruolo {
   punti: number;
@@ -35,7 +35,9 @@ export interface ModelloProposta {
   schema: string;
   trimestri: number[];
   astensioneAmmessa?: boolean;
-  /** Frasi su misura (facoltative) per reparto e segno dell'effetto. */
+  /** Frase per la TV che spiega l'effetto reale sull'azienda (D-033). */
+  spiegazione: string;
+  /** Frasi su misura per reparto e segno dell'effetto (D-030, D-032). */
   testi?: Partial<Record<RepartoId, { positivo?: string; negativo?: string }>>;
 }
 
@@ -47,9 +49,10 @@ export interface Frasi {
 export interface ModelloSegreto {
   id: string;
   titolo: string;
-  campi: Record<string, ValoreCampo>;
-  valoreAzienda: number;
-  valoreConcorrente: number;
+  /** Tipo "a bilancia": i valori stanno in config.json (D-038). */
+  tipo: TipoSegreto;
+  /** Versioni possibili; il dato vero si estrae campo per campo (D-036, D-037). */
+  versioni: Record<string, ValoreCampo>[];
   trimestri: number[];
 }
 
@@ -93,6 +96,7 @@ export function controllaContenuti(
     if (visti.has(m.id)) problemi.push(`${dove}: identificativo ripetuto`);
     visti.add(m.id);
     if (!m.titolo) problemi.push(`${dove}: manca il titolo`);
+    if (!m.spiegazione) problemi.push(`${dove}: manca la frase di spiegazione (D-033)`);
     if (!(m.costo > 0)) problemi.push(`${dove}: il costo deve essere positivo`);
     if (!schemi[m.schema]) problemi.push(`${dove}: schema "${m.schema}" inesistente`);
     if (m.trimestri.length === 0 || m.trimestri.some((t) => !Number.isInteger(t) || t < 1 || t > config.trimestri)) {
@@ -110,7 +114,14 @@ export function controllaSegreti(segreti: ModelloSegreto[], config: Configurazio
     const dove = `Segreto "${s.id}"`;
     if (visti.has(s.id)) problemi.push(`${dove}: identificativo ripetuto`);
     visti.add(s.id);
-    if (Object.keys(s.campi).length === 0) problemi.push(`${dove}: servono dei campi`);
+    if (!(s.tipo in config.segreti.tipi)) problemi.push(`${dove}: tipo "${s.tipo}" sconosciuto`);
+    const versioni = s.versioni ?? [];
+    if (versioni.length < 3) problemi.push(`${dove}: servono almeno 3 versioni (D-036)`);
+    const nomi = Object.keys(versioni[0] ?? {});
+    if (nomi.length < 1 || nomi.length > 2) problemi.push(`${dove}: servono uno o due campi (D-037)`);
+    if (versioni.some((v) => Object.keys(v).sort().join() !== [...nomi].sort().join())) problemi.push(`${dove}: tutte le versioni devono avere gli stessi campi`);
+    if (new Set(versioni.map((v) => JSON.stringify(v))).size !== versioni.length) problemi.push(`${dove}: versioni ripetute`);
+    if (!versioni.some((v) => Object.values(v).some((x) => /\d/.test(String(x))))) problemi.push(`${dove}: almeno un campo deve essere un numero o una data (D-037)`);
     if (s.trimestri.length === 0 || s.trimestri.some((t) => !Number.isInteger(t) || t < 1 || t > config.trimestri)) {
       problemi.push(`${dove}: trimestri non validi`);
     }

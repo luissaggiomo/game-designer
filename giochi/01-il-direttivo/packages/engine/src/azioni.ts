@@ -65,14 +65,14 @@ type ContenutoEvento =
   | { tipo: "FUGA_DI_NOTIZIE"; concorrente: string; segretoId: string; causa: string }
   /** Ultimo trimestre: risultati nascosti fino al punteggio (D-029). */
   | { tipo: "RISULTATI_RINVIATI"; causa: string }
-  /** Riservato alla fonte: dato ufficiale del suo reparto (D-015). */
+  /** Riservato alla fonte: "dato certo, arrivato al tuo reparto" (D-015, D-035). */
   | { tipo: "SEGRETO_RICEVUTO"; copiaId: string; causa: string }
   /** Riservato al destinatario. */
   | { tipo: "MESSAGGIO_RICEVUTO"; messaggioId: string; causa: string }
   /** Riservato alla spia. */
   | { tipo: "SEGRETO_CONSEGNATO"; copiaId: string; causa: string }
   /** Pubblico, senza dire quale segreto (D-021, S2). */
-  | { tipo: "SEGRETO_IN_TEMPO"; variazione: number; causa: string }
+  | { tipo: "SEGRETO_IN_TEMPO"; causa: string }
   /** Pubblico: quale segreto ha usato il concorrente, e se era falso (GDD §11.3–11.4). */
   | { tipo: "SEGRETO_USATO"; concorrente: string; segretoId: string; falso: boolean; variazione: number; causa: string }
   /** Promozioni e demansionamenti (GDD §13): proposta pubblica, voti rivelati alla chiusura. */

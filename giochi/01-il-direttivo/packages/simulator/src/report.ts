@@ -176,7 +176,7 @@ export function creaReport(partite: DatiPartita[], intestazione: string): { mark
   sezioni.push("\n## 7. Avvisi automatici\n");
   sezioni.push(avvisi.length === 0 ? "Nessuno." : avvisi.map((a) => `- ⚠️ ${a.testo}`).join("\n"));
   sezioni.push(
-    "\n## 8. Limiti\n\n- I robot non parlano, non mentono a voce e non persuadono: la parte \"psicologica\" si misura solo nelle serate di prova.\n- I contenuti (16 quesiti, 10 segreti, pesi) sono **segnaposto**: i risultati valgono per il motore e le regole, non ancora per il gioco finale.\n- Gli obiettivi personali non esistono ancora (punto aperto 3), quindi i punteggi sono incompleti.\n- Il comportamento dei robot (soglie di voto, sospetti, accuse) è una semplificazione descritta in packages/simulator/src/robot.ts.",
+    "\n## 8. Limiti\n\n- I robot non parlano, non mentono a voce e non persuadono: la parte \"psicologica\" si misura solo nelle serate di prova.\n- Contenuti veri (40 quesiti, 36 segreti con valori variabili e tipi a bilancia, D-030…D-039), ma i robot non leggono i testi: votano sui numeri e non usano il tipo dei segreti per decidere a chi darli.\n- Gli obiettivi personali non esistono ancora (punto aperto 3), quindi i punteggi sono incompleti.\n- Il comportamento dei robot (soglie di voto, sospetti, accuse) è una semplificazione descritta in packages/simulator/src/robot.ts.",
   );
   return { markdown: sezioni.join("\n"), avvisi };
 }

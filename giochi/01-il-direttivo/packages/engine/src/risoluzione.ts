@@ -123,7 +123,8 @@ function applicaEffettiProposte(partita: Partita, ambiente: Ambiente): Evento[] 
       tipo: "EFFETTO_PROPOSTA",
       propostaId: p.id,
       effettoAzienda: p.effettoAzienda,
-      causa: `${p.titolo}: effetto reale sull'azienda ${segno}.`,
+      // Con la frase di spiegazione (D-033); nell'ultimo trimestre esce al punteggio (D-029).
+      causa: `${p.titolo}: effetto reale sull'azienda ${segno}. ${p.spiegazione}.`,
     });
   }
   return eventi;

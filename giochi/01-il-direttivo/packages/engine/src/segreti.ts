@@ -2,8 +2,10 @@
  * Segreti e messaggi privati (GDD §10, §11 · Architettura §10.5 · D-015, D-021).
  *
  * - Distribuzione nel Rapporto: ogni segreto va al reparto "fonte" (≠ reparto utile), come
- *   "dato ufficiale del tuo reparto"; fonte e reparto utile si scelgono al momento (D-023) e le
+ *   "dato certo, arrivato al tuo reparto" (D-035); fonte e reparto utile si scelgono al momento (D-023) e le
  *   fonti sono bilanciate tra i reparti (D-005). Chi possiede una copia sa a quale reparto serve.
+ * - Il dato vero si estrae campo per campo tra i valori possibili (D-036, D-037); il tipo "a
+ *   bilancia" decide quanto vale per l'azienda e per il concorrente (D-038, valori in config).
  * - Messaggi: quota per trimestre, anonimo = costa entrambi i messaggi (vietato ai demansionati),
  *   testo libero breve; si possono inoltrare segreti, anche modificati (copia falsa).
  * - Un segreto vale per l'azienda se il reparto utile ne ha una copia VERA prima della chiusura
@@ -38,10 +40,22 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
   if (candidati.length < config.segreti.perTrimestre) candidati = ambiente.segreti.filter((m) => ammissibile(m, true));
 
   const eventi: Evento[] = [];
+  const perTipo: Partial<Record<ModelloSegreto["tipo"], number>> = {};
 
   for (let i = 0; i < config.segreti.perTrimestre && candidati.length > 0; i++) {
     const modello = casuale.scegli(candidati);
     candidati = candidati.filter((m) => m !== modello);
+    // Limite per tipo nello stesso trimestre (D-039: mai due "da custodire" insieme).
+    const tipo = config.segreti.tipi[modello.tipo];
+    perTipo[modello.tipo] = (perTipo[modello.tipo] ?? 0) + 1;
+    if (tipo.massimoPerTrimestre !== undefined && perTipo[modello.tipo]! >= tipo.massimoPerTrimestre) {
+      candidati = candidati.filter((m) => m.tipo !== modello.tipo);
+    }
+    // Dato vero estratto campo per campo (D-036, D-037).
+    const valoriPossibili: Record<string, ValoreCampo[]> = {};
+    for (const nome of Object.keys(modello.versioni[0]!)) valoriPossibili[nome] = [...new Set(modello.versioni.map((v) => v[nome]!))];
+    const campi: Record<string, ValoreCampo> = {};
+    for (const [nome, valori] of Object.entries(valoriPossibili)) campi[nome] = casuale.scegli(valori);
 
     const mescolati = casuale.mescola(attivi);
     const minimo = Math.min(...mescolati.map((g) => partita.conteggioFontiSegreti[g.repartoId] ?? 0));
@@ -55,12 +69,14 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
       id: segretoId,
       modelloId: modello.id,
       titolo: modello.titolo,
-      campi: { ...modello.campi },
+      tipo: modello.tipo,
+      campi,
+      valoriPossibili,
       fonte: fonte.repartoId,
       utile: utile.repartoId,
       propostaCollegataId: collegata.id,
-      valoreAzienda: modello.valoreAzienda,
-      valoreConcorrente: modello.valoreConcorrente,
+      valoreAzienda: tipo.azienda,
+      valoreConcorrente: tipo.concorrente,
       trimestre: partita.trimestre,
       arrivatoInTempo: false,
     });
@@ -69,7 +85,7 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
       id: nuovoId(partita, "C"),
       segretoId,
       possessore: fonte.id,
-      campi: { ...modello.campi },
+      campi: { ...campi },
       falsa: false,
       provenienza: { tipo: "GIOCO" },
       catena: [],
@@ -78,7 +94,7 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
     eventi.push({
       tipo: "SEGRETO_RICEVUTO",
       copiaId: copia.id,
-      causa: `Dato ufficiale del tuo reparto: ${modello.titolo} (serve al reparto ${utile.repartoId})`,
+      causa: `Dato certo, arrivato al tuo reparto: ${modello.titolo} (serve al reparto ${utile.repartoId})`,
       riservatoA: [fonte.id],
     });
   }
@@ -220,11 +236,8 @@ export function risolviSegreti(partita: Partita, ambiente: Ambiente): Evento[] {
   const eventi: Evento[] = [];
   for (const s of partita.segreti.filter((x) => x.trimestre === partita.trimestre && x.arrivatoInTempo)) {
     partita.azienda.quota += s.valoreAzienda;
-    eventi.push({
-      tipo: "SEGRETO_IN_TEMPO",
-      variazione: s.valoreAzienda,
-      causa: `Un'informazione è arrivata in tempo al reparto giusto: +${s.valoreAzienda} per l'azienda.`,
-    });
+    // Senza numero: il "+N" rivelerebbe il tipo del segreto (D-038).
+    eventi.push({ tipo: "SEGRETO_IN_TEMPO", causa: "Un'informazione è arrivata in tempo al reparto giusto." });
   }
   for (const p of partita.segretiPassati.filter((x) => x.trimestre === partita.trimestre)) {
     const copia = partita.copieSegreto.find((c) => c.id === p.copiaId)!;
