@@ -3,10 +3,12 @@
  * I numeri non si scrivono mai nel codice: si cambiano nel file JSON (regola 4 del gioco).
  */
 import datiConfig from "@il-direttivo/content/config.json" with { type: "json" };
+import type { RepartoId } from "./tipi.js";
 
 export interface Configurazione {
   giocatori: { minimo: number; massimo: number };
   trimestri: number;
+  reparti: { base: RepartoId[]; aggiuntiviInOrdine: RepartoId[] };
   votazioniPerTrimestre: number[];
   cassaPerTrimestre: number;
   mossaPrivata: {
@@ -14,8 +16,11 @@ export interface Configurazione {
     azienda: { puntiReparto: number; deltaAzienda: number };
     rumore: number[];
   };
-  spie: { probabilitaNessunaSpia: number };
-  concorrenti: { finoA7Giocatori: number; con8Giocatori: number };
+  spie: {
+    probabilitaNessunaSpia: number;
+    con8Giocatori: { probabilitaDueSpie: number; probabilitaStessoConcorrente: number };
+  };
+  concorrenti: { finoA7Giocatori: number; con8Giocatori: number; nomi: string[] };
   messaggi: { perTrimestre: number; perTrimestreDemansionato: number; caratteriTestoLibero: number };
   quesitiConAstensione: { quotaDelMazzo: number };
   autogestione: { probabilitaMossaAzienda: number };
@@ -30,6 +35,13 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   if (c.giocatori.minimo < 1 || c.giocatori.minimo > c.giocatori.massimo) {
     problemi.push("Numero di giocatori: minimo e massimo incoerenti");
   }
+  const tuttiIReparti = [...c.reparti.base, ...c.reparti.aggiuntiviInOrdine];
+  if (new Set(tuttiIReparti).size !== tuttiIReparti.length) {
+    problemi.push("Un reparto compare più di una volta nell'elenco dei reparti");
+  }
+  if (tuttiIReparti.length < c.giocatori.massimo) {
+    problemi.push(`Servono almeno ${c.giocatori.massimo} reparti (uno per giocatore), ce ne sono ${tuttiIReparti.length}`);
+  }
   if (c.votazioniPerTrimestre.length !== c.trimestri) {
     problemi.push(
       `La scaletta delle votazioni ha ${c.votazioniPerTrimestre.length} valori, ma i trimestri sono ${c.trimestri}`,
@@ -40,7 +52,13 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   }
   if (c.cassaPerTrimestre <= 0) problemi.push("La cassa per trimestre deve essere positiva");
   if (c.mossaPrivata.rumore.length === 0) problemi.push("Il rumore della mossa privata non può essere vuoto");
+  const maxConcorrenti = Math.max(c.concorrenti.finoA7Giocatori, c.concorrenti.con8Giocatori);
+  if (c.concorrenti.nomi.length < maxConcorrenti) {
+    problemi.push(`Servono almeno ${maxConcorrenti} nomi di concorrenti`);
+  }
   probabilita("spie.probabilitaNessunaSpia", c.spie.probabilitaNessunaSpia);
+  probabilita("spie.con8Giocatori.probabilitaDueSpie", c.spie.con8Giocatori.probabilitaDueSpie);
+  probabilita("spie.con8Giocatori.probabilitaStessoConcorrente", c.spie.con8Giocatori.probabilitaStessoConcorrente);
   probabilita("quesitiConAstensione.quotaDelMazzo", c.quesitiConAstensione.quotaDelMazzo);
   probabilita("autogestione.probabilitaMossaAzienda", c.autogestione.probabilitaMossaAzienda);
   return problemi;

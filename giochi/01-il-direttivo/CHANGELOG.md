@@ -9,6 +9,11 @@ Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 - Impianto del codice: pacchetto del motore (`packages/engine`) e dei contenuti (`packages/content`), controllo dei tipi e test automatici.
 - Generatore casuale con seme (stessa partita a parità di seme) e file dei parametri `config.json`, controllato all'avvio.
 - Primi 13 test automatici (generatore casuale, validità dei parametri).
+- Motore: stato della partita, creazione con assegnazione segreta di reparti, spie e concorrenti (4–8 giocatori), scaletta delle fasi con i cicli discussione → voto e la scaletta 2-3-3-2. 42 test automatici.
+- Parametri segnaposto in config.json: ordine dei reparti aggiuntivi (punto aperto 7) e probabilità delle spie con 8 giocatori.
+
+### Design
+- Nuovo punto aperto: cassa non spesa, accumulo o azzeramento (n. 26).
 
 ## 2026-11-22 — 0.2.0
 

@@ -18,8 +18,8 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 
 ## Fase 2 · Motore e simulazione
 - ✅ Impianto del codice (pacchetti, test, controllo tipi) — 22/11/2026
-- 🔄 Motore: stato, azioni, macchina a stati delle fasi — prossimo passo
-- ⬜ Regole: votazione pesata, mossa privata, segreti, concorrenti, autogestione
+- ✅ Motore: stato, azioni, macchina a stati delle fasi — 22/11/2026 (sotto-fasi del finale insieme alle regole del finale)
+- 🔄 Regole: votazione pesata, mossa privata, segreti, concorrenti, autogestione
 - ⬜ Demansionamento/promozione, finale, punteggio
 - ⬜ Viste filtrate + test di riservatezza
 - ⬜ Contenuti minimi (proposte, segreti, obiettivi) in JSON
@@ -45,6 +45,8 @@ Riferimento: tabella §20 del GDD. Da chiudere prima o durante la fase 2.
 
 | # GDD | Tema | Blocca |
 |---|---|---|
+| 26 | Cassa non spesa: si accumula o si azzera a ogni trimestre? | votazione (costo ≤ cassa) |
+| 7 | Reparti aggiunti con 6, 7, 8 giocatori (nel motore c'è un ordine segnaposto in config.json) | assegnazione definitiva |
 | 1–4 | Liste di proposte, segreti, obiettivi, comportamento concorrenti | contenuti e simulatore (bastano versioni minime) |
 
 ## Idee e punti da valutare (non bloccano subito)

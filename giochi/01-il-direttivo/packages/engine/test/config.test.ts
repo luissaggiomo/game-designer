@@ -18,7 +18,8 @@ describe("configurazione (content/config.json)", () => {
   });
 
   it("segnala una probabilità fuori da 0..1", () => {
-    const c = { ...caricaConfigurazione(), spie: { probabilitaNessunaSpia: 1.5 } };
+    const base = caricaConfigurazione();
+    const c = { ...base, spie: { ...base.spie, probabilitaNessunaSpia: 1.5 } };
     expect(controllaConfigurazione(c)).toHaveLength(1);
   });
 });

@@ -676,9 +676,12 @@ il-direttivo/
 ├─ packages/
 │  ├─ engine/          # logica pura: stato, azioni, regole, viste, punteggio
 │  │  ├─ src/
-│  │  │  ├─ state.ts
-│  │  │  ├─ actions.ts
-│  │  │  ├─ phases/    # una cartella per fase della macchina a stati
+│  │  │  ├─ tipi.ts    # stato della partita
+│  │  │  ├─ azioni.ts  # azioni, eventi, esiti
+│  │  │  ├─ partita.ts # creazione e assegnazione segreta
+│  │  │  ├─ fasi.ts    # macchina a stati delle fasi
+│  │  │  ├─ motore.ts  # applica(partita, azione)
+│  │  │  ├─ config.ts  # lettura e controllo dei parametri
 │  │  │  ├─ rules/     # votazioni, segreti, concorrenti, autogestione, finale
 │  │  │  ├─ views.ts   # proiezione per TV e per giocatore
 │  │  │  └─ rng.ts     # generatore casuale con seme

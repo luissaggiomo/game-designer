@@ -2,6 +2,11 @@
   "_nota": "Parametri del gioco. Tutti i numeri sono da tarare col simulatore. Le chiavi che iniziano con _ sono note con i riferimenti al GDD e alle decisioni.",
   "giocatori": { "minimo": 4, "massimo": 8 },
   "trimestri": 4,
+  "reparti": {
+    "base": ["ACQUISTI", "PRODUZIONE", "VENDITE", "MARKETING"],
+    "aggiuntiviInOrdine": ["FINANZA", "RISORSE_UMANE", "RICERCA_SVILUPPO", "IT_SICUREZZA"]
+  },
+  "_reparti": "GDD §5. PROVVISORIO: l'ordine dei reparti aggiuntivi oltre Finanza è il punto aperto 7 (GDD §20); qui è solo un segnaposto per far funzionare il motore da 4 a 8 giocatori.",
   "votazioniPerTrimestre": [2, 3, 3, 2],
   "_votazioniPerTrimestre": "Scaletta T1-T4 (D-014)",
   "cassaPerTrimestre": 10,
@@ -12,10 +17,13 @@
     "rumore": [-1, 0, 1]
   },
   "_mossaPrivata": "GDD §9, Architettura §10.4",
-  "spie": { "probabilitaNessunaSpia": 0.15 },
-  "_spie": "GDD §4.2; probabilità di 1 o 2 spie con 8 giocatori da definire",
-  "concorrenti": { "finoA7Giocatori": 1, "con8Giocatori": 2 },
-  "_concorrenti": "D-011",
+  "spie": {
+    "probabilitaNessunaSpia": 0.15,
+    "con8Giocatori": { "probabilitaDueSpie": 0.4, "probabilitaStessoConcorrente": 0.5 }
+  },
+  "_spie": "GDD §4.2, Architettura §10.1. SEGNAPOSTO da tarare: con 8 giocatori, se ci sono spie, probabilità che siano 2 e che servano lo stesso concorrente.",
+  "concorrenti": { "finoA7Giocatori": 1, "con8Giocatori": 2, "nomi": ["Concorrente A", "Concorrente B"] },
+  "_concorrenti": "D-011. I nomi sono segnaposto (tono ironico da definire, GDD §19).",
   "messaggi": { "perTrimestre": 2, "perTrimestreDemansionato": 1, "caratteriTestoLibero": 80 },
   "_messaggi": "GDD §10, §13.2",
   "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
