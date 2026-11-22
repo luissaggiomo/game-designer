@@ -61,6 +61,10 @@ type ContenutoEvento =
   | { tipo: "EFFETTO_PROPOSTA"; propostaId: string; effettoAzienda: number; causa: string }
   | { tipo: "MOSSA_CONCORRENTE"; concorrente: string; variazione: number; causa: string }
   | { tipo: "CORSA_DI_MERCATO"; azienda: number; concorrenti: Record<string, number>; causa: string }
+  /** Ultimo trimestre: un segreto è finito al concorrente, senza numeri né esito (D-029, variante B). */
+  | { tipo: "FUGA_DI_NOTIZIE"; concorrente: string; segretoId: string; causa: string }
+  /** Ultimo trimestre: risultati nascosti fino al punteggio (D-029). */
+  | { tipo: "RISULTATI_RINVIATI"; causa: string }
   /** Riservato alla fonte: dato ufficiale del suo reparto (D-015). */
   | { tipo: "SEGRETO_RICEVUTO"; copiaId: string; causa: string }
   /** Riservato al destinatario. */

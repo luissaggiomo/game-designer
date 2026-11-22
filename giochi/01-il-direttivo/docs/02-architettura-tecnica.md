@@ -457,7 +457,10 @@ PROMOZIONE (D-010): nella fase DEMANSIONAMENTO, PRIMA della proposta di demansio
 
 ### 10.9 Finale
 ```
-1-2. per ogni DEMANSIONATO, uno alla volta: voto palese "promuovere o licenziare?" (D-028)
+0. i numeri del 4° trimestre restano nascosti fino a PUNTEGGIO; le fughe di notizie
+   si annunciano subito come FUGA_DI_NOTIZIE, senza numeri (D-029, variante B)
+1-2. per ogni DEMANSIONATO, uno alla volta: voto palese "promuovere o licenziare?" (D-028);
+     votano tutti tranne l'interessato, tempo scaduto = licenzia (D-029)
      promosso → ATTIVO (vota sui successivi); altrimenti → LICENZIATO, rivela ruolo
 3. VERIFICA: ogni attivo vota segretamente sì/no
    se tutti sì → PUNTEGGIO

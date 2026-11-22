@@ -209,6 +209,25 @@ describe("segreto arrivato in tempo (D-021)", () => {
   });
 });
 
+describe("ultimo trimestre: fuga di notizie annunciata subito, senza numeri (D-029, variante B)", () => {
+  it("ai Risultati del 4° trimestre si vede il titolo del segreto, non l'effetto sul mercato", () => {
+    let p = nuova();
+    while (!(p.trimestre === 4 && p.fase.nome === "RAPPORTO")) p = fai(p, { tipo: "AVANZA_FASE" }).partita;
+    p = structuredClone(p);
+    const s = p.segreti.find((x) => x.trimestre === 4)!;
+    const spia = giocatoreDi(p, s.fonte);
+    rendiSpia(p, spia);
+    let q = fai(p, { tipo: "PASSA_AL_CONCORRENTE", da: spia.id, copiaSegretoId: copiaDi(p, s, spia.id)!.id }).partita;
+    let eventi: Evento[] = [];
+    while (q.fase.nome !== "RISOLUZIONE") ({ partita: q, eventi } = fai(q, { tipo: "AVANZA_FASE" }));
+    const fuga = eventi.find((e) => e.tipo === "FUGA_DI_NOTIZIE");
+    expect(fuga).toBeDefined();
+    expect(fuga!.causa).toContain(s.titolo);
+    expect(fuga).not.toHaveProperty("variazione");
+    expect(eventi.some((e) => e.tipo === "SEGRETO_USATO" || e.tipo === "CORSA_DI_MERCATO")).toBe(false);
+  });
+});
+
 describe("la spia passa un segreto al concorrente (GDD §11.3, D-021)", () => {
   const prepara = () => {
     const p = nuova();

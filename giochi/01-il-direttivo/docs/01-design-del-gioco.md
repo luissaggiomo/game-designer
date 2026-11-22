@@ -216,7 +216,7 @@
 | **1. Rapporto** | Ognuno vede l'effetto delle proposte sul proprio reparto ed eventuali segreti | Telefono |
 | **2–3. Ciclo per proposta** (ripetuto 2–3 volte) | **Discussione** a voce sulla proposta di turno, con messaggi privati (quota per trimestre, spesa quando si vuole), poi **votazione** palese con pesi. Il voto appare subito in TV. | Voce + TV + telefono |
 | **4. Mossa privata** | Scelta segreta: interesse personale o aziendale | Telefono |
-| **5. Risultati** | Corsa di mercato, mosse dei concorrenti, esito della mossa privata, effetto reale delle proposte | TV |
+| **5. Risultati** | Corsa di mercato, mosse dei concorrenti, esito della mossa privata, effetto reale delle proposte. *(D-029: nel 4° trimestre i **numeri** del mercato restano nascosti e si scoprono solo al punteggio, dopo il finale; le fughe di notizie si annunciano subito, senza numeri: "un'informazione è finita a [concorrente]: «titolo»")* | TV |
 | **6. Demansionamento** (facoltativo) | Votazione per demansionare un direttore | TV + telefono |
 
 ⚖️ Durata indicativa di un trimestre: 10–12 minuti, con timer gestiti dal gioco.
@@ -277,12 +277,12 @@
 ✅ *(provvisorio, da verificare col simulatore — D-006)* I **reparti vacanti dall'inizio non contano** nella soglia; i **demansionati sì**. Vedi §14.
 
 ### 8.4bis Astensione
-✅ *(provvisorio, da verificare col simulatore — D-007)* **Regola normale: solo SÌ / NO.** Chi non vota entro il tempo vale **"no"**; in TV: *"No (tempo scaduto)"*.
+✅ *(provvisorio, da verificare col simulatore — D-007)* **Regola normale: solo SÌ / NO.** Chi non vota entro il tempo vale **"no"**; in TV: *"No (tempo scaduto)"*. Principio generale *(D-029)*: **il tempo scaduto conserva lo stato delle cose** (non approva, non demansiona, non promuove, alla verifica vale "sì", non nomina); dove l'astensione è ammessa vale astensione.
 ✅ *(provvisorio — D-007)* **Eccezione: quesiti "con astensione".** Alcuni quesiti, indicati nel mazzo, mostrano anche il tasto **"Mi astengo"**. In quel caso l'astensione è **vera**: la soglia si calcola **solo sul peso di chi ha votato** (sì + no).
 ✅ *(provvisorio — D-007)* Nei voti di **demansionamento e promozione** l'astensione **non esiste mai**: solo SÌ / NO, e il tempo scaduto vale "no".
 ✅ *(provvisorio, da verificare col simulatore — D-013)* Dettagli dei quesiti con astensione:
 - il peso dei **demansionati conta come un "no" fisso**: soglia = metà più uno di (peso dei votanti + peso dei demansionati), così il demansionamento resta costoso (§8.4);
-- il **tempo scaduto vale "no"**, come in tutte le altre votazioni (una sola regola sul tempo);
+- il **tempo scaduto vale astensione** *(D-029, rivede D-013)*;
 - sono **rari** (⚖️ circa il 15% del mazzo, in media 1–2 per partita), **segnalati in TV** dall'inizio della discussione con l'etichetta *"⚖️ Astensione ammessa"*, e riguardano temi in cui un onesto ha motivi legittimi per non schierarsi (conflitti di interesse, "votazione di coscienza");
 - in questi quesiti **tutti i reparti occupati hanno peso 1** ("votazione del consiglio"), per non dare ai reparti di peso 2 un'astensione più pesante (D-005).
 
@@ -455,9 +455,9 @@
 
 ### 15.1 Sequenza approvata
 
-1. **Decisione sui demansionati** *(provvisorio, da verificare col simulatore — D-028)*. Per **ogni** demansionato, uno alla volta (prima chi è fuori da più tempo), il direttivo decide esplicitamente: **promuoverlo o licenziarlo?** Voto palese, 1 a testa tra gli attivi, il demansionato non vota, metà più uno per promuovere. **Pareggio o nessuna risposta = licenziato.** Chi viene promosso torna nel direttivo e vota sui successivi.
-2. **Licenziamento.** Chi non viene promosso è licenziato e il suo ruolo viene rivelato subito. Punti come la nomina (§16.2): chi ha votato "licenzia" prende i punti o le penalità di chi nomina; chi ha votato "promuovi" per una spia prende la stessa penalità di chi fa licenziare un onesto.
-3. **Domanda di verifica.** Ogni membro del direttivo vota **in segreto**: *"Nel direttivo sono rimasti solo onesti?"* Sì o no.
+1. **Decisione sui demansionati** *(provvisorio, da verificare col simulatore — D-028)*. Per **ogni** demansionato, uno alla volta (prima chi è fuori da più tempo), il direttivo decide esplicitamente: **promuoverlo o licenziarlo?** Voto palese, 1 a testa: **votano tutti, anche demansionati e licenziati, tranne l'interessato** *(D-029, unica eccezione a §15.2)*; metà più uno per promuovere. **Pareggio o tempo scaduto = licenziato** (il tempo scaduto conta come voto "licenzia"). Chi viene promosso torna nel direttivo.
+2. **Licenziamento.** Chi non viene promosso è licenziato e il suo ruolo viene rivelato subito. Punti come la nomina (§16.2): chi ha votato "licenzia" prende +3 se era una spia, −3 se era un onesto; chi ha votato "promuovi" per una spia prende −3 (D-029).
+3. **Domanda di verifica.** Ogni membro del direttivo vota **in segreto**: *"Nel direttivo sono rimasti solo onesti?"* Sì o no. **Chi non risponde in tempo vale "sì"** *(D-029)*.
 4. **Se tutti rispondono sì**, il gioco passa al punteggio.
 5. **Se c'è almeno un no**, la TV rivela **chi ha votato no**.
 6. **Nomina.** Ognuno indica in segreto chi secondo lui è la spia.
@@ -467,7 +467,8 @@
 10. **Secondo giro:** si ripete dal punto 3 **solo se sono possibili due spie** (8 giocatori). Si rifà la domanda anche se nel primo giro è stato licenziato un onesto.
 
 ### 15.2 Regole del finale
-✅ **Votano solo i membri del direttivo.** Demansionati e licenziati possono solo suggerire e confondere.
+✅ **Votano solo i membri del direttivo.** Demansionati e licenziati possono solo suggerire e confondere. *(Eccezione D-029: nella decisione sui demansionati votano tutti tranne l'interessato.)*
+✅ *(provvisorio — D-029)* **Il finale si gioca senza conoscere l'esito della corsa di mercato**: i numeri del 4° trimestre si scoprono al punteggio; le fughe di notizie del 4° trimestre si annunciano subito, senza numeri, perché sono indizi utili al finale.
 ✅ Nel finale **ogni voto vale 1**, senza pesi di reparto.
 ✅ *(provvisorio — D-022)* Si può nominare come spia solo un **membro attivo del direttivo**, esclusi se stessi e i licenziati.
 ✅ Il ruolo di ogni licenziato viene rivelato subito.
@@ -504,10 +505,12 @@
 | Tutti "sì" e davvero nessuna spia | Bonus a tutti gli onesti |
 | Tutti "sì" ma la spia c'era | Grande bonus alla spia |
 | Qualcuno "no" ma non c'erano spie | Penalità a chi ha votato "no" (falso allarme) |
-| Spia licenziata | Bonus agli onesti, punti extra a chi l'ha nominata, grossa penalità alla spia *(D-027: vale anche per la spia ancora demansionata a fine anno — contratto non rinnovato = licenziata; l'unica via d'uscita è farsi promuovere all'ultimo turno)* |
-| Onesto licenziato | Penalità a chi l'ha nominato, punti alla spia, **penalità anche all'onesto licenziato** *(D-026, −5 indicativo ⚖️; vale anche per chi è licenziato perché ancora demansionato)* |
-| Spia che fa licenziare una spia rivale | Punti alla spia accusatrice |
-| Decisione finale su un demansionato *(D-028)* | Chi vota "licenzia" = come chi nomina (stessi punti e penalità); chi vota "promuovi" per una spia = penalità come chi fa licenziare un onesto. Contano i voti espressi |
+| Spia licenziata (nominata o non promossa) | +2 a ogni onesto, −5 alla spia *(D-027)* |
+| Onesto licenziato (nominato o non promosso) | −5 all'onesto *(D-026)*; **nessun bonus alle spie** *(D-029)* |
+| Nomina *(D-029)* | **+5** a chi nomina una spia (anche una spia che nomina una spia rivale); **−5** a chi nomina un onesto (spie comprese). Chi non nomina non accusa nessuno |
+| Voto nella decisione sui demansionati *(D-028, D-029)* | **+3** a chi vota "licenzia" su una spia; **−3** a chi vota "licenzia" su un onesto o "promuovi" su una spia. Il tempo scaduto vale "licenzia" |
+
+⚖️ *(D-029)* Accuse: **un solo valore per la nomina (5) e uno per il voto (3)**, uguali per bonus e penalità, da tarare insieme mantenendo la simmetria.
 | Demansionamento di un onesto (durante la partita) | 🟡 Penalità a chi l'ha votato |
 
 ### 16.3 Classifica

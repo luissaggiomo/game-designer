@@ -2,8 +2,9 @@
  * Il finale (GDD §15 · Architettura §10.9 · D-022).
  *
  * 1-2. Decisione obbligatoria su ogni demansionato: promuoverlo o licenziarlo (D-028). Voto palese
- *    1 a testa tra gli attivi (il demansionato non vota), metà più uno; pareggio o tempo scaduto =
- *    licenziato, con ruolo rivelato. Chi viene promosso torna attivo e vota sui successivi.
+ *    1 a testa di TUTTI, anche demansionati e licenziati, tranne l'interessato (D-029); metà più uno;
+ *    pareggio o tempo scaduto = licenziato, con ruolo rivelato.
+ *    Tempo scaduto in generale = conserva lo stato delle cose (D-029): alla verifica vale "sì".
  * 3. Verifica: ogni attivo risponde in segreto "nel direttivo sono rimasti solo onesti?".
  *    Tutti sì → punteggio. Almeno un no → la TV rivela chi ha risposto no.
  * 4. Nomina segreta della spia (solo membri attivi, non se stessi); rivelazione una alla volta.

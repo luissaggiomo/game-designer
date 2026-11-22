@@ -396,3 +396,32 @@ Modello di voce:
 - Verifica: quanti licenziati con questo voto sono davvero spie; onesti licenziati per partita;
   egoisti contro cooperativi.
 - Rif.: GDD §13, §15.1, §16.2 · Architettura §9, §10.9
+
+## D-029 — Revisione del finale: chi vota, tempo scaduto, punti delle accuse, esito nascosto
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Scelte di Luis:
+  - **Decisione sui demansionati:** votano tutti, anche demansionati e licenziati, tranne
+    l'interessato (eccezione a GDD §15.2, valida solo per questo voto).
+  - **Principio generale del tempo scaduto:** conserva lo stato delle cose. Quesiti: no;
+    demansionamento e promozione: no; verifica finale: **sì**; nomina: nessuna nomina;
+    decisione sui demansionati: **licenzia** (e conta come voto, con i suoi punti). Dove
+    l'astensione è ammessa il tempo scaduto vale **astensione** (rivede D-013). La mossa
+    privata a tempo scaduto resta "per l'azienda" (D-020).
+  - **Punti delle accuse,** uguali per onesti e spie: nomina giusta +5, nomina di un onesto −5;
+    voto "licenzia" giusto +3, "licenzia" su un onesto −3, "promuovi" su una spia −3. Una spia
+    che accusa la propria alleata: 0. **Nessun bonus alle spie** quando un onesto è licenziato.
+    Due soli valori (5 e 3), da tarare insieme mantenendo la simmetria bonus/penalità.
+  - **Niente bonus "azienda vince" alla spia** (le converrebbe far vincere l'azienda).
+  - **Esito del 4° trimestre nascosto fino al punteggio:** il finale si gioca senza sapere chi
+    ha vinto la corsa di mercato. Variante **B** (dopo il quinto report): si nascondono solo i
+    numeri (quote, mosse dei concorrenti, andamento dell'azienda); le fughe di notizie si
+    annunciano subito senza numeri, perché nascondere tutto toglieva agli onesti gli indizi
+    dell'ultimo trimestre (spie scoperte con 4 giocatori: dal 65% al 52%).
+  - Valutazione: valgono i punteggi individuali; il criterio per fazione (onesti/spie) serve
+    solo a Luis per valutare le simulazioni.
+- Effetto: spie (accusare un onesto costa anche a loro; restano prudenti anche a mercato perso,
+  perché non sanno l'esito e rischiano −5); onesti (accuse sbagliate costose, ma sbagliare in
+  silenzio è possibile non nominando); reparti: nessun effetto.
+- Verifica: nomine fatte per partita, spie sopravvissute, onesti licenziati, egoisti contro
+  cooperativi; nelle serate, se le accuse costano troppo e nessuno nomina più.
+- Rif.: GDD §8.4bis, §15, §16.2 · D-007, D-013, D-020, D-026…D-028

@@ -60,39 +60,36 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
     aggiungi(s.id, "Sei stata scoperta e licenziata", v.spiaLicenziataPenalita);
   }
 
-  // Nomine del finale: punti e penalità a chi ha nominato.
+  // Accuse giuste o sbagliate (D-029): un solo valore per la nomina e uno per il voto, uguali
+  // per bonus e penalità e per onesti e spie. Accusare una spia (non la propria alleata) dà
+  // punti; accusare un onesto li toglie. Nessun bonus alle spie quando un onesto è licenziato.
+  const esitoAccusa = (accusatore: GiocatoreId, accusato: GiocatoreId): 1 | -1 | 0 => {
+    const cAccusato = concorrenteDi(accusato);
+    if (cAccusato === null) return -1;
+    return concorrenteDi(accusatore) === cAccusato ? 0 : 1;
+  };
+
+  // Nomine del finale.
   for (const l of partita.finale.licenziamenti) {
-    const concorrenteLicenziato = concorrenteDi(l.giocatore);
-    if (concorrenteLicenziato) {
-      for (const da of l.nominatoDa) {
-        const concorrenteNominatore = concorrenteDi(da);
-        if (concorrenteNominatore === null) aggiungi(da, `Hai nominato la spia ${nome(l.giocatore)}`, v.spiaLicenziataBonusNominatori);
-        else if (concorrenteNominatore !== concorrenteLicenziato) aggiungi(da, `Hai fatto licenziare una spia rivale`, v.spiaRivaleLicenziata);
-      }
-    } else {
-      for (const da of l.nominatoDa) aggiungi(da, `Hai fatto licenziare un onesto (${nome(l.giocatore)})`, v.onestoLicenziatoPenalitaNominatori);
-      for (const g of spie) aggiungi(g.id, `Un onesto è stato licenziato al posto tuo`, v.onestoLicenziatoBonusSpie);
+    for (const da of l.nominatoDa) {
+      const e = esitoAccusa(da, l.giocatore);
+      if (e === 1) aggiungi(da, `Hai nominato la spia ${nome(l.giocatore)}`, v.accusaNomina);
+      if (e === -1) aggiungi(da, `Hai nominato un onesto (${nome(l.giocatore)})`, -v.accusaNomina);
     }
   }
 
-  // Decisione finale sui demansionati (D-028): chi vota "licenzia" è trattato come chi nomina;
-  // chi vota "promuovi" per una spia prende la stessa penalità di chi fa licenziare un onesto.
-  // Contano solo i voti espressi (il tempo scaduto decide l'esito ma non dà punti, come nella nomina).
+  // Decisione finale sui demansionati (D-028, D-029). Votano tutti tranne l'interessato; il tempo
+  // scaduto vale "licenzia" (conserva lo stato: il demansionato resta fuori) e conta come voto.
   for (const d of partita.storicoVotiPersonali.filter((x) => x.tipo === "PROMOZIONE" && x.momento === "FINALE")) {
-    const concorrenteBersaglio = concorrenteDi(d.bersaglio);
-    const licenziato = !d.approvato;
-    if (licenziato && concorrenteBersaglio === null) {
-      for (const g of spie) aggiungi(g.id, `Un onesto è stato licenziato (${nome(d.bersaglio)})`, v.onestoLicenziatoBonusSpie);
-    }
-    for (const [id, scelta] of Object.entries(d.voti)) {
-      const concorrenteVotante = concorrenteDi(id);
-      if (licenziato && scelta === "NO") {
-        if (concorrenteBersaglio === null) aggiungi(id, `Hai votato per licenziare un onesto (${nome(d.bersaglio)})`, v.onestoLicenziatoPenalitaNominatori);
-        else if (concorrenteVotante === null) aggiungi(id, `Hai votato per licenziare la spia ${nome(d.bersaglio)}`, v.spiaLicenziataBonusNominatori);
-        else if (concorrenteVotante !== concorrenteBersaglio) aggiungi(id, "Hai fatto licenziare una spia rivale", v.spiaRivaleLicenziata);
+    for (const g of partita.giocatori.filter((x) => x.id !== d.bersaglio)) {
+      const scelta = d.voti[g.id] ?? "NO";
+      const e = esitoAccusa(g.id, d.bersaglio);
+      if (!d.approvato && scelta === "NO") {
+        if (e === 1) aggiungi(g.id, `Hai votato per licenziare la spia ${nome(d.bersaglio)}`, v.accusaVoto);
+        if (e === -1) aggiungi(g.id, `Hai votato per licenziare un onesto (${nome(d.bersaglio)})`, -v.accusaVoto);
       }
-      if (!licenziato && scelta === "SI" && concorrenteBersaglio !== null) {
-        aggiungi(id, `Hai votato per promuovere una spia (${nome(d.bersaglio)})`, v.onestoLicenziatoPenalitaNominatori);
+      if (d.approvato && scelta === "SI" && concorrenteDi(d.bersaglio) !== null) {
+        aggiungi(g.id, `Hai votato per promuovere una spia (${nome(d.bersaglio)})`, -v.accusaVoto);
       }
     }
   }

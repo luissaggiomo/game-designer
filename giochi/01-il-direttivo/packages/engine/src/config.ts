@@ -51,13 +51,13 @@ export interface Configurazione {
     tuttiSiConSpia: number;
     falsoAllarme: number;
     spiaLicenziataBonusOnesti: number;
-    spiaLicenziataBonusNominatori: number;
     spiaLicenziataPenalita: number;
-    onestoLicenziatoPenalitaNominatori: number;
     /** Penalità all'onesto licenziato, per accusa o perché ancora demansionato (D-026). */
     onestoLicenziatoPenalita: number;
-    onestoLicenziatoBonusSpie: number;
-    spiaRivaleLicenziata: number;
+    /** Accusa con la nomina finale: +valore se giusta (una spia non alleata), −valore se un onesto (D-029). */
+    accusaNomina: number;
+    /** Voto nella decisione sui demansionati: stessi segni, valore più basso (D-029). */
+    accusaVoto: number;
     demansionamentoOnestoPenalitaPerVoto: number;
   };
   autogestione: { mossaPrivataDemansionati: boolean; probabilitaMossaAzienda: number; fattoreEffetti: number };

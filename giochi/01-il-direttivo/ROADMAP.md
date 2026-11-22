@@ -23,8 +23,8 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Demansionamento/promozione, finale, punteggio (senza obiettivi personali, D-022)
 - ✅ Viste filtrate + test di riservatezza (partite casuali da 4 a 8 giocatori, controllo a ogni passo)
 - 🔄 Contenuti minimi in JSON — quesiti: 40 con 7 schemi di effetto (D-023), titoli e frasi provvisori; segreti: 10 segnaposto; obiettivi: da fare
-- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-22-simulazione-04.md (4 avvisi)
-- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-028 — in corso (quarto report fatto)
+- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-22-simulazione-05.md (2 avvisi)
+- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-029 — in corso (quinto report fatto)
 
 ## Fase 3 · Prototipo locale giocabile
 - ⬜ Scelta hosting (DG-006)
@@ -68,4 +68,4 @@ D-014 numero di votazioni, bilanciamento dei favoriti, mazzo · D-015 provenienz
 D-018 cassa: 100 K a trimestre, accumulo con tetto 150 K · D-019 voti rivelati alla chiusura · D-020 mossa privata: solo demansionati in automatico, predefinita "azienda" ·
 D-021 segreti e messaggi: collegamento al voto, quando si scrive, anonimi, scadenza ·
 D-022 demansionamento, finale e punteggio: limiti, nomina, pareggio, punteggio senza obiettivi ·
-D-023 quesiti dall'effetto · D-024 prima taratura · D-025 niente bonus alla spia licenziata · D-026 penalità all'onesto licenziato · D-027 demansionato a fine anno = licenziato a tutti gli effetti · D-028 decisione finale sui demansionati.
+D-023 quesiti dall'effetto · D-024 prima taratura · D-025 niente bonus alla spia licenziata · D-026 penalità all'onesto licenziato · D-027 demansionato a fine anno = licenziato a tutti gli effetti · D-028 decisione finale sui demansionati · D-029 revisione del finale.

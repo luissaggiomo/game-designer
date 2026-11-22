@@ -95,7 +95,14 @@ export type Fase =
   | { nome: "LETTURA_MESSAGGI" }
   | { nome: "FINE" };
 
+import type { Evento } from "./azioni.js";
+
 export interface Partita {
+  /**
+   * Risultati del 4° trimestre tenuti nascosti fino al punteggio (D-029): gli eventi già calcolati
+   * e le quote di mercato com'erano prima, da mostrare nel frattempo.
+   */
+  risultatiRinviati?: { eventi: Evento[]; quote: { azienda: number; concorrenti: Record<string, number> } };
   seme: number;
   /** Stato del generatore casuale: la partita prosegue sempre in modo riproducibile. */
   statoCasuale: number;

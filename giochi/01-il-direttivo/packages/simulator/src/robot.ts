@@ -70,7 +70,7 @@ export class Robot {
   osserva(eventi: Evento[], v: VistaGiocatore): void {
     if (this.spia(v)) return;
     for (const e of eventi) {
-      if (e.tipo === "SEGRETO_USATO") {
+      if (e.tipo === "SEGRETO_USATO" || e.tipo === "FUGA_DI_NOTIZIE") {
         // Un segreto è finito al concorrente: chi l'ha ricevuto da me o me l'ha passato diventa sospetto.
         for (const x of this.inviati.filter((i) => e.causa.includes(i.titolo))) this.aumenta(x.a, 3);
         for (const x of this.ricevuti.filter((r) => e.causa.includes(r.titolo))) this.aumenta(x.da, 2);
@@ -184,7 +184,8 @@ export class Robot {
   votaPersonale(v: VistaGiocatore): Azione | undefined {
     const voto = v.votoPersonale;
     const io = v.giocatori.find((g) => g.id === this.id)!;
-    if (!voto || io.stato !== "ATTIVO" || voto.bersaglio === this.id) return undefined;
+    // Nella decisione finale votano anche demansionati e licenziati (D-029).
+    if (!voto || (io.stato !== "ATTIVO" && v.fase.nome !== "DECISIONE_FINALE") || voto.bersaglio === this.id) return undefined;
     const sospetto = this.sospetto.get(voto.bersaglio) ?? 0;
     const alleato = v.io.alleati.includes(voto.bersaglio);
     let si: boolean;

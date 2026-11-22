@@ -81,8 +81,12 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
     case "NOMINA":
       partita.finale.nomine = {};
       return [];
-    case "PUNTEGGIO":
-      return calcolaPunteggi(partita, ambiente);
+    case "PUNTEGGIO": {
+      // Prima si svelano i risultati dell'ultimo trimestre (D-029), poi la classifica.
+      const rinviati = partita.risultatiRinviati?.eventi ?? [];
+      delete partita.risultatiRinviati;
+      return [...rinviati, ...calcolaPunteggi(partita, ambiente)];
+    }
     case "RAPPORTO":
       break;
     default:

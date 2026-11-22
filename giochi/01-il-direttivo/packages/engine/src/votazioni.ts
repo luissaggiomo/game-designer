@@ -6,7 +6,8 @@
  *   i vacanti non contano (D-006). Solo SÌ/NO.
  * - Quesito con astensione: pesi tutti 1, soglia = metà più uno del peso di chi ha votato SÌ o NO
  *   più il peso dei demansionati, che vale come un "no" fisso (D-007, D-013).
- * - Tempo scaduto = "no" (D-007). Pareggio = respinta (segue dalla soglia "metà più uno").
+ * - Tempo scaduto = "no"; nei quesiti con astensione = astensione (D-029, rivede D-013).
+ *   Pareggio = respinta (segue dalla soglia "metà più uno").
  * - Approvata solo se c'è abbastanza cassa (costo ≤ cassa).
  */
 import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
@@ -48,7 +49,8 @@ export function registraVoto(partita: Partita, azione: Extract<AzioneGiocatore, 
 /** Calcola l'esito di una proposta (senza modificare nulla). */
 export function calcolaEsito(partita: Partita, proposta: PropostaIstanza, unita: string): EsitoVotazione {
   const aventiDiritto = partita.giocatori.filter((g) => g.stato === "ATTIVO" && pesoDi(proposta, g) > 0);
-  const votoDi = (g: Giocatore) => proposta.voti[g.id] ?? "NO"; // tempo scaduto = no (D-007)
+  // Tempo scaduto = conserva lo stato delle cose (D-029): "no"; nei quesiti con astensione = astensione.
+  const votoDi = (g: Giocatore) => proposta.voti[g.id] ?? (proposta.astensioneAmmessa ? "ASTENUTO" : "NO");
   const votiPerTempoScaduto = aventiDiritto.filter((g) => proposta.voti[g.id] === undefined).length;
 
   const si = aventiDiritto.filter((g) => votoDi(g) === "SI").reduce((s, g) => s + pesoDi(proposta, g), 0);
@@ -69,7 +71,8 @@ export function calcolaEsito(partita: Partita, proposta: PropostaIstanza, unita:
   const fondiSufficienti = proposta.costo <= partita.azienda.cassa;
   const approvata = votiSufficienti && fondiSufficienti;
 
-  const scaduti = votiPerTempoScaduto > 0 ? ` (${votiPerTempoScaduto} "no" per tempo scaduto)` : "";
+  const comeScaduto = proposta.astensioneAmmessa ? "astenuti" : '"no"';
+  const scaduti = votiPerTempoScaduto > 0 ? ` (${votiPerTempoScaduto} ${comeScaduto} per tempo scaduto)` : "";
   let motivo: string;
   if (approvata) motivo = `Approvata: ${si} sì, ne servivano ${soglia}${scaduti}.`;
   else if (!votiSufficienti) motivo = `Respinta: ${si} sì, ne servivano ${soglia}${scaduti}.`;

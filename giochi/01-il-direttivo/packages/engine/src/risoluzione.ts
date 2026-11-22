@@ -32,6 +32,11 @@ export function registraMossa(partita: Partita, azione: Extract<AzioneGiocatore,
 export function risolviTrimestre(partita: Partita, ambiente: Ambiente): Evento[] {
   const casuale = creaCasuale(partita.statoCasuale);
   const eventi: Evento[] = [];
+  // Quote prima dei risultati: nell'ultimo trimestre restano quelle visibili fino al punteggio (D-029).
+  const quotePrima = {
+    azienda: partita.azienda.quota,
+    concorrenti: Object.fromEntries(partita.concorrenti.map((c) => [c.id, c.quota])),
+  };
 
   eventi.push(risolviMossePrivate(partita, ambiente, casuale));
   eventi.push(...applicaEffettiProposte(partita, ambiente));
@@ -50,6 +55,20 @@ export function risolviTrimestre(partita: Partita, ambiente: Ambiente): Evento[]
   });
 
   partita.statoCasuale = casuale.stato();
+
+  // Ultimo trimestre: i numeri del mercato si scoprono solo alla fine, dopo il finale (D-029), così
+  // le decisioni del finale si prendono senza sapere chi ha vinto la corsa. Le fughe di notizie si
+  // annunciano subito, senza numeri: sono indizi che servono al finale (variante B).
+  if (partita.trimestre >= ambiente.config.trimestri) {
+    partita.risultatiRinviati = { eventi, quote: quotePrima };
+    const fughe: Evento[] = eventi.flatMap((e) => {
+      if (e.tipo !== "SEGRETO_USATO") return [];
+      const titolo = partita.segreti.find((s) => s.id === e.segretoId)!.titolo;
+      const nome = partita.concorrenti.find((c) => c.id === e.concorrente)!.nome;
+      return [{ tipo: "FUGA_DI_NOTIZIE" as const, concorrente: e.concorrente, segretoId: e.segretoId, causa: `Un'informazione è finita a ${nome}: «${titolo}».` }];
+    });
+    return [...fughe, { tipo: "RISULTATI_RINVIATI", causa: "I numeri del mercato dell'ultimo trimestre si scopriranno alla fine, dopo il finale." }];
+  }
   return eventi;
 }
 

@@ -171,8 +171,9 @@ function vistaComune(p: Partita): VistaComune {
       ...(rivelaTutti || g.stato === "LICENZIATO" ? { fazione: structuredClone(g.fazione) } : {}),
     })),
     reparti: p.reparti.map((r) => ({ id: r.id, ...(r.occupatoDa ? { occupatoDa: r.occupatoDa } : {}), autogestione: r.autogestione })),
-    azienda: { ...p.azienda },
-    concorrenti: p.concorrenti.map((c) => ({ id: c.id, nome: c.nome, quota: c.quota })),
+    // Fino al punteggio le quote dell'ultimo trimestre restano nascoste (D-029).
+    azienda: { ...p.azienda, ...(p.risultatiRinviati ? { quota: p.risultatiRinviati.quote.azienda } : {}) },
+    concorrenti: p.concorrenti.map((c) => ({ id: c.id, nome: c.nome, quota: p.risultatiRinviati ? p.risultatiRinviati.quote.concorrenti[c.id]! : c.quota })),
     ordineDelGiorno: p.proposteTrimestre.map((x) => {
       const chiusa = x.esito !== undefined;
       return {
@@ -313,7 +314,11 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId): VistaGiocatore {
     mieiMessaggi,
     segretiConsegnati: p.segretiPassati
       .filter((x) => x.spia === io.id)
-      .map((x) => ({ copiaId: x.copiaId, trimestre: x.trimestre, ...(x.riuscito !== undefined ? { riuscito: x.riuscito } : {}) })),
+      .map((x) => {
+        // L'esito di un segreto dell'ultimo trimestre si scopre con gli altri risultati (D-029).
+        const nascosto = p.risultatiRinviati !== undefined && x.trimestre === p.trimestre;
+        return { copiaId: x.copiaId, trimestre: x.trimestre, ...(x.riuscito !== undefined && !nascosto ? { riuscito: x.riuscito } : {}) };
+      }),
   };
 }
 

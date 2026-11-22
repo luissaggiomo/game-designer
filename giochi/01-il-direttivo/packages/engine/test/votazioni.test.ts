@@ -146,9 +146,9 @@ describe("quesiti con astensione vera (D-007, D-013)", () => {
     expect(proposta.esito).toMatchObject({ approvata: false, si: 2, soglia: 3 });
   });
 
-  it("il tempo scaduto vale 'no' anche qui, non astensione (D-013)", () => {
+  it("qui il tempo scaduto vale astensione (D-029, rivede D-013)", () => {
     const { proposta } = chiudi(vota(conAstensione(), { PRODUZIONE: "SI", FINANZA: "SI" }));
-    // 3 "no" per tempo scaduto: base 5 → soglia 3, 2 sì → respinta
-    expect(proposta.esito).toMatchObject({ approvata: false, si: 2, soglia: 3, votiPerTempoScaduto: 3 });
+    // 3 astenuti per tempo scaduto: base 2 → soglia 2, 2 sì → approvata
+    expect(proposta.esito).toMatchObject({ approvata: true, si: 2, soglia: 2, votiPerTempoScaduto: 3 });
   });
 });

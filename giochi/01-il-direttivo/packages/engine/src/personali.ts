@@ -92,7 +92,9 @@ export function votaPersonale(
   const tipoAtteso = azione.tipo === "VOTA_PROMOZIONE" ? "PROMOZIONE" : "DEMANSIONAMENTO";
   if (!voto || voto.tipo !== tipoAtteso) return { ok: false, errore: "Non c'è una votazione di questo tipo in corso" };
   const g = partita.giocatori.find((x) => x.id === azione.da);
-  if (!g || g.stato !== "ATTIVO") return { ok: false, errore: "Votano solo i direttori attivi" };
+  if (!g) return { ok: false, errore: "Giocatore sconosciuto" };
+  // Nella decisione finale votano tutti, anche demansionati e licenziati, tranne l'interessato (D-029).
+  if (voto.momento !== "FINALE" && g.stato !== "ATTIVO") return { ok: false, errore: "Votano solo i direttori attivi" };
   if (g.id === voto.bersaglio) return { ok: false, errore: "Non si vota sulla propria posizione" };
   const nuova = structuredClone(partita);
   nuova.votoPersonale!.voti[g.id] = azione.voto; // modificabile fino alla chiusura (come D-019)
@@ -105,7 +107,8 @@ export function chiudiVotoPersonale(partita: Partita): Evento[] {
   if (!voto) return [];
   delete partita.votoPersonale;
 
-  const aventiDiritto = partita.giocatori.filter((g) => g.stato === "ATTIVO" && g.id !== voto.bersaglio);
+  // Nella decisione finale votano tutti tranne l'interessato (D-029); altrimenti solo gli attivi.
+  const aventiDiritto = partita.giocatori.filter((g) => (voto.momento === "FINALE" || g.stato === "ATTIVO") && g.id !== voto.bersaglio);
   const si = aventiDiritto.filter((g) => voto.voti[g.id] === "SI").length;
   const soglia = Math.floor(aventiDiritto.length / 2) + 1;
   const approvato = si >= soglia;

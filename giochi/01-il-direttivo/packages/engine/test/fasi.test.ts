@@ -62,12 +62,11 @@ describe("macchina a stati delle fasi", () => {
 
   it("dopo il 4° trimestre: finale, punteggio, lettura dei messaggi, fine", () => {
     const { fasi, finale } = giocaFinoAllaFine(nuova());
-    // Senza risposte: tutti "no" alla verifica (tempo scaduto) → nomina senza nomi → punteggio (5 giocatori: un solo giro).
-    // Nessun demansionato: niente decisioni finali (D-028), si passa subito alla verifica.
-    expect(fasi.slice(-6)).toEqual([
+    // Nessun demansionato: niente decisioni finali (D-028), si passa subito alla verifica;
+    // nessuno risponde → tutti "sì" (D-029) → niente nomina.
+    expect(fasi.slice(-5)).toEqual([
       "4:DEMANSIONAMENTO",
       "4:VERIFICA",
-      "4:NOMINA",
       "4:PUNTEGGIO",
       "4:LETTURA_MESSAGGI",
       "4:FINE",

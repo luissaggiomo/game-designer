@@ -3,6 +3,18 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-22 — 0.2.10
+
+### Design
+- D-029 (provvisoria): revisione del finale — nella decisione sui demansionati votano tutti tranne l'interessato; il tempo scaduto conserva lo stato delle cose (alla verifica vale "sì", nei quesiti con astensione vale astensione); accuse con due soli valori simmetrici (nomina ±5, voto ±3) uguali per onesti e spie, nessun bonus alle spie per un onesto licenziato; i risultati del 4° trimestre si scoprono solo al punteggio.
+
+### Modificato
+- Motore e robot adeguati a D-029; test del finale aggiornati (135 test).
+- Variante B dell'esito nascosto: nel 4° trimestre si nascondono solo i numeri del mercato; le fughe di notizie si annunciano subito, senza numeri.
+
+### Aggiunto
+- Quinto report (docs/simulazioni/2026-11-22-simulazione-05.md): con l'esito del 4° trimestre nascosto le spie vengono scoperte meno (con 4 giocatori dal 65% al 52%), perché anche gli indizi dell'ultimo trimestre (segreti finiti al concorrente) arrivano dopo il finale.
+
 ## 2026-11-22 — 0.2.9
 
 ### Design
