@@ -1,13 +1,13 @@
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import { caricaAmbiente, type Ambiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
-import { creaPartita } from "../src/partita.js";
 import type { Partita, RepartoId } from "../src/tipi.js";
 
 const ambiente = caricaAmbiente();
 
 function crea(n: number, seme: number, amb: Ambiente = ambiente): Partita {
-  const esito = creaPartita(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, amb);
+  const esito = creaEAvvia(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, amb);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }

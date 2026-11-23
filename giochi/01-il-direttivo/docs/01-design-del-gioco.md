@@ -104,7 +104,7 @@
 | Fazione | Obiettivo |
 |---|---|
 | **Onesti** | Far vincere l'azienda contro i concorrenti, e intanto accumulare punti personali (reparto più obiettivo segreto). |
-| **Spie** | Far vincere il **proprio** concorrente, passandogli segreti e boicottando l'azienda. Hanno anche un reparto da gestire e obiettivi personali. |
+| **Spie** | Far vincere il **proprio** concorrente, passandogli segreti e boicottando l'azienda. Hanno anche un reparto da gestire e obiettivi personali, che per loro sono sempre **aziendalisti** *(D-049)*. |
 
 ### 4.2 Numero di spie
 
@@ -131,14 +131,27 @@
 
 ✅ Ogni giocatore ha almeno un **obiettivo personale segreto**, svelato solo a fine partita.
 
-🟡 Due livelli: un obiettivo **facile** e uno **difficile**, con punteggi diversi.
+✅ *(provvisorio, ⚖️ punti da verificare col simulatore — D-046)* **Tre proposti, se ne tiene uno.** A inizio partita ogni giocatore riceve tre obiettivi, **uno per tipo**, e ne sceglie uno. Ogni obiettivo ha **due traguardi**, con difficoltà proporzionata ai punti:
 
-🟡 Esempi:
-- "Fai approvare almeno 2 proposte che favoriscono il tuo reparto."
-- "Chiudi l'anno con più punti di reparto di tutti."
-- "Fai in modo che [Reparto X] venga demansionato almeno una volta." Gli obiettivi che riguardano altri giocatori rendono sospetti gli onesti per motivi legittimi.
+| Tipo | Forma | Facile | Difficile | Massimo |
+|---|---|---|---|---|
+| 1 · Graduale | stesso tema, due soglie | +3 | +5 | +8 |
+| 2 · Doppio | due traguardi diversi, il facile è accessibile | +3 | +7 | +10 |
+| 3 · Doppio | due traguardi diversi, il facile è un po' più complesso | +4 | +6 | +10 |
 
-🔴 Da definire: la lista completa degli obiettivi per reparto e per spie.
+Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi contano ciascuno per conto proprio.
+
+✅ *(provvisorio, da verificare nelle serate — D-047)* **Visibilità.** Durante la partita l'obiettivo scelto è visibile **solo sul telefono del proprietario**, con l'**avanzamento** di ogni traguardo. Non esiste un modo di dimostrarlo dentro l'app: lo si può solo dichiarare a voce, anche mentendo. **Al punteggio la TV rivela l'obiettivo scelto da ognuno e com'è andato**; gli obiettivi scartati non si mostrano mai.
+
+✅ *(provvisorio, da verificare nelle serate — D-048)* **Assegnazione.** Dopo la spiegazione delle regole in TV (che si può saltare) ognuno riceve le sue tre proposte e sceglie; **la partita inizia quando tutti hanno scelto**. Chi non sceglie entro il tempo massimo (⚖️) riceve uno dei suoi tre a caso. Nella stessa partita **ogni obiettivo compare al massimo una volta** fra tutte le terne.
+
+✅ *(provvisorio, da verificare col simulatore e nelle serate — D-049)* **Spie: obiettivi aziendalisti.** Il mazzo è unico e contiene una parte di obiettivi **aziendalisti** (aiutano l'azienda). Gli onesti ricevono la terna da tutto il mazzo; **le spie ricevono solo aziendalisti**, uno per tipo: devono districarsi tra il sabotaggio e i punti extra che vengono dall'aiutare l'azienda. Schermata e punti identici per tutti, quindi dichiarare un obiettivo aziendalista non prova nulla. Una parte degli aziendalisti è **invisibile** agli altri (es. mossa privata per l'azienda), così costa davvero alla spia. Principio gemello di §16: **per la spia la vittoria del concorrente vale più di qualsiasi obiettivo.** Demansionati e licenziati conservano i punti dell'obiettivo.
+
+✅ *(provvisorio — D-050)* **Tipi ammessi.** Solo meccaniche generiche verificabili dal computer: voti sulle proposte, mossa privata, segreti in generale, cassa, demansionamenti e promozioni, finale, messaggi (solo obiettivi "di ricezione" o con un costo vero, pochi). **Bersagli solo generici**, mai un giocatore preciso. **Niente obiettivi sull'esito** (chi vince la corsa, chi è la spia). **Nessun obiettivo premia la mossa "per il reparto"**; la mossa "per l'azienda" compare solo fra gli aziendalisti.
+
+~~🟡 Esempi iniziali~~ *(superati da D-050: niente bersagli precisi come "[Reparto X] demansionato")*.
+
+✅ *(provvisorio, soglie ⚖️ da tarare col simulatore — D-052)* **Lista:** 36 obiettivi, 12 per tipo, di cui 4 aziendalisti per tipo. Regole di verifica: l'avanzamento sul telefono conta solo ciò che il giocatore può già sapere, il resto si verifica a fine partita; contano solo le scelte del giocatore (non voti scaduti, mosse del computer, astensioni); i voti con peso 0 non contano. Lista completa: [contenuti/obiettivi.md](contenuti/obiettivi.md).
 
 ---
 
@@ -206,8 +219,9 @@
 ### 7.1 Prima della partita
 1. La TV crea la stanza e mostra il QR code.
 2. I giocatori entrano e scelgono un nome.
-3. Il gioco assegna in segreto reparti, fazioni, spie e obiettivi.
-4. 🟡 La TV spiega le regole passo per passo.
+3. Il gioco assegna in segreto reparti, fazioni e spie.
+4. 🟡 La TV spiega le regole passo per passo *(D-048: si possono saltare)*.
+5. ✅ *(provvisorio — D-048)* Ognuno riceve sul telefono tre obiettivi personali e ne sceglie uno; la partita inizia quando tutti hanno scelto (o allo scadere del tempo, con scelta a caso).
 
 ### 7.2 Il trimestre
 
@@ -487,6 +501,7 @@ Mai due "da custodire" nello stesso trimestre. Lista completa: [contenuti/segret
 ### 15.3 Dopo il finale
 ✅ Calcolo dei punteggi (§16).
 ✅ **Lettura di tutti i messaggi privati** scambiati durante la partita.
+✅ *(provvisorio — D-047)* **Rivelazione degli obiettivi personali**: per ogni giocatore, obiettivo scelto, traguardi raggiunti e punti.
 
 ---
 
@@ -497,15 +512,17 @@ Mai due "da custodire" nello stesso trimestre. Lista completa: [contenuti/segret
 
 🟡 Principio: **il bonus aziendale vale più di qualsiasi obiettivo personale**. Così a un onesto non conviene mai far fallire l'azienda per i propri punti.
 
+✅ *(provvisorio, da verificare col simulatore — D-051)* Per la spia il bonus "il concorrente vince" (+10) resta pari al massimo di un obiettivo (+10): aiutare l'azienda per l'obiettivo rischia di farla vincere, quindi il conto resta a favore del ruolo. **Si tarano le soglie degli obiettivi, non i punti**: facile raggiunto dal 60–70% di chi l'ha scelto, difficile dal 25–35%, i tre tipi con resa media simile.
+
 ✅ *(provvisorio — D-022)* **Pareggio** nella corsa di mercato a fine anno: **non vince nessuno** (niente bonus agli onesti né alla spia).
-✅ *(provvisorio — D-022)* Il punteggio si calcola per ora **senza obiettivi personali** (si aggiungono quando ci sarà la lista, punto aperto 3), con i valori indicativi di questa sezione come segnaposto ⚖️. Ogni giocatore vede l'elenco delle voci che compongono il suo punteggio.
+✅ *(provvisorio — D-022, D-046…D-052)* Il punteggio comprende ora gli **obiettivi personali** (§4.4), con i valori indicativi di questa sezione come segnaposto ⚖️. Ogni giocatore vede l'elenco delle voci che compongono il suo punteggio.
 
 | Voce | Chi | Punti (indicativi) |
 |---|---|---|
 | Azienda batte i concorrenti | ogni onesto | +20 *(D-024: il bonus comune deve valere più del guadagno egoistico)* |
 | Concorrente della spia vince (supera l'azienda, D-011) | spia **non licenziata** *(D-025: una spia scoperta ha perso)* | +10 |
 | Punti di reparto | tutti | accumulati in partita |
-| Obiettivo personale facile / difficile | tutti | +2 / +5 |
+| Obiettivo personale (D-046: uno scelto fra tre) | tutti | tipo 1: +3 / +5 · tipo 2: +3 / +7 · tipo 3: +4 / +6 ⚖️ |
 | Segreto passato al concorrente con successo | spia | +1 / +2 / +3 secondo il tipo *(D-038, ⚖️)* |
 | Crisi o sconfitta aziendale causata | spia | 🟡 +2 per evento |
 
@@ -600,7 +617,7 @@ Dettagli tecnici nel documento di architettura.
 |---|---|---|
 | 1 | Lista proposte con effetti privati e pesi | ✅ provvisorio (D-030…D-034), da verificare nelle serate |
 | 2 | Lista segreti e loro valore | ✅ provvisorio (D-035…D-039), numeri ⚖️ |
-| 3 | Obiettivi segreti per reparto e per spie | 🔴 |
+| 3 | Obiettivi personali (anche per le spie) | ✅ provvisorio (D-046…D-052), soglie ⚖️ |
 | 4 | Comportamento dei concorrenti | 🔴 |
 | 5 | Poteri speciali dei reparti (riallineare al modello a tre numeri) | 🔴 |
 | 6 | Sovrapposizione Risorse Umane / IT | 🔴 |

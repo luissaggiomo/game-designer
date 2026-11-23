@@ -1,8 +1,8 @@
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import type { Evento } from "../src/azioni.js";
 import { caricaAmbiente, type Ambiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
-import { creaPartita } from "../src/partita.js";
 import type { Partita, PropostaIstanza, RepartoId, SceltaMossa } from "../src/tipi.js";
 
 const base = caricaAmbiente();
@@ -21,7 +21,7 @@ function ambienteFisso(modifiche: { autogestione?: Partial<Ambiente["config"]["a
 }
 
 function inMossaPrivata(n: number, amb: Ambiente): Partita {
-  const esito = creaPartita(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), 5, amb);
+  const esito = creaEAvvia(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), 5, amb);
   if (!esito.ok) throw new Error(esito.errore);
   const p = esito.partita;
   p.proposteTrimestre = [];

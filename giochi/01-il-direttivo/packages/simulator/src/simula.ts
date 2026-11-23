@@ -8,6 +8,8 @@ import {
   creaCasuale,
   creaPartita,
   eventiPer,
+  modelloObiettivo,
+  valutaObiettivo,
   vistaGiocatore,
   type Ambiente,
   type Azione,
@@ -38,6 +40,8 @@ export interface DatiGiocatore {
   segretiComeFonte: number;
   favorito: number;
   pesoVotoAnno: number;
+  /** Obiettivo personale scelto e traguardi raggiunti (D-046…D-052). */
+  obiettivo: { id: string; nome: string; tipo: number; aziendalista: boolean; facile: boolean; difficile: boolean; punti: number; aCaso: boolean };
 }
 
 export interface DatiPartita {
@@ -86,7 +90,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     spie: 0,
     configurazioneSpie: "0",
     votazioni: [],
-    cassaInizioTrimestre: [p.azienda.cassa],
+    cassaInizioTrimestre: [],
     tettoRaggiunto: 0,
     demansionamenti: [],
     mosse: { totali: 0, aziendaliste: 0 },
@@ -98,7 +102,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
   registraPesi(p);
 
   const distribuisci = (q: Partita, eventi: Evento[]) => {
-    for (const [id, rob] of robot) rob.osserva(eventiPer(eventi, { tipo: "GIOCATORE", id }), vistaGiocatore(q, id));
+    for (const [id, rob] of robot) rob.osserva(eventiPer(eventi, { tipo: "GIOCATORE", id }), vistaGiocatore(q, id, ambiente));
   };
   const prova = (azione: Azione | undefined): boolean => {
     if (!azione) return false;
@@ -119,7 +123,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
         const bersaglio = p.giocatori.find((g) => g.id === e.bersaglio)!;
         dati.demansionamenti.push({ trimestre: prima.trimestre, spia: bersaglio.fazione.tipo === "SPIA" });
       }
-      if (e.tipo === "CASSA_RICARICATA" && prima.fase.nome !== "RAPPORTO") {
+      if (e.tipo === "CASSA_RICARICATA") {
         dati.cassaInizioTrimestre.push(e.cassa);
         if (e.cassa >= ambiente.config.cassa.massima) dati.tettoRaggiunto++;
       }
@@ -130,24 +134,24 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     const fase = p.fase.nome;
     if (fase === "DECISIONE_FINALE") {
       // Il voto "promuovere o licenziare?" è già aperto: votano tutti, poi AVANZA_FASE lo chiude.
-      for (const [id, rob] of robot) prova(rob.votaPersonale(vistaGiocatore(p, id)));
+      for (const [id, rob] of robot) prova(rob.votaPersonale(vistaGiocatore(p, id, ambiente)));
     } else if (fase === "DEMANSIONAMENTO") {
       // Proposte una alla volta: chi ha una proposta la presenta, tutti votano, si chiude.
       for (let giro = 0; giro < 8; giro++) {
         let aperta = false;
         for (const id of casuale.mescola([...robot.keys()])) {
-          if (prova(robot.get(id)!.proponi(vistaGiocatore(p, id)))) {
+          if (prova(robot.get(id)!.proponi(vistaGiocatore(p, id, ambiente)))) {
             aperta = true;
             break;
           }
         }
         if (!aperta) break;
-        for (const [id, rob] of robot) prova(rob.votaPersonale(vistaGiocatore(p, id)));
+        for (const [id, rob] of robot) prova(rob.votaPersonale(vistaGiocatore(p, id, ambiente)));
         prova({ tipo: "CHIUDI_VOTO_PERSONALE" });
       }
     } else {
       for (const id of casuale.mescola([...robot.keys()])) {
-        for (const azione of robot.get(id)!.agisci(vistaGiocatore(p, id))) prova(azione);
+        for (const azione of robot.get(id)!.agisci(vistaGiocatore(p, id, ambiente))) prova(azione);
       }
     }
     const primaDiAvanzare = p;
@@ -206,6 +210,14 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       segretiComeFonte: p.conteggioFontiSegreti[g.repartoId] ?? 0,
       favorito: p.conteggioFavoriti[g.repartoId] ?? 0,
       pesoVotoAnno: pesoVoto.get(g.repartoId) ?? 0,
+      obiettivo: (() => {
+        const o = p.obiettivi[g.id]!;
+        const m = modelloObiettivo(ambiente, o.scelto!);
+        const t = valutaObiettivo(p, ambiente, g.id, "COMPLETA");
+        const facile = t[0]?.stato === "RAGGIUNTO";
+        const difficile = t[1]?.stato === "RAGGIUNTO";
+        return { id: m.id, nome: m.nome, tipo: m.tipo, aziendalista: m.aziendalista, facile, difficile, punti: t.filter((x) => x.stato === "RAGGIUNTO").reduce((s, x) => s + x.punti, 0), aCaso: o.sceltoACaso === true };
+      })(),
     })),
   };
 }

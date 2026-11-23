@@ -9,6 +9,7 @@ import type { Ambiente } from "./contenuti.js";
 import { descriviFase, entraNellaFase, faseSuccessiva } from "./fasi.js";
 import { chiudiDecisioneFinale, chiudiNomina, chiudiVerifica, nominaSpia, rispondiVerifica } from "./finale.js";
 import { chiudiVotoPersonale, proponiDemansionamento, proponiPromozione, votaPersonale } from "./personali.js";
+import { chiudiSceltaObiettivi, scegliObiettivo } from "./obiettivi.js";
 import { registraMossa } from "./risoluzione.js";
 import { inviaMessaggio, passaAlConcorrente } from "./segreti.js";
 import type { Partita } from "./tipi.js";
@@ -25,6 +26,8 @@ export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): E
       const nuova = structuredClone(partita);
       return { ok: true, partita: nuova, eventi: chiudiVotoPersonale(nuova) };
     }
+    case "SCEGLI_OBIETTIVO":
+      return scegliObiettivo(partita, azione);
     case "VOTA":
       return registraVoto(partita, azione);
     case "MOSSA_PRIVATA":
@@ -50,6 +53,8 @@ export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): E
 /** Chiude ciò che è in corso nella fase attuale (chi non ha agito vale la scelta predefinita). */
 function chiudiFase(partita: Partita, ambiente: Ambiente): Evento[] {
   switch (partita.fase.nome) {
+    case "SCELTA_OBIETTIVI":
+      return chiudiSceltaObiettivi(partita, ambiente);
     case "VOTAZIONE":
       return chiudiVotazione(partita, ambiente);
     case "DEMANSIONAMENTO":

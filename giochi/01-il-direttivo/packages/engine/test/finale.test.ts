@@ -1,15 +1,15 @@
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import type { Azione, Evento } from "../src/azioni.js";
 import { caricaAmbiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
-import { creaPartita } from "../src/partita.js";
 import type { Fazione, Giocatore, Partita } from "../src/tipi.js";
 import { vistaGiocatore, vistaTV } from "../src/viste.js";
 
 const ambiente = caricaAmbiente();
 
 function nuova(n = 5, seme = 3): Partita {
-  const esito = creaPartita(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, ambiente);
+  const esito = creaEAvvia(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, ambiente);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }
@@ -137,7 +137,7 @@ describe("risultati dell'ultimo trimestre nascosti fino al punteggio (D-029)", (
     const ingresso = q;
     expect(ingresso.risultatiRinviati).toBeDefined();
     q = vaiA(q, "VERIFICA", 4);
-    for (const vista of [vistaTV(q), vistaGiocatore(q, "g1"), vistaGiocatore(q, "g2")]) {
+    for (const vista of [vistaTV(q, ambiente), vistaGiocatore(q, "g1", ambiente), vistaGiocatore(q, "g2", ambiente)]) {
       expect(vista.azienda.quota).toBe(ingresso.risultatiRinviati!.quote.azienda);
       expect(vista.concorrenti.map((c) => c.quota)).toEqual(q.concorrenti.map((c) => ingresso.risultatiRinviati!.quote.concorrenti[c.id]));
     }
@@ -146,7 +146,7 @@ describe("risultati dell'ultimo trimestre nascosti fino al punteggio (D-029)", (
     expect(eventi.some((e) => e.tipo === "CORSA_DI_MERCATO")).toBe(true);
     expect(eventi.some((e) => e.tipo === "FUGA_DI_NOTIZIE")).toBe(false);
     expect(q.risultatiRinviati).toBeUndefined();
-    expect(vistaTV(q).azienda.quota).toBe(q.azienda.quota);
+    expect(vistaTV(q, ambiente).azienda.quota).toBe(q.azienda.quota);
   });
 });
 

@@ -231,7 +231,6 @@ interface Giocatore {
   stato: "ATTIVO" | "DEMANSIONATO" | "LICENZIATO";
   demansionatoDalTrimestre?: number;
   puntiReparto: number;
-  obiettivi: ObiettivoIstanza[];
   quotaMessaggi: number;
   poteriUsati: string[];
   pauseCaffe: number;
@@ -298,9 +297,10 @@ interface Concorrente {
 
 ```
 LOBBY
-  └─► ASSEGNAZIONE (ruoli, spie, obiettivi)
-        └─► TUTORIAL (facoltativo)
-              └─► TRIMESTRE n (n = 1..4)
+  └─► ASSEGNAZIONE (ruoli, spie, tre obiettivi proposti a testa)
+        └─► TUTORIAL (facoltativo, si può saltare)
+              └─► SCELTA_OBIETTIVI (ognuno ne tiene uno; a tempo scaduto a caso — D-048)
+                    └─► TRIMESTRE n (n = 1..4)
                     ├─ RAPPORTO           (effetti privati, segreti distribuiti,
                     │                      ordine casuale delle proposte annunciato)
                     ├─ per k = 1..2–3:    (D-008)
@@ -346,7 +346,9 @@ input: N giocatori (4..8), seme
      stesso concorrente con probabilità q (si conoscono)
      concorrenti diversi con probabilità 1−q (non si conoscono)
 5. assegnazione casuale (mescolamento con seme) di reparti e fazioni
-6. obiettivi: estrazione dal mazzo filtrato per reparto e fazione, senza duplicati
+6. obiettivi (D-046…D-049): tre a testa, uno per tipo; prima le spie (solo aziendalisti),
+   poi gli onesti (tutto il mazzo); nessun obiettivo ripetuto nella partita. Lo stato
+   (proposti e scelto) sta in partita.obiettivi, solo sul server.
 ```
 
 ### 10.2 Generazione delle proposte del trimestre
@@ -596,7 +598,7 @@ Tutti i contenuti sono file JSON validati da uno schema all'avvio.
 
 ### 13.3 Altri file
 - `segreti.json`: modelli di segreti con campi variabili, reparto fonte, reparto utile e valori.
-- `obiettivi.json`: obiettivi personali con condizione verificabile dal motore (per esempio `{"tipo": "PROPOSTE_APPROVATE", "riguarda": "PROPRIO_REPARTO", "min": 2}`).
+- `obiettivi.json`: obiettivi personali (D-046…D-052). Ogni obiettivo ha tipo, flag `aziendalista` e due traguardi; ogni traguardo ha una `misura` (cosa conta il motore, elenco in `engine/src/misure.ts`), una `soglia` (numero oppure `META_ALTRI`, `TUTTI_ALTRI`, `TUTTI_I_TRIMESTRI`) e un eventuale `parametro`. Le misure leggono gli storici solo-server (`storicoVotazioni`, `storicoTrimestri`, `finale.storicoNomine`, `alterataDa` delle copie) e hanno due livelli di conoscenza: "giocatore" (avanzamento sul telefono, senza informazioni nascoste) e "completa" (punteggio).
 - `eventi.json`: eventi di trimestre ("questo trimestre l'egoismo vale doppio").
 - `concorrenti.json`: nomi, eventi propri.
 - `config.json`: tutti i parametri numerici (§10).

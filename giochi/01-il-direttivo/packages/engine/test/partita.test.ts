@@ -1,3 +1,4 @@
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import { caricaAmbiente } from "../src/contenuti.js";
 import { creaPartita, type NuovoGiocatore } from "../src/partita.js";
@@ -8,7 +9,7 @@ const config = ambiente.config;
 const persone = (n: number): NuovoGiocatore[] => Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `Giocatore ${i + 1}` }));
 
 function crea(n: number, seme: number): Partita {
-  const esito = creaPartita(persone(n), seme, ambiente);
+  const esito = creaEAvvia(persone(n), seme, ambiente);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }

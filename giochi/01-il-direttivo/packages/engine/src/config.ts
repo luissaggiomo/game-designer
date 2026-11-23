@@ -74,6 +74,15 @@ export interface Configurazione {
     demansionamentoOnestoPenalitaPerVoto: number;
   };
   autogestione: { mossaPrivataDemansionati: boolean; probabilitaMossaAzienda: number; fattoreEffetti: number };
+  /** Obiettivi personali (D-046…D-052). */
+  obiettivi: {
+    /** Quanti obiettivi riceve ognuno: uno per tipo (D-046). */
+    proposti: number;
+    /** Per tipo ("1", "2", "3"): punti del traguardo facile e del difficile. */
+    punti: Record<string, number[]>;
+    /** Tempo massimo per la scelta (lo usa il server; allo scadere il motore estrae a caso, D-048). */
+    secondiPerLaScelta: number;
+  };
 }
 
 /** Controlla che la configurazione sia coerente; restituisce l'elenco dei problemi (vuoto = tutto ok). */
@@ -132,6 +141,12 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("autogestione.probabilitaMossaAzienda", c.autogestione.probabilitaMossaAzienda);
   probabilita("selezione.fattoreStessaCategoria", c.selezione.fattoreStessaCategoria);
   probabilita("selezione.probabilitaAlternativa", c.selezione.probabilitaAlternativa);
+  const tipiObiettivi = Object.keys(c.obiettivi?.punti ?? {});
+  if (tipiObiettivi.length !== c.obiettivi?.proposti) problemi.push("obiettivi: servono i punti di tanti tipi quanti sono gli obiettivi proposti (uno per tipo)");
+  for (const [tipo, punti] of Object.entries(c.obiettivi?.punti ?? {})) {
+    if (!Array.isArray(punti) || punti.length !== 2 || punti.some((x) => !(x > 0))) problemi.push(`obiettivi.punti.${tipo}: servono due punteggi positivi (facile, difficile)`);
+  }
+  if (!(c.obiettivi?.secondiPerLaScelta > 0)) problemi.push("obiettivi.secondiPerLaScelta deve essere positivo");
   return problemi;
 }
 

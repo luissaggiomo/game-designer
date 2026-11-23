@@ -10,7 +10,9 @@ import datiFrasi from "@il-direttivo/content/frasi.json" with { type: "json" };
 import datiProposte from "@il-direttivo/content/proposte.json" with { type: "json" };
 import datiSchemi from "@il-direttivo/content/schemi.json" with { type: "json" };
 import datiSegreti from "@il-direttivo/content/segreti.json" with { type: "json" };
+import datiObiettivi from "@il-direttivo/content/obiettivi.json" with { type: "json" };
 import { caricaConfigurazione, type Configurazione } from "./config.js";
+import { MISURE_NOTE } from "./misure.js";
 import type { Peso, RepartoId, TipoSegreto, ValoreCampo } from "./tipi.js";
 
 export interface Ruolo {
@@ -58,12 +60,36 @@ export interface ModelloSegreto {
   trimestri: number[];
 }
 
+/** Soglia di un traguardo: un numero, oppure un valore che dipende dalla partita. */
+export type SogliaObiettivo = number | "META_ALTRI" | "TUTTI_ALTRI" | "TUTTI_I_TRIMESTRI";
+
+export interface ModelloTraguardo {
+  /** Testo per il telefono e la TV; {soglia} e {parametro} si sostituiscono con i valori. */
+  testo: string;
+  /** Cosa conta il computer (elenco in misure.ts). */
+  misura: string;
+  soglia: SogliaObiettivo;
+  parametro?: number;
+}
+
+export interface ModelloObiettivo {
+  id: string;
+  nome: string;
+  /** 1 graduale, 2 e 3 doppi (D-046). */
+  tipo: number;
+  /** Aiuta l'azienda: le spie ricevono solo questi (D-049). */
+  aziendalista: boolean;
+  /** Traguardo facile e difficile. */
+  traguardi: [ModelloTraguardo, ModelloTraguardo];
+}
+
 export interface Ambiente {
   config: Configurazione;
   mazzo: ModelloProposta[];
   schemi: Record<string, Schema>;
   frasi: Frasi;
   segreti: ModelloSegreto[];
+  obiettivi: ModelloObiettivo[];
 }
 
 const tuttiIReparti = (config: Configurazione) => new Set<string>([...config.reparti.base, ...config.reparti.aggiuntiviInOrdine]);
@@ -139,6 +165,47 @@ export function controllaSegreti(segreti: ModelloSegreto[], config: Configurazio
   return problemi;
 }
 
+/** Massimo numero di spie in una partita (GDD §4.2: fino a 2 con 8 giocatori). */
+const MASSIMO_SPIE = 2;
+
+export function controllaObiettivi(obiettivi: ModelloObiettivo[], config: Configurazione, misureNote: Set<string>): string[] {
+  const problemi: string[] = [];
+  const visti = new Set<string>();
+  const tipi = Object.keys(config.obiettivi.punti).map(Number);
+  for (const o of obiettivi) {
+    const dove = `Obiettivo "${o.id}"`;
+    if (visti.has(o.id)) problemi.push(`${dove}: identificativo ripetuto`);
+    visti.add(o.id);
+    if (!o.nome) problemi.push(`${dove}: manca il nome`);
+    if (!tipi.includes(o.tipo)) problemi.push(`${dove}: tipo ${o.tipo} senza punti in config.json`);
+    if (o.traguardi?.length !== 2) {
+      problemi.push(`${dove}: servono due traguardi (facile e difficile, D-046)`);
+      continue;
+    }
+    for (const t of o.traguardi) {
+      if (!t.testo) problemi.push(`${dove}: manca il testo di un traguardo`);
+      if (!misureNote.has(t.misura)) problemi.push(`${dove}: misura "${t.misura}" sconosciuta`);
+      const simbolica = ["META_ALTRI", "TUTTI_ALTRI", "TUTTI_I_TRIMESTRI"].includes(t.soglia as string);
+      if (!simbolica && !(typeof t.soglia === "number" && t.soglia >= 1)) problemi.push(`${dove}: soglia non valida`);
+      if (t.testo.includes("{parametro}") && t.parametro === undefined) problemi.push(`${dove}: manca il parametro del traguardo`);
+    }
+    // Tipo 1 graduale: stesso tema, il secondo gradino più alto del primo (D-046).
+    if (o.tipo === 1) {
+      const [a, b] = o.traguardi;
+      if (a.misura !== b.misura) problemi.push(`${dove}: nel tipo 1 i due gradini devono avere la stessa misura`);
+      if (typeof a.soglia === "number" && typeof b.soglia === "number" && b.soglia <= a.soglia) problemi.push(`${dove}: il secondo gradino deve essere più alto del primo`);
+    }
+  }
+  // Nessuna ripetizione nella stessa partita (D-048): servono abbastanza obiettivi per tipo, e
+  // abbastanza aziendalisti per le spie (D-049).
+  for (const tipo of tipi) {
+    const delTipo = obiettivi.filter((o) => o.tipo === tipo);
+    if (delTipo.length < config.giocatori.massimo) problemi.push(`Obiettivi di tipo ${tipo}: ne servono almeno ${config.giocatori.massimo}, ce ne sono ${delTipo.length}`);
+    if (delTipo.filter((o) => o.aziendalista).length < MASSIMO_SPIE) problemi.push(`Obiettivi di tipo ${tipo}: servono almeno ${MASSIMO_SPIE} aziendalisti`);
+  }
+  return problemi;
+}
+
 /** Carica parametri e contenuti predefiniti, controllandoli. */
 export function caricaAmbiente(): Ambiente {
   const config = caricaConfigurazione();
@@ -146,7 +213,12 @@ export function caricaAmbiente(): Ambiente {
   const schemi = datiSchemi.schemi as Record<string, Schema>;
   const frasi = { neutro: datiFrasi.neutro, reparti: datiFrasi.reparti } as Frasi;
   const segreti = datiSegreti.segreti as ModelloSegreto[];
-  const problemi = [...controllaContenuti(mazzo, schemi, frasi, config), ...controllaSegreti(segreti, config)];
+  const obiettivi = datiObiettivi.obiettivi as ModelloObiettivo[];
+  const problemi = [
+    ...controllaContenuti(mazzo, schemi, frasi, config),
+    ...controllaSegreti(segreti, config),
+    ...controllaObiettivi(obiettivi, config, MISURE_NOTE),
+  ];
   if (problemi.length > 0) throw new Error("Contenuti non validi:\n- " + problemi.join("\n- "));
-  return { config, mazzo, schemi, frasi, segreti };
+  return { config, mazzo, schemi, frasi, segreti, obiettivi };
 }

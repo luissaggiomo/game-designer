@@ -13,7 +13,7 @@
 import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import { verificaSegretiInTempo } from "./segreti.js";
-import type { EsitoVotazione, Giocatore, Partita, PropostaIstanza, Voto } from "./tipi.js";
+import type { EsitoVotazione, Giocatore, GiocatoreId, Partita, PropostaIstanza, Voto } from "./tipi.js";
 
 const pesoDi = (proposta: PropostaIstanza, g: Giocatore): number => proposta.pesi[g.repartoId] ?? 0;
 
@@ -81,14 +81,52 @@ export function calcolaEsito(partita: Partita, proposta: PropostaIstanza, unita:
   return { approvata, si, soglia, votiPerTempoScaduto, motivo };
 }
 
+/**
+ * Voti decisivi (obiettivi, D-052): chi, votando al contrario, avrebbe ribaltato l'esito.
+ * Contano solo i SÌ e i NO espressi (niente astensioni né tempo scaduto, R2).
+ */
+function votiDecisivi(partita: Partita, proposta: PropostaIstanza, approvata: boolean, unita: string): GiocatoreId[] {
+  return Object.entries(proposta.voti).flatMap(([id, voto]) => {
+    if (voto !== "SI" && voto !== "NO") return [];
+    const ribaltata = { ...proposta, voti: { ...proposta.voti, [id]: voto === "SI" ? ("NO" as const) : ("SI" as const) } };
+    return calcolaEsito(partita, ribaltata, unita).approvata !== approvata ? [id] : [];
+  });
+}
+
+/** Storico delle votazioni per gli obiettivi (solo server). */
+function registraNelloStorico(partita: Partita, proposta: PropostaIstanza, approvata: boolean, decisivi: GiocatoreId[]): void {
+  const costoMassimo = Math.max(...partita.proposteTrimestre.map((x) => x.costo));
+  const voti: Partial<Record<GiocatoreId, Voto>> = {};
+  for (const [id, voto] of Object.entries(proposta.voti)) {
+    const g = partita.giocatori.find((x) => x.id === id);
+    if (voto && g?.stato === "ATTIVO" && pesoDi(proposta, g) > 0) voti[id] = voto;
+  }
+  partita.storicoVotazioni.push({
+    propostaId: proposta.id,
+    trimestre: partita.trimestre,
+    posizione: partita.proposteTrimestre.indexOf(proposta) + 1,
+    votazioniDelTrimestre: partita.proposteTrimestre.length,
+    costo: proposta.costo,
+    piuCostosa: proposta.costo === costoMassimo,
+    approvata,
+    effettoAzienda: proposta.effettoAzienda,
+    voti,
+    decisivi,
+    cassaDopo: partita.azienda.cassa,
+  });
+}
+
 /** Chiude la votazione in corso: registra l'esito e, se approvata, paga il costo. Modifica la copia ricevuta. */
 export function chiudiVotazione(partita: Partita, ambiente: Ambiente): Evento[] {
   const proposta = propostaInVotazione(partita);
   if (!proposta) return [];
-  const esito = calcolaEsito(partita, proposta, ambiente.config.cassa.unita);
+  const unita = ambiente.config.cassa.unita;
+  const esito = calcolaEsito(partita, proposta, unita);
   proposta.esito = esito;
   verificaSegretiInTempo(partita, proposta);
+  const decisivi = votiDecisivi(partita, proposta, esito.approvata, unita);
   if (esito.approvata) partita.azienda.cassa -= proposta.costo;
+  registraNelloStorico(partita, proposta, esito.approvata, decisivi);
   const voti: Partial<Record<string, Voto | "TEMPO_SCADUTO">> = {};
   for (const g of partita.giocatori) {
     if (g.stato === "ATTIVO" && pesoDi(proposta, g) > 0) voti[g.id] = proposta.voti[g.id] ?? "TEMPO_SCADUTO";

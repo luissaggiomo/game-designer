@@ -26,6 +26,8 @@ export function faseSuccessiva(partita: Partita, config: Configurazione): { fase
   const votazioniDelTrimestre = partita.proposteTrimestre.length;
 
   switch (fase.nome) {
+    case "SCELTA_OBIETTIVI":
+      return { fase: { nome: "RAPPORTO" }, trimestre: 1 };
     case "RAPPORTO":
       return votazioniDelTrimestre > 0
         ? { fase: { nome: "DISCUSSIONE", votazione: 1 }, trimestre }
@@ -101,6 +103,7 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
   const prima = partita.azienda.cassa;
   const dopo = Math.min(prima + config.cassa.perTrimestre, config.cassa.massima);
   partita.azienda.cassa = dopo;
+  partita.cassaInizioTrimestre = dopo;
   const tetto = prima + config.cassa.perTrimestre > config.cassa.massima ? ` (tetto massimo ${config.cassa.massima} ${unita})` : "";
   eventi.push({
     tipo: "CASSA_RICARICATA",
@@ -133,6 +136,8 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
 /** Descrizione leggibile della fase, da mostrare in TV. */
 export function descriviFase(fase: Fase, trimestre: number): string {
   switch (fase.nome) {
+    case "SCELTA_OBIETTIVI":
+      return "Prima della partita: ognuno sceglie il suo obiettivo personale";
     case "RAPPORTO":
       return `Trimestre ${trimestre}: rapporto dei reparti`;
     case "DISCUSSIONE":

@@ -1,14 +1,14 @@
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import { caricaAmbiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
-import { creaPartita } from "../src/partita.js";
 import type { Partita } from "../src/tipi.js";
 
 const ambiente = caricaAmbiente();
 const config = ambiente.config;
 
 function nuova(): Partita {
-  const esito = creaPartita(
+  const esito = creaEAvvia(
     Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })),
     2026,
     ambiente,

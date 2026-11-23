@@ -82,6 +82,8 @@ export interface PropostaIstanza {
 
 /** Le fasi della partita (Architettura §9, con il ciclo discussione → voto di D-008). */
 export type Fase =
+  /** Prima della partita: ognuno sceglie il suo obiettivo personale fra tre (D-048). */
+  | { nome: "SCELTA_OBIETTIVI" }
   | { nome: "RAPPORTO" }
   | { nome: "DISCUSSIONE"; votazione: number }
   | { nome: "VOTAZIONE"; votazione: number }
@@ -115,6 +117,8 @@ export interface Partita {
   concorrenti: Concorrente[];
   /** Quota di mercato e cassa (in K€, D-018). */
   azienda: { quota: number; cassa: number };
+  /** Cassa all'inizio del trimestre in corso, dopo il budget (per gli obiettivi). */
+  cassaInizioTrimestre: number;
   /** Ordine del giorno del trimestre, nell'ordine annunciato nel Rapporto (D-008). */
   proposteTrimestre: PropostaIstanza[];
   /** Identificativi dei quesiti già usciti nella partita. */
@@ -137,9 +141,53 @@ export interface Partita {
   /** Votazione di promozione o demansionamento in corso (una alla volta). */
   votoPersonale?: VotoPersonale;
   storicoVotiPersonali: VotoPersonaleChiuso[];
+  /** Obiettivi personali: i tre proposti e quello scelto (solo server, D-046…D-048). */
+  obiettivi: Partial<Record<GiocatoreId, ObiettiviGiocatore>>;
+  /** Storico delle votazioni sulle proposte, per verificare gli obiettivi (solo server). */
+  storicoVotazioni: RegistroVotazione[];
+  /** Storico dei trimestri risolti: mosse scelte, andamento, cassa (solo server). */
+  storicoTrimestri: RegistroTrimestre[];
   finale: StatoFinale;
   /** Calcolati nella fase PUNTEGGIO. */
   punteggi?: Partial<Record<GiocatoreId, Punteggio>>;
+}
+
+export interface ObiettiviGiocatore {
+  /** Identificativi dei tre obiettivi proposti, uno per tipo. Gli scartati non escono mai dal server (D-047). */
+  proposti: string[];
+  scelto?: string;
+  /** Vero se il tempo è scaduto e l'obiettivo è stato estratto a caso (D-048). */
+  sceltoACaso?: boolean;
+}
+
+export interface RegistroVotazione {
+  propostaId: string;
+  trimestre: number;
+  /** Posizione nell'ordine del giorno e numero di votazioni del trimestre. */
+  posizione: number;
+  votazioniDelTrimestre: number;
+  costo: number;
+  /** Vero se è (una del)le proposte più costose del trimestre. */
+  piuCostosa: boolean;
+  approvata: boolean;
+  /** Effetto reale sull'azienda (noto ai giocatori solo ai Risultati, D-029 per l'ultimo trimestre). */
+  effettoAzienda: number;
+  /** Solo i voti espressi da chi aveva diritto (niente tempo scaduto, D-052 R2). */
+  voti: Partial<Record<GiocatoreId, Voto>>;
+  /** Chi, votando al contrario, avrebbe ribaltato l'esito (D-052). */
+  decisivi: GiocatoreId[];
+  /** Cassa subito dopo la votazione. */
+  cassaDopo: number;
+}
+
+export interface RegistroTrimestre {
+  trimestre: number;
+  /** Mosse private scelte davvero dai direttori (non quelle predefinite o del computer, D-052 R2). */
+  mosseScelte: Partial<Record<GiocatoreId, SceltaMossa>>;
+  andamento: "IN_CALO" | "STABILE" | "IN_CRESCITA";
+  cassaInizio: number;
+  /** Cassa dopo l'ultima votazione del trimestre. */
+  cassaFine: number;
 }
 
 /** "Momento" di un voto personale: il numero del trimestre (fase 6) oppure il finale. */
@@ -176,6 +224,8 @@ export interface StatoFinale {
   ballottaggio: GiocatoreId[];
   esitiVerifica: EsitoVerifica[];
   licenziamenti: { giocatore: GiocatoreId; giro: number; nominatoDa: GiocatoreId[] }[];
+  /** Tutte le nomine rivelate (pubbliche alla rivelazione), per gli obiettivi. */
+  storicoNomine: { giro: number; ballottaggio: boolean; nomine: Partial<Record<GiocatoreId, GiocatoreId>> }[];
 }
 
 export interface Punteggio {
@@ -222,6 +272,10 @@ export interface CopiaSegreto {
   catena: GiocatoreId[];
   /** Vero se il possessore l'ha persa perché demansionato (dato del proprio reparto, D-022). */
   revocata?: boolean;
+  /** Vero se chi l'ha inoltrata ha cambiato dei campi (solo server, per gli obiettivi). */
+  modificataDalMittente?: boolean;
+  /** Chi ha modificato i campi lungo il percorso di questa copia (solo server). */
+  alterataDa?: GiocatoreId[];
 }
 
 export type ModelloMessaggio = "SEGRETO" | "CHIEDI_DATO" | "PATTO" | "SOLO_TESTO";

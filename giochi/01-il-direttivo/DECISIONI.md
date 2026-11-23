@@ -512,3 +512,69 @@ Modello di voce:
 - Regole: l'alternativa ha un effetto sull'azienda **diverso** (i quesiti "buoni" diventano deboli o dannosi e viceversa) e una **propria frase di spiegazione** (rivede D-033: una frase per versione); nel mazzo ogni schema compare come alternativa tante volte quante come principale, così la media degli effetti non cambia. Titoli, costi, categorie, frasi dei reparti e astensione restano uguali.
 - Effetto: chi gioca spesso non ha vantaggi di memoria; la spia non può contare sul ricordo per spingere i quesiti dannosi, e gli onesti esperti non possono smascherare un bluff solo ricordando il titolo. Reparti: nessun effetto (i ruoli restano estratti a caso).
 - Tabella delle 40 coppie: [docs/contenuti/quesiti.md](docs/contenuti/quesiti.md) · Rif.: GDD §8.2 · D-023, D-031, D-033
+
+## D-046 — Obiettivi personali: tre proposti, se ne tiene uno; tre tipi con due traguardi
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: punto aperto 3 (GDD §4.4, §16). Il GDD prevedeva "almeno un obiettivo segreto", con la proposta 🟡 di un facile e un difficile.
+- Alternative: A) un solo obiettivo, facile o difficile a caso (scartata: viola D-005) · B) due obiettivi diversi, uno facile e uno difficile · C) due o tre obiettivi proposti, se ne tiene uno · D) un solo obiettivo "a due gradini".
+- Scelta di Luis: **C + D**. A inizio partita ogni giocatore riceve **tre obiettivi, uno per tipo**, e **ne tiene uno**. Ogni obiettivo ha due traguardi:
+
+| Tipo | Forma | Traguardo facile | Traguardo difficile | Massimo |
+|---|---|---|---|---|
+| 1 · Graduale | stesso tema, due soglie ("2 volte… / 4 volte…") | +3 | +5 | +8 |
+| 2 · Doppio, facile accessibile | due traguardi diversi | +3 (accessibile) | +7 (impegnativo) | +10 |
+| 3 · Doppio, facile più complesso | due traguardi diversi | +4 (un po' più complesso) | +6 (più impegnativo) | +10 |
+
+- Regole: la difficoltà di ogni traguardo è proporzionata ai punti. Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i due traguardi contano ciascuno per conto proprio (si può ottenere anche solo il difficile). Punti ⚖️ in config.json.
+- Effetto: pari opportunità per costruzione (D-005: tutti ricevono un obiettivo per tipo); la scelta dà al giocatore un obiettivo "suo" e un dilemma sicuro/rischioso. Da verificare col simulatore che i tre tipi rendano in media in modo simile. Il massimo (+10) resta sotto il bonus aziendale (+20), come vuole il principio di §16; il rapporto si rivede al punto "valore" e nella ritaratura.
+- Rif.: GDD §4.4, §16 · D-005, D-022
+
+## D-047 — Obiettivi personali: chi li vede e quando si scoprono
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Contesto: punto aperto 3. Fisso: durante la partita l'obiettivo sta solo sul telefono del proprietario (riservatezza, regola specifica 3).
+- Alternative: 2a) avanzamento sul telefono sì / no · 2b) a fine partita A) la TV rivela l'obiettivo scelto e l'esito, B) solo sul proprio telefono, C) come A più i due scartati · 2c) prova dell'obiettivo nell'app no / sì.
+- Scelta di Luis: **avanzamento sul telefono sì · rivelazione in TV al punteggio dell'obiettivo scelto e del suo esito (A) · nessuna prova nell'app.**
+- Regole: il telefono mostra l'obiettivo scelto e l'avanzamento di ogni traguardo ("2 su 4"). Gli obiettivi scartati non compaiono più da nessuna parte. Al punteggio la TV mostra per ogni giocatore obiettivo, traguardi raggiunti e punti, con una frase. Durante la partita nessuno può dimostrare il proprio obiettivo: si può solo dichiararlo a voce, anche mentendo.
+- Effetto: niente conti a memoria (non è un gestionale); l'obiettivo resta una copertura credibile per tutti (onesti ambigui, §1); la rivelazione finale spiega a posteriori i comportamenti strani ("mai nascondere il perché").
+- Rif.: GDD §4.4, §15.3, §17 · D-046
+
+## D-048 — Obiettivi personali: quando si ricevono e si sceglie
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Contesto: punto aperto 3. Serve un momento della scelta uguale per tutti (D-005).
+- Alternative: 3a) A) prima della partita, dopo le regole · B) entro il Rapporto del T1 · C) più tardi (sconsigliata) — 3b) chi non sceglie: a caso / sempre il tipo 1 — 3c) stesso obiettivo a due giocatori: no / sì.
+- Scelta di Luis: **A**, nella sequenza: la TV spiega le regole (si possono saltare), poi ognuno riceve sul telefono le sue tre proposte, e **la partita inizia quando tutti hanno scelto**. **Chi non sceglie in tempo riceve un obiettivo estratto a caso fra i suoi tre.** **Ogni obiettivo compare al massimo una volta** fra tutte le terne della partita.
+- Regole: per non bloccare il gruppo c'è comunque un tempo massimo per la scelta (⚖️ in config.json); allo scadere vale l'estrazione a caso. La lista deve avere almeno 8 obiettivi per tipo (8 giocatori). L'avanzamento conta dall'inizio del T1.
+- Effetto: tutti scelgono con le stesse informazioni (ruolo e reparto), prima che succeda qualsiasi cosa; nessun vantaggio a non scegliere; nessuna "alleanza naturale" tra due giocatori con lo stesso obiettivo.
+- Rif.: GDD §4.4, §7.1 · D-046
+
+## D-049 — Obiettivi personali delle spie: aziendalisti, dallo stesso mazzo
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: punto aperto 3. Gli onesti hanno un dilemma (reparto contro azienda); la spia finora no: sabota e basta.
+- Alternative: A) stesso mazzo e stessi obiettivi degli onesti · B) obiettivi propri delle spie · C) terna mista · D) spie senza obiettivi. Su proposta di Luis, B nella forma "aziendalista": gli obiettivi della spia **favoriscono l'azienda**, contro il suo ruolo. Varianti: B1) liste separate (spie solo aziendalisti, onesti mai) · B2) mazzo unico con una parte aziendalista · B3) come B2 ma 2 aziendalisti + 1 normale.
+- Scelta di Luis: **B2**. Il mazzo è unico e contiene una parte di **obiettivi aziendalisti** (che aiutano l'azienda). Gli **onesti** ricevono la terna da tutto il mazzo (aziendalisti compresi); le **spie** ricevono una terna **solo di aziendalisti**, uno per tipo. Punti e schermata identici per tutti.
+- Regole: una parte degli aziendalisti deve essere **invisibile** agli altri (es. mossa privata "per l'azienda", segreti arrivati in tempo), perché sono i soli che costano davvero alla spia; quelli **visibili** (es. votare con la maggioranza) le danno anche copertura. Regola gemella del principio di §16, da fissare col valore degli obiettivi: **la vittoria del concorrente deve valere per la spia più di qualsiasi obiettivo**. **4b:** demansionati e licenziati conservano i punti dell'obiettivo (vale per tutti).
+- Effetto: anche la spia ha un dilemma (sabotare o prendere punti aiutando l'azienda); dichiarare a voce un obiettivo aziendalista non prova nulla, perché possono averlo anche gli onesti; gli onesti cooperativi ricevono a volte un premio personale per il gioco aziendale (punto 31). Rischio da controllare col simulatore: spie troppo indebolite (ripiego pronto: B3).
+- Rif.: GDD §4.1, §4.4, §16 · D-046…D-048, punto 31
+
+## D-050 — Obiettivi personali: tipi ammessi
+- Data: 2026-11-22 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: punto aperto 3. Gli obiettivi devono riferirsi a meccaniche generiche (mai a quesiti o segreti specifici, che cambiano da partita a partita) ed essere verificabili dal computer senza ascoltare la voce.
+- Famiglie ammesse (scelta di Luis): **voti sulle proposte · mossa privata · segreti in generale · cassa · demansionamenti e promozioni · finale · messaggi**, questi ultimi **solo con obiettivi "di ricezione"** (la difficoltà dipende dalla fiducia degli altri, es. "ricevi messaggi da almeno 3 giocatori diversi") **o con un costo vero** (es. "un anonimo in tutti e 4 i trimestri"), al massimo 2–3 nella lista. Scartati gli obiettivi sui messaggi che dipendono solo da chi li compie ("manda 2 anonimi", "scrivi a tutti"): non hanno difficoltà.
+- Altre scelte: **5b) bersagli solo generici** ("vota sì a un demansionamento", "vota contro chi ha peso 2"), mai un giocatore preciso (scartate: nessun bersaglio; giocatore estratto nei voti; "fai demansionare Marco") · **5c) niente obiettivi sull'esito** (chi vince la corsa, chi è la spia): solo azioni e risultati intermedi · **5d) nessun obiettivo che premi la mossa privata "per il reparto"**, già premiata dai punti di reparto (punto 31); la mossa "per l'azienda" compare solo fra gli aziendalisti.
+- Effetto: nessun giocatore è preso di mira personalmente (D-005); il dilemma della spia sta in ciò che fa, non nel risultato; gli obiettivi non peggiorano il vantaggio degli egoisti. Limite: i robot scrivono messaggi in modo rozzo, quindi gli obiettivi sui messaggi si tarano davvero solo nelle serate.
+- Rif.: GDD §4.4 · D-046…D-049, punto 31
+
+## D-051 — Obiettivi personali: valore e taratura
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Contesto: punto aperto 3. Con D-046 un obiettivo vale al massimo +10, quanto il bonus della spia "il concorrente vince" (+10): il principio gemello di D-049 sembrava violato.
+- Alternative: 6a) A) alzare il bonus della spia (≥ 12) · B) meno punti alle spie per gli stessi obiettivi (scartata: i numeri sul telefono la tradirebbero) · C) lasciare la parità · 6b) si tarano le soglie degli obiettivi, non i punti.
+- Scelta di Luis: **6a C**, per ora. Motivo: per la spia non c'è vera parità, perché aiutando l'azienda per l'obiettivo rischia di farla vincere, e allora tutti gli onesti prendono +20 e lei perde il +10; il conto interno resta a favore del ruolo. Si rivede nella ritaratura se il simulatore mostra spie che "fanno le oneste". **6b sì.**
+- Regole di taratura (col simulatore): i punti di D-046 restano fissi, si regolano le soglie; traguardo facile raggiunto da circa il 60–70% di chi l'ha scelto, difficile dal 25–35%; i tre tipi rendono in media lo stesso (±1 punto); nessun reparto avvantaggiato (D-005); onesti e spie con resa simile.
+- Rif.: GDD §16 · D-046, D-049
+
+## D-052 — Obiettivi personali: la lista e le regole di verifica
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **soglie ⚖️ da tarare col simulatore, testi da verificare nelle serate**
+- Contesto: punto aperto 3, ultimo passo dopo D-046…D-051.
+- Scelta di Luis: approvata la lista di **36 obiettivi, 12 per tipo, di cui 4 aziendalisti per tipo**, e le regole di verifica: **R1** avanzamento rinviato a fine partita quando rivelerebbe un'informazione nascosta (copie vere/false, catena, risultati del 4° trimestre) · **R2** contano solo le scelte del giocatore (non voti scaduti, mosse del computer, astensioni) · **R3** i voti con peso 0 non contano.
+- Dettagli tecnici (Claude, senza effetto sulle regole): "voto decisivo" = se avessi votato al contrario l'esito sarebbe stato opposto (con il tempo scaduto che vale "no", "senza il tuo voto" non renderebbe mai decisivo un "no"); R1 vale anche per i mittenti anonimi nei conteggi "da giocatori diversi" e per i conteggi dei messaggi ricevuti dagli altri.
+- Lista completa: [docs/contenuti/obiettivi.md](docs/contenuti/obiettivi.md) · dati: `packages/content/obiettivi.json` · Rif.: GDD §4.4 · D-046…D-051

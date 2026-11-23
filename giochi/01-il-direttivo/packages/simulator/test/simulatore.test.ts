@@ -29,6 +29,14 @@ describe("simulatore", { timeout: 30_000 }, () => {
     expect(partite.reduce((s, p) => s + p.demansionamenti.length, 0)).toBeGreaterThan(0);
   });
 
+  it("i robot scelgono il proprio obiettivo (nessuno a caso) e a volte raggiungono i traguardi (D-046…D-052)", () => {
+    const giocatori = Array.from({ length: 30 }, (_, i) => simulaPartita(6, i + 1, ambiente)).flatMap((p) => p.dettaglio);
+    expect(giocatori.every((g) => !g.obiettivo.aCaso)).toBe(true);
+    expect(giocatori.filter((g) => g.spia).every((g) => g.obiettivo.aziendalista)).toBe(true);
+    expect(giocatori.some((g) => g.obiettivo.facile)).toBe(true);
+    expect(giocatori.some((g) => g.obiettivo.difficile)).toBe(true);
+  });
+
   it("il report e i CSV si generano", () => {
     const partite = Array.from({ length: 20 }, (_, i) => simulaPartita(5, i + 1, ambiente));
     const { markdown } = creaReport(partite, "prova");

@@ -9,7 +9,11 @@ export {
   type Schema,
   type Frasi,
   type ModelloSegreto,
+  type ModelloObiettivo,
+  type ModelloTraguardo,
 } from "./contenuti.js";
+export { MISURE } from "./misure.js";
+export { valutaObiettivo, modello as modelloObiettivo, type EsitoTraguardo, type StatoTraguardo } from "./obiettivi.js";
 export type * from "./tipi.js";
 export type { Azione, AzioneGiocatore, AzioneSistema, Esito, Evento } from "./azioni.js";
 export { creaPartita, type NuovoGiocatore, type EsitoCreazione } from "./partita.js";
@@ -24,4 +28,6 @@ export {
   type Destinatario,
   type VistaTV,
   type VistaGiocatore,
+  type ObiettivoVisibile,
+  type ObiettivoRivelato,
 } from "./viste.js";

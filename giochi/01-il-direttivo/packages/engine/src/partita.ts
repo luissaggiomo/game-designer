@@ -1,6 +1,7 @@
 /**
- * Creazione di una partita: assegnazione segreta di reparti, fazioni e concorrenti
- * (GDD §4, §5, §12 · Architettura §10.1), poi ingresso nel Rapporto del primo trimestre.
+ * Creazione di una partita: assegnazione segreta di reparti, fazioni, concorrenti e delle tre
+ * proposte di obiettivo personale (GDD §4, §5, §12 · Architettura §10.1 · D-046…D-049), poi la
+ * scelta dell'obiettivo (D-048). Il primo trimestre comincia quando la scelta si chiude.
  *
  * L'ingresso nella stanza (lobby) e la spiegazione delle regole (tutorial) sono compiti
  * del server e della TV: il motore parte con i giocatori già presenti.
@@ -8,7 +9,8 @@
 import type { Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import type { Configurazione } from "./config.js";
-import { entraNellaFase } from "./fasi.js";
+import { descriviFase } from "./fasi.js";
+import { assegnaObiettivi } from "./obiettivi.js";
 import { creaCasuale, type Casuale } from "./rng.js";
 import type { Concorrente, Fazione, Giocatore, GiocatoreId, Partita, Reparto } from "./tipi.js";
 
@@ -66,13 +68,14 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
 
   const partita: Partita = {
     seme,
-    statoCasuale: casuale.stato(),
-    fase: { nome: "RAPPORTO" },
+    statoCasuale: 0,
+    fase: { nome: "SCELTA_OBIETTIVI" },
     trimestre: 1,
     giocatori,
     reparti,
     concorrenti,
     azienda: { quota: 0, cassa: 0 },
+    cassaInizioTrimestre: 0,
     proposteTrimestre: [],
     proposteUscite: [],
     conteggioFavoriti: {},
@@ -84,11 +87,18 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     conteggioFontiSegreti: {},
     contatore: 0,
     storicoVotiPersonali: [],
-    finale: { verifica: {}, nomine: {}, ballottaggio: [], esitiVerifica: [], licenziamenti: [] },
+    obiettivi: {},
+    storicoVotazioni: [],
+    storicoTrimestri: [],
+    finale: { verifica: {}, nomine: {}, ballottaggio: [], esitiVerifica: [], licenziamenti: [], storicoNomine: [] },
   };
 
-  // Ingresso nel Rapporto del trimestre 1: budget, quota messaggi, ordine del giorno.
-  const eventi = entraNellaFase(partita, ambiente);
+  // 5. Obiettivi personali: tre a testa, uno per tipo (D-046, D-049).
+  assegnaObiettivi(partita, ambiente, casuale);
+  partita.statoCasuale = casuale.stato();
+
+  // Si parte dalla scelta degli obiettivi; il Rapporto del trimestre 1 arriva con AVANZA_FASE.
+  const eventi: Evento[] = [{ tipo: "FASE_INIZIATA", fase: partita.fase, trimestre: 1, causa: descriviFase(partita.fase, 1) }];
   return { ok: true, partita, eventi };
 }
 

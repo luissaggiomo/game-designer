@@ -1,14 +1,14 @@
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import { caricaAmbiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
-import { creaPartita } from "../src/partita.js";
 import type { Partita, PropostaIstanza, RepartoId, Voto } from "../src/tipi.js";
 
 const ambiente = caricaAmbiente();
 
 /** Partita a 5 giocatori (4 base + Finanza) ferma sulla votazione 1 di una proposta costruita apposta. */
 function inVotazione(proposta: Partial<PropostaIstanza> = {}): Partita {
-  const esito = creaPartita(
+  const esito = creaEAvvia(
     Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })),
     11,
     ambiente,

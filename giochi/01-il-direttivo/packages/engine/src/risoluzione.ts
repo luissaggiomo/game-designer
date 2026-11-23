@@ -100,6 +100,19 @@ function risolviMossePrivate(partita: Partita, ambiente: Ambiente, casuale: Casu
   partita.azienda.quota += delta;
 
   const andamento = delta < 0 ? "IN_CALO" : delta === 0 ? "STABILE" : "IN_CRESCITA";
+  // Storico per gli obiettivi: solo le mosse scelte davvero dai direttori attivi (D-052 R2).
+  const mosseScelte: Partial<Record<string, SceltaMossa>> = {};
+  for (const g of partita.giocatori.filter((x) => x.stato === "ATTIVO")) {
+    const scelta = partita.mossePrivate[g.id];
+    if (scelta) mosseScelte[g.id] = scelta;
+  }
+  partita.storicoTrimestri.push({
+    trimestre: partita.trimestre,
+    mosseScelte,
+    andamento,
+    cassaInizio: partita.cassaInizioTrimestre,
+    cassaFine: partita.azienda.cassa,
+  });
   const testo = { IN_CALO: "in calo", STABILE: "stabile", IN_CRESCITA: "in crescita" }[andamento];
   return { tipo: "ESITO_MOSSE_PRIVATE", andamento, causa: `Impegno dei reparti questo trimestre: ${testo}.` };
 }

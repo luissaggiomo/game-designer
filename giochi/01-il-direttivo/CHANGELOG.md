@@ -3,6 +3,31 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-23 — 0.2.13
+
+### Design
+- D-046 (provvisoria): obiettivi personali — tre proposti (uno per tipo), se ne tiene uno; ogni obiettivo ha due traguardi: tipo 1 graduale +3/+5, tipo 2 doppio +3/+7, tipo 3 doppio +4/+6 (⚖️).
+- D-047 (provvisoria): l'obiettivo scelto si vede solo sul proprio telefono, con l'avanzamento; nessuna prova nell'app; al punteggio la TV rivela l'obiettivo di ognuno e il suo esito (gli scartati mai).
+- D-048 (provvisoria): dopo le regole in TV (saltabili) ognuno riceve tre obiettivi e ne sceglie uno; la partita inizia quando tutti hanno scelto; a tempo scaduto uno a caso; nessun obiettivo ripetuto nella stessa partita.
+- D-049 (provvisoria): mazzo unico con una parte di obiettivi aziendalisti; le spie ricevono solo aziendalisti (dilemma tra sabotaggio e punti), gli onesti pescano da tutto il mazzo; demansionati e licenziati conservano i punti dell'obiettivo.
+- D-050 (provvisoria): tipi ammessi — voti, mossa privata, segreti, cassa, demansionamenti/promozioni, finale, messaggi (solo ricezione o costo vero); bersagli solo generici; niente obiettivi sull'esito; nessun premio alla mossa "per il reparto".
+- D-051 (provvisoria): il bonus della spia resta +10 (aiutare l'azienda rischia di farla vincere); si tarano le soglie degli obiettivi, non i punti (facile 60–70%, difficile 25–35%, tipi con resa simile).
+- D-052 (provvisoria): lista di 36 obiettivi (12 per tipo, 4 aziendalisti per tipo) e regole di verifica R1–R3 (docs/contenuti/obiettivi.md).
+
+### Aggiunto
+- Obiettivi personali nel motore: `packages/content/obiettivi.json` (36 obiettivi), parametri `obiettivi` in config.json (punti per tipo, tempo di scelta); nuova fase SCELTA_OBIETTIVI prima del trimestre 1, azione SCEGLI_OBIETTIVO, estrazione a caso a tempo scaduto; verifica dei traguardi con 45 "misure" (engine/src/misure.ts) e storici solo-server (votazioni, trimestri, nomine, copie modificate); traguardi raggiunti nel punteggio; telefono con proposte, obiettivo scelto e avanzamento ("si verifica a fine partita" dove serve); rivelazione in TV al punteggio.
+- Robot: scelgono l'obiettivo (metà secondo il profilo, metà a caso) e lo perseguono secondo un "impegno" per profilo (spie aggressive poco impegnate: per loro l'obiettivo aiuta l'azienda); messaggi di solo testo occasionali.
+- Report del simulatore: sezione 4b sugli obiettivi (per tipo, per obiettivo, per profilo, dilemma della spia, equità tra reparti a parità di giocatori); colonne obiettivo nel CSV.
+- 19 test (164 in tutto): assegnazione, scelta, verifica dei traguardi, regole R1–R2, punteggio, rivelazione finale; test di riservatezza esteso agli obiettivi (verificato con una fuga introdotta apposta).
+- Nono report (docs/simulazioni/2026-11-23-simulazione-09.md) e studio dei concorrenti (docs/simulazioni/2026-11-23-studio-concorrenti-09.md).
+
+### Modificato
+- La partita comincia con la scelta degli obiettivi: `creaPartita` non entra più nel Rapporto, ci si arriva con AVANZA_FASE; le viste ricevono anche l'ambiente (testi degli obiettivi). Test esistenti adattati con un aiuto comune (`test/aiuti.ts`).
+- Architettura (§9, §10.1, §13.3) e GDD (§4.4, §7.1, §15.3, §16, §20 punto 3) aggiornati.
+
+### Corretto
+- Simulatore: la cassa d'inizio trimestre nel report era sfasata di un trimestre dopo l'introduzione della fase di scelta (segnalato nel report 09).
+
 ## 2026-11-22 — 0.2.12
 
 ### Design

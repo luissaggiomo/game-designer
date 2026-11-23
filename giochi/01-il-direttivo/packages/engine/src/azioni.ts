@@ -12,6 +12,8 @@ export type AzioneSistema = { tipo: "AVANZA_FASE" } | { tipo: "CHIUDI_VOTO_PERSO
  * le regole relative arrivano nei passi successivi.
  */
 export type AzioneGiocatore = { da: GiocatoreId } & (
+  /** Prima della partita: uno dei tre obiettivi proposti (D-048). */
+  | { tipo: "SCEGLI_OBIETTIVO"; obiettivo: string }
   | { tipo: "VOTA"; voto: Voto }
   | { tipo: "MOSSA_PRIVATA"; scelta: SceltaMossa }
   | {
@@ -40,6 +42,10 @@ export type Azione = AzioneSistema | AzioneGiocatore;
 type ContenutoEvento =
   | { tipo: "FASE_INIZIATA"; fase: Fase; trimestre: number; causa: string }
   | { tipo: "CASSA_RICARICATA"; cassa: number; causa: string }
+  /** Dice solo CHI ha scelto l'obiettivo, mai quale (D-047). */
+  | { tipo: "OBIETTIVO_REGISTRATO"; da: GiocatoreId; causa: string }
+  /** Riservato all'interessato: tempo scaduto, obiettivo estratto a caso (D-048). */
+  | { tipo: "OBIETTIVO_ASSEGNATO"; causa: string }
   | { tipo: "ORDINE_DEL_GIORNO"; proposte: { id: string; titolo: string; costo: number }[]; causa: string }
   /** Dice solo CHI ha votato, non cosa: i voti si rivelano alla chiusura (D-019). */
   | { tipo: "VOTO_REGISTRATO"; da: GiocatoreId; propostaId: string; causa: string }

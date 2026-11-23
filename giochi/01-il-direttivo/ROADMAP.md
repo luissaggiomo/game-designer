@@ -1,7 +1,7 @@
 # Il Direttivo — Roadmap e avanzamento
 
 **Fase attuale:** 2 · Motore e simulazione
-**Ultimo aggiornamento:** 2026-11-22
+**Ultimo aggiornamento:** 2026-11-23
 
 Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 
@@ -22,9 +22,9 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (segnaposto), segreti e messaggi
 - ✅ Demansionamento/promozione, finale, punteggio (senza obiettivi personali, D-022)
 - ✅ Viste filtrate + test di riservatezza (partite casuali da 4 a 8 giocatori, controllo a ogni passo)
-- 🔄 Contenuti in JSON — quesiti: 40 veri con due versioni ciascuno (D-030…D-034, D-045) ✅; segreti: 36 veri (D-035…D-039) ✅; obiettivi personali: in lavorazione (sessione dedicata, D-040…D-044)
-- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-22-simulazione-08.md (3 avvisi)
-- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-045 — in corso (ottavo report fatto)
+- 🔄 Contenuti in JSON — quesiti: 40 veri con due versioni ciascuno (D-030…D-034, D-045) ✅; segreti: 36 veri (D-035…D-039) ✅; obiettivi personali: 36 con regole di verifica (D-046…D-052) ✅, soglie ⚖️ da tarare
+- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-23-simulazione-09.md (1 avviso: soglie degli obiettivi)
+- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-052 — in corso (nono report fatto, ritaratura generale dopo gli obiettivi da decidere)
 
 ## Fase 3 · Prototipo locale giocabile
 - ⬜ Scelta hosting (DG-006)
@@ -47,7 +47,7 @@ Riferimento: tabella §20 del GDD. Da chiudere prima o durante la fase 2.
 |---|---|---|
 | 29 | Informazioni di contesto dei reparti con i quesiti generici (D-023) | identità dei reparti (non blocca il motore) |
 | 7 | Reparti aggiunti con 6, 7, 8 giocatori (nel motore c'è un ordine segnaposto in config.json) | assegnazione definitiva |
-| 3–4 | Obiettivi personali, comportamento concorrenti (proposte e segreti fatti: D-030…D-039) | contenuti e simulatore |
+| 4 | Comportamento concorrenti (proposte, segreti e obiettivi fatti: D-030…D-039, D-046…D-052) | contenuti e simulatore |
 
 ## Idee e punti da valutare (non bloccano subito)
 | # GDD | Idea | Tocca |
@@ -69,4 +69,5 @@ D-018 cassa: 100 K a trimestre, accumulo con tetto 150 K · D-019 voti rivelati 
 D-021 segreti e messaggi: collegamento al voto, quando si scrive, anonimi, scadenza ·
 D-022 demansionamento, finale e punteggio: limiti, nomina, pareggio, punteggio senza obiettivi ·
 D-023 quesiti dall'effetto · D-024 prima taratura · D-025 niente bonus alla spia licenziata · D-026 penalità all'onesto licenziato · D-027 demansionato a fine anno = licenziato a tutti gli effetti · D-028 decisione finale sui demansionati · D-029 revisione del finale ·
-D-030…D-034 contenuti dei quesiti · D-035…D-039 contenuti dei segreti · D-045 due versioni per quesito.
+D-030…D-034 contenuti dei quesiti · D-035…D-039 contenuti dei segreti · D-045 due versioni per quesito ·
+D-046…D-052 obiettivi personali (tre proposti, aziendalisti per le spie, lista e regole di verifica).

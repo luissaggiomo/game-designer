@@ -1,8 +1,8 @@
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import type { AzioneGiocatore, Evento } from "../src/azioni.js";
 import { caricaAmbiente, type Ambiente } from "../src/contenuti.js";
 import { applica } from "../src/motore.js";
-import { creaPartita } from "../src/partita.js";
 import { calcolaPunteggi } from "../src/punteggio.js";
 import { vistaGiocatore, vistaTV } from "../src/viste.js";
 import type { Fazione, Giocatore, Partita, SegretoIstanza } from "../src/tipi.js";
@@ -20,7 +20,7 @@ const amb: Ambiente = {
 };
 
 function nuova(seme = 21, ambiente = amb): Partita {
-  const esito = creaPartita(Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, ambiente);
+  const esito = creaEAvvia(Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, ambiente);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }
@@ -70,7 +70,7 @@ describe("distribuzione dei segreti (Rapporto)", () => {
   });
 
   it("l'avviso del segreto ricevuto è riservato alla fonte", () => {
-    const esito = creaPartita(Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), 21, amb);
+    const esito = creaEAvvia(Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), 21, amb);
     if (!esito.ok) throw new Error(esito.errore);
     for (const e of esito.eventi.filter((x) => x.tipo === "SEGRETO_RICEVUTO")) expect(e.riservatoA).toHaveLength(1);
   });
@@ -325,7 +325,7 @@ describe("contenuti veri dei segreti (D-035…D-039)", () => {
       const p = nuova(seme, base);
       for (const s of p.segreti) {
         const fonte = giocatoreDi(p, s.fonte);
-        const copia = vistaGiocatore(p, fonte.id).mieiSegreti.find((c) => c.titolo === s.titolo)!;
+        const copia = vistaGiocatore(p, fonte.id, base).mieiSegreti.find((c) => c.titolo === s.titolo)!;
         expect(copia.tipo).toBe(s.tipo);
         const modello = base.segreti.find((m) => m.id === s.modelloId)!;
         for (const nome of Object.keys(s.campi)) {
@@ -335,7 +335,7 @@ describe("contenuti veri dei segreti (D-035…D-039)", () => {
         }
       }
       // La TV non vede né i segreti né i loro valori.
-      expect(JSON.stringify(vistaTV(p))).not.toContain("valoriSuggeriti");
+      expect(JSON.stringify(vistaTV(p, base))).not.toContain("valoriSuggeriti");
     }
   });
 
@@ -347,8 +347,8 @@ describe("contenuti veri dei segreti (D-035…D-039)", () => {
     const campo = Object.keys(s.campi)[0]!;
     const copia = copiaDi(p, s, fonte.id)!;
     const q = fai(p, { tipo: "INVIA_MESSAGGIO", da: fonte.id, a: altro.id, anonimo: false, modello: "SEGRETO", copiaSegretoId: copia.id, campi: { [campo]: "valore inventato" } }).partita;
-    expect(vistaGiocatore(q, altro.id).mieiSegreti[0]!.valoriSuggeriti[campo]).toContain("valore inventato");
-    expect(vistaGiocatore(q, fonte.id).mieiSegreti.find((c) => c.titolo === s.titolo)!.valoriSuggeriti[campo]).not.toContain("valore inventato");
+    expect(vistaGiocatore(q, altro.id, base).mieiSegreti[0]!.valoriSuggeriti[campo]).toContain("valore inventato");
+    expect(vistaGiocatore(q, fonte.id, base).mieiSegreti.find((c) => c.titolo === s.titolo)!.valoriSuggeriti[campo]).not.toContain("valore inventato");
   });
 
   it("la spia prende i punti secondo il tipo del segreto usato (aggiunta a D-038)", () => {

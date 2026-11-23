@@ -4,6 +4,7 @@
  * Si giocano molte partite con azioni casuali (valide e non) e a ogni passo si controlla che
  * nessuna vista e nessun evento ricevuto contenga dati che quel dispositivo non deve vedere.
  */
+import { creaEAvvia } from "./aiuti.js";
 import { describe, expect, it } from "vitest";
 import type { Azione, Evento } from "../src/azioni.js";
 import { caricaAmbiente } from "../src/contenuti.js";
@@ -17,7 +18,14 @@ const ambiente = caricaAmbiente();
 const FASI_FINE = new Set(["PUNTEGGIO", "LETTURA_MESSAGGI", "FINE"]);
 
 /** Chiavi che non devono MAI comparire in una vista (a nessun livello). */
-const CHIAVI_VIETATE = ["catena", "statoCasuale", "seme", "mossePrivate", "spieTraAttivi", "effettiPrivati", "effettoAzienda", "nomine", "revocata", "possessore"];
+const CHIAVI_VIETATE = [
+  "catena", "statoCasuale", "seme", "mossePrivate", "spieTraAttivi", "effettiPrivati", "effettoAzienda", "nomine", "revocata", "possessore",
+  // Obiettivi personali e loro storici (solo server, D-047, D-052).
+  "proposti", "storicoVotazioni", "storicoTrimestri", "decisivi", "mosseScelte", "alterataDa", "modificataDalMittente", "storicoNomine", "aziendalista", "misura",
+];
+
+/** Identificativi degli obiettivi (es. "T2-07") presenti in un testo. */
+const idObiettivi = (testo: string): Set<string> => new Set([...testo.matchAll(/"(T\d-\d\d)"/g)].map((m) => m[1]!));
 
 function chiaviPresenti(oggetto: unknown, trovate = new Set<string>()): Set<string> {
   if (Array.isArray(oggetto)) oggetto.forEach((x) => chiaviPresenti(x, trovate));
@@ -36,6 +44,8 @@ function azioneCasuale(p: Partita, r: Casuale): Azione {
   const altro = r.scegli(p.giocatori.filter((x) => x.id !== g.id));
   const mieCopie = p.copieSegreto.filter((c) => c.possessore === g.id);
   const scelte: (() => Azione)[] = [
+    // Scelta dell'obiettivo: a volte uno dei propri tre, a volte quello di un altro (non valido).
+    () => ({ tipo: "SCEGLI_OBIETTIVO", da: g.id, obiettivo: r.scegli(p.obiettivi[r.probabilita(0.8) ? g.id : altro.id]?.proposti ?? ["T1-01"]) }),
     () => ({ tipo: "AVANZA_FASE" }),
     () => ({ tipo: "AVANZA_FASE" }),
     () => ({ tipo: "VOTA", da: g.id, voto: r.scegli(["SI", "NO", "ASTENUTO"] as const) }),
@@ -63,7 +73,7 @@ function azioneCasuale(p: Partita, r: Casuale): Azione {
 }
 
 function controllaVistaGiocatore(p: Partita, id: string): void {
-  const v = vistaGiocatore(p, id);
+  const v = vistaGiocatore(p, id, ambiente);
   const io = p.giocatori.find((g) => g.id === id)!;
   const fine = FASI_FINE.has(p.fase.nome);
 
@@ -122,10 +132,18 @@ function controllaVistaGiocatore(p: Partita, id: string): void {
 
   // Segreti consegnati: solo i miei.
   for (const s of v.segretiConsegnati) expect(p.segretiPassati.find((x) => x.copiaId === s.copiaId && x.spia === id)).toBeDefined();
+
+  // Obiettivi (D-047): nella mia vista solo i miei — le tre proposte durante la scelta, poi lo scelto.
+  // Mai gli obiettivi degli altri (la rivelazione finale mostra nomi e testi, non identificativi).
+  const mio = p.obiettivi[id]!;
+  const ammessi = new Set(p.fase.nome === "SCELTA_OBIETTIVI" ? mio.proposti : mio.scelto ? [mio.scelto] : []);
+  for (const oid of idObiettivi(JSON.stringify(v))) expect(ammessi.has(oid), `obiettivo ${oid} nella vista di ${id}`).toBe(true);
+  if (p.fase.nome !== "SCELTA_OBIETTIVI") expect(v.obiettivo.proposte).toBeUndefined();
+  if (!fine) expect(v.obiettivi, `obiettivi altrui visibili a ${id} prima del punteggio`).toBeUndefined();
 }
 
 function controllaVistaTV(p: Partita): void {
-  const v = vistaTV(p);
+  const v = vistaTV(p, ambiente);
   const fine = FASI_FINE.has(p.fase.nome);
   const chiavi = chiaviPresenti({ ...v, letturaMessaggi: undefined });
   for (const k of [...CHIAVI_VIETATE, "io", "mieiSegreti", "mieiMessaggi", "mieiEffetti", "mieiVoti", "alleati"]) {
@@ -136,6 +154,18 @@ function controllaVistaTV(p: Partita): void {
     if (g.fazione) expect(stato === "LICENZIATO" || fine).toBe(true);
   }
   if (!["LETTURA_MESSAGGI", "FINE"].includes(p.fase.nome)) expect(v.letturaMessaggi).toBeUndefined();
+  // Obiettivi: la TV non vede mai un identificativo né le proposte scartate; l'obiettivo scelto di
+  // ognuno compare solo dal punteggio in poi (D-047).
+  expect(idObiettivi(JSON.stringify(v)).size).toBe(0);
+  for (const k of ["obiettivo", "proposte"]) expect(chiavi.has(k), `chiave vietata "${k}" nella vista TV`).toBe(false);
+  if (!fine) expect(v.obiettivi).toBeUndefined();
+  else {
+    for (const [gid, o] of Object.entries(v.obiettivi ?? {})) {
+      const scelto = ambiente.obiettivi.find((x) => x.id === p.obiettivi[gid]!.scelto)!;
+      expect(o!.nome).toBe(scelto.nome);
+      expect(o!.tipo).toBe(scelto.tipo);
+    }
+  }
 }
 
 function controllaEventi(p: Partita, eventi: Evento[]): void {
@@ -144,9 +174,12 @@ function controllaEventi(p: Partita, eventi: Evento[]): void {
     for (const e of eventiPer(eventi, d)) {
       if (e.riservatoA) expect(d.tipo === "GIOCATORE" && e.riservatoA.includes(d.id)).toBe(true);
       // Gli eventi di registrazione dicono chi ha agito, mai cosa.
-      if (e.tipo === "VOTO_REGISTRATO" || e.tipo === "MOSSA_REGISTRATA" || e.tipo === "RISPOSTA_REGISTRATA" || e.tipo === "VOTO_PERSONALE_REGISTRATO") {
+      if (e.tipo === "VOTO_REGISTRATO" || e.tipo === "MOSSA_REGISTRATA" || e.tipo === "RISPOSTA_REGISTRATA" || e.tipo === "VOTO_PERSONALE_REGISTRATO" || e.tipo === "OBIETTIVO_REGISTRATO") {
         expect(Object.keys(e).sort()).toEqual(["causa", "da", ...(e.tipo === "VOTO_REGISTRATO" ? ["propostaId"] : []), "tipo"].sort());
       }
+      // L'obiettivo estratto a caso è riservato all'interessato; nessun evento contiene identificativi di obiettivi.
+      if (e.tipo === "OBIETTIVO_ASSEGNATO") expect(e.riservatoA).toHaveLength(1);
+      expect(idObiettivi(JSON.stringify(e)).size).toBe(0);
       // L'esito delle mosse private non contiene numeri.
       if (e.tipo === "ESITO_MOSSE_PRIVATE") expect(e.causa).not.toMatch(/\d/);
     }
@@ -178,18 +211,18 @@ describe("riservatezza delle viste (regola 3)", () => {
   }
 
   it("nella lettura finale i messaggi anonimi mostrano il mittente", () => {
-    const esito = creaPartita(Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), 9, ambiente);
+    const esito = creaEAvvia(Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), 9, ambiente);
     if (!esito.ok) throw new Error(esito.errore);
     let p = applica(esito.partita, { tipo: "INVIA_MESSAGGIO", da: "g1", a: "g2", anonimo: true, modello: "SOLO_TESTO", testo: "chi sono?" }, ambiente);
     if (!p.ok) throw new Error(p.errore);
-    expect(vistaGiocatore(p.partita, "g2").mieiMessaggi[0]!.da).toBeUndefined();
+    expect(vistaGiocatore(p.partita, "g2", ambiente).mieiMessaggi[0]!.da).toBeUndefined();
     let q = p.partita;
     while (q.fase.nome !== "LETTURA_MESSAGGI") {
       const r = applica(q, { tipo: "AVANZA_FASE" }, ambiente);
       if (!r.ok) throw new Error(r.errore);
       q = r.partita;
     }
-    expect(vistaTV(q).letturaMessaggi![0]).toMatchObject({ da: "g1", anonimo: true, testo: "chi sono?" });
+    expect(vistaTV(q, ambiente).letturaMessaggi![0]).toMatchObject({ da: "g1", anonimo: true, testo: "chi sono?" });
     void p;
   });
 });

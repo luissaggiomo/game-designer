@@ -7,9 +7,12 @@
  * Mai nelle viste: ruoli altrui (salvo licenziati e fine partita), il segnale "falsa" delle copie,
  * la catena dei passaggi, gli effetti privati degli altri reparti, l'effetto sull'azienda prima
  * dei risultati, i voti prima della rivelazione, le mosse private, il mittente dei messaggi anonimi
- * (fino alla lettura finale), lo stato del generatore casuale.
+ * (fino alla lettura finale), lo stato del generatore casuale, gli obiettivi personali altrui
+ * (fino al punteggio, e mai quelli scartati: D-047).
  */
 import type { Evento } from "./azioni.js";
+import type { Ambiente } from "./contenuti.js";
+import { modello, testoTraguardo, valutaObiettivo, type StatoTraguardo } from "./obiettivi.js";
 import type {
   Fase,
   Fazione,
@@ -98,8 +101,33 @@ export interface VistaComune {
   };
   /** Dal punteggio in poi. */
   punteggi?: Partial<Record<GiocatoreId, Punteggio>>;
+  /** Dal punteggio in poi: l'obiettivo scelto da ognuno e com'è andato (D-047). */
+  obiettivi?: Partial<Record<GiocatoreId, ObiettivoRivelato>>;
   /** Solo nella lettura finale dei messaggi (GDD §10.1, §15.3). */
   letturaMessaggi?: MessaggioLetturaFinale[];
+}
+
+/** Obiettivo personale come lo vede il suo proprietario (D-047). */
+export interface ObiettivoVisibile {
+  id: string;
+  nome: string;
+  tipo: number;
+  traguardi: {
+    testo: string;
+    punti: number;
+    /** Dopo la scelta: stato e avanzamento ("si verifica a fine partita" = A_FINE_PARTITA, D-052 R1). */
+    stato?: StatoTraguardo;
+    valore?: number;
+    soglia?: number;
+  }[];
+}
+
+/** Rivelazione finale in TV dell'obiettivo scelto da ognuno (D-047): mai gli scartati. */
+export interface ObiettivoRivelato {
+  nome: string;
+  tipo: number;
+  sceltoACaso: boolean;
+  traguardi: { testo: string; punti: number; raggiunto: boolean }[];
 }
 
 export type VistaTV = VistaComune & { tipo: "TV" };
@@ -160,11 +188,17 @@ export interface VistaGiocatore extends VistaComune {
   mieiMessaggi: MessaggioVisibile[];
   /** Solo per le spie: i segreti che ho consegnato. */
   segretiConsegnati: { copiaId: string; trimestre: number; riuscito?: boolean }[];
+  /** Il MIO obiettivo personale: le tre proposte durante la scelta, poi solo quello scelto (D-047, D-048). */
+  obiettivo: {
+    proposte?: ObiettivoVisibile[];
+    scelto?: ObiettivoVisibile;
+    sceltoACaso?: boolean;
+  };
 }
 
 const FASI_FINE = new Set(["PUNTEGGIO", "LETTURA_MESSAGGI", "FINE"]);
 
-function vistaComune(p: Partita): VistaComune {
+function vistaComune(p: Partita, ambiente: Ambiente): VistaComune {
   const rivelaTutti = FASI_FINE.has(p.fase.nome);
   const votazioneAperta = p.fase.nome === "VOTAZIONE" ? p.proposteTrimestre[p.fase.votazione - 1]?.id : undefined;
 
@@ -222,6 +256,7 @@ function vistaComune(p: Partita): VistaComune {
     };
   }
   if (rivelaTutti && p.punteggi) comune.punteggi = structuredClone(p.punteggi);
+  if (rivelaTutti) comune.obiettivi = obiettiviRivelati(p, ambiente);
   if (p.fase.nome === "LETTURA_MESSAGGI" || p.fase.nome === "FINE") comune.letturaMessaggi = p.messaggi.map((m) => letturaFinale(p, m));
   return comune;
 }
@@ -241,14 +276,55 @@ function letturaFinale(p: Partita, m: Messaggio): MessaggioLetturaFinale {
   };
 }
 
-export function vistaTV(p: Partita): VistaTV {
-  return { tipo: "TV", ...vistaComune(p) };
+function obiettiviRivelati(p: Partita, ambiente: Ambiente): Partial<Record<GiocatoreId, ObiettivoRivelato>> {
+  const rivelati: Partial<Record<GiocatoreId, ObiettivoRivelato>> = {};
+  for (const g of p.giocatori) {
+    const o = p.obiettivi[g.id];
+    if (!o?.scelto) continue;
+    const m = modello(ambiente, o.scelto);
+    rivelati[g.id] = {
+      nome: m.nome,
+      tipo: m.tipo,
+      sceltoACaso: o.sceltoACaso === true,
+      traguardi: valutaObiettivo(p, ambiente, g.id, "COMPLETA").map((t) => ({ testo: t.testo, punti: t.punti, raggiunto: t.stato === "RAGGIUNTO" })),
+    };
+  }
+  return rivelati;
 }
 
-export function vistaGiocatore(p: Partita, id: GiocatoreId): VistaGiocatore {
+/** Il mio obiettivo: durante la scelta le tre proposte; poi solo lo scelto, con l'avanzamento. */
+function mioObiettivo(p: Partita, ambiente: Ambiente, id: GiocatoreId): VistaGiocatore["obiettivo"] {
+  const o = p.obiettivi[id];
+  if (!o) return {};
+  const punti = (tipo: number) => ambiente.config.obiettivi.punti[String(tipo)]!;
+  const semplice = (oid: string): ObiettivoVisibile => {
+    const m = modello(ambiente, oid);
+    return { id: m.id, nome: m.nome, tipo: m.tipo, traguardi: m.traguardi.map((t, i) => ({ testo: testoTraguardo(t, p, ambiente), punti: punti(m.tipo)[i]! })) };
+  };
+  if (p.fase.nome === "SCELTA_OBIETTIVI") {
+    return { proposte: o.proposti.map(semplice), ...(o.scelto ? { scelto: semplice(o.scelto) } : {}) };
+  }
+  if (!o.scelto) return {};
+  const conoscenza = FASI_FINE.has(p.fase.nome) ? "COMPLETA" : "GIOCATORE";
+  const scelto = semplice(o.scelto);
+  scelto.traguardi = valutaObiettivo(p, ambiente, id, conoscenza).map((t) => ({
+    testo: t.testo,
+    punti: t.punti,
+    stato: t.stato,
+    soglia: t.soglia,
+    ...(t.valore !== undefined ? { valore: t.valore } : {}),
+  }));
+  return { scelto, ...(o.sceltoACaso ? { sceltoACaso: true } : {}) };
+}
+
+export function vistaTV(p: Partita, ambiente: Ambiente): VistaTV {
+  return { tipo: "TV", ...vistaComune(p, ambiente) };
+}
+
+export function vistaGiocatore(p: Partita, id: GiocatoreId, ambiente: Ambiente): VistaGiocatore {
   const io = p.giocatori.find((g) => g.id === id);
   if (!io) throw new Error(`Giocatore sconosciuto: ${id}`);
-  const comune = vistaComune(p);
+  const comune = vistaComune(p, ambiente);
 
   const alleati =
     io.fazione.tipo === "SPIA"
@@ -325,6 +401,7 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId): VistaGiocatore {
     mieiVoti,
     mieiSegreti,
     mieiMessaggi,
+    obiettivo: mioObiettivo(p, ambiente, io.id),
     segretiConsegnati: p.segretiPassati
       .filter((x) => x.spia === io.id)
       .map((x) => {
@@ -335,8 +412,8 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId): VistaGiocatore {
   };
 }
 
-export function vista(p: Partita, destinatario: Destinatario): VistaTV | VistaGiocatore {
-  return destinatario.tipo === "TV" ? vistaTV(p) : vistaGiocatore(p, destinatario.id);
+export function vista(p: Partita, destinatario: Destinatario, ambiente: Ambiente): VistaTV | VistaGiocatore {
+  return destinatario.tipo === "TV" ? vistaTV(p, ambiente) : vistaGiocatore(p, destinatario.id, ambiente);
 }
 
 /** Gli eventi che un destinatario può ricevere: i riservati solo ai diretti interessati. */

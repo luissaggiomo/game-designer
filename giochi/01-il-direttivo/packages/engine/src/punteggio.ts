@@ -1,9 +1,10 @@
 /**
  * Punteggio finale (GDD §16 · Architettura §10.10 · D-011, D-022).
- * Ogni voce è spiegata in una frase. Gli obiettivi personali si aggiungeranno con la loro lista.
+ * Ogni voce è spiegata in una frase. Obiettivi personali: D-046…D-052.
  */
 import type { Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
+import { vociObiettivo } from "./obiettivi.js";
 import type { GiocatoreId, Partita, Punteggio } from "./tipi.js";
 
 export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] {
@@ -26,6 +27,10 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
 
   // Punti di reparto accumulati in partita.
   for (const g of partita.giocatori) aggiungi(g.id, "Punti del tuo reparto", g.puntiReparto);
+
+  // Obiettivo personale: ogni traguardo raggiunto vale i suoi punti, anche per demansionati e
+  // licenziati (D-046, D-049).
+  for (const g of partita.giocatori) for (const voce of vociObiettivo(partita, ambiente, g)) aggiungi(g.id, voce.testo, voce.punti);
 
   // Corsa di mercato: l'azienda vince se supera ogni concorrente; un concorrente vince se supera
   // l'azienda (D-011); pareggio = nessuno vince (D-022).

@@ -138,6 +138,9 @@ export function creaReport(partite: DatiPartita[], intestazione: string): { mark
     ),
   );
 
+  // 4b. Obiettivi personali (D-046…D-052).
+  sezioni.push(...sezioneObiettivi(partite, avvisi));
+
   // 5. Cassa e votazioni (D-008, D-014, D-018).
   sezioni.push("\n## 5. Cassa e votazioni\n");
   const voti = partite.flatMap((p) => p.votazioni);
@@ -176,9 +179,86 @@ export function creaReport(partite: DatiPartita[], intestazione: string): { mark
   sezioni.push("\n## 7. Avvisi automatici\n");
   sezioni.push(avvisi.length === 0 ? "Nessuno." : avvisi.map((a) => `- ⚠️ ${a.testo}`).join("\n"));
   sezioni.push(
-    "\n## 8. Limiti\n\n- I robot non parlano, non mentono a voce e non persuadono: la parte \"psicologica\" si misura solo nelle serate di prova.\n- Contenuti veri (40 quesiti, 36 segreti con valori variabili e tipi a bilancia, D-030…D-039), ma i robot non leggono i testi: votano sui numeri e non usano il tipo dei segreti per decidere a chi darli.\n- Gli obiettivi personali non esistono ancora (punto aperto 3), quindi i punteggi sono incompleti.\n- Il comportamento dei robot (soglie di voto, sospetti, accuse) è una semplificazione descritta in packages/simulator/src/robot.ts.",
+    "\n## 8. Limiti\n\n- I robot non parlano, non mentono a voce e non persuadono: la parte \"psicologica\" si misura solo nelle serate di prova.\n- Contenuti veri (40 quesiti, 36 segreti con valori variabili e tipi a bilancia, D-030…D-039), ma i robot non leggono i testi: votano sui numeri e non usano il tipo dei segreti per decidere a chi darli.\n- Obiettivi personali (D-046…D-052): i robot scelgono metà delle volte secondo il profilo e metà a caso, e li perseguono con regole semplici (robot.ts). Non sanno \"leggere la sala\": gli obiettivi che chiedono di indovinare l'esito di un voto o l'effetto sull'azienda risultano più difficili che per una persona. I messaggi di solo testo sono simulati con una probabilità fissa.\n- Il comportamento dei robot (soglie di voto, sospetti, accuse) è una semplificazione descritta in packages/simulator/src/robot.ts.",
   );
   return { markdown: sezioni.join("\n"), avvisi };
+}
+
+/** Obiettivi personali: resa per tipo, per obiettivo, per profilo e per reparto (D-046…D-052). */
+function sezioneObiettivi(partite: DatiPartita[], avvisi: Avviso[]): string[] {
+  const sezioni: string[] = [];
+  const tutti = partite.flatMap((p) => p.dettaglio.map((g) => ({ ...g, partita: p })));
+  sezioni.push(
+    "\n## 4b. Obiettivi personali\n\nObiettivi di taratura (D-051): traguardo **facile** raggiunto dal **60–70%** di chi l'ha scelto, **difficile** dal **25–35%**; **i tre tipi rendono in media lo stesso (±1 punto)**; nessun reparto avvantaggiato. Si regolano le soglie, non i punti.\n",
+  );
+  // Per tipo.
+  const righeTipo: (string | number)[][] = [];
+  const reseTipo: number[] = [];
+  for (const tipo of [1, 2, 3]) {
+    const gs = tutti.filter((g) => g.obiettivo.tipo === tipo);
+    const onesti = gs.filter((g) => !g.spia);
+    const spie = gs.filter((g) => g.spia);
+    const resa = media(gs.map((g) => g.obiettivo.punti));
+    reseTipo.push(resa);
+    righeTipo.push([tipo, pct(gs.length, tutti.length), pct(gs.filter((g) => g.obiettivo.facile).length, gs.length), pct(gs.filter((g) => g.obiettivo.difficile).length, gs.length), dec(resa), dec(media(onesti.map((g) => g.obiettivo.punti))), dec(media(spie.map((g) => g.obiettivo.punti)))]);
+  }
+  sezioni.push(tabella(["Tipo", "Scelto da", "Facile raggiunto", "Difficile raggiunto", "Punti medi", "…onesti", "…spie"], righeTipo));
+  if (Math.max(...reseTipo) - Math.min(...reseTipo) > 1) {
+    avvisi.push({ testo: `Obiettivi: i tre tipi rendono in media ${reseTipo.map((x) => dec(x)).join(" / ")} punti (scarto oltre 1 punto, D-051).` });
+  }
+
+  // Per obiettivo.
+  sezioni.push("\n### Resa di ogni obiettivo\n\n⚖️ = fuori dagli obiettivi di taratura (con almeno 30 scelte). 🏢 = aziendalista.\n");
+  const ids = [...new Set(tutti.map((g) => g.obiettivo.id))].sort();
+  let fuori = 0;
+  const righeOb = ids.map((id) => {
+    const gs = tutti.filter((g) => g.obiettivo.id === id);
+    const o = gs[0]!.obiettivo;
+    const f = gs.filter((g) => g.obiettivo.facile).length / gs.length;
+    const d = gs.filter((g) => g.obiettivo.difficile).length / gs.length;
+    const fuoriF = gs.length >= 30 && (f < 0.6 || f > 0.7);
+    const fuoriD = gs.length >= 30 && (d < 0.25 || d > 0.35);
+    if (fuoriF || fuoriD) fuori++;
+    return [id, `${o.aziendalista ? "🏢 " : ""}${o.nome}`, gs.length, `${pct(f * gs.length, gs.length)}${fuoriF ? " ⚖️" : ""}`, `${pct(d * gs.length, gs.length)}${fuoriD ? " ⚖️" : ""}`, dec(media(gs.map((g) => g.obiettivo.punti)))];
+  });
+  sezioni.push(tabella(["Obiettivo", "Nome", "Scelto", "Facile", "Difficile", "Punti medi"], righeOb));
+  if (fuori > 0) avvisi.push({ testo: `Obiettivi: ${fuori} su ${ids.length} hanno almeno un traguardo fuori dagli obiettivi di taratura (soglie da ritoccare).` });
+
+  // Per profilo e fazione.
+  sezioni.push("\n### Obiettivi per profilo\n");
+  sezioni.push(
+    tabella(
+      ["Profilo", "Punti obiettivo medi", "Facile raggiunto", "Difficile raggiunto"],
+      (["COOPERATIVO", "EGOISTA", "SPIA_PRUDENTE", "SPIA_AGGRESSIVA"] as const).map((nome) => {
+        const gs = tutti.filter((g) => g.profilo === nome);
+        return [nome, dec(media(gs.map((g) => g.obiettivo.punti))), pct(gs.filter((g) => g.obiettivo.facile).length, gs.length), pct(gs.filter((g) => g.obiettivo.difficile).length, gs.length)];
+      }),
+    ),
+  );
+
+  // Il dilemma della spia: chi insegue l'obiettivo aziendalista vince meno?
+  const spie = tutti.filter((g) => g.spia && g.partita.spie === 1);
+  const conPunti = spie.filter((g) => g.obiettivo.punti > 0);
+  const senzaPunti = spie.filter((g) => g.obiettivo.punti === 0);
+  const vinceSpia = (gs: typeof spie) => pct(gs.filter((g) => g.partita.vincitoreFazione === "SPIE").length, gs.length);
+  sezioni.push(
+    `\nDilemma della spia (partite con una spia): chi ha preso punti dall'obiettivo aziendalista vince la partita nel ${vinceSpia(conPunti)} dei casi (${conPunti.length} spie), chi non ne ha presi nel ${vinceSpia(senzaPunti)} (${senzaPunti.length} spie).`,
+  );
+
+  // Equità tra reparti (D-005), a parità di numero di giocatori (alcune soglie dipendono da quanti si è).
+  const righeReparti: (string | number)[][] = [];
+  let scartoPeggiore = 0;
+  for (const n of [...new Set(tutti.map((g) => g.partita.giocatori))].sort()) {
+    const gs = tutti.filter((g) => g.partita.giocatori === n);
+    const perReparto = [...new Set(gs.map((g) => g.reparto))].map((r) => media(gs.filter((g) => g.reparto === r).map((g) => g.obiettivo.punti)));
+    const scarto = Math.max(...perReparto) - Math.min(...perReparto);
+    scartoPeggiore = Math.max(scartoPeggiore, scarto);
+    righeReparti.push([n, dec(media(gs.map((g) => g.obiettivo.punti))), dec(Math.min(...perReparto)), dec(Math.max(...perReparto))]);
+  }
+  sezioni.push("\n### Obiettivi per numero di giocatori ed equità tra reparti (D-005)\n");
+  sezioni.push(tabella(["Giocatori", "Punti obiettivo medi", "Reparto più basso", "Reparto più alto"], righeReparti));
+  if (scartoPeggiore > 0.6) avvisi.push({ testo: `Obiettivi: a parità di giocatori, tra i reparti i punti medi differiscono fino a ${dec(scartoPeggiore)} punti (D-005).` });
+  return sezioni;
 }
 
 /** Quota di scelte aziendaliste oltre la quale l'azienda vince almeno metà delle volte (stima a scaglioni del 5%). */
@@ -192,11 +272,11 @@ export function stimaSoglia(partite: DatiPartita[]): number | null {
 
 export function creaCsv(partite: DatiPartita[]): { partite: string; giocatori: string } {
   const righeP = ["giocatori;seme;spie;configurazione_spie;mercato;votazioni_approvate;votazioni_totali;demansionamenti;segreti_in_tempo;segreti_passati;spie_licenziate;onesti_licenziati_finale"];
-  const righeG = ["giocatori;seme;reparto;spia;profilo;punteggio;punti_reparto;vincitore;demansionato;licenziato;segreti_come_fonte;favorito;peso_voto_anno"];
+  const righeG = ["giocatori;seme;reparto;spia;profilo;punteggio;punti_reparto;vincitore;demansionato;licenziato;segreti_come_fonte;favorito;peso_voto_anno;obiettivo;tipo_obiettivo;facile;difficile;punti_obiettivo"];
   for (const p of partite) {
     righeP.push([p.giocatori, p.seme, p.spie, p.configurazioneSpie, p.mercato, p.votazioni.filter((v) => v.approvata).length, p.votazioni.length, p.demansionamenti.length, p.segreti.inTempo, p.segreti.passati, p.spieLicenziate, p.onestiLicenziatiNelFinale].join(";"));
     for (const g of p.dettaglio) {
-      righeG.push([p.giocatori, p.seme, g.reparto, g.spia ? 1 : 0, g.profilo, g.punteggio, g.puntiReparto, g.vincitore ? 1 : 0, g.demansionato ? 1 : 0, g.licenziato ? 1 : 0, g.segretiComeFonte, g.favorito, g.pesoVotoAnno].join(";"));
+      righeG.push([p.giocatori, p.seme, g.reparto, g.spia ? 1 : 0, g.profilo, g.punteggio, g.puntiReparto, g.vincitore ? 1 : 0, g.demansionato ? 1 : 0, g.licenziato ? 1 : 0, g.segretiComeFonte, g.favorito, g.pesoVotoAnno, g.obiettivo.id, g.obiettivo.tipo, g.obiettivo.facile ? 1 : 0, g.obiettivo.difficile ? 1 : 0, g.obiettivo.punti].join(";"));
     }
   }
   return { partite: righeP.join("\n"), giocatori: righeG.join("\n") };

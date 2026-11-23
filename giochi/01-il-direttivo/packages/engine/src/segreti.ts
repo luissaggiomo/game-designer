@@ -152,6 +152,8 @@ export function inviaMessaggio(
   if (copiaOrigine) {
     const originale = nuova.segreti.find((s) => s.id === copiaOrigine!.segretoId)!;
     const campi = { ...copiaOrigine.campi, ...(azione.campi ?? {}) };
+    const modificata = !ugualiAiVeri(campi, copiaOrigine.campi);
+    const alterataDa = [...(copiaOrigine.alterataDa ?? []), ...(modificata ? [mittente.id] : [])];
     copiaNuovaId = nuovoId(nuova, "C");
     nuova.copieSegreto.push({
       id: copiaNuovaId,
@@ -161,6 +163,8 @@ export function inviaMessaggio(
       falsa: !ugualiAiVeri(campi, originale.campi),
       provenienza: { tipo: "GIOCATORE", da: mittente.id, anonimo: azione.anonimo },
       catena: [...copiaOrigine.catena, mittente.id],
+      ...(modificata ? { modificataDalMittente: true } : {}),
+      ...(alterataDa.length > 0 ? { alterataDa } : {}),
     });
   }
 
