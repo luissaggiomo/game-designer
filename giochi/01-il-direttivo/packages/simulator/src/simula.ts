@@ -36,9 +36,11 @@ export interface DatiGiocatore {
   puntiReparto: number;
   vincitore: boolean;
   licenziato: boolean;
-  segretiComeFonte: number;
-  favorito: number;
-  pesoVotoAnno: number;
+  /** Quante volte è stato fonte o destinatario di un segreto (D-074). */
+  coinvolgimentiSegreti: number;
+  /** Bonus e malus ricevuti dalle carte della partita, approvate o no (D-069: devono essere uguali per tutti). */
+  bonusCarte: number;
+  malusCarte: number;
   /** Obiettivo personale scelto e traguardi raggiunti (D-046…D-052). */
   obiettivo: {
     id: string;
@@ -60,14 +62,16 @@ export interface DatiPartita {
   spie: number;
   configurazioneSpie: "0" | "1" | "2 alleate" | "2 rivali";
   mercato: "AZIENDA" | "CONCORRENTE" | "PAREGGIO";
-  votazioni: { trimestre: number; posizione: number; approvata: boolean; perFondi: boolean }[];
+  /** Voto del pacchetto, per trimestre (D-068). */
+  votazioni: { trimestre: number; esito: "PRIMO_VOTO" | "PRINCIPALE" | "ALTERNATIVA"; costo: number; grande: boolean; proposte: number; cassa: number }[];
+  /** Scarto massimo tra reparti nei totali di bonus e malus delle carte, e trimestri con reparti non smistati (D-069). */
+  equita: { scarto: number; violazioni: number };
   cassaInizioTrimestre: number[];
   /** Cassa dopo l'ultima votazione di ogni trimestre e minima dopo le votazioni (obiettivi sulla cassa). */
   cassaFineTrimestre: number[];
   cassaMinimaDopoVoti: number;
   /** Per trimestre: effetto sull'azienda di proposte approvate e segreti arrivati in tempo (D-056). */
   crescitaProposteESegreti: number[];
-  tettoRaggiunto: number;
   /** Finale "Rinnovo dei contratti" (D-058). */
   finale: {
     /** Esito della domanda in ogni giro (true = si procede con i nomi). */
@@ -79,7 +83,8 @@ export interface DatiPartita {
     /** Ultima votazione del percorso a tre finita senza licenziati. */
     nessunoAllUltima: boolean;
   };
-  segreti: { totali: number; inTempo: number; passati: number; passatiFalsi: number };
+  /** D-072…D-074: arrivati = qualunque versione al reparto utile; inTempo = copia vera di un segreto vero. */
+  segreti: { totali: number; veri: number; arrivati: number; inTempo: number; passati: number; passatiFalsi: number; passatiFinti: number };
   /**
    * Esito per fazione (benchmark di Luis, 22/11/2026): vince la spia se il suo concorrente supera
    * l'azienda E lei non è stata scoperta (non licenziata); altrimenti vincono gli onesti.
@@ -109,21 +114,15 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     robot.set(g.id, new Robot(g.id, profilo, ambiente, creaCasuale(casuale.intero(1, 2 ** 31))));
   }
 
-  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti" | "crescitaProposteESegreti" | "finale"> & { mosse: DatiPartita["mosse"] } = {
+  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti" | "crescitaProposteESegreti" | "finale" | "equita"> & { mosse: DatiPartita["mosse"] } = {
     giocatori: n,
     seme,
     spie: 0,
     configurazioneSpie: "0",
     votazioni: [],
     cassaInizioTrimestre: [],
-    tettoRaggiunto: 0,
     mosse: { totali: 0, aziendaliste: 0 },
   };
-  const pesoVoto = new Map<RepartoId, number>();
-  const registraPesi = (q: Partita) => {
-    for (const prop of q.proposteTrimestre) for (const [r, peso] of Object.entries(prop.pesi) as [RepartoId, number][]) pesoVoto.set(r, (pesoVoto.get(r) ?? 0) + peso);
-  };
-  registraPesi(p);
 
   const distribuisci = (q: Partita, eventi: Evento[]) => {
     for (const [id, rob] of robot) rob.osserva(eventiPer(eventi, { tipo: "GIOCATORE", id }), vistaGiocatore(q, id, ambiente));
@@ -140,13 +139,21 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
   };
   const raccogli = (prima: Partita, eventi: Evento[]) => {
     for (const e of eventi) {
-      if (e.tipo === "VOTAZIONE_CHIUSA" && prima.fase.nome === "VOTAZIONE") {
-        dati.votazioni.push({ trimestre: prima.trimestre, posizione: prima.fase.votazione, approvata: e.approvata, perFondi: e.causa.includes("mancanza di fondi") });
+      const approvato = e.tipo === "VOTO_PACCHETTO_CHIUSO" ? e.approvato : e.tipo === "SECONDO_VOTO_CHIUSO" ? e.approvato : undefined;
+      if (approvato) {
+        const esito = e.tipo === "VOTO_PACCHETTO_CHIUSO" ? "PRIMO_VOTO" : e.tipo === "SECONDO_VOTO_CHIUSO" && e.principaleApprovato ? "PRINCIPALE" : "ALTERNATIVA";
+        const proposte = prima.proposteTrimestre.filter((x) => approvato.includes(x.id));
+        const piuCara = Math.max(...prima.proposteTrimestre.map((x) => x.costo));
+        dati.votazioni.push({
+          trimestre: prima.trimestre,
+          esito,
+          costo: proposte.reduce((s, x) => s + x.costo, 0),
+          grande: proposte.some((x) => x.costo === piuCara),
+          proposte: proposte.length,
+          cassa: prima.azienda.cassa,
+        });
       }
-      if (e.tipo === "CASSA_RICARICATA") {
-        dati.cassaInizioTrimestre.push(e.cassa);
-        if (e.cassa >= ambiente.config.cassa.massima) dati.tettoRaggiunto++;
-      }
+      if (e.tipo === "CASSA_RICARICATA") dati.cassaInizioTrimestre.push(e.cassa);
     }
   };
 
@@ -164,7 +171,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       }
     }
     prova({ tipo: "AVANZA_FASE" });
-    if (p.fase.nome === "RAPPORTO" && primaDiAvanzare.fase.nome !== "RAPPORTO") registraPesi(p);
+    void primaDiAvanzare;
   }
 
   // Dati finali dalla partita conclusa.
@@ -183,6 +190,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     mercato,
     cassaFineTrimestre: p.storicoTrimestri.map((t) => t.cassaFine),
     cassaMinimaDopoVoti: Math.min(...p.storicoVotazioni.map((r) => r.cassaDopo)),
+    equita: p.equita ?? { scarto: 0, violazioni: 0 },
     crescitaProposteESegreti: p.storicoTrimestri.map((t) => (t.effettoProposte ?? 0) + (t.effettoSegreti ?? 0)),
     finale: {
       domande: p.finale.esitiDomanda.map((e) => e.procede),
@@ -202,9 +210,12 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       : {}),
     segreti: {
       totali: p.segreti.length,
-      inTempo: p.segreti.filter((s) => s.arrivatoInTempo).length,
+      veri: p.segreti.filter((s) => !s.finto).length,
+      arrivati: p.segreti.filter((s) => s.arrivatoIl !== undefined).length,
+      inTempo: p.segreti.filter((s) => s.arrivatoInTempo && !s.finto).length,
       passati: p.segretiPassati.length,
       passatiFalsi: p.segretiPassati.filter((s) => s.riuscito === false).length,
+      passatiFinti: p.segretiPassati.filter((x) => p.segreti.find((s) => s.id === x.segretoId)?.finto).length,
     },
     spieLicenziate: spie.filter((g) => g.stato === "LICENZIATO").length,
     onestiLicenziatiNelFinale: p.giocatori.filter((g) => g.fazione.tipo === "ONESTO" && g.stato === "LICENZIATO").length,
@@ -216,9 +227,9 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       puntiReparto: g.puntiReparto,
       vincitore: (punteggi[g.id]?.totale ?? 0) === massimo,
       licenziato: g.stato === "LICENZIATO",
-      segretiComeFonte: p.conteggioFontiSegreti[g.repartoId] ?? 0,
-      favorito: p.conteggioFavoriti[g.repartoId] ?? 0,
-      pesoVotoAnno: pesoVoto.get(g.repartoId) ?? 0,
+      coinvolgimentiSegreti: p.coinvolgimentiSegreti[g.id] ?? 0,
+      bonusCarte: p.carte.flat().reduce((s, c) => s + Math.max(0, c.effettiPrivati[g.repartoId]?.punti ?? 0), 0),
+      malusCarte: p.carte.flat().reduce((s, c) => s - Math.min(0, c.effettiPrivati[g.repartoId]?.punti ?? 0), 0),
       obiettivo: (() => {
         const o = p.obiettivi[g.id]!;
         const m = modelloObiettivo(ambiente, o.scelto!);

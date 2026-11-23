@@ -114,9 +114,8 @@ describe("mossa privata (GDD §9)", () => {
 describe("effetti delle proposte approvate (GDD §8.2, §14)", () => {
   const amb = ambienteFisso();
   const approvata = (effetti: PropostaIstanza["effettiPrivati"], effettoAzienda: number, approvataSi = true): PropostaIstanza => ({
-    id: "p", modelloId: "p", titolo: "Prova", categoria: "X", costo: 10, spiegazione: "Spiegazione di prova",
-    pesi: {}, effettiPrivati: effetti, effettoAzienda, voti: {},
-    esito: { approvata: approvataSi, si: 0, soglia: 0, votiPerTempoScaduto: 0, motivo: "" },
+    id: "p", modelloId: "p", titolo: "Prova", categoria: "X", costo: 10, trimestre: 1, spiegazione: "Spiegazione di prova",
+    effettiPrivati: effetti, effettoAzienda, approvata: approvataSi,
   });
 
   it("punti ai reparti e effetto reale sull'azienda, con evento leggibile", () => {

@@ -8,8 +8,9 @@ const ambiente = caricaAmbiente();
 const config = ambiente.config;
 const persone = (n: number): NuovoGiocatore[] => Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `Giocatore ${i + 1}` }));
 
+/** Solo la creazione (assegnazioni segrete): le carte si preparano all'inizio del 1° trimestre. */
 function crea(n: number, seme: number): Partita {
-  const esito = creaEAvvia(persone(n), seme, ambiente);
+  const esito = creaPartita(persone(n), seme, ambiente);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }
@@ -50,11 +51,13 @@ describe("creazione della partita", () => {
   }
 
   it("partenza: fase Rapporto del trimestre 1, cassa piena, tutti attivi", () => {
-    const p = crea(5, 3);
+    const esito = creaEAvvia(persone(5), 3, ambiente);
+    if (!esito.ok) throw new Error(esito.errore);
+    const p = esito.partita;
     expect(p.fase).toEqual({ nome: "RAPPORTO" });
     expect(p.trimestre).toBe(1);
     expect(p.azienda.cassa).toBe(config.cassa.perTrimestre);
-    expect(p.proposteTrimestre.length).toBe(config.votazioniPerTrimestre[0]);
+    expect(p.proposteTrimestre.map((x) => x.costo)).toEqual(config.proposte.costi);
     expect(p.giocatori.every((g) => g.stato === "ATTIVO")).toBe(true);
   });
 });

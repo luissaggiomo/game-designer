@@ -16,7 +16,6 @@ export type RepartoId =
 
 export type GiocatoreId = string;
 export type ConcorrenteId = string;
-export type Peso = 0 | 1 | 2;
 export type Voto = "SI" | "NO";
 export type SceltaMossa = "REPARTO" | "AZIENDA";
 
@@ -49,42 +48,48 @@ export interface Concorrente {
   quota: number;
 }
 
-export interface EsitoVotazione {
-  approvata: boolean;
-  si: number;
-  soglia: number;
-  /** Voti assegnati d'ufficio come "no" per tempo scaduto (D-007). */
-  votiPerTempoScaduto: number;
-  /** Spiegazione in una frase, da mostrare in TV. */
-  motivo: string;
-}
-
-/** Un quesito estratto per il trimestre in corso. */
+/** Un quesito della partita (le 12 carte si preparano a inizio partita, D-069). */
 export interface PropostaIstanza {
   id: string;
   modelloId: string;
   titolo: string;
   categoria: string;
   costo: number;
+  trimestre: number;
   /** Frase che spiega in TV l'effetto reale, mostrata ai risultati (D-033): mai prima. */
   spiegazione: string;
-  /** Pesi effettivi: solo reparti occupati (D-006). */
-  pesi: Partial<Record<RepartoId, Peso>>;
-  /** Effetti privati per reparto: SEGRETI, ognuno vede solo il proprio. */
+  /** Effetti privati per reparto occupato: SEGRETI, ognuno vede solo il proprio. */
   effettiPrivati: Partial<Record<RepartoId, { punti?: number; testo: string }>>;
   /** Effetto sull'azienda: nascosto fino alla risoluzione. */
   effettoAzienda: number;
-  voti: Partial<Record<GiocatoreId, Voto>>;
-  esito?: EsitoVotazione;
+  /** Vero se fa parte del pacchetto approvato. */
+  approvata?: boolean;
 }
 
-/** Le fasi della partita (Architettura §9, con il ciclo discussione → voto di D-008). */
+/** Voto del pacchetto del trimestre (D-068). Un pacchetto è un elenco di id di proposte, in ordine di costo. */
+export interface VotoTrimestre {
+  /** Pacchetti validi (almeno l'investimento minimo, entro la cassa). */
+  pacchetti: string[][];
+  /** Primo voto: SEGRETO fino alla chiusura. */
+  voti: Partial<Record<GiocatoreId, string[]>>;
+  /** Secondo voto, se il primo non ha una maggioranza. */
+  principale?: string[];
+  /** Alternativa coperta: il contenuto non esce dal server (la TV ne vede solo il numero di proposte). */
+  alternativa?: string[];
+  secondiVoti: Partial<Record<GiocatoreId, Voto>>;
+  approvato?: string[];
+  /** Come si è deciso: maggioranza al primo voto, principale o alternativa al secondo. */
+  esito?: "PRIMO_VOTO" | "PRINCIPALE" | "ALTERNATIVA";
+}
+
+/** Le fasi della partita (Architettura §9; D-068: una discussione e un voto del pacchetto a trimestre). */
 export type Fase =
   /** Prima della partita: ognuno sceglie il suo obiettivo personale fra tre (D-048). */
   | { nome: "SCELTA_OBIETTIVI" }
   | { nome: "RAPPORTO" }
-  | { nome: "DISCUSSIONE"; votazione: number }
-  | { nome: "VOTAZIONE"; votazione: number }
+  | { nome: "DISCUSSIONE" }
+  | { nome: "VOTO_PACCHETTO" }
+  | { nome: "SECONDO_VOTO" }
   | { nome: "MOSSA_PRIVATA" }
   | { nome: "RISOLUZIONE" }
   // Finale "Rinnovo dei contratti" (GDD §15, D-058)
@@ -118,12 +123,14 @@ export interface Partita {
   azienda: { quota: number; cassa: number };
   /** Cassa all'inizio del trimestre in corso, dopo il budget (storico per gli obiettivi). */
   cassaInizioTrimestre: number;
-  /** Ordine del giorno del trimestre, nell'ordine annunciato nel Rapporto (D-008). */
+  /** Le carte di tutta la partita, per trimestre (D-069). Solo server: quelle future non si vedono. */
+  carte: PropostaIstanza[][];
+  /** Le tre proposte del trimestre in corso, in ordine di costo. */
   proposteTrimestre: PropostaIstanza[];
-  /** Identificativi dei quesiti già usciti nella partita. */
-  proposteUscite: string[];
-  /** Quante volte ogni reparto è stato "favorito" da un quesito estratto (D-014). */
-  conteggioFavoriti: Partial<Record<RepartoId, number>>;
+  /** Esito dell'algoritmo di equità delle carte (solo server, per test e report). */
+  equita?: { scarto: number; violazioni: number };
+  /** Voto del pacchetto del trimestre in corso (D-068). */
+  votoTrimestre?: VotoTrimestre;
   /** Mosse private del trimestre: SEGRETE, la TV ne mostra solo l'esito complessivo (GDD §9). */
   mossePrivate: Partial<Record<GiocatoreId, SceltaMossa>>;
   /** Segreti originali generati dal gioco (solo server). */
@@ -133,13 +140,16 @@ export interface Partita {
   messaggi: Messaggio[];
   /** Segreti consegnati dalle spie ai concorrenti, con effetto ai Risultati del trimestre. */
   segretiPassati: SegretoPassato[];
-  /** Quante volte ogni reparto ha ricevuto segreti come fonte (D-005). */
-  conteggioFontiSegreti: Partial<Record<RepartoId, number>>;
+  /** Quante volte ogni giocatore è stato fonte o destinatario di un segreto (D-074: equilibrio). */
+  coinvolgimentiSegreti: Partial<Record<GiocatoreId, number>>;
   /** Numeratore per creare identificativi unici in modo riproducibile. */
   contatore: number;
   /** Obiettivi personali: i tre proposti e quello scelto (solo server, D-046…D-048). */
   obiettivi: Partial<Record<GiocatoreId, ObiettiviGiocatore>>;
-  /** Storico delle votazioni sulle proposte, per verificare gli obiettivi (solo server). */
+  /**
+   * Storico per proposta, per gli obiettivi (solo server). Con il voto del pacchetto (D-068): "SI" se
+   * il primo voto del giocatore conteneva la proposta, "NO" altrimenti. Da rivedere con gli obiettivi (D-071).
+   */
   storicoVotazioni: RegistroVotazione[];
   /** Storico dei trimestri risolti: mosse scelte, andamento, cassa (solo server). */
   storicoTrimestri: RegistroTrimestre[];
@@ -200,6 +210,8 @@ export interface Ballottaggio {
   turno: number;
   /** Voti dei turni precedenti (per bloccare, al turno 3, il nome votato due volte di fila). */
   votiPrecedenti: Partial<Record<GiocatoreId, GiocatoreId>>[];
+  /** Vero se il turno in corso ripete un turno chiuso senza nessun voto (D-063: un secondo turno vuoto = nessun licenziamento). */
+  ripetutoSenzaVoti?: boolean;
 }
 
 export interface EsitoDomanda {
@@ -252,11 +264,16 @@ export interface SegretoIstanza {
   valoriPossibili: Record<string, ValoreCampo[]>;
   fonte: RepartoId;
   utile: RepartoId;
-  /** Vale se arriva al reparto utile prima della chiusura di questa votazione (D-021). */
-  propostaCollegataId: string;
+  /** Uno dei due segreti del trimestre è finto (D-074): per l'azienda non vale nulla, al concorrente costa. MAI nelle viste. */
+  finto: boolean;
   valoreAzienda: number;
   valoreConcorrente: number;
   trimestre: number;
+  /** Ultimo trimestre utile per arrivare al reparto o al concorrente (D-072: il successivo). */
+  scadenza: number;
+  /** Trimestre in cui una copia (qualsiasi versione) è arrivata al reparto utile: lo annuncia la TV (D-074). */
+  arrivatoIl?: number;
+  /** Calcolato alla scadenza: una copia VERA era arrivata al reparto utile. */
   arrivatoInTempo: boolean;
 }
 

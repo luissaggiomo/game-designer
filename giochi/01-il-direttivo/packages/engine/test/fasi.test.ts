@@ -25,38 +25,32 @@ function giocaFinoAllaFine(p: Partita): { fasi: string[]; finale: Partita } {
     const esito = applica(attuale, { tipo: "AVANZA_FASE" }, ambiente);
     if (!esito.ok) break;
     attuale = esito.partita;
-    const extra = "votazione" in attuale.fase ? `#${attuale.fase.votazione}` : "";
-    fasi.push(`${attuale.trimestre}:${attuale.fase.nome}${extra}`);
+    fasi.push(`${attuale.trimestre}:${attuale.fase.nome}`);
   }
   return { fasi, finale: attuale };
 }
 
 describe("macchina a stati delle fasi", () => {
-  it("trimestre 1: rapporto, 2 cicli discussione → voto, mossa privata, risultati (niente demansionamento, D-057)", () => {
+  it("trimestre 1: rapporto, discussione, voto del pacchetto, secondo voto (nessuno ha votato), mossa privata, risultati (D-068)", () => {
     const { fasi } = giocaFinoAllaFine(nuova());
-    expect(fasi.slice(0, 8)).toEqual([
+    expect(fasi.slice(0, 7)).toEqual([
       "1:RAPPORTO",
-      "1:DISCUSSIONE#1",
-      "1:VOTAZIONE#1",
-      "1:DISCUSSIONE#2",
-      "1:VOTAZIONE#2",
+      "1:DISCUSSIONE",
+      "1:VOTO_PACCHETTO",
+      "1:SECONDO_VOTO",
       "1:MOSSA_PRIVATA",
       "1:RISOLUZIONE",
       "2:RAPPORTO",
     ]);
   });
 
-  it("votazioni per trimestre secondo la scaletta 2-3-3-2 (D-014)", () => {
+  it("ogni trimestre ha una sola discussione e un solo voto del pacchetto (D-068)", () => {
     const { fasi } = giocaFinoAllaFine(nuova());
-    const votiPerTrimestre = [1, 2, 3, 4].map((t) => fasi.filter((f) => f.startsWith(`${t}:VOTAZIONE`)).length);
-    expect(votiPerTrimestre).toEqual(config.votazioniPerTrimestre);
-  });
-
-  it("ogni votazione è preceduta dalla sua discussione (D-008)", () => {
-    const { fasi } = giocaFinoAllaFine(nuova());
-    fasi.forEach((f, i) => {
-      if (f.includes("VOTAZIONE")) expect(fasi[i - 1]).toBe(f.replace("VOTAZIONE", "DISCUSSIONE"));
-    });
+    for (const t of [1, 2, 3, 4]) {
+      expect(fasi.filter((f) => f === `${t}:DISCUSSIONE`)).toHaveLength(1);
+      expect(fasi.filter((f) => f === `${t}:VOTO_PACCHETTO`)).toHaveLength(1);
+      expect(fasi[fasi.indexOf(`${t}:VOTO_PACCHETTO`) - 1]).toBe(`${t}:DISCUSSIONE`);
+    }
   });
 
   it("dopo il 4° trimestre: finale, punteggio, lettura dei messaggi, fine", () => {

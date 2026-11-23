@@ -1,134 +1,194 @@
 {
-  "_nota": "Schemi di effetto (D-023). Ogni ruolo ha punti per il reparto e peso di voto; i ruoli si assegnano AL MOMENTO DELL'ESTRAZIONE ai reparti occupati e non in autogestione, quindi tutti i reparti sono uguali per costruzione. 'pesoAltri' = peso dei reparti occupati senza ruolo. effettoAzienda = effetto reale sull'azienda se approvata. SEGNAPOSTO da tarare col simulatore.",
+  "_nota": "Schemi di effetto PROVVISORI (D-070, D-071): per ogni costo il totale dei bonus e dei malus di reparto è fisso (30 → +2/−1, 50 → +3/−2, 80 → +5/−3: la grande vale quanto le due piccole); l'effetto sull'azienda varia da schema a schema (anche negativo) e in media cresce col costo. I ruoli si assegnano ai reparti a inizio partita con l'algoritmo di equità (D-069). Da riscrivere insieme ai testi dei quesiti a regole fissate.",
   "schemi": {
-    "PROTAGONISTA": {
-      "descrizione": "Un reparto guadagna molto, due perdono poco",
+    "P30_UNO": {
+      "costo": 30,
+      "descrizione": "Un reparto guadagna, uno paga poco",
       "ruoli": [
         {
-          "punti": 3,
-          "peso": 2
+          "punti": 2
         },
         {
-          "punti": -1,
-          "peso": 1
-        },
-        {
-          "punti": -1,
-          "peso": 1
+          "punti": -1
         }
       ],
-      "pesoAltri": 1,
       "effettoAzienda": 2
     },
-    "COPPIA": {
-      "descrizione": "Due reparti guadagnano, uno perde molto",
+    "P30_DUE": {
+      "costo": 30,
+      "descrizione": "Due reparti guadagnano poco, uno paga poco",
       "ruoli": [
         {
-          "punti": 2,
-          "peso": 2
+          "punti": 1
         },
         {
-          "punti": 2,
-          "peso": 1
+          "punti": 1
         },
         {
-          "punti": -3,
-          "peso": 2
+          "punti": -1
         }
       ],
-      "pesoAltri": 1,
       "effettoAzienda": 1
     },
-    "SACRIFICIO": {
-      "descrizione": "Un reparto paga, tre guadagnano un poco",
+    "P30_EGO": {
+      "costo": 30,
+      "descrizione": "Un reparto guadagna, uno paga poco: all'azienda costa",
       "ruoli": [
         {
-          "punti": 1,
-          "peso": 1
+          "punti": 2
         },
         {
-          "punti": 1,
-          "peso": 1
-        },
-        {
-          "punti": 1,
-          "peso": 1
-        },
-        {
-          "punti": -2,
-          "peso": 2
+          "punti": -1
         }
       ],
-      "pesoAltri": 1,
+      "effettoAzienda": -1
+    },
+    "P30_RISCHIO": {
+      "costo": 30,
+      "descrizione": "Due reparti guadagnano poco, uno paga poco: buon affare",
+      "ruoli": [
+        {
+          "punti": 1
+        },
+        {
+          "punti": 1
+        },
+        {
+          "punti": -1
+        }
+      ],
       "effettoAzienda": 2
     },
-    "RISCHIO": {
-      "descrizione": "Grande guadagno per un reparto, perdita sicura per un altro",
+    "M50_PROTAGONISTA": {
+      "costo": 50,
+      "descrizione": "Un reparto guadagna molto, due pagano poco",
       "ruoli": [
         {
-          "punti": 4,
-          "peso": 1
+          "punti": 3
         },
         {
-          "punti": -2,
-          "peso": 2
+          "punti": -1
+        },
+        {
+          "punti": -1
         }
       ],
-      "pesoAltri": 1,
-      "effettoAzienda": 0
+      "effettoAzienda": 2
     },
-    "PAREGGIO": {
-      "descrizione": "Due guadagnano poco, due perdono poco",
+    "M50_COPPIA": {
+      "costo": 50,
+      "descrizione": "Due reparti guadagnano, uno paga",
       "ruoli": [
         {
-          "punti": 1,
-          "peso": 1
+          "punti": 2
         },
         {
-          "punti": 1,
-          "peso": 1
+          "punti": 1
         },
         {
-          "punti": -1,
-          "peso": 1
-        },
-        {
-          "punti": -1,
-          "peso": 1
+          "punti": -2
         }
       ],
-      "pesoAltri": 1,
-      "effettoAzienda": 1
+      "effettoAzienda": 2
     },
-    "AZIENDALE": {
-      "descrizione": "Buono per l'azienda, costa a due reparti",
+    "M50_EGO": {
+      "costo": 50,
+      "descrizione": "Un reparto guadagna molto, uno paga: all'azienda costa",
       "ruoli": [
         {
-          "punti": -1,
-          "peso": 2
+          "punti": 3
         },
         {
-          "punti": -1,
-          "peso": 1
+          "punti": -2
         }
       ],
-      "pesoAltri": 1,
+      "effettoAzienda": -1
+    },
+    "M50_DIFFUSO": {
+      "costo": 50,
+      "descrizione": "Tre reparti guadagnano poco, uno paga",
+      "ruoli": [
+        {
+          "punti": 1
+        },
+        {
+          "punti": 1
+        },
+        {
+          "punti": 1
+        },
+        {
+          "punti": -2
+        }
+      ],
+      "effettoAzienda": 4
+    },
+    "G80_COPPIA": {
+      "costo": 80,
+      "descrizione": "Due reparti guadagnano molto, due pagano",
+      "ruoli": [
+        {
+          "punti": 3
+        },
+        {
+          "punti": 2
+        },
+        {
+          "punti": -2
+        },
+        {
+          "punti": -1
+        }
+      ],
       "effettoAzienda": 3
     },
-    "EGOISTICO": {
-      "descrizione": "Buono per un reparto, cattivo per l'azienda",
+    "G80_PROTAGONISTA": {
+      "costo": 80,
+      "descrizione": "Un reparto guadagna moltissimo, uno poco, uno paga molto",
       "ruoli": [
         {
-          "punti": 3,
-          "peso": 2
+          "punti": 4
         },
         {
-          "punti": -1,
-          "peso": 1
+          "punti": 1
+        },
+        {
+          "punti": -3
         }
       ],
-      "pesoAltri": 1,
+      "effettoAzienda": 3
+    },
+    "G80_EGO": {
+      "costo": 80,
+      "descrizione": "Due reparti guadagnano molto, uno paga molto: all'azienda costa",
+      "ruoli": [
+        {
+          "punti": 3
+        },
+        {
+          "punti": 2
+        },
+        {
+          "punti": -3
+        }
+      ],
       "effettoAzienda": -1
+    },
+    "G80_GRANDE": {
+      "costo": 80,
+      "descrizione": "Un reparto prende tutto, due pagano",
+      "ruoli": [
+        {
+          "punti": 5
+        },
+        {
+          "punti": -2
+        },
+        {
+          "punti": -1
+        }
+      ],
+      "effettoAzienda": 5
     }
   }
 }

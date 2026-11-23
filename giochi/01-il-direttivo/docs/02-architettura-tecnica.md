@@ -296,11 +296,14 @@ LOBBY
         └─► TUTORIAL (facoltativo, si può saltare)
               └─► SCELTA_OBIETTIVI (ognuno ne tiene uno; a tempo scaduto a caso — D-048)
                     └─► TRIMESTRE n (n = 1..4)
-                    ├─ RAPPORTO           (effetti privati, segreti distribuiti,
-                    │                      ordine casuale delle proposte annunciato)
-                    ├─ per k = 1..2–3:    (D-008)
-                    │    ├─ DISCUSSIONE k (messaggi abilitati, timer)
-                    │    └─ VOTAZIONE k   (palese, timer, esito subito in TV)
+                    ├─ RAPPORTO           (tre proposte 30/50/80 e pacchetti possibili;
+                    │                      segreti distribuiti nei trimestri 1–3; nel 1° si
+                    │                      preparano le 12 carte con l'algoritmo di equità)
+                    ├─ DISCUSSIONE        (messaggi abilitati, timer — D-068)
+                    ├─ VOTO_PACCHETTO     (segreto fino alla chiusura, poi palese; maggioranza
+                    │                      dei membri → approvato)
+                    ├─ SECONDO_VOTO       (solo senza maggioranza: sì/no al più votato,
+                    │                      alternativa coperta; tempo scaduto = no)
                     ├─ MOSSA_PRIVATA      (timer)
                     └─ RISOLUZIONE        (calcoli + animazioni TV)
               └─► FINALE "Rinnovo dei contratti" (D-058)
@@ -317,7 +320,7 @@ LOBBY
 ```
 
 - Ogni transizione è un'azione di sistema (`AVANZA_FASE`), attivata dal timer o dalla conferma di tutti i giocatori.
-- ✅ provvisorio (D-008): un ciclo DISCUSSIONE → VOTAZIONE per proposta; ordine estratto con il seme della partita e annunciato nel RAPPORTO. La quota messaggi resta per trimestre.
+- ✅ provvisorio (D-068, supera D-008): una DISCUSSIONE e un VOTO_PACCHETTO per trimestre, con eventuale SECONDO_VOTO. La quota messaggi resta per trimestre.
 
 ---
 
@@ -343,32 +346,39 @@ input: N giocatori (4..8), seme
    (proposti e scelto) sta in partita.obiettivi, solo sul server.
 ```
 
-### 10.2 Generazione delle proposte del trimestre
+### 10.2 Le carte della partita e l'algoritmo di equità (D-068, D-069, D-070)
 ```
-1. mazzo = proposte compatibili con il trimestre corrente
-2. escludi le proposte con "riguarda" ∈ reparti in autogestione
-   e penalizza (estrazione rara) quelle in cui i reparti vacanti avrebbero peso rilevante (D-006)
-3. escludi le proposte già uscite
-4. estrai il numero previsto dalla scaletta (T1: 2, T2: 3, T3: 3, T4: 2 — D-014, parametro),
-   preferendo categorie diverse (varietà dei pesi) e rispettando il bilanciamento dei favoriti:
-   conteggio "favorito" per reparto occupato, scarto massimo ±1 a fine partita (D-014)
-5. per ognuna calcola:
-     pesi = tabella_pesi[categoria], con i reparti assenti a 0
-     effetti privati = modello ± variazione casuale piccola (±1), se previsto
-     effettoAzienda = somma pesata degli effetti + fattore_mercato
+all'inizio del 1° trimestre (una volta sola, con il seme della partita):
+1. per ogni trimestre un quesito per costo (30 / 50 / 80), tra quelli ammessi nel trimestre e non
+   ancora usciti, preferendo categorie diverse; versione principale o alternativa (D-045)
+   — la combinazione del trimestre deve permettere i reparti smistati:
+     reparti con bonus nella più cara + reparti con bonus in una delle altre ≤ reparti occupati
+2. ogni schema ha un totale fisso di bonus e malus per costo (30 → +2/−1, 50 → +3/−2, 80 → +5/−3:
+   la grande vale quanto le due piccole), controllato al caricamento dei contenuti
+3. assegnazione dei ruoli ai reparti occupati:
+   a) "golosa": tutti i ruoli della partita dal più grande, ognuno al reparto con il totale più
+      basso di quel segno; un ruolo per reparto per carta; un bonus non va a chi ha già un bonus
+      sull'altro lato del pacchetto (la più cara / le altre) nello stesso trimestre
+   b) "scalata": spostamenti e scambi di ruoli che avvicinano i totali alla media, senza creare
+      reparti non smistati; passi "alla pari" a caso per uscire dai vicoli ciechi
+   c) obiettivo: totali di bonus e di malus uguali per tutti, scarto ≤ tolleranzaEquita (1);
+      dopo tentativiEquita prove si estrae un'altra serie di carte (fino a 10), poi si tiene la migliore
+4. effetti privati: testo su misura del quesito o frase predefinita del reparto
+Misure (3000 partite di prova): scarto entro 1 e zero violazioni in tutti i casi; da 0,2 a 33 ms a partita.
 ```
 
-### 10.3 Risoluzione di una votazione
+### 10.3 Voto del pacchetto (D-068)
 ```
-sì         = Σ pesi dei giocatori ATTIVI che hanno votato SÌ    (solo SÌ/NO, niente astensione — D-060)
-pesoTotale = Σ pesi dei reparti OCCUPATI (i vacanti non contano — D-006)
-soglia     = floor(pesoTotale / 2) + 1
-approvata  = (sì ≥ soglia) E (costo ≤ cassa)
-pareggio   → respinta
-se approvata: cassa −= costo; effetti privati e aziendale messi in coda per la RISOLUZIONE
+pacchetti validi = combinazioni delle tre proposte con  costo ≥ investimentoMinimo (51) e ≤ cassa
+primo voto: ogni membro del direttivo sceglie un pacchetto (segreto fino alla chiusura)
+  se un pacchetto ha ≥ floor(membri/2)+1 voti → approvato
+  altrimenti: principale = il più votato (pari merito o nessun voto: estratto tra i candidati)
+              alternativa = estratta tra gli altri pacchetti validi (coperta: la TV vede solo quante proposte)
+secondo voto: sì/no al principale; sì ≥ floor(membri/2)+1 → principale, altrimenti alternativa
+              (tempo scaduto = no)
+approvazione: cassa −= costo del pacchetto; effetti privati e aziendale alla RISOLUZIONE
+cassa: += 100 a trimestre, senza tetto
 ```
-Esempio: pesi 2+2+1+1+2 = 8 → soglia 5.
-
 ### 10.4 Mossa privata
 ```
 per ogni membro del direttivo (i reparti vacanti non partecipano; tempo scaduto = "azienda"):
@@ -379,36 +389,34 @@ deltaAzienda += rumore ∈ {−1, 0, +1}
 TV mostra: "N su M hanno giocato per l'azienda" (mai chi; D-061). Nel 4° trimestre si annuncia subito.
 ```
 
-### 10.5 Segreti: distribuzione, inoltro, uso
+### 10.5 Segreti: distribuzione, inoltro, uso (D-072, D-073, D-074)
 ```
-DISTRIBUZIONE (fase RAPPORTO):
-  per ogni segreto del trimestre → una CopiaSegreto (provenienza GIOCO)
-  evento pubblico SEGRETO_ANNUNCIATO: "<reparto utile> ha bisogno di informazioni su «titolo»
-  prima della votazione «proposta collegata»!" — mai chi l'ha ricevuto (D-061)
-  al reparto "fonte" (≠ repartoUtile, così condividere ha un senso)
-  ogni campo vero si estrae tra i valori delle versioni del modello (D-037)
-  al massimo segreti.tipi[tipo].massimoPerTrimestre dello stesso tipo (D-039)
+DISTRIBUZIONE (fase RAPPORTO, trimestri 1..ultimoTrimestre = 3):
+  due segreti dello STESSO tipo (tipo estratto con segreti.tipi[t].probabilita), uno vero e uno finto
+  fonte e destinatario tra i membri del direttivo: chi è stato coinvolto meno finora, un ruolo a testa
+  nel trimestre se possibile; al massimo un segreto con una spia dentro, ed è il finto; se nessuna spia
+  è coinvolta il finto si estrae a caso
+  scadenza = trimestre + 1 (fine del trimestre successivo), per il reparto utile e per il concorrente
+  evento pubblico SEGRETO_ANNUNCIATO: "<reparto utile> ha bisogno di informazioni su «titolo» entro la
+  fine del prossimo trimestre!" — mai chi l'ha ricevuto (D-061)
+  alla fonte: "Arrivato al tuo reparto" (niente "dato certo", D-074)
 
 INOLTRO (messaggio con modello SEGRETO):
-  nuova copia per il destinatario; campi = campi inviati
-  falsa = (campi ≠ campi dell'originale)
-  catena = catena del mittente + [mittente]
-  il destinatario NON vede il flag "falsa"
-  vista del destinatario (D-015): provenienza GIOCO → "dato certo, arrivato al tuo reparto" (D-035);
-  il possessore vede il tipo e i valori suggeriti (in ordine alfabetico, D-036);
-  da giocatore → solo il mittente diretto ("anonimo" se anonimo); mai la catena
+  rifiutato se il destinatario ha già una copia, se il segreto è scaduto, o se il destinatario è il
+  reparto utile e la catena della copia ha meno di passaggiMinimi[N] colleghi (1-1-2-2-2)
+  nuova copia: campi inviati; falsa = (campi ≠ originale); catena = catena del mittente + [mittente]
+  vista: mittente diretto (o "anonimo"), passaggi mancanti, chi ha già il segreto (giaServiti);
+  la spia vede "finto" sui segreti in cui è fonte o destinataria; mai il flag "falsa"
+  primo arrivo al reparto utile (qualsiasi versione) → annunciato in TV ai Risultati
 
-VALORE PER L'AZIENDA (fase RISOLUZIONE):
-  se il giocatore del repartoUtile possiede una copia VERA prima della votazione collegata
-    → quota azienda += valoreAzienda (in TV senza il numero, D-038)
+VALORE PER L'AZIENDA (RISOLUZIONE del trimestre di scadenza):
+  se il reparto utile ha una copia VERA e il segreto non è il finto → quota azienda += valoreAzienda
+  (si conta alla scadenza, insieme all'altro segreto del trimestre: niente numero per segreto)
 
-USO DA PARTE DI UNA SPIA (PASSA_AL_CONCORRENTE):
-  se copia vera  → quota concorrente += valoreConcorrente;
-                   evento TV: "Il concorrente ha anticipato la nostra mossa"
-  se copia falsa → quota concorrente −= penalitàFalso;
-                   evento TV: "Il concorrente ha sbagliato offerta"
-  l'evento TV mostra QUALE segreto è stato usato, così il gruppo può chiedersi chi lo conosceva
-  (rispetta il principio "mai nascondere il perché")
+USO DA PARTE DI UNA SPIA (PASSA_AL_CONCORRENTE, fino alla scadenza):
+  copia vera di un segreto vero → quota concorrente += valoreConcorrente
+  copia falsa o segreto finto  → quota concorrente −= penalitàFalso (4)
+  l'evento TV mostra QUALE segreto è stato usato (nel 4° trimestre come fuga di notizie, senza numeri)
 ```
 
 ### 10.6 Concorrenti

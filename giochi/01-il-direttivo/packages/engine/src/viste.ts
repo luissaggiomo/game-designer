@@ -5,7 +5,9 @@
  * mai il server: da lì si costruiscono una vista per la TV e una per ciascun giocatore.
  *
  * Mai nelle viste: ruoli altrui (salvo licenziati e fine partita), il segnale "falsa" delle copie,
- * la catena dei passaggi, gli effetti privati degli altri reparti, l'effetto sull'azienda prima
+ * quale segreto è il finto (D-074: solo la spia lo vede, e solo per i segreti in cui è fonte o
+ * destinataria), il contenuto dell'alternativa coperta (D-068), le carte dei trimestri futuri,
+ * l'ordine della catena dei passaggi (D-073: si vede solo chi ha già il segreto), gli effetti privati degli altri reparti, l'effetto sull'azienda prima
  * dei risultati, i voti prima della rivelazione, le mosse private, il mittente dei messaggi anonimi
  * (fino alla lettura finale), lo stato del generatore casuale, gli obiettivi personali altrui
  * (fino al punteggio, e mai quelli scartati: D-047).
@@ -13,6 +15,7 @@
 import type { Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import { nomeBloccato, votantiBallottaggio } from "./finale.js";
+import { passaggiMinimi, possessori } from "./segreti.js";
 import { modello, testoTraguardo, valutaObiettivo, type StatoTraguardo } from "./obiettivi.js";
 import type {
   Fase,
@@ -21,7 +24,6 @@ import type {
   Messaggio,
   ModelloMessaggio,
   Partita,
-  Peso,
   Punteggio,
   RepartoId,
   SceltaMossa,
@@ -47,13 +49,23 @@ export interface PropostaPubblica {
   titolo: string;
   categoria: string;
   costo: number;
-  /** I pesi sono sempre visibili in TV prima del voto (GDD §8.3). */
-  pesi: Partial<Record<RepartoId, Peso>>;
-  /** Chi ha già votato (non cosa), finché la votazione è aperta (D-019). */
+  /** Dopo il voto del pacchetto: fa parte del pacchetto approvato? */
+  approvata?: boolean;
+}
+
+/** Il voto del pacchetto come lo vedono tutti (D-068, D-019). */
+export interface VotoTrimestrePubblico {
+  pacchetti: string[][];
+  /** Chi ha già votato (non cosa), finché il voto è aperto. */
   hannoVotato: GiocatoreId[];
-  /** Dopo la chiusura: voti rivelati ed esito. */
-  voti?: Partial<Record<GiocatoreId, Voto>>;
-  esito?: { approvata: boolean; si: number; soglia: number; motivo: string };
+  /** Primo voto, rivelato alla chiusura. */
+  voti?: Partial<Record<GiocatoreId, string[] | "TEMPO_SCADUTO">>;
+  /** Secondo voto: il principale e quante proposte ha l'alternativa coperta (mai quali). */
+  principale?: string[];
+  proposteAlternativa?: number;
+  secondiVoti?: Partial<Record<GiocatoreId, Voto | "TEMPO_SCADUTO">>;
+  approvato?: string[];
+  esito?: "PRIMO_VOTO" | "PRINCIPALE" | "ALTERNATIVA";
 }
 
 export interface MessaggioLetturaFinale {
@@ -75,6 +87,9 @@ export interface VistaComune {
   azienda: { quota: number; cassa: number };
   concorrenti: { id: string; nome: string; quota: number }[];
   ordineDelGiorno: PropostaPubblica[];
+  votoTrimestre?: VotoTrimestrePubblico;
+  /** Investimento minimo del pacchetto (D-068). */
+  investimentoMinimo: number;
   /** Durante la mossa privata: chi ha già scelto (non cosa). */
   hannoSceltoLaMossa: GiocatoreId[];
   /** Finale "Rinnovo dei contratti" (D-058): i voti si vedono solo dopo la chiusura. */
@@ -134,11 +149,19 @@ export interface CopiaVisibile {
    * sia il vero.
    */
   valoriSuggeriti: Record<string, ValoreCampo[]>;
-  /** D-015, D-035: "dato certo, arrivato al tuo reparto", oppure solo il mittente diretto (nascosto se anonimo). */
+  /** "Arrivato al tuo reparto" (D-074: senza certezza), oppure il mittente diretto (nascosto se anonimo). */
   provenienza: { tipo: "GIOCO" } | { tipo: "GIOCATORE"; da?: GiocatoreId; anonimo: boolean };
   /** Il reparto a cui il dato serve (GDD §11.2: vale solo se arriva al reparto giusto). */
   utileA: RepartoId;
   trimestre: number;
+  /** Ultimo trimestre utile (D-072). */
+  scadenza: number;
+  /** Colleghi da attraversare ancora prima di poterlo consegnare al reparto utile (D-073). */
+  passaggiMancanti: number;
+  /** Chi ha già una copia: non si può inoltrare a loro (D-073). */
+  giaServiti: GiocatoreId[];
+  /** Solo per la spia, sui segreti in cui è fonte o destinataria: è il finto (D-074). */
+  finto?: true;
 }
 
 export interface MessaggioVisibile {
@@ -167,6 +190,9 @@ export interface VistaGiocatore extends VistaComune {
   /** Effetto di ogni proposta del trimestre sul MIO reparto (GDD §8.2). */
   mieiEffetti: Record<string, { punti?: number; testo: string }>;
   mieiVoti: {
+    /** Il mio pacchetto nel primo voto (finché è aperto). */
+    pacchetto?: string[];
+    /** Il mio sì / no al principale nel secondo voto (finché è aperto). */
     proposta?: Voto;
     mossaPrivata?: SceltaMossa;
     /** Finale: la mia risposta alla domanda "C'è una spia?" (finché è aperta). */
@@ -192,7 +218,7 @@ const FASI_FINE = new Set(["PUNTEGGIO", "LETTURA_MESSAGGI", "FINE"]);
 
 function vistaComune(p: Partita, ambiente: Ambiente): VistaComune {
   const rivelaTutti = FASI_FINE.has(p.fase.nome);
-  const votazioneAperta = p.fase.nome === "VOTAZIONE" ? p.proposteTrimestre[p.fase.votazione - 1]?.id : undefined;
+  const voto = p.votoTrimestre;
 
   const comune: VistaComune = {
     fase: structuredClone(p.fase),
@@ -209,19 +235,15 @@ function vistaComune(p: Partita, ambiente: Ambiente): VistaComune {
     // Fino al punteggio le quote dell'ultimo trimestre restano nascoste (D-029).
     azienda: { ...p.azienda, ...(p.risultatiRinviati ? { quota: p.risultatiRinviati.quote.azienda } : {}) },
     concorrenti: p.concorrenti.map((c) => ({ id: c.id, nome: c.nome, quota: p.risultatiRinviati ? p.risultatiRinviati.quote.concorrenti[c.id]! : c.quota })),
-    ordineDelGiorno: p.proposteTrimestre.map((x) => {
-      const chiusa = x.esito !== undefined;
-      return {
-        id: x.id,
-        titolo: x.titolo,
-        categoria: x.categoria,
-        costo: x.costo,
-        pesi: { ...x.pesi },
-        hannoVotato: x.id === votazioneAperta ? Object.keys(x.voti) : [],
-        ...(chiusa ? { voti: { ...x.voti } } : {}),
-        ...(chiusa ? { esito: { approvata: x.esito!.approvata, si: x.esito!.si, soglia: x.esito!.soglia, motivo: x.esito!.motivo } } : {}),
-      };
-    }),
+    ordineDelGiorno: p.proposteTrimestre.map((x) => ({
+      id: x.id,
+      titolo: x.titolo,
+      categoria: x.categoria,
+      costo: x.costo,
+      ...(x.approvata !== undefined ? { approvata: x.approvata } : {}),
+    })),
+    ...(voto ? { votoTrimestre: votoPubblico(p) } : {}),
+    investimentoMinimo: ambiente.config.proposte.investimentoMinimo,
     hannoSceltoLaMossa: p.fase.nome === "MOSSA_PRIVATA" ? Object.keys(p.mossePrivate) : [],
     finale: {
       hannoRisposto: p.fase.nome === "DOMANDA" ? Object.keys(p.finale.risposte) : [],
@@ -245,6 +267,35 @@ function vistaComune(p: Partita, ambiente: Ambiente): VistaComune {
   if (rivelaTutti) comune.obiettivi = obiettiviRivelati(p, ambiente);
   if (p.fase.nome === "LETTURA_MESSAGGI" || p.fase.nome === "FINE") comune.letturaMessaggi = p.messaggi.map((m) => letturaFinale(p, m));
   return comune;
+}
+
+/** Il voto del pacchetto per tutti: i voti si vedono solo a voto chiuso, l'alternativa mai (D-068). */
+function votoPubblico(p: Partita): VotoTrimestrePubblico {
+  const v = p.votoTrimestre!;
+  const membri = p.giocatori.filter((g) => g.stato === "ATTIVO");
+  const primoChiuso = v.principale !== undefined || v.approvato !== undefined;
+  const secondoChiuso = v.principale !== undefined && v.approvato !== undefined;
+  const pubblico: VotoTrimestrePubblico = {
+    pacchetti: v.pacchetti.map((x) => [...x]),
+    hannoVotato: p.fase.nome === "VOTO_PACCHETTO" ? Object.keys(v.voti) : p.fase.nome === "SECONDO_VOTO" ? Object.keys(v.secondiVoti) : [],
+  };
+  if (primoChiuso) {
+    const voti: NonNullable<VotoTrimestrePubblico["voti"]> = {};
+    for (const g of membri) voti[g.id] = v.voti[g.id] ? [...v.voti[g.id]!] : "TEMPO_SCADUTO";
+    pubblico.voti = voti;
+  }
+  if (v.principale && v.alternativa) {
+    pubblico.principale = [...v.principale];
+    pubblico.proposteAlternativa = v.alternativa.length;
+  }
+  if (secondoChiuso) {
+    const secondi: NonNullable<VotoTrimestrePubblico["secondiVoti"]> = {};
+    for (const g of membri) secondi[g.id] = v.secondiVoti[g.id] ?? "TEMPO_SCADUTO";
+    pubblico.secondiVoti = secondi;
+  }
+  if (v.approvato) pubblico.approvato = [...v.approvato];
+  if (v.esito) pubblico.esito = v.esito;
+  return pubblico;
 }
 
 function letturaFinale(p: Partita, m: Messaggio): MessaggioLetturaFinale {
@@ -325,10 +376,11 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId, ambiente: Ambiente):
     if (e) mieiEffetti[x.id] = { ...(e.punti !== undefined ? { punti: e.punti } : {}), testo: e.testo };
   }
 
-  const inVotazione = p.fase.nome === "VOTAZIONE" ? p.proposteTrimestre[p.fase.votazione - 1] : undefined;
   const mieiVoti: VistaGiocatore["mieiVoti"] = {};
-  const votoProposta = inVotazione?.voti[io.id];
-  if (votoProposta) mieiVoti.proposta = votoProposta;
+  const mioPacchetto = p.fase.nome === "VOTO_PACCHETTO" ? p.votoTrimestre?.voti[io.id] : undefined;
+  if (mioPacchetto) mieiVoti.pacchetto = [...mioPacchetto];
+  const mioSecondo = p.fase.nome === "SECONDO_VOTO" ? p.votoTrimestre?.secondiVoti[io.id] : undefined;
+  if (mioSecondo) mieiVoti.proposta = mioSecondo;
   const mossa = p.mossePrivate[io.id];
   if (mossa) mieiVoti.mossaPrivata = mossa;
   const risposta = p.fase.nome === "DOMANDA" ? p.finale.risposte[io.id] : undefined;
@@ -352,7 +404,24 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId, ambiente: Ambiente):
       for (const [nome, valori] of Object.entries(s.valoriPossibili)) {
         valoriSuggeriti[nome] = [...new Set([...valori, c.campi[nome]!])].sort((a, b) => String(a).localeCompare(String(b), "it", { numeric: true }));
       }
-      return { id: c.id, titolo: s.titolo, tipo: s.tipo, campi: { ...c.campi }, valoriSuggeriti, provenienza, utileA: s.utile, trimestre: s.trimestre };
+      const giaServiti = possessori(p, s.id).filter((x) => x !== io.id);
+      const passaggiMancanti = Math.max(0, passaggiMinimi(p, ambiente) - c.catena.length);
+      // La spia sa che il segreto in cui è fonte o destinataria è il finto (D-074).
+      const mioFinto = io.fazione.tipo === "SPIA" && s.finto && (s.fonte === io.repartoId || s.utile === io.repartoId);
+      return {
+        id: c.id,
+        titolo: s.titolo,
+        tipo: s.tipo,
+        campi: { ...c.campi },
+        valoriSuggeriti,
+        provenienza,
+        utileA: s.utile,
+        trimestre: s.trimestre,
+        scadenza: s.scadenza,
+        passaggiMancanti,
+        giaServiti,
+        ...(mioFinto ? { finto: true as const } : {}),
+      };
     });
 
   const mieiMessaggi: MessaggioVisibile[] = p.messaggi

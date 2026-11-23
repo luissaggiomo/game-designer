@@ -10,8 +10,21 @@ export interface Configurazione {
   trimestri: number;
   /** "nomi": come la TV chiama ogni reparto (es. negli annunci dei segreti, D-061). */
   reparti: { base: RepartoId[]; aggiuntiviInOrdine: RepartoId[]; nomi: Record<RepartoId, string> };
-  votazioniPerTrimestre: number[];
-  cassa: { perTrimestre: number; massima: number; unita: string };
+  /** Proposte del trimestre e voto del pacchetto (D-068…D-070). */
+  proposte: {
+    /** Un quesito per ogni costo, a ogni trimestre. */
+    costi: number[];
+    /** Un pacchetto deve costare almeno tanto (e non più della cassa). */
+    investimentoMinimo: number;
+    /** Per costo: totale dei bonus e dei malus di reparto di una carta (controllato sugli schemi). */
+    valorePerCosto: Record<string, { bonus: number; malus: number }>;
+    /** Differenza massima tra reparti nei totali di bonus e di malus sulle carte della partita (D-069). */
+    tolleranzaEquita: number;
+    /** Tentativi dell'algoritmo di equità prima di tenere la migliore assegnazione trovata. */
+    tentativiEquita: number;
+  };
+  /** Senza tetto (D-068). */
+  cassa: { perTrimestre: number; unita: string };
   selezione: { fattoreStessaCategoria: number; probabilitaAlternativa: number };
   mossaPrivata: {
     reparto: { puntiReparto: number; deltaAzienda: number };
@@ -40,7 +53,12 @@ export interface Configurazione {
     quando: "DAL_RAPPORTO_ALLE_VOTAZIONI" | "TUTTO_IL_TRIMESTRE";
   };
   segreti: {
+    /** Segreti a trimestre: uno vero e gli altri finti (D-074). */
     perTrimestre: number;
+    /** Ultimo trimestre che distribuisce segreti (D-072: il 4° no). */
+    ultimoTrimestre: number;
+    /** Colleghi da attraversare prima del reparto utile, per numero di giocatori (D-073). */
+    passaggiMinimi: Record<string, number>;
     penalitaFalsoConcorrente: number;
     /** Tipi "a bilancia" (D-038, D-039). */
     tipi: Record<
@@ -52,8 +70,8 @@ export interface Configurazione {
         concorrente: number;
         /** Punti alla spia per un segreto di questo tipo usato dal suo concorrente. */
         puntiSpia: number;
-        /** Quanti segreti di questo tipo al massimo nello stesso trimestre (assente = nessun limite). */
-        massimoPerTrimestre?: number;
+        /** Probabilità che la coppia del trimestre sia di questo tipo (D-074: stesso tipo per i due segreti). */
+        probabilita: number;
       }
     >;
   };
@@ -92,16 +110,24 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   if (tuttiIReparti.length < c.giocatori.massimo) {
     problemi.push(`Servono almeno ${c.giocatori.massimo} reparti (uno per giocatore), ce ne sono ${tuttiIReparti.length}`);
   }
-  if (c.votazioniPerTrimestre.length !== c.trimestri) {
-    problemi.push(
-      `La scaletta delle votazioni ha ${c.votazioniPerTrimestre.length} valori, ma i trimestri sono ${c.trimestri}`,
-    );
+  const costi = c.proposte?.costi ?? [];
+  if (costi.length < 2 || new Set(costi).size !== costi.length || costi.some((x) => !(x > 0))) problemi.push("proposte.costi: servono almeno due costi positivi e diversi");
+  for (const costo of costi) {
+    const v = c.proposte.valorePerCosto?.[String(costo)];
+    if (!v || !(v.bonus > 0) || !(v.malus >= 0)) problemi.push(`proposte.valorePerCosto: manca o non è valido il costo ${costo}`);
   }
-  if (c.votazioniPerTrimestre.some((n) => !Number.isInteger(n) || n < 1)) {
-    problemi.push("Ogni trimestre deve avere almeno una votazione");
+  if (!(c.proposte?.investimentoMinimo > 0)) problemi.push("proposte.investimentoMinimo deve essere positivo");
+  // Deve sempre esistere un pacchetto valido con il solo budget del trimestre (D-068).
+  const pacchettiPossibili = (1 << costi.length) - 1;
+  let esisteValido = false;
+  for (let m = 1; m <= pacchettiPossibili; m++) {
+    const totale = costi.reduce((s, x, i) => s + (m & (1 << i) ? x : 0), 0);
+    if (totale >= c.proposte.investimentoMinimo && totale <= c.cassa.perTrimestre) esisteValido = true;
   }
+  if (!esisteValido) problemi.push("Con il solo budget del trimestre non esiste nessun pacchetto che rispetti l'investimento minimo");
+  if (!(c.proposte?.tolleranzaEquita >= 0)) problemi.push("proposte.tolleranzaEquita non può essere negativa");
+  if (!(c.proposte?.tentativiEquita >= 1)) problemi.push("proposte.tentativiEquita deve essere almeno 1");
   if (c.cassa.perTrimestre <= 0) problemi.push("Il budget per trimestre deve essere positivo");
-  if (c.cassa.massima < c.cassa.perTrimestre) problemi.push("Il tetto della cassa non può essere inferiore al budget per trimestre");
   if (c.mossaPrivata.rumore.length === 0) problemi.push("Il rumore della mossa privata non può essere vuoto");
   if (!["REPARTO", "AZIENDA"].includes(c.mossaPrivata.sceltaPredefinita)) {
     problemi.push('La scelta predefinita della mossa privata deve essere "REPARTO" o "AZIENDA"');
@@ -114,12 +140,22 @@ export function controllaConfigurazione(c: Configurazione): string[] {
     problemi.push('finale.rispostaDomandaPredefinita deve essere "SI" o "NO"');
   }
   if (c.messaggi.costoAnonimo < 1) problemi.push("Il costo del messaggio anonimo deve essere almeno 1");
-  if (c.segreti.perTrimestre < 0) problemi.push("I segreti per trimestre non possono essere negativi");
+  if (c.segreti.perTrimestre !== 0 && c.segreti.perTrimestre < 2) problemi.push("I segreti per trimestre devono essere 0 oppure almeno 2 (uno vero e uno finto, D-074)");
+  if (!(c.segreti.ultimoTrimestre >= 0 && c.segreti.ultimoTrimestre <= c.trimestri)) problemi.push("segreti.ultimoTrimestre non valido");
+  for (let n = c.giocatori.minimo; n <= c.giocatori.massimo; n++) {
+    const x = c.segreti.passaggiMinimi?.[String(n)];
+    if (!(Number.isInteger(x) && x! >= 1 && x! <= n - 2)) problemi.push(`segreti.passaggiMinimi.${n}: serve un intero tra 1 e ${n - 2}`);
+  }
+  let sommaProbabilita = 0;
   for (const t of TIPI_SEGRETO) {
     const v = c.segreti.tipi?.[t];
     if (!v) problemi.push(`segreti.tipi: manca il tipo ${t}`);
-    else if (v.massimoPerTrimestre !== undefined && v.massimoPerTrimestre < 1) problemi.push(`segreti.tipi.${t}.massimoPerTrimestre deve essere almeno 1`);
+    else {
+      probabilita(`segreti.tipi.${t}.probabilita`, v.probabilita);
+      sommaProbabilita += v.probabilita;
+    }
   }
+  if (Math.abs(sommaProbabilita - 1) > 1e-9) problemi.push("segreti.tipi: le probabilità dei tipi devono sommare a 1");
   const maxConcorrenti = Math.max(c.concorrenti.finoA7Giocatori, c.concorrenti.con8Giocatori);
   if (c.concorrenti.nomi.length < maxConcorrenti) {
     problemi.push(`Servono almeno ${maxConcorrenti} nomi di concorrenti`);

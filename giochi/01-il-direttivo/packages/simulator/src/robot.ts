@@ -50,6 +50,13 @@ const PROBABILITA_SI_SENZA_INDIZI = 0.3;
 /** Le spie prudenti rispondono "sì" per mimetizzarsi con questa probabilità; le aggressive dicono sempre "no". */
 const PROBABILITA_SI_SPIA_PRUDENTE = 0.5;
 
+/**
+ * Spie e segreti finti (D-074): se la spia non sa quale dei due segreti del trimestre è il finto,
+ * passarlo al concorrente è una scommessa (il finto gli costa la penalità). La spia aggressiva rischia
+ * più spesso della prudente. Se sa che l'altro è il finto (perché il finto è il suo), lo passa.
+ */
+const PROBABILITA_SCOMMESSA = { aggressiva: 0.35, prudente: 0.1 };
+
 /** Probabilità di un messaggio di solo testo a inizio trimestre ("chiacchiere" che nella realtà ci sono sempre). */
 const PROBABILITA_CHIACCHIERA = 0.35;
 
@@ -153,6 +160,28 @@ export class Robot {
     this.sospetto.set(id, (this.sospetto.get(id) ?? 0) + quanto);
   }
 
+  /** Il collega di cui mi fido di più (meno sospetto, a parità a caso). */
+  private menoSospetto(candidati: GiocatoreId[]): GiocatoreId {
+    let migliore: { id: GiocatoreId; valore: number } | undefined;
+    for (const id of this.casuale.mescola(candidati)) {
+      const valore = this.sospetto.get(id) ?? 0;
+      if (!migliore || valore < migliore.valore) migliore = { id, valore };
+    }
+    return migliore!.id;
+  }
+
+  /** Effetto di un pacchetto sul mio reparto. */
+  private puntiPacchetto(v: VistaGiocatore, pacchetto: string[]): number {
+    return pacchetto.reduce((t, id) => t + (v.mieiEffetti[id]?.punti ?? 0), 0);
+  }
+
+  /** L'elemento con il valore più alto (a parità, a caso). */
+  private migliore<T>(elenco: T[], valore: (x: T) => number): T {
+    const valori = elenco.map(valore);
+    const massimo = Math.max(...valori);
+    return this.casuale.scegli(elenco.filter((_, i) => valori[i] === massimo));
+  }
+
   private piuSospetto(candidati: GiocatoreId[]): { id: GiocatoreId; valore: number } | undefined {
     let migliore: { id: GiocatoreId; valore: number } | undefined;
     for (const id of this.casuale.mescola(candidati)) {
@@ -167,14 +196,11 @@ export class Robot {
     if (this.spia(v)) return;
     for (const e of eventi) {
       if (e.tipo === "SEGRETO_USATO" || e.tipo === "FUGA_DI_NOTIZIE") {
-        // Un segreto è finito al concorrente: chi l'ha ricevuto da me o me l'ha passato diventa sospetto.
+        // Un segreto è finito al concorrente: chi l'ha ricevuto da me o me l'ha passato diventa sospetto,
+        // e un po' anche gli altri che so averlo ricevuto (il telefono mostra chi l'ha già, D-073).
         for (const x of this.inviati.filter((i) => e.causa.includes(i.titolo))) this.aumenta(x.a, 3);
         for (const x of this.ricevuti.filter((r) => e.causa.includes(r.titolo))) this.aumenta(x.da, 2);
-      }
-      if (e.tipo === "VOTAZIONE_CHIUSA" && !e.approvata) {
-        // Chi blocca proposte buone per il mio reparto mi insospettisce un poco.
-        const mio = v.mieiEffetti[e.propostaId]?.punti ?? 0;
-        if (mio > 0) for (const [id, voto] of Object.entries(e.voti)) if (voto === "NO") this.aumenta(id, 0.3);
+        for (const c of v.mieiSegreti.filter((c) => e.causa.includes(c.titolo))) for (const id of c.giaServiti) this.aumenta(id, 1);
       }
     }
   }
@@ -201,39 +227,50 @@ export class Robot {
           azioni.push({ tipo: "INVIA_MESSAGGIO", da: this.id, a: r.scegli(altriAttivi), anonimo: true, modello: "SOLO_TESTO", testo: "Occhio a chi parla troppo." });
         }
         const fonteDaProteggere = this.vuole(v, "NON_CONSEGNARE_FONTE");
-        for (const copia of v.mieiSegreti.filter((c) => c.trimestre === v.trimestre)) {
-          // Consegna al concorrente (spie); con l'obiettivo "Custode" la spia risparmia i propri dati.
-          if (spia && !this.consegnati.has(copia.id) && !(fonteDaProteggere && copia.provenienza.tipo === "GIOCO")) {
+        const vivi = v.mieiSegreti.filter((c) => v.trimestre <= c.scadenza);
+        // La spia sa quali trimestri hanno il finto "suo": l'altro segreto di quel trimestre è vero (D-074).
+        const trimestriConFintoMio = new Set(vivi.filter((c) => c.finto).map((c) => c.trimestre));
+        for (const copia of vivi) {
+          // Consegna al concorrente (spie): mai il finto noto; con l'obiettivo "Custode" niente dati propri.
+          if (spia && !copia.finto && !this.consegnati.has(copia.id) && !(fonteDaProteggere && copia.provenienza.tipo === "GIOCO")) {
             const ricevutoDaAltri = copia.provenienza.tipo === "GIOCATORE";
-            if (!p.prudente || ricevutoDaAltri) {
+            const sicuro = trimestriConFintoMio.has(copia.trimestre);
+            const scommessa = r.probabilita(p.prudente ? PROBABILITA_SCOMMESSA.prudente : PROBABILITA_SCOMMESSA.aggressiva);
+            if ((!p.prudente || ricevutoDaAltri) && (sicuro || scommessa)) {
               this.consegnati.add(copia.id);
               azioni.push({ tipo: "PASSA_AL_CONCORRENTE", da: this.id, copiaSegretoId: copia.id });
             }
           }
-          // Condivisione con il reparto a cui serve (solo i dati del proprio reparto, una volta).
-          if (this.condivisi.has(copia.id)) continue;
+          // Un solo passo per copia e per trimestre: il segreto avanza lungo la catena (D-073).
+          const chiave = `${copia.id}@${v.trimestre}`;
+          if (this.condivisi.has(chiave)) continue;
+          this.condivisi.add(chiave);
           const utile = v.giocatori.find((g) => g.repartoId === copia.utileA && g.stato === "ATTIVO");
-          // Obiettivi sui segreti: far arrivare i dati al reparto giusto (anche quelli ricevuti),
-          // farli girare, falsificarli, tendere la trappola del canarino.
+          if (!utile || utile.id === this.id || copia.giaServiti.includes(utile.id)) continue;
           const portaAlReparto = this.vuole(v, "PORTA_AL_REPARTO");
-          if (copia.provenienza.tipo !== "GIOCO" && !(portaAlReparto && utile && utile.id !== this.id)) continue;
-          this.condivisi.add(copia.id);
-          azioni.push(...this.azioniObiettivoSegreto(v, copia, altriAttivi, utile?.id));
-          if (!utile || utile.id === this.id || !(portaAlReparto || r.probabilita(p.condivisione))) continue;
-          const falsifica = spia && !portaAlReparto && r.probabilita(p.sabotaggio);
-          // Falso credibile: un altro dei valori suggeriti dal telefono (D-036).
+          azioni.push(...this.azioniObiettivoSegreto(v, copia, altriAttivi, utile.id));
+          if (!(portaAlReparto || r.probabilita(p.condivisione))) continue;
+          // Destinatario: il reparto utile se la catena è completa, altrimenti il collega di cui mi fido di più.
+          let destinatario: GiocatoreId | undefined = utile.id;
+          if (copia.passaggiMancanti > 0) {
+            const liberi = altriAttivi.filter((id) => id !== utile.id && !copia.giaServiti.includes(id));
+            if (liberi.length === 0) continue;
+            destinatario = spia ? r.scegli(liberi) : this.menoSospetto(liberi);
+          }
+          // La spia a volte falsifica quello che inoltra (mai il finto: non servirebbe).
+          const falsifica = spia && !copia.finto && !portaAlReparto && r.probabilita(p.sabotaggio);
           const campo = Object.keys(copia.campi)[0];
           const alternativa = campo ? copia.valoriSuggeriti[campo]?.find((x) => x !== copia.campi[campo]) : undefined;
           azioni.push({
             tipo: "INVIA_MESSAGGIO",
             da: this.id,
-            a: utile.id,
+            a: destinatario,
             anonimo: false,
             modello: "SEGRETO",
             copiaSegretoId: copia.id,
             ...(falsifica && campo ? { campi: { [campo]: alternativa ?? `${copia.campi[campo]} (ritoccato)` } } : {}),
           });
-          this.inviati.push({ titolo: copia.titolo, a: utile.id });
+          this.inviati.push({ titolo: copia.titolo, a: destinatario });
         }
         // Chiacchiere: un messaggio di solo testo ogni tanto (servono anche agli obiettivi "di ricezione").
         if (v.fase.nome === "RAPPORTO" && altriAttivi.length > 0 && r.probabilita(PROBABILITA_CHIACCHIERA)) {
@@ -247,21 +284,35 @@ export class Robot {
         }
         break;
       }
-      case "VOTAZIONE": {
-        if (io.stato !== "ATTIVO") break;
-        const proposta = v.ordineDelGiorno[v.fase.votazione - 1];
-        if (!proposta || (proposta.pesi[v.io.repartoId] ?? 0) === 0) break;
-        const effetto = v.mieiEffetti[proposta.id]?.punti ?? 0;
-        // Obiettivi sul voto: soglia più bassa (più SÌ) o più alta (più selettivo).
-        const soglia = p.sogliaVoto - (this.vuole(v, "VOTA_SI") ? 1 : 0) + (this.vuole(v, "SELETTIVO") ? 1 : 0);
-        let voto: "SI" | "NO" = effetto >= soglia ? "SI" : "NO";
-        if (spia && r.probabilita(p.sabotaggio)) voto = "NO";
-        if (voto === "SI" && this.vuole(v, "VOTA_NO") && r.probabilita(0.4)) voto = "NO";
-        if (this.vuole(v, "VOTA_CONTRO") && r.probabilita(0.35)) voto = voto === "SI" ? "NO" : "SI";
-        const piuCostosa = Math.max(...v.ordineDelGiorno.map((x) => x.costo));
-        if (proposta.costo === piuCostosa && this.vuole(v, "NO_PIU_COSTOSA")) voto = "NO";
-        if (proposta.costo >= 40 && this.vuole(v, "RISPARMIA") && r.probabilita(0.5)) voto = "NO";
-        azioni.push({ tipo: "VOTA", da: this.id, voto });
+      case "VOTO_PACCHETTO": {
+        if (io.stato !== "ATTIVO" || !v.votoTrimestre) break;
+        const pacchetti = v.votoTrimestre.pacchetti;
+        if (pacchetti.length === 0) break;
+        const costo = (pk: string[]) => pk.reduce((t, id) => t + (v.ordineDelGiorno.find((x) => x.id === id)?.costo ?? 0), 0);
+        const piuCara = Math.max(...v.ordineDelGiorno.map((x) => x.costo));
+        const conCara = (pk: string[]) => pk.some((id) => v.ordineDelGiorno.find((x) => x.id === id)?.costo === piuCara);
+        // Punteggio di un pacchetto: effetto sul mio reparto; il cooperativo preferisce investire di più
+        // (crede che spendere aiuti l'azienda); gli obiettivi spostano un po' la scelta.
+        const risparmia = this.vuole(v, "RISPARMIA");
+        const noCara = this.vuole(v, "NO_PIU_COSTOSA");
+        const valore = (pk: string[]) =>
+          this.puntiPacchetto(v, pk) +
+          (p.nome === "COOPERATIVO" ? costo(pk) / 100 : 0) -
+          (risparmia ? costo(pk) / 40 : 0) -
+          (noCara && conCara(pk) ? 3 : 0);
+        // La spia non sa quale pacchetto aiuta l'azienda: segue il suo interesse o vota a caso.
+        const scelto = spia && r.probabilita(p.sabotaggio * 0.5) ? r.scegli(pacchetti) : this.migliore(pacchetti, valore);
+        azioni.push({ tipo: "VOTA_PACCHETTO", da: this.id, pacchetto: scelto });
+        break;
+      }
+      case "SECONDO_VOTO": {
+        if (io.stato !== "ATTIVO" || !v.votoTrimestre?.principale) break;
+        const principale = v.votoTrimestre.principale;
+        // L'alternativa è coperta: la stimo come la media degli altri pacchetti possibili.
+        const altri = v.votoTrimestre.pacchetti.filter((pk) => pk.join("+") !== principale.join("+"));
+        const attesa = altri.length > 0 ? altri.reduce((t, pk) => t + this.puntiPacchetto(v, pk), 0) / altri.length : 0;
+        const si = spia && r.probabilita(p.sabotaggio * 0.5) ? r.probabilita(0.5) : this.puntiPacchetto(v, principale) >= attesa;
+        azioni.push({ tipo: "VOTA", da: this.id, voto: si ? "SI" : "NO" });
         break;
       }
       case "MOSSA_PRIVATA":
@@ -306,7 +357,7 @@ export class Robot {
   /** Messaggi in più per gli obiettivi sui segreti (oltre alla condivisione con il reparto utile). */
   private azioniObiettivoSegreto(v: VistaGiocatore, copia: VistaGiocatore["mieiSegreti"][number], altri: GiocatoreId[], utile?: GiocatoreId): Azione[] {
     const azioni: Azione[] = [];
-    const destinatari = this.casuale.mescola(altri.filter((id) => id !== utile));
+    const destinatari = this.casuale.mescola(altri.filter((id) => id !== utile && !copia.giaServiti.includes(id)));
     const campo = Object.keys(copia.campi)[0];
     const falsoCredibile = () => (campo ? copia.valoriSuggeriti[campo]?.find((x) => x !== copia.campi[campo]) ?? `${copia.campi[campo]} (ritoccato)` : undefined);
     const invia = (a: GiocatoreId, modificata: boolean): Azione => ({

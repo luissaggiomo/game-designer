@@ -93,7 +93,11 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
   );
 
   // 3. Equità tra reparti (D-005).
-  sezioni.push("\n## 3. Equità tra reparti (D-005)\n\nPer ogni reparto: punteggio medio, percentuale di partite vinte (punteggio più alto), peso di voto disponibile nell'anno, segreti ricevuti come fonte, volte \"favorito\" dall'ordine del giorno, percentuale di licenziamenti subiti nel finale.\n");
+  sezioni.push("\n## 3. Equità tra reparti (D-005, D-069)\n\nPer ogni reparto: punteggio medio, percentuale di partite vinte (punteggio più alto), bonus e malus ricevuti dalle 12 carte della partita (approvate o no: devono essere uguali per tutti), volte coinvolto come fonte o destinatario di un segreto, percentuale di licenziamenti subiti nel finale.\n");
+  const scartoEquita = Math.max(0, ...partite.map((p) => p.equita.scarto));
+  const violazioniEquita = partite.reduce((s, p) => s + p.equita.violazioni, 0);
+  sezioni.push(`Algoritmo di equità: scarto massimo tra reparti **${scartoEquita}** punti (tolleranza ${ambiente?.config.proposte.tolleranzaEquita ?? 1}); trimestri con un reparto premiato sia nella grande sia nelle piccole: **${violazioniEquita}**.\n`);
+  if (scartoEquita > (ambiente?.config.proposte.tolleranzaEquita ?? 1) || violazioniEquita > 0) avvisi.push({ testo: `Algoritmo di equità fuori tolleranza (scarto ${scartoEquita}, violazioni ${violazioniEquita}).` });
   for (const n of numeri) {
     const giocatori = perN(n).flatMap((p) => p.dettaglio);
     const reparti = [...new Set(giocatori.map((g) => g.reparto))];
@@ -109,14 +113,14 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
     sezioni.push(`\n**${n} giocatori** (vittoria attesa se tutti pari: ${pct(1, n)})\n`);
     sezioni.push(
       tabella(
-        ["Reparto", "Punteggio medio", "Vittorie", "Peso voto/anno", "Segreti come fonte", "Favorito", "Licenziato"],
+        ["Reparto", "Punteggio medio", "Vittorie", "Bonus carte", "Malus carte", "Segreti (fonte o destinatario)", "Licenziato"],
         righe.map(({ r, punteggio, vittorie: v, gs }) => [
           r,
           dec(punteggio),
           pct(v * gs.length, gs.length),
-          dec(media(gs.map((g) => g.pesoVotoAnno))),
-          dec(media(gs.map((g) => g.segretiComeFonte))),
-          dec(media(gs.map((g) => g.favorito))),
+          dec(media(gs.map((g) => g.bonusCarte))),
+          dec(media(gs.map((g) => g.malusCarte))),
+          dec(media(gs.map((g) => g.coinvolgimentiSegreti))),
           pct(gs.filter((g) => g.licenziato).length, gs.length),
         ]),
       ),
@@ -149,28 +153,30 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
   sezioni.push(...sezioneObiettivi(partite, avvisi));
   if (ambiente) sezioni.push(...sezioneSoglie(partite, ambiente));
 
-  // 5. Cassa e votazioni (D-008, D-014, D-018).
-  sezioni.push("\n## 5. Cassa e votazioni\n");
+  // 5. Cassa e voto del pacchetto (D-068).
+  sezioni.push("\n## 5. Cassa e voto del pacchetto (D-068)\n\nCome si decide il pacchetto di ogni trimestre e quale si sceglie: \"la grande\" (80 K da sola), \"le due piccole\" (30 + 50) o un pacchetto più ricco grazie al tesoretto.\n");
   const voti = partite.flatMap((p) => p.votazioni);
+  const tipo = (v: (typeof voti)[number]) => (v.proposte === 1 ? "grande" : v.proposte === 2 && !v.grande ? "piccole" : "ricco");
   sezioni.push(
     tabella(
-      ["Posizione nel trimestre", "Votazioni", "Approvate", "Respinte per fondi"],
-      [1, 2, 3].map((k) => {
-        const g = voti.filter((v) => v.posizione === k);
-        return [`${k}ª`, g.length, pct(g.filter((v) => v.approvata).length, g.length), pct(g.filter((v) => v.perFondi).length, g.length)];
+      ["Trimestre", "Cassa media all'inizio (K)", "Maggioranza al 1° voto", "Passa il principale", "Passa l'alternativa", "La grande", "Le due piccole", "Più ricco", "Spesa media (K)"],
+      [1, 2, 3, 4].map((t) => {
+        const g = voti.filter((v) => v.trimestre === t);
+        return [
+          t,
+          dec(media(partite.map((p) => p.cassaInizioTrimestre[t - 1] ?? 0))),
+          pct(g.filter((v) => v.esito === "PRIMO_VOTO").length, g.length),
+          pct(g.filter((v) => v.esito === "PRINCIPALE").length, g.length),
+          pct(g.filter((v) => v.esito === "ALTERNATIVA").length, g.length),
+          pct(g.filter((v) => tipo(v) === "grande").length, g.length),
+          pct(g.filter((v) => tipo(v) === "piccole").length, g.length),
+          pct(g.filter((v) => tipo(v) === "ricco").length, g.length),
+          dec(media(g.map((v) => v.costo))),
+        ];
       }),
     ),
   );
-  sezioni.push("");
-  sezioni.push(
-    tabella(
-      ["Trimestre", "Cassa media a inizio trimestre (K)", "Approvate"],
-      [1, 2, 3, 4].map((t) => [t, dec(media(partite.map((p) => p.cassaInizioTrimestre[t - 1] ?? 0))), pct(voti.filter((v) => v.trimestre === t && v.approvata).length, voti.filter((v) => v.trimestre === t).length)]),
-    ),
-  );
-  const trimestriConRicarica = partite.reduce((s, p) => s + Math.max(0, p.cassaInizioTrimestre.length - 1), 0);
-  const respinteFondi = voti.filter((v) => v.perFondi).length;
-  sezioni.push(`\nTetto della cassa (${ambiente?.config.cassa.massima ?? 150} K) raggiunto in ${pct(partite.reduce((s, p) => s + p.tettoRaggiunto, 0), trimestriConRicarica)} dei trimestri 2–4. Proposte respinte per mancanza di fondi: ${pct(respinteFondi, voti.length)} di tutte le votazioni.`);
+  sezioni.push(`\nCassa media a fine anno: ${dec(media(partite.map((p) => p.cassaFineTrimestre.at(-1) ?? 0)))} K.`);
 
   // 5b. Crescita dell'azienda (D-056): serve a tarare la velocità del concorrente.
   sezioni.push("\n### Crescita dell'azienda da proposte e segreti (D-056)\n\nEffetto medio per trimestre delle proposte approvate e dei segreti arrivati in tempo, nelle partite **senza spie**: è il valore da usare per `concorrenti.crescitaMediaProposteESegreti`.\n");
@@ -188,10 +194,19 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
   const seg = partite.map((p) => p.segreti);
   const totali = seg.reduce((s, x) => s + x.totali, 0);
   const passati = seg.reduce((s, x) => s + x.passati, 0);
+  const veri = seg.reduce((s, x) => s + x.veri, 0);
+  sezioni.push("Due segreti a trimestre (1°–3°), uno vero e uno finto (D-074); scadenza a fine del trimestre successivo (D-072); catena minima di colleghi (D-073).\n");
   sezioni.push(
     tabella(
-      ["Segreti distribuiti", "Arrivati in tempo al reparto giusto", "Consegnati ai concorrenti", "…di cui falsi"],
-      [[totali, pct(seg.reduce((s, x) => s + x.inTempo, 0), totali), pct(passati, totali), pct(seg.reduce((s, x) => s + x.passatiFalsi, 0), passati)]],
+      ["Segreti distribuiti", "Arrivati a destinazione (qualsiasi versione)", "Veri arrivati veri in tempo (su veri)", "Consegnati ai concorrenti", "…falsi o finti (penalità)", "…di cui finti"],
+      [[
+        totali,
+        pct(seg.reduce((s, x) => s + x.arrivati, 0), totali),
+        pct(seg.reduce((s, x) => s + x.inTempo, 0), veri),
+        pct(passati, totali),
+        pct(seg.reduce((s, x) => s + x.passatiFalsi, 0), passati),
+        pct(seg.reduce((s, x) => s + x.passatiFinti, 0), passati),
+      ]],
     ),
   );
 
@@ -347,12 +362,12 @@ export function stimaSoglia(partite: DatiPartita[]): number | null {
 }
 
 export function creaCsv(partite: DatiPartita[]): { partite: string; giocatori: string } {
-  const righeP = ["giocatori;seme;spie;configurazione_spie;mercato;votazioni_approvate;votazioni_totali;domanda_passa;ballottaggi;segreti_in_tempo;segreti_passati;spie_licenziate;onesti_licenziati_finale"];
-  const righeG = ["giocatori;seme;reparto;spia;profilo;punteggio;punti_reparto;vincitore;licenziato;segreti_come_fonte;favorito;peso_voto_anno;obiettivo;tipo_obiettivo;facile;difficile;punti_obiettivo"];
+  const righeP = ["giocatori;seme;spie;configurazione_spie;mercato;spesa_anno;trimestri_con_la_grande;domanda_passa;ballottaggi;segreti_in_tempo;segreti_passati;spie_licenziate;onesti_licenziati_finale"];
+  const righeG = ["giocatori;seme;reparto;spia;profilo;punteggio;punti_reparto;vincitore;licenziato;segreti_coinvolto;bonus_carte;malus_carte;obiettivo;tipo_obiettivo;facile;difficile;punti_obiettivo"];
   for (const p of partite) {
-    righeP.push([p.giocatori, p.seme, p.spie, p.configurazioneSpie, p.mercato, p.votazioni.filter((v) => v.approvata).length, p.votazioni.length, p.finale.domande[0] ? 1 : 0, p.finale.ballottaggi, p.segreti.inTempo, p.segreti.passati, p.spieLicenziate, p.onestiLicenziatiNelFinale].join(";"));
+    righeP.push([p.giocatori, p.seme, p.spie, p.configurazioneSpie, p.mercato, p.votazioni.reduce((s, v) => s + v.costo, 0), p.votazioni.filter((v) => v.grande).length, p.finale.domande[0] ? 1 : 0, p.finale.ballottaggi, p.segreti.inTempo, p.segreti.passati, p.spieLicenziate, p.onestiLicenziatiNelFinale].join(";"));
     for (const g of p.dettaglio) {
-      righeG.push([p.giocatori, p.seme, g.reparto, g.spia ? 1 : 0, g.profilo, g.punteggio, g.puntiReparto, g.vincitore ? 1 : 0, g.licenziato ? 1 : 0, g.segretiComeFonte, g.favorito, g.pesoVotoAnno, g.obiettivo.id, g.obiettivo.tipo, g.obiettivo.facile ? 1 : 0, g.obiettivo.difficile ? 1 : 0, g.obiettivo.punti].join(";"));
+      righeG.push([p.giocatori, p.seme, g.reparto, g.spia ? 1 : 0, g.profilo, g.punteggio, g.puntiReparto, g.vincitore ? 1 : 0, g.licenziato ? 1 : 0, g.coinvolgimentiSegreti, g.bonusCarte, g.malusCarte, g.obiettivo.id, g.obiettivo.tipo, g.obiettivo.facile ? 1 : 0, g.obiettivo.difficile ? 1 : 0, g.obiettivo.punti].join(";"));
     }
   }
   return { partite: righeP.join("\n"), giocatori: righeG.join("\n") };

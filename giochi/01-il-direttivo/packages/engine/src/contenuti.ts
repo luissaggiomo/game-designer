@@ -4,7 +4,8 @@
  * I contenuti sono controllati al caricamento: se un file è sbagliato, il gioco non parte.
  *
  * Modello B (D-023): un quesito non è legato a reparti precisi. Ha uno SCHEMA di effetto (ruoli con
- * punti e peso) e i ruoli si assegnano ai reparti al momento dell'estrazione.
+ * punti) e i ruoli si assegnano ai reparti a inizio partita con l'algoritmo di equità (D-069).
+ * Niente pesi: nel voto del pacchetto ognuno vale 1 (D-068).
  */
 import datiFrasi from "@il-direttivo/content/frasi.json" with { type: "json" };
 import datiProposte from "@il-direttivo/content/proposte.json" with { type: "json" };
@@ -13,18 +14,17 @@ import datiSegreti from "@il-direttivo/content/segreti.json" with { type: "json"
 import datiObiettivi from "@il-direttivo/content/obiettivi.json" with { type: "json" };
 import { caricaConfigurazione, type Configurazione } from "./config.js";
 import { MISURE_NOTE } from "./misure.js";
-import type { Peso, RepartoId, TipoSegreto, ValoreCampo } from "./tipi.js";
+import type { RepartoId, TipoSegreto, ValoreCampo } from "./tipi.js";
 
 export interface Ruolo {
   punti: number;
-  peso: Peso;
 }
 
 export interface Schema {
+  /** Costo dei quesiti che usano questo schema: fissa il totale di bonus e malus (D-070). */
+  costo: number;
   descrizione: string;
   ruoli: Ruolo[];
-  /** Peso dei reparti occupati che non ricevono un ruolo. */
-  pesoAltri: Peso;
   effettoAzienda: number;
 }
 
@@ -106,8 +106,15 @@ export function controllaContenuti(
     const dove = `Schema "${nome}"`;
     if (s.ruoli.length === 0) problemi.push(`${dove}: servono dei ruoli`);
     if (s.ruoli.length > config.giocatori.minimo) problemi.push(`${dove}: più ruoli (${s.ruoli.length}) del minimo di giocatori`);
-    for (const r of s.ruoli) if (![0, 1, 2].includes(r.peso)) problemi.push(`${dove}: i pesi devono essere 0, 1 o 2`);
-    if (![0, 1, 2].includes(s.pesoAltri)) problemi.push(`${dove}: pesoAltri deve essere 0, 1 o 2`);
+    if (s.ruoli.some((r) => !Number.isInteger(r.punti) || r.punti === 0)) problemi.push(`${dove}: ogni ruolo deve avere punti interi diversi da zero`);
+    // Valore proporzionale al costo (D-070): totale dei bonus e dei malus fissato per costo.
+    const valore = config.proposte.valorePerCosto[String(s.costo)];
+    if (!valore) problemi.push(`${dove}: costo ${s.costo} non previsto in proposte.costi`);
+    else {
+      const bonus = s.ruoli.filter((r) => r.punti > 0).reduce((t, r) => t + r.punti, 0);
+      const malus = -s.ruoli.filter((r) => r.punti < 0).reduce((t, r) => t + r.punti, 0);
+      if (bonus !== valore.bonus || malus !== valore.malus) problemi.push(`${dove}: bonus ${bonus} e malus ${malus}, per il costo ${s.costo} servono ${valore.bonus} e ${valore.malus} (D-070)`);
+    }
   }
 
   // Frasi: ogni reparto deve avere almeno una frase positiva e una negativa (uguaglianza tra reparti, D-005).
@@ -126,9 +133,12 @@ export function controllaContenuti(
     if (!m.spiegazione) problemi.push(`${dove}: manca la frase di spiegazione (D-033)`);
     if (!(m.costo > 0)) problemi.push(`${dove}: il costo deve essere positivo`);
     if (!schemi[m.schema]) problemi.push(`${dove}: schema "${m.schema}" inesistente`);
+    else if (schemi[m.schema]!.costo !== m.costo) problemi.push(`${dove}: lo schema "${m.schema}" è per il costo ${schemi[m.schema]!.costo}, il quesito costa ${m.costo}`);
+    if (!config.proposte.costi.includes(m.costo)) problemi.push(`${dove}: costo ${m.costo} non previsto in proposte.costi`);
     if (m.alternativa) {
       const alt = schemi[m.alternativa.schema];
       if (!alt) problemi.push(`${dove}: schema alternativo "${m.alternativa.schema}" inesistente`);
+      else if (alt.costo !== m.costo) problemi.push(`${dove}: lo schema alternativo è per un altro costo`);
       else if (schemi[m.schema] && alt.effettoAzienda === schemi[m.schema]!.effettoAzienda) {
         problemi.push(`${dove}: lo schema alternativo deve avere un effetto sull'azienda diverso (D-045)`);
       }
@@ -138,6 +148,12 @@ export function controllaContenuti(
       problemi.push(`${dove}: trimestri non validi`);
     }
     for (const r of Object.keys(m.testi ?? {})) if (!repartiValidi.has(r)) problemi.push(`${dove}: testi per il reparto sconosciuto "${r}"`);
+  }
+  // Ogni trimestre serve almeno un quesito per costo (D-068).
+  for (let t = 1; t <= config.trimestri; t++) {
+    for (const costo of config.proposte.costi) {
+      if (!mazzo.some((m) => m.costo === costo && m.trimestri.includes(t))) problemi.push(`Mazzo: nessun quesito da ${costo} per il trimestre ${t}`);
+    }
   }
   return problemi;
 }

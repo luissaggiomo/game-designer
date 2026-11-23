@@ -7,6 +7,8 @@
 > Vincoli rispettati: non si toccano schemi, costi, numeri degli effetti, trimestri, codice.
 >
 > **Aggiornamento 23/11/2026:** costi convertiti a 30 / 50 / 80 K (D-062, indicato "era …"); i quesiti con astensione non esistono più (D-060), D-034 è superata.
+>
+> **Aggiornamento 23/11/2026 (D-068…D-071):** i pesi non esistono più (voto del pacchetto, una testa un voto) e gli schemi sono stati sostituiti da schemi **provvisori proporzionali al costo** (30 → +2/−1, 50 → +3/−2, 80 → +5/−3), assegnati ai quesiti a rotazione in `packages/content/proposte.json`. Le spiegazioni e gli schemi indicati qui sotto valgono come traccia: schemi e testi si riscrivono a regole fissate (D-071).
 
 ## Vincoli tecnici rilevati (dal motore, sola lettura)
 

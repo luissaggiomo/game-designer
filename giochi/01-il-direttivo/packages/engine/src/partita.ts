@@ -76,15 +76,14 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     concorrenti,
     azienda: { quota: 0, cassa: 0 },
     cassaInizioTrimestre: 0,
+    carte: [],
     proposteTrimestre: [],
-    proposteUscite: [],
-    conteggioFavoriti: {},
     mossePrivate: {},
     segreti: [],
     copieSegreto: [],
     messaggi: [],
     segretiPassati: [],
-    conteggioFontiSegreti: {},
+    coinvolgimentiSegreti: {},
     contatore: 0,
     obiettivi: {},
     storicoVotazioni: [],
@@ -92,7 +91,7 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     finale: { risposte: {}, nomine: {}, esitiDomanda: [], votazioni: [], licenziamenti: [] },
   };
 
-  // 5. Obiettivi personali: tre a testa, uno per tipo (D-046, D-049).
+  // 5. Obiettivi personali (le carte della partita si preparano all'inizio del 1° trimestre, D-069): tre a testa, uno per tipo (D-046, D-049).
   assegnaObiettivi(partita, ambiente, casuale);
   partita.statoCasuale = casuale.stato();
 

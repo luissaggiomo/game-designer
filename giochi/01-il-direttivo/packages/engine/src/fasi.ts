@@ -1,18 +1,19 @@
 /**
  * Macchina a stati delle fasi (= la scaletta che la partita segue, come un ordine del giorno).
- * Architettura §9, con il ciclo discussione → voto per ogni proposta (D-008)
- * e la scaletta delle votazioni per trimestre (D-014).
+ * Architettura §9. Ogni trimestre (D-068): Rapporto → Discussione → Voto del pacchetto →
+ * (se serve) Secondo voto → Mossa privata → Risultati.
  */
 import type { Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import type { Configurazione } from "./config.js";
-import { estraiOrdineDelGiorno } from "./proposte.js";
 import { risolviTrimestre } from "./risoluzione.js";
 import { distribuisciSegreti } from "./segreti.js";
+import { preparaCarte } from "./proposte.js";
 import { duePossibiliSpie, licenziatiNelGiro } from "./finale.js";
 import { calcolaPunteggi } from "./punteggio.js";
 import { creaCasuale } from "./rng.js";
 import type { Fase, Partita } from "./tipi.js";
+import { pacchettiValidi } from "./votazioni.js";
 
 /** Fine di un giro del finale: con 8 giocatori, se nel primo giro è uscito uno solo, secondo giro (D-058). */
 function dopoIlGiro(partita: Partita, giro: number, trimestre: number): { fase: Fase; trimestre: number } {
@@ -24,21 +25,19 @@ function dopoIlGiro(partita: Partita, giro: number, trimestre: number): { fase: 
 /** Fase successiva a quella attuale; null se la partita è finita. */
 export function faseSuccessiva(partita: Partita, config: Configurazione): { fase: Fase; trimestre: number } | null {
   const { fase, trimestre } = partita;
-  const votazioniDelTrimestre = partita.proposteTrimestre.length;
 
   switch (fase.nome) {
     case "SCELTA_OBIETTIVI":
       return { fase: { nome: "RAPPORTO" }, trimestre: 1 };
     case "RAPPORTO":
-      return votazioniDelTrimestre > 0
-        ? { fase: { nome: "DISCUSSIONE", votazione: 1 }, trimestre }
-        : { fase: { nome: "MOSSA_PRIVATA" }, trimestre };
+      return partita.votoTrimestre ? { fase: { nome: "DISCUSSIONE" }, trimestre } : { fase: { nome: "MOSSA_PRIVATA" }, trimestre };
     case "DISCUSSIONE":
-      return { fase: { nome: "VOTAZIONE", votazione: fase.votazione }, trimestre };
-    case "VOTAZIONE":
-      return fase.votazione < votazioniDelTrimestre
-        ? { fase: { nome: "DISCUSSIONE", votazione: fase.votazione + 1 }, trimestre }
-        : { fase: { nome: "MOSSA_PRIVATA" }, trimestre };
+      return { fase: { nome: "VOTO_PACCHETTO" }, trimestre };
+    // Le chiusure dei voti sono già avvenute quando si calcola la fase successiva.
+    case "VOTO_PACCHETTO":
+      return partita.votoTrimestre?.approvato ? { fase: { nome: "MOSSA_PRIVATA" }, trimestre } : { fase: { nome: "SECONDO_VOTO" }, trimestre };
+    case "SECONDO_VOTO":
+      return { fase: { nome: "MOSSA_PRIVATA" }, trimestre };
     case "MOSSA_PRIVATA":
       return { fase: { nome: "RISOLUZIONE" }, trimestre };
     case "RISOLUZIONE":
@@ -89,33 +88,47 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
   partita.mossePrivate = {};
   const unita = config.cassa.unita;
 
-  // Cassa: arriva il budget del trimestre, che si somma all'avanzo fino al tetto (D-018).
-  const prima = partita.azienda.cassa;
-  const dopo = Math.min(prima + config.cassa.perTrimestre, config.cassa.massima);
+  // Cassa: arriva il budget del trimestre, che si somma all'avanzo, senza tetto (D-018, D-068).
+  const dopo = partita.azienda.cassa + config.cassa.perTrimestre;
   partita.azienda.cassa = dopo;
   partita.cassaInizioTrimestre = dopo;
-  const tetto = prima + config.cassa.perTrimestre > config.cassa.massima ? ` (tetto massimo ${config.cassa.massima} ${unita})` : "";
   eventi.push({
     tipo: "CASSA_RICARICATA",
     cassa: dopo,
-    causa: `Budget del trimestre: +${config.cassa.perTrimestre} ${unita}. In cassa ${dopo} ${unita}${tetto}.`,
+    causa: `Budget del trimestre: +${config.cassa.perTrimestre} ${unita}. In cassa ${dopo} ${unita}.`,
   });
 
   // Quota messaggi: riparte, non si accumula (GDD §10.1).
   for (const g of partita.giocatori) g.quotaMessaggi = config.messaggi.perTrimestre;
 
-  // Ordine del giorno: estratto e annunciato subito, nell'ordine in cui si voterà (D-008).
+  // Le carte di tutta la partita si preparano una volta sola, all'inizio del 1° trimestre (D-069).
+  if (partita.carte.length === 0) {
+    const casualeCarte = creaCasuale(partita.statoCasuale);
+    const occupati = partita.reparti.filter((r) => r.occupatoDa).map((r) => r.id);
+    const equita = preparaCarte(occupati, ambiente, casualeCarte);
+    partita.carte = equita.carte;
+    partita.equita = { scarto: equita.scarto, violazioni: equita.violazioni };
+    partita.statoCasuale = casualeCarte.stato();
+  }
+  // Le tre proposte del trimestre e i pacchetti possibili (D-068).
+  partita.proposteTrimestre = partita.carte[partita.trimestre - 1] ?? [];
+  delete partita.votoTrimestre;
+  if (partita.proposteTrimestre.length > 0) {
+    const pacchetti = pacchettiValidi(partita.proposteTrimestre, partita.azienda.cassa, config.proposte.investimentoMinimo);
+    partita.votoTrimestre = { pacchetti, voti: {}, secondiVoti: {} };
+    eventi.push({
+      tipo: "ORDINE_DEL_GIORNO",
+      proposte: partita.proposteTrimestre.map((p) => ({ id: p.id, titolo: p.titolo, costo: p.costo })),
+      pacchetti: pacchetti.map((x) => [...x]),
+      causa:
+        "Le proposte del trimestre: " +
+        partita.proposteTrimestre.map((p) => `${p.titolo} (${p.costo} ${unita})`).join(" · ") +
+        `. Da investire almeno ${config.proposte.investimentoMinimo} ${unita}, in cassa ${partita.azienda.cassa} ${unita}.`,
+    });
+  }
   const casuale = creaCasuale(partita.statoCasuale);
-  partita.proposteTrimestre = estraiOrdineDelGiorno(partita, ambiente, casuale);
   const eventiSegreti = distribuisciSegreti(partita, ambiente, casuale);
   partita.statoCasuale = casuale.stato();
-  eventi.push({
-    tipo: "ORDINE_DEL_GIORNO",
-    proposte: partita.proposteTrimestre.map((p) => ({ id: p.id, titolo: p.titolo, costo: p.costo })),
-    causa:
-      "Ordine del giorno: " +
-      partita.proposteTrimestre.map((p, i) => `${i + 1}) ${p.titolo} (${p.costo} ${unita})`).join(" · "),
-  });
   eventi.push(...eventiSegreti);
 
   return eventi;
@@ -129,9 +142,11 @@ export function descriviFase(fase: Fase, trimestre: number): string {
     case "RAPPORTO":
       return `Trimestre ${trimestre}: rapporto dei reparti`;
     case "DISCUSSIONE":
-      return `Trimestre ${trimestre}: discussione sulla proposta ${fase.votazione}`;
-    case "VOTAZIONE":
-      return `Trimestre ${trimestre}: votazione della proposta ${fase.votazione}`;
+      return `Trimestre ${trimestre}: discussione sulle proposte`;
+    case "VOTO_PACCHETTO":
+      return `Trimestre ${trimestre}: voto del pacchetto`;
+    case "SECONDO_VOTO":
+      return `Trimestre ${trimestre}: sì o no al pacchetto più votato`;
     case "MOSSA_PRIVATA":
       return `Trimestre ${trimestre}: mossa privata`;
     case "RISOLUZIONE":

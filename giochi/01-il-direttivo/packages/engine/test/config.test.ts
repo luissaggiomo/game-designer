@@ -6,15 +6,27 @@ describe("configurazione (content/config.json)", () => {
     expect(() => caricaConfigurazione()).not.toThrow();
   });
 
-  it("scaletta delle votazioni 2-3-3-2, 10 a partita (D-014)", () => {
+  it("tre proposte a trimestre da 30 / 50 / 80 K, investimento minimo 51 K, cassa senza tetto (D-068)", () => {
     const c = caricaConfigurazione();
-    expect(c.votazioniPerTrimestre).toEqual([2, 3, 3, 2]);
-    expect(c.votazioniPerTrimestre.reduce((a, b) => a + b, 0)).toBe(10);
+    expect(c.proposte.costi).toEqual([30, 50, 80]);
+    expect(c.proposte.investimentoMinimo).toBe(51);
+    expect("massima" in c.cassa).toBe(false);
   });
 
-  it("segnala una scaletta che non corrisponde ai trimestri", () => {
-    const c = { ...caricaConfigurazione(), votazioniPerTrimestre: [2, 3] };
-    expect(controllaConfigurazione(c)).toContainEqual(expect.stringContaining("scaletta"));
+  it("la grande vale quanto le due piccole nei punti dei reparti (D-070)", () => {
+    const v = caricaConfigurazione().proposte.valorePerCosto;
+    expect(v["80"]!.bonus).toBe(v["30"]!.bonus + v["50"]!.bonus);
+    expect(v["80"]!.malus).toBe(v["30"]!.malus + v["50"]!.malus);
+  });
+
+  it("segnala un investimento minimo impossibile con il solo budget del trimestre", () => {
+    const base = caricaConfigurazione();
+    const c = { ...base, proposte: { ...base.proposte, investimentoMinimo: 200 } };
+    expect(controllaConfigurazione(c)).toContainEqual(expect.stringContaining("investimento minimo"));
+  });
+
+  it("catena minima dei segreti: 1-1-2-2-2 da 4 a 8 giocatori (D-073)", () => {
+    expect(caricaConfigurazione().segreti.passaggiMinimi).toEqual({ "4": 1, "5": 1, "6": 2, "7": 2, "8": 2 });
   });
 
   it("segnala una probabilità fuori da 0..1", () => {

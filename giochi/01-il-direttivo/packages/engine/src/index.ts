@@ -19,7 +19,9 @@ export type { Azione, AzioneGiocatore, AzioneSistema, Esito, Evento } from "./az
 export { creaPartita, type NuovoGiocatore, type EsitoCreazione } from "./partita.js";
 export { applica } from "./motore.js";
 export { faseSuccessiva, descriviFase } from "./fasi.js";
-export { calcolaEsito, propostaInVotazione } from "./votazioni.js";
+export { chiavePacchetto, pacchettiValidi, costoPacchetto } from "./votazioni.js";
+export { preparaCarte, valutaAssegnazione } from "./proposte.js";
+export { passaggiMinimi, possessori } from "./segreti.js";
 export {
   vista,
   vistaTV,

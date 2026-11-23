@@ -193,6 +193,23 @@ export function chiudiBallottaggio(partita: Partita): Evento[] {
   const eventi: Evento[] = [evento];
   delete partita.finale.ballottaggio;
 
+  // Turno senza nessun voto (D-063): non è uno stallo. Si ripete una volta lo stesso turno;
+  // se anche la ripetizione resta vuota, nessun licenziamento (il tempo scaduto conserva lo stato, D-060).
+  if (conteggio.size === 0) {
+    if (b.ripetutoSenzaVoti) {
+      eventi.push({ tipo: "NESSUN_LICENZIAMENTO", causa: "Di nuovo nessun voto al ballottaggio: come annunciato, non viene licenziato nessuno." });
+      return eventi;
+    }
+    partita.finale.ballottaggio = { ...b, ripetutoSenzaVoti: true };
+    eventi.push({
+      tipo: "BALLOTTAGGIO",
+      candidati: b.candidati,
+      turno: b.turno,
+      causa: `Nessuno ha votato: si ripete la votazione tra ${elencoNomi(partita, b.candidati)}. Se di nuovo nessuno vota, non verrà licenziato nessuno.`,
+    });
+    return eventi;
+  }
+
   const voti = (id: GiocatoreId) => conteggio.get(id)?.length ?? 0;
   const massimo = Math.max(...b.candidati.map(voti));
   const inTesta = b.candidati.filter((id) => voti(id) === massimo);

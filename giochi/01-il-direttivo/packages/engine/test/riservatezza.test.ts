@@ -22,6 +22,8 @@ const CHIAVI_VIETATE = [
   "catena", "statoCasuale", "seme", "mossePrivate", "spieTraAttivi", "effettiPrivati", "effettoAzienda", "nomine", "revocata", "possessore",
   // Obiettivi personali e loro storici (solo server, D-047, D-052).
   "proposti", "storicoVotazioni", "storicoTrimestri", "decisivi", "mosseScelte", "alterataDa", "modificataDalMittente", "aziendalista", "misura",
+  // Carte future, alternativa coperta, equilibrio dei ruoli (D-068, D-069, D-074).
+  "carte", "alternativa", "equita", "coinvolgimentiSegreti", "secondiVoti_server",
 ];
 
 /** Identificativi degli obiettivi (es. "T2-07") presenti in un testo. */
@@ -49,6 +51,8 @@ function azioneCasuale(p: Partita, r: Casuale): Azione {
     () => ({ tipo: "AVANZA_FASE" }),
     () => ({ tipo: "AVANZA_FASE" }),
     () => ({ tipo: "VOTA", da: g.id, voto: r.scegli(["SI", "NO"] as const) }),
+    () => ({ tipo: "VOTA_PACCHETTO", da: g.id, pacchetto: p.votoTrimestre ? r.scegli(p.votoTrimestre.pacchetti) : [] }),
+    () => ({ tipo: "VOTA_PACCHETTO", da: g.id, pacchetto: p.votoTrimestre ? r.scegli(p.votoTrimestre.pacchetti) : [] }),
     () => ({ tipo: "MOSSA_PRIVATA", da: g.id, scelta: r.scegli(["REPARTO", "AZIENDA"] as const) }),
     () => ({ tipo: "INVIA_MESSAGGIO", da: g.id, a: altro.id, anonimo: r.probabilita(0.3), modello: "SOLO_TESTO", testo: "parola" }),
     () => {
@@ -100,10 +104,19 @@ function controllaVistaGiocatore(p: Partita, id: string): void {
     expect(proposta.effettiPrivati[io.repartoId]?.testo).toBe(effetto.testo);
   }
 
-  // Voti delle proposte: rivelati solo dopo la chiusura.
-  for (const prop of v.ordineDelGiorno) {
-    const vera = p.proposteTrimestre.find((x) => x.id === prop.id)!;
-    if (!vera.esito) expect(prop.voti).toBeUndefined();
+  // Voto del pacchetto: i voti altrui solo dopo la chiusura; l'alternativa coperta mai (D-068).
+  if (p.fase.nome === "VOTO_PACCHETTO") expect(v.votoTrimestre?.voti).toBeUndefined();
+  if (p.fase.nome === "SECONDO_VOTO") expect(v.votoTrimestre?.secondiVoti).toBeUndefined();
+  // (L'alternativa è uno dei pacchetti validi, che sono pubblici: con due soli pacchetti si capisce per
+  // esclusione, conseguenza accettata in D-068. Ciò che non deve uscire è il campo "alternativa", vietato sopra.)
+
+  // Segreti finti (D-074): solo la spia lo vede, e solo per i segreti in cui è fonte o destinataria.
+  for (const c of v.mieiSegreti) {
+    if (!c.finto) continue;
+    const vera = p.copieSegreto.find((x) => x.id === c.id)!;
+    const s = p.segreti.find((x) => x.id === vera.segretoId)!;
+    expect(io.fazione.tipo).toBe("SPIA");
+    expect(s.finto && (s.fonte === io.repartoId || s.utile === io.repartoId)).toBe(true);
   }
 
   // Copie dei segreti: solo le mie, senza mittente se anonime.
@@ -174,7 +187,7 @@ function controllaEventi(p: Partita, eventi: Evento[]): void {
       if (e.riservatoA) expect(d.tipo === "GIOCATORE" && e.riservatoA.includes(d.id)).toBe(true);
       // Gli eventi di registrazione dicono chi ha agito, mai cosa.
       if (e.tipo === "VOTO_REGISTRATO" || e.tipo === "MOSSA_REGISTRATA" || e.tipo === "RISPOSTA_REGISTRATA" || e.tipo === "OBIETTIVO_REGISTRATO") {
-        expect(Object.keys(e).sort()).toEqual(["causa", "da", ...(e.tipo === "VOTO_REGISTRATO" ? ["propostaId"] : []), "tipo"].sort());
+        expect(Object.keys(e).sort()).toEqual(["causa", "da", "tipo"]);
       }
       // L'obiettivo estratto a caso è riservato all'interessato; nessun evento contiene identificativi di obiettivi.
       if (e.tipo === "OBIETTIVO_ASSEGNATO") expect(e.riservatoA).toHaveLength(1);
@@ -188,7 +201,7 @@ function controllaEventi(p: Partita, eventi: Evento[]): void {
   }
 }
 
-describe("riservatezza delle viste (regola 3)", () => {
+describe("riservatezza delle viste (regola 3)", { timeout: 60_000 }, () => {
   for (const n of [4, 5, 6, 7, 8]) {
     it(`partite casuali con ${n} giocatori: nessun dato segreto al dispositivo sbagliato`, () => {
       let passi = 0;

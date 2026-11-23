@@ -17,10 +17,20 @@
     }
   },
   "_reparti": "GDD §5. PROVVISORIO: l'ordine dei reparti aggiuntivi oltre Finanza è il punto aperto 7 (GDD §20); qui è solo un segnaposto per far funzionare il motore da 4 a 8 giocatori. 'nomi': come la TV chiama i reparti (annunci dei segreti, D-061).",
-  "votazioniPerTrimestre": [2, 3, 3, 2],
-  "_votazioniPerTrimestre": "Scaletta T1-T4 (D-014)",
-  "cassa": { "perTrimestre": 100, "massima": 150, "unita": "K" },
-  "_cassa": "K€ (migliaia di euro). Ogni trimestre: cassa = minimo tra avanzo + perTrimestre e massima (D-018). Le proposte costano 30 / 50 / 80 (D-062, in proposte.json).",
+  "proposte": {
+    "costi": [30, 50, 80],
+    "investimentoMinimo": 51,
+    "valorePerCosto": {
+      "30": { "bonus": 2, "malus": 1 },
+      "50": { "bonus": 3, "malus": 2 },
+      "80": { "bonus": 5, "malus": 3 }
+    },
+    "tolleranzaEquita": 1,
+    "tentativiEquita": 8
+  },
+  "_proposte": "D-068…D-070. Ogni trimestre tre proposte, una per costo ('costi'); il pacchetto votato deve costare almeno 'investimentoMinimo' K e non superare la cassa. 'valorePerCosto': totale dei bonus e dei malus di reparto di una carta di quel costo (la grande vale quanto le due piccole: 2+3=5, 1+2=3), controllato sugli schemi. 'tolleranzaEquita': differenza massima tra reparti nei totali di bonus e di malus sulle 12 carte (D-069); 'tentativiEquita': quante assegnazioni prova l'algoritmo su una serie di carte prima di estrarne un'altra (fino a 10 serie, poi tiene la migliore). ⚖️",
+  "cassa": { "perTrimestre": 100, "unita": "K" },
+  "_cassa": "K€ (migliaia di euro). Ogni trimestre: cassa = avanzo + perTrimestre, senza tetto (D-018, D-068). Le proposte costano 30 / 50 / 80 (D-062).",
   "selezione": { "fattoreStessaCategoria": 0.3, "probabilitaAlternativa": 0.5 },
   "_selezione": "Estrazione dell'ordine del giorno (D-023): riduce la probabilità di due quesiti della stessa categoria nello stesso trimestre (1 = nessuna riduzione). I ruoli si assegnano ai reparti al momento dell'estrazione. 'probabilitaAlternativa' (D-045): probabilità che un quesito esca con il suo schema alternativo, così l'effetto sull'azienda non si impara a memoria.",
   "mossaPrivata": {
@@ -40,7 +50,7 @@
     "con8Giocatori": 2,
     "nomi": ["Concorrente A", "Concorrente B"],
     "quotaAziendalistaRiferimento": 0.45,
-    "crescitaMediaProposteESegreti": 2.93,
+    "crescitaMediaProposteESegreti": 3.41,
     "eventoCasuale": [-1, 0, 1]
   },
   "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6). D-056: il concorrente avanza quanto l'azienda media. Crescita a trimestre = numero di giocatori × effetto medio della mossa privata se la quota 'quotaAziendalistaRiferimento' sceglie per l'azienda (con i valori attuali 0,45 → −0,1 a testa; scelta di Luis, era 0,55) + 'crescitaMediaProposteESegreti' (effetto medio per trimestre di proposte approvate e segreti arrivati in tempo, misurato col simulatore: sezione 'Crescita dell'azienda' del report) + evento casuale (a media zero: −1 / 0 / +1); la parte decimale diventa +1 con quella probabilità. ⚖️",
@@ -53,14 +63,16 @@
   "_messaggi": "GDD §10. costoAnonimo: l'anonimo costa entrambi i messaggi. quando: DAL_RAPPORTO_ALLE_VOTAZIONI oppure TUTTO_IL_TRIMESTRE (D-021, da valutare giocando).",
   "segreti": {
     "perTrimestre": 2,
+    "ultimoTrimestre": 3,
+    "passaggiMinimi": { "4": 1, "5": 1, "6": 2, "7": 2, "8": 2 },
     "penalitaFalsoConcorrente": 4,
     "tipi": {
-      "DA_FAR_GIRARE": { "azienda": 2, "concorrente": 1, "puntiSpia": 1 },
-      "NORMALE": { "azienda": 1, "concorrente": 2, "puntiSpia": 2 },
-      "DA_CUSTODIRE": { "azienda": 1, "concorrente": 3, "puntiSpia": 3, "massimoPerTrimestre": 1 }
+      "DA_FAR_GIRARE": { "azienda": 2, "concorrente": 1, "puntiSpia": 1, "probabilita": 0.2 },
+      "NORMALE": { "azienda": 1, "concorrente": 2, "puntiSpia": 2, "probabilita": 0.5 },
+      "DA_CUSTODIRE": { "azienda": 1, "concorrente": 3, "puntiSpia": 3, "probabilita": 0.3 }
     }
   },
-  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso. Tipi «a bilancia» (D-038): quanto vale il segreto per l'azienda se arriva in tempo al reparto utile, per il concorrente se esce, e i punti alla spia se il concorrente lo usa; 'massimoPerTrimestre' = mai due 'da custodire' nello stesso trimestre (D-039). Fonte e reparto utile si scelgono alla distribuzione, con fonti bilanciate tra i reparti (D-023, D-005). D-056: valore per il concorrente 1 / 2 / 3 (ripristinato dopo D-054) e penalità per un dato falso 4 (era 2).",
+  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso. Tipi «a bilancia» (D-038): quanto vale il segreto per l'azienda se arriva in tempo al reparto utile, per il concorrente se esce, e i punti alla spia se il concorrente lo usa; 'massimoPerTrimestre' = mai due 'da custodire' nello stesso trimestre (D-039). Fonte e reparto utile si scelgono alla distribuzione, con fonti bilanciate tra i reparti (D-023, D-005). D-056: valore per il concorrente 1 / 2 / 3 (ripristinato dopo D-054) e penalità per un dato falso 4 (era 2). D-072…D-074: ogni trimestre fino a 'ultimoTrimestre' escono 'perTrimestre' = 2 segreti dello stesso tipo, uno vero e uno finto (quello della spia è sempre il finto); il tipo si estrae con 'probabilita' (preferiti i tipi da +1 per l'azienda); scadenza a fine del trimestre successivo; 'passaggiMinimi': quanti colleghi deve attraversare un segreto prima di arrivare al reparto utile, per numero di giocatori. Il finto passato al concorrente vale come un falso (−penalitaFalsoConcorrente).",
   "finale": { "rispostaDomandaPredefinita": "NO" },
   "_finale": "Rinnovo dei contratti (D-058): chi non risponde in tempo alla domanda «C'è una spia?» vale 'No' (il tempo scaduto conserva lo stato delle cose, D-029, D-060). Chi non fa un nome non vota.",
   "punteggio": { "aziendaVince": 20, "concorrenteVince": 10 },

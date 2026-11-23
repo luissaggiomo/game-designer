@@ -156,18 +156,17 @@ describe("verifica dei traguardi (D-052)", () => {
     expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.valore).toBe(1);
   });
 
-  it("voto decisivo: chi, votando al contrario, avrebbe ribaltato l'esito", () => {
+  it("con il voto del pacchetto lo storico segna SÌ sulle proposte del pacchetto votato, NO sulle altre (provvisorio, D-071)", () => {
     let p = conObiettivo("T1-02");
-    const proposta = p.proposteTrimestre[0]!;
-    proposta.pesi = Object.fromEntries(p.giocatori.map((g) => [g.repartoId, 1]));
-    proposta.costo = 10;
-    p.fase = { nome: "VOTAZIONE", votazione: 1 };
-    // 5 pesi da 1, soglia 3: tre SÌ e due NO → ogni SÌ è decisivo, i NO no.
-    const voti = { g1: "SI", g2: "SI", g3: "SI", g4: "NO", g5: "NO" } as const;
-    for (const [da, voto] of Object.entries(voti)) p = fai(p, { tipo: "VOTA", da, voto }).partita;
+    p.fase = { nome: "VOTO_PACCHETTO" };
+    const [piccola, media, grande] = p.proposteTrimestre;
+    for (const da of ["g1", "g2", "g3"]) p = fai(p, { tipo: "VOTA_PACCHETTO", da, pacchetto: [grande!.id] }).partita;
+    p = fai(p, { tipo: "VOTA_PACCHETTO", da: "g4", pacchetto: [piccola!.id, media!.id] }).partita;
     p = fai(p, { tipo: "AVANZA_FASE" }).partita;
-    expect(p.storicoVotazioni[0]!.decisivi.sort()).toEqual(["g1", "g2", "g3"]);
-    expect(p.storicoVotazioni[0]!.piuCostosa).toBe(proposta.costo >= Math.max(...p.proposteTrimestre.map((x) => x.costo)));
+    const registro = (id: string) => p.storicoVotazioni.find((r) => r.propostaId === id)!;
+    expect(registro(grande!.id)).toMatchObject({ approvata: true, piuCostosa: true, voti: { g1: "SI", g4: "NO" } });
+    expect(registro(piccola!.id)).toMatchObject({ approvata: false, voti: { g1: "NO", g4: "SI" } });
+    expect(registro(grande!.id).voti.g5).toBeUndefined(); // chi non vota non conta (R2)
   });
 
   it("gli effetti si contano solo quando sono rivelati: l'ultimo trimestre al punteggio (D-029, R1)", () => {
@@ -217,7 +216,9 @@ describe("verifica dei traguardi (D-052)", () => {
     let p = conObiettivo("T1-05"); // Falsario
     const copia = p.copieSegreto[0]!;
     const fonte = copia.possessore;
-    const [a, b] = p.giocatori.filter((g) => g.id !== fonte).map((g) => g.id);
+    // Mai di prima mano al reparto utile (D-073): i due passaggi vanno a colleghi qualsiasi.
+    const utile = p.segreti.find((s) => s.id === copia.segretoId)!.utile;
+    const [a, b] = p.giocatori.filter((g) => g.id !== fonte && g.repartoId !== utile).map((g) => g.id);
     const campo = Object.keys(copia.campi)[0]!;
     p = fai(p, { tipo: "INVIA_MESSAGGIO", da: fonte, a: a!, anonimo: false, modello: "SEGRETO", copiaSegretoId: copia.id, campi: { [campo]: "inventato" } }).partita;
     const ricevuta = p.copieSegreto.at(-1)!;
@@ -251,11 +252,13 @@ describe("punteggio e rivelazione finale (D-047)", () => {
   });
 
   it("i traguardi raggiunti entrano nel punteggio, anche per chi è stato licenziato (D-049)", () => {
-    let p = conObiettivo("T3-07"); // Tesoriere: senza voti non si approva nulla e la cassa non scende mai
+    // Squadra (3.9), difficile: più di metà del direttivo per l'azienda in tutti i trimestri; chi non
+    // sceglie conta "per l'azienda" (D-061), quindi senza azioni il traguardo è raggiunto.
+    let p = conObiettivo("T3-09");
     p.giocatori.find((g) => g.id === "g1")!.stato = "LICENZIATO";
     p = finoAlPunteggio(p);
     const voci = p.punteggi!.g1!.voci.filter((v) => v.testo.startsWith("Obiettivo"));
-    expect(voci.map((v) => v.punti)).toContain(4);
+    expect(voci.map((v) => v.punti)).toContain(ambiente.config.obiettivi.punti["3"]![1]);
   });
 });
 

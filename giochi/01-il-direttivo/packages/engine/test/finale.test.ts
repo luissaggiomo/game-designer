@@ -185,6 +185,29 @@ describe("finale: il ballottaggio (D-058)", () => {
     expect(secondo.fase.nome).toBe("PUNTEGGIO");
   });
 
+  it("turno senza voti: si ripete una volta; se resta vuoto, nessun licenziamento (D-063)", () => {
+    const { partita: ripetuto, eventi } = vota(aDue(), {});
+    expect(ripetuto.fase).toEqual({ nome: "BALLOTTAGGIO", giro: 1, turno: 1 });
+    expect(eventi.find((e) => e.tipo === "BALLOTTAGGIO")?.causa).toContain("non verrà licenziato nessuno");
+    const { partita } = vota(ripetuto, {});
+    expect(partita.giocatori.every((x) => x.stato === "ATTIVO")).toBe(true);
+    expect(partita.fase.nome).toBe("PUNTEGGIO");
+  });
+
+  it("dopo un turno vuoto si può ancora decidere: la ripetizione conta normalmente (D-063)", () => {
+    const ripetuto = vota(aDue(), {}).partita;
+    const { partita } = vota(ripetuto, { g3: "g2", g4: "g2" });
+    expect(g(partita, "g2").stato).toBe("LICENZIATO");
+  });
+
+  it("a due: stallo, poi turno vuoto → si ripete invece di licenziare entrambi (D-063)", () => {
+    const t2 = vota(aDue(), { g3: "g1", g4: "g2" }).partita; // 1-1
+    const ripetuto = vota(t2, {}).partita; // nessuno vota al secondo turno
+    expect(ripetuto.fase).toEqual({ nome: "BALLOTTAGGIO", giro: 1, turno: 2 });
+    const { partita } = vota(ripetuto, {});
+    expect(partita.giocatori.every((x) => x.stato === "ATTIVO")).toBe(true);
+  });
+
   /** 7 giocatori: ballottaggio a tre tra g1, g2, g3 (votano g4…g7). */
   const aTre = () => vota(aiNomi(nuova(7)), { g4: "g1", g5: "g2", g6: "g3", g7: "g1", g1: "g2", g2: "g3", g3: "g4" }).partita;
 

@@ -616,6 +616,7 @@ Modello di voce:
 - Taratura della quota (prove da 400 partite per numero di giocatori): 55% → spia vincente 34% con una spia, 56–58% con due; 50% → 29% e 47–49%; 45% → 23% e 40%. Scelta di Luis: **45%**, la più vicina al riferimento del 20%.
 - Verifica (report 11, 5000 partite): spia vincente con una spia **23 / 25 / 22 / 23 / 15%** (4…8 giocatori; report 10: 28–35%), con due spie 39% alleate / 34% rivali (era 57 / 53%); spie scoperte invariate (35–58%); azienda senza spie 71–86% (solo informativo); soglia stimata 55%. Punteggi: cooperativi 21,1 / egoisti 18,0 (vittorie 15 / 20%), spie prudenti 17% e aggressive 28% di vittorie.
 - Effetto atteso: senza spie l'azienda batte il concorrente se il direttivo gioca per l'azienda più del 45% delle volte; con una spia il risultato dipende soprattutto dai segreti, e un segreto falso costa caro al concorrente (trappola del canarino più forte).
+- Ritaratura dopo D-068…D-074 (Claude, 23/11/2026, come previsto dalla regola): `crescitaMediaProposteESegreti` **3,41** (misura su 3000 partite con il voto a pacchetti; report 13: 3,39).
 - Rif.: GDD §11.5, §12 · D-011, D-038, D-054 · punto aperto 4
 
 ## D-057 — Via il demansionamento (e la promozione)
@@ -624,7 +625,7 @@ Modello di voce:
 - Scelta di Luis: **eliminare del tutto demansionamento e promozione**. Durante la partita nessuno perde il voto; l'unico licenziamento è nel finale (D-058).
 - Conseguenze: sparisce la fase 6 del trimestre; i reparti in autogestione sono solo quelli vacanti; spariscono il messaggio ridotto e il divieto di anonimi per il demansionato, la perdita dei segreti, il voto di demansionamento/promozione e la decisione finale sui demansionati. Superano o svuotano: D-009, D-010, D-012, D-020 (parte sui demansionati), D-021 (parte sui demansionati), D-022 (parti sul demansionamento), D-028; punti aperti 8, 9, 20, 21, 23 chiusi; il 22 resta solo per l'idea "punti extra nel finale".
 - Si perde l'indizio "le fughe si fermano quando il sospettato è fuori"; resta la trappola del canarino (dare il dato modificato solo al sospettato).
-- Obiettivo T2-02 «Riformatore» (chiedeva un demansionamento o una promozione): sostituito da 🟡 «Intermediario» (proposta di Claude): inoltra 2 copie di segreti ad altri giocatori / una copia inoltrata da te passa per almeno 3 giocatori.
+- Obiettivo T2-02 «Riformatore» (chiedeva un demansionamento o una promozione): sostituito da «Intermediario» (proposta di Claude, **approvata da Luis il 23/11/2026**; soglia del difficile da tarare nelle serate, D-053): inoltra 2 copie di segreti ad altri giocatori / una copia inoltrata da te passa per almeno 3 giocatori.
 - Rif.: GDD §7.2, §8.3–8.4, §13 (eliminato), §14, §15 · analisi generale T3, T4
 
 ## D-058 — Il finale "Rinnovo dei contratti"
@@ -657,8 +658,8 @@ Modello di voce:
 ## D-061 — Più indizi in TV: quanti hanno giocato per l'azienda, quali dati girano
 - Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare nelle serate**
 - S1 (Luis: approvato): ai Risultati la TV dice **"3 su 5 hanno giocato per l'azienda"** invece di "in calo / stabile / in crescita". Contano tutti i membri del direttivo; chi non sceglie in tempo conta "per l'azienda" (D-020). Non si sa chi.
-- S2 (Luis: approvato, con il suo testo): nel Rapporto la TV annuncia ogni segreto del trimestre con il reparto a cui serve, senza dire chi l'ha ricevuto, nello stile *"Ufficio Vendite ha bisogno di informazioni sull'offerta della gara di primavera prima della scadenza!"* (la scadenza è la votazione collegata). In piccolo, sempre visibile: *"ATTENZIONE: una spia potrebbe essersi infiltrata tra voi!"*; 🟡 con 8 giocatori *"potrebbero esserci spie tra voi"* (proposta di Claude, chiude il punto 🔴 di §4.2).
-- 🟡 Dettagli di Claude: (a) quando un segreto arriva in tempo la TV dice **quale** (il titolo è già pubblico); (b) nel 4° trimestre il conteggio "per l'azienda" si annuncia subito, come le fughe di notizie, perché è un indizio per il finale (i numeri del mercato restano nascosti, D-029); (c) gli obiettivi «Squadra» (2.9 e 3.9), che parlavano di impegno "in calo / in crescita", si riscrivono con il conteggio: "in ogni trimestre almeno metà del direttivo gioca per l'azienda" e "in tutti i 4 trimestri più di metà del direttivo gioca per l'azienda".
+- S2 (Luis: approvato, con il suo testo): nel Rapporto la TV annuncia ogni segreto del trimestre con il reparto a cui serve, senza dire chi l'ha ricevuto, nello stile *"Ufficio Vendite ha bisogno di informazioni sull'offerta della gara di primavera prima della scadenza!"* (la scadenza è la votazione collegata). In piccolo, sempre visibile: *"ATTENZIONE: una spia potrebbe essersi infiltrata tra voi!"*; con 8 giocatori *"potrebbero esserci spie tra voi"* (proposta di Claude, approvata da Luis il 23/11/2026; chiude il punto 🔴 di §4.2).
+- Dettagli di Claude (**approvati da Luis il 23/11/2026**): (a) quando un segreto arriva in tempo la TV dice **quale** (il titolo è già pubblico); (b) nel 4° trimestre il conteggio "per l'azienda" si annuncia subito, come le fughe di notizie, perché è un indizio per il finale (i numeri del mercato restano nascosti, D-029); (c) gli obiettivi «Squadra» (2.9 e 3.9), che parlavano di impegno "in calo / in crescita", si riscrivono con il conteggio: "in ogni trimestre almeno metà del direttivo gioca per l'azienda" e "in tutti i 4 trimestri più di metà del direttivo gioca per l'azienda".
 - Rinviati (Luis): S3 (più peso agli effetti privati) no per ora; S4 (carta indagine) da considerare in futuro; S5 (evento per trimestre) solo se il gioco risulta ripetitivo.
 - Rif.: GDD §9, §11.5, §17 · analisi generale S1, S2
 
@@ -666,6 +667,132 @@ Modello di voce:
 - Data: 2026-11-23 · Stato: ✅ provvisoria — **⚖️ da verificare col simulatore**
 - Contesto: cassa al tetto nel 73% dei trimestri e 0–9% di proposte bocciate per mancanza di fondi (analisi generale, punto 2.4).
 - Scelta di Luis: budget invariato (100 K a trimestre, tetto 150 K: cifre tonde e facili); costi delle proposte solo **30, 50 o 80 K**.
-- 🟡 Conversione (Claude): i costi attuali fino a 40 K → 30; da 45 a 60 K → 50; da 70 K in su → 80.
+- Conversione (Claude, **approvata da Luis il 23/11/2026**): i costi attuali fino a 40 K → 30; da 45 a 60 K → 50; da 70 K in su → 80.
 - Obiettivi personali: **resta la scelta fra tre** (Luis, T6 respinto: "prendersi in parte la responsabilità del proprio destino").
 - Rif.: GDD §6, §8.6 · D-018 · analisi generale T5, T6
+
+## D-063 — Ballottaggio senza voti: si ripete una volta, poi nessun licenziamento
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- Contesto: con almeno 4 membri, fuori da un ballottaggio a due restano sempre almeno 2 votanti; il rischio vero era il **tempo scaduto**: due turni senza nessun voto contavano come due stalli e licenziavano entrambi i candidati senza che nessuno l'avesse deciso.
+- Alternative: A) un turno senza voti chiude subito il finale senza licenziati · B) si ripete una volta, poi nessun licenziato · C) lasciare com'era.
+- Scelta di Luis: **B**. Un turno di ballottaggio in cui nessuno vota **non è uno stallo**: si ripete una volta lo stesso turno (la TV avverte che, se di nuovo nessuno vota, non verrà licenziato nessuno); se anche la ripetizione resta vuota, **nessun licenziamento**. Vale a due e a tre candidati; il doppio licenziamento (D-058 punto 4) e l'ultima votazione a vuoto (punto 5) scattano solo con stalli veri, cioè con voti dati. Con 8 giocatori, nessun licenziato = niente secondo giro.
+- Rif.: GDD §15.1 · D-058, D-060 · test in packages/engine/test/finale.test.ts
+
+## D-064 — Poteri speciali dei reparti: rinviati a dopo le prime serate
+- Data: 2026-11-23 · Stato: ✅
+- Scelta di Luis: il prototipo si gioca **senza poteri speciali**; si valutano dopo le prime serate di prova. I punti aperti 5, 6 e 24 restano 🔴 ma **non bloccano** la fase 3 (i reparti sono già alla pari per costruzione, D-005, D-023).
+- Rif.: GDD §5, §20 punti 5, 6, 24
+
+## D-065 — Bot nel prototipo (prima parte del punto 18)
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da rivedere dopo le prove**
+- Contesto: le prime prove del prototipo le fa Luis da solo, contro i bot.
+- Scelte di Luis (raccomandazioni di Claude):
+  1. I bot sono i **robot del simulatore** (già collaudati su migliaia di partite): votano, fanno la mossa privata, inoltrano segreti e votano nel finale; **non scrivono testi**. Frasi preconfezionate nei messaggi: eventuale passo successivo.
+  2. Opzione d'avvio **"i bot possono essere spie: sì / no"**, predefinita **sì**.
+  3. Carattere dei bot: i quattro profili del simulatore (cooperativo, egoista, spia prudente, spia aggressiva) assegnati a caso; i livelli 1–5 sono rinviati.
+  4. **A fine partita** la TV rivela il **carattere** di ogni bot.
+- Rif.: GDD §20 punto 18 · packages/simulator/src/robot.ts
+
+## D-066 — Timer delle fasi: valori in config, chiusura anticipata, pausa e avanti
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **valori ⚖️ da tarare nelle prove**
+- Alternative: A) timer con valori in config, la fase si chiude appena tutti hanno agito, pulsanti "Pausa" e "Avanti" per chi ha creato la partita · B) niente timer, si avanza solo a mano · C) timer rigidi senza pausa.
+- Scelta di Luis: **A**. Obiettivo indicativo: 10–12 minuti a trimestre (GDD §8). I valori iniziali li propone Claude con il server (passo 1) e si tarano nelle prove.
+- Rif.: GDD §8, §20 punto 11 · Architettura §7.4
+
+## D-067 — Prime prove sul PC di Luis, in rete locale non sicura
+- Data: 2026-11-23 · Stato: ✅ (solo per le prove in solitario)
+- Scelta di Luis: per le prime prove il server gira **sul suo PC**; la TV è una finestra del browser, il telefono si collega dalla Wi-Fi di casa con indirizzo `http` (senza HTTPS: il telefono non può tenere lo schermo acceso da solo, limite accettato). HTTPS (tunnel) e hosting (DG-006) si decidono più avanti, prima della serata con altre persone.
+- Rif.: Architettura §4.2, §17 · DG-006
+
+## D-068 — Il voto del trimestre a pacchetti
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: cassa poco vincolante (report 12: tetto raggiunto nel 76% dei trimestri, 3% di bocciature per fondi); il denaro non vale nulla perché costo ed effetto non sono legati e i soldi avanzati non servono. Idea di Luis: si deve litigare su **a quale proposta rinunciare**.
+- Regola (proposta di Luis, dettagli chiusi con Claude):
+  1. Ogni trimestre **tre proposte: 30, 50 e 80 K**, presentate una alla volta su TV e telefoni.
+  2. **Discussione** per al massimo X minuti (parametro ⚖️, iniziale **4**).
+  3. **Voto segreto del pacchetto**: ognuno sceglie una combinazione che costi **almeno 51 K** ⚖️ e **non superi la cassa**. **Ognuno vale 1, votano tutti i membri del direttivo** (i pesi dei reparti spariscono).
+  4. Alla chiusura la TV mostra chi ha votato cosa. Passa il pacchetto che ha **più della metà dei membri del direttivo** (chi non vota non conta a favore di nessuno).
+  5. Altrimenti **secondo voto**: **principale = il pacchetto più votato** (a parità, estratto tra i più votati); **alternativa estratta a caso** tra gli altri validi, **coperta** in TV (si vede quante proposte contiene, non quali). Sì/no al principale, maggioranza dei membri; **chi non vota vale "no"** e passa l'alternativa.
+  6. Cassa: **100 K a trimestre, senza tetto** (si avanzano al massimo 20 K a trimestre). Il minimo è sempre rispettato perché il voto si chiude sempre con un pacchetto valido: non serve alcuna penalità.
+- Accettato da Luis: con 100 K i pacchetti validi sono due, quindi nel 1° trimestre l'alternativa coperta è di fatto nota (spareggio); dopo diventa un'incognita.
+- Supera o modifica: D-008 (un ciclo per proposta), D-014 (scaletta 2-3-3-2 e favoriti), D-018 (tetto di 150 K), D-006 (pesi dei vacanti), GDD §8.3–8.4 (pesi e soglia pesata). La concorrenza (D-056) va **ritarata** e, se serve, ricalibrata col simulatore.
+- Verifica (report 13, 5000 partite): maggioranza al primo voto 70% nel 1° trimestre, 21–32% dopo; dal 2° trimestre 36–45% di pacchetti "ricchi"; cassa media a fine anno 32 K. Spia vincente con una spia 25 / 18 / 17 / 13 / 9% (4…8 giocatori).
+- Rif.: GDD §6, §7.2, §8.3, §8.6
+
+## D-069 — Algoritmo di equità delle carte
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Regola (Luis): a inizio partita il gioco sceglie le 12 carte e assegna i ruoli ai reparti occupati in modo che **ogni reparto riceva lo stesso totale di bonus e lo stesso totale di malus** sulla somma delle 12 carte; se la parità esatta è aritmeticamente impossibile, **differenza massima 1 punto**. Chi finisce penalizzato lo è per le scelte dei giocatori, non per le carte.
+- **Reparti smistati:** nello stesso trimestre si evita che un reparto abbia un bonus sia nella grande (80) sia nelle due piccole (30+50); i bonus di ciascun reparto vanno distribuiti tra trimestri diversi.
+- Restano: trimestri ammessi, categorie diverse nello stesso trimestre, versioni dei quesiti (D-045), nessun ruolo ai vacanti. Sostituisce il bilanciamento dei favoriti di D-014.
+- Rif.: GDD §8.6 · D-005, D-023
+
+## D-070 — Valore delle proposte proporzionale al costo
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **numeri ⚖️**
+- Regola: **la grande vale quanto le due piccole**. Per i **reparti** in modo esatto nello stesso trimestre (bonus e malus totali della carta da 80 = somma di quelli delle carte da 30 e 50); per l'**azienda** solo **in media** (l'effetto nascosto varia da carta a carta, anche negativo, così la scelta conta e la spia o l'egoista possono spingere nella direzione sbagliata).
+- Criterio indicativo ⚖️: bonus + malus di una carta circa 3 / 5 / 8 punti per 30 / 50 / 80 K; effetto medio sull'azienda in proporzione.
+- Rif.: GDD §8.6 · analisi P3 del 23/11/2026 (oggi le carte da 80 rendono in media all'azienda +0,75 contro +1,25 di quelle da 30)
+
+## D-071 — Obiettivi e quesiti si riscrivono a regole fissate
+- Data: 2026-11-23 · Stato: ✅
+- Scelta di Luis: obiettivi personali e quesiti si **riscrivono alla fine**, quando regole e dinamiche sono tutte fissate. Per ora valgono la regola generale e i criteri (D-068…D-070); **prove e simulazioni** si fanno già con il nuovo schema, usando schemi provvisori proporzionali al costo.
+- Da rifare: circa **32 traguardi su 68** (27 legati al voto sulla singola proposta, 5 alla cassa con il vecchio tetto); schemi e testi dei 40 quesiti.
+- Si resta in **fase 2** finché tutto non è fissato (Luis).
+- Rif.: GDD §4.4, §8.6, §20 punto 33
+
+## D-072 — Scadenza dei segreti: fine del trimestre successivo; 4° trimestre senza nuovi segreti
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Contesto: con un solo voto a trimestre (D-068) il legame "segreto → votazione collegata" (D-021) perde senso.
+- Alternative: A) scadenza a fine dello stesso trimestre · B) fine del trimestre successivo per il reparto, ma la spia solo nel trimestre di uscita · C) fine del trimestre successivo per tutti.
+- Scarto di B (osservazione di Luis): basterebbe tenere fermo il segreto un trimestre per renderlo inutile alla spia; mossa sempre sicura che cancella il dilemma della condivisione.
+- Scelta di Luis: **C** — ogni segreto scade a **fine del trimestre successivo**, sia per arrivare al reparto utile sia per essere passato al concorrente; niente collegamento a una proposta. **Il 4° trimestre non distribuisce nuovi segreti** (è già il più carico: voto del pacchetto e rinnovo dei contratti); vi scadono quelli del 3°. Segreti a partita: 6 invece di 8.
+- Da verificare: vittorie delle spie (più tempo per intercettare, fughe più difficili da collegare); leve se servono: valori per il concorrente (D-056).
+- Rif.: GDD §11.5 · D-021, D-061
+
+## D-073 — Catena minima dei segreti
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **X ⚖️ da verificare col simulatore**
+- Idea di Luis: un segreto non si consegna mai di prima mano; deve passare da X giocatori.
+- Analisi (Claude): con scelte alla cieca il rischio che la spia veda un segreto è circa **(X+1)/N**. Riferimenti: The Resistance/Avalon (scelta alla cieca ≈ testa o croce, scelta informata premiata), Secret Hitler (catene corte = responsabilità chiare). Soglia di convenienza a inviare alla cieca = a/(a+c): 67% per "da far girare", 33% "normale", 25% "da custodire"; un rischio alla cieca del 40–50% rende diverse e interessanti le tre decisioni. Un X più alto per i segreti più rischiosi li renderebbe mai inviabili (il rischio è già nei valori).
+- Scelta di Luis: **X unico per numero di giocatori: 4 → 1 · 5 → 1 · 6 → 2 · 7 → 2 · 8 → 2** (rischio alla cieca 50 / 40 / 50 / 43 / 38%; 64% con due spie). Intermediari tutti diversi, mai la fonte né il destinatario; la catena la sceglie chi ha in mano il segreto, un passaggio alla volta.
+- Telefono (Luis): mostra **quanti passaggi mancano** e, per l'inoltro, **disattiva chi ha già ricevuto** quel segreto. Gli ultimi anelli sanno da chi è passato il segreto (compresa la fonte), ma se è stato manomesso non si sa da chi. Modifica D-015 (prima si vedeva solo il mittente diretto).
+- Rif.: GDD §11.5 · D-015, D-038
+
+## D-074 — Segreti: uno vero e uno finto a ogni trimestre
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore (in particolare con 4 giocatori)**
+- Contesto: per non far riconoscere la spia ("non riceve mai segreti") e per non permetterle di sfruttare i segreti che la riguardano. Le varianti discusse (V1 segreti della spia inutili, V2 validi per l'azienda ma non consegnabili, V3 numeri nascosti) avevano due buchi: A) un segreto annunciato come arrivato che non muove il mercato tradisce la spia; B) l'azienda indebolita di nascosto nelle partite con spia.
+- Scelta di Luis: **ogni trimestre due segreti, uno vero e uno finto**; quello in cui la spia è fonte o destinataria è **sempre il finto**; anche agli onesti può capitare il finto; la TV annuncia **sempre** "arrivato a destinazione".
+- Regole di dettaglio (proposte di Claude, approvate):
+  1. Fonte e destinatario equilibrati tra tutti i giocatori, spia compresa; la spia al massimo in un segreto per trimestre; se non è coinvolta, il finto si estrae a caso.
+  2. Il finto passato al concorrente gli costa **−4** (come una copia falsificata); per l'azienda vale 0.
+  3. La TV annuncia l'arrivo per ogni versione (vera, finta, manomessa).
+  4. Il valore dei due segreti di un trimestre si conta **insieme, alla scadenza**, non all'arrivo.
+  5. I due segreti dello stesso trimestre hanno **lo stesso tipo** (preferibilmente uno con +1 per l'azienda, che l'imprevisto ±1 confonde meglio).
+  6. Eliminata l'etichetta "dato certo" (modifica D-035).
+- Effetti: chiude i buchi A e B; la spia che intercetta non sa se il dato è vero (rubare è una scommessa), ma se è coinvolta sa che l'altro è vero. Valore dai segreti: 3 veri a partita.
+- Punto debole accettato da Luis: con 4 giocatori la spia è sempre dentro il finto, quindi un finto smascherato (consegnandone apposta uno solo) la indica tra due persone; il test è costoso, poco affidabile con valori +1 e possibile solo per i segreti del 1° e 2° trimestre. **Si misura col simulatore.**
+- Da riverificare: la tabella di X (D-073), perché inviare alla cieca diventa più conveniente.
+- Supera D-039 ("mai due «da custodire» nello stesso trimestre"): con la regola 5 i due segreti del trimestre hanno sempre lo stesso tipo (scelto con le probabilità in config: 20% da far girare, 50% normale, 30% da custodire, così prevalgono i tipi da +1 per l'azienda).
+- Rif.: GDD §11 · D-015, D-035, D-038, D-072, D-073
+
+## D-075 — Equilibrio della spia: il metro è 1/N
+- Data: 2026-11-23 · Stato: ✅
+- Contesto: report 13, spia vincente 25 / 18 / 17 / 13 / 9% (4…8 giocatori). Claude l'aveva confrontata con un riferimento fisso del 20%.
+- Ragionamento di Luis (accolto): ognuno punta a vincere personalmente (D-054), quindi un ruolo è equilibrato se vince **una volta ogni N partite** (4 → 25%, 5 → 20%, 6 → 17%, 7 → 14%, 8 → 12,5%; con due spie 2/N). Scarto accettabile ±3–4 punti: il resto lo fanno le persone.
+- Verifica: vittoria della fazione spia e primo posto in classifica sono vicini a 1/N, tranne **la spia prima in classifica con 4 giocatori: 34%** (neutro 25%), probabilmente per gli obiettivi personali (le spie prendono più punti): da ricontrollare dopo la riscrittura degli obiettivi (D-076).
+- Le correzioni proposte (catena 3 con 7–8 giocatori, concorrente più veloce nelle partite grandi) non servono.
+- Rif.: docs/simulazioni/2026-11-23-simulazione-13.md · D-054, D-056
+
+## D-076 — Obiettivi personali riscritti per il voto del pacchetto
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **soglie ⚖️ da tarare col simulatore** (facile 60–70%, difficile 25–35%, D-051)
+- Scelta di Luis: approvata la lista proposta da Claude (16 obiettivi su 34; restano invariati quelli su segreti, messaggi e mossa privata). Correzioni sui singoli obiettivi possibili dopo la taratura.
+- Definizioni: **voto decisivo** = il pacchetto passa con il minimo dei voti necessari e tu l'hai votato, oppure al secondo voto il tuo voto ribaltato cambierebbe l'esito; **pacchetto positivo** = somma degli effetti sull'azienda delle sue proposte > 0 (si scopre ai Risultati; 4° trimestre al punteggio).
+- Tipo 1 (+3/+5): 1.1 Bastian contrario: al primo voto un pacchetto diverso dall'approvato (2/3 trimestri) · 1.2 Ago della bilancia: voto decisivo (1/2) · 1.3 Forbici: voti un pacchetto senza la più cara, e passa (2/3) · 1.8 Cassaforte: trimestri chiusi con almeno 40 K (1/3) · 1.10 🏢 In linea: al primo voto il pacchetto poi approvato (2/3) · 1.11 🏢 Occhio clinico: il tuo pacchetto passa e si rivela positivo (1/3).
+- Tipo 2 (+3/+7): 2.1 Voce critica: NO al principale 2 volte / il tuo NO fa passare l'alternativa · 2.8 Forbici d'oro: in 3 trimestri un pacchetto senza la più cara / a fine anno almeno 60 K · 2.10 🏢 Occhio clinico: 2 pacchetti tuoi passano positivi / con almeno 3 voti nessuno dannoso · 2.12 🏢 Consenso: in 3 trimestri il primo voto è l'approvato / in 2 trimestri il tuo pacchetto passa già al primo voto.
+- Tipo 3 (+4/+6): 3.1 Ago d'oro: decisivo una volta / in 2 trimestri diversi · 3.2 Voce solitaria: diverso dall'approvato 2 volte / unico a votare il tuo pacchetto in un trimestre · 3.7 Tesoriere: a fine anno almeno 40 K / mai un pacchetto oltre 80 K · 3.8 Controcorrente: SÌ a un principale che non passa / NO a un principale che passa · 3.10 🏢 Occhio clinico: un pacchetto tuo passa positivo / con almeno 3 voti nessuno dannoso · 3.12 🏢 Maggioranza: primo voto = approvato in 2 trimestri / in tutti e 4.
+- Aziendalisti: 4 per tipo (invariato, D-049).
+- Rif.: GDD §4.4 · D-046…D-055, D-068, D-071 · docs/contenuti/obiettivi.md
+
+## D-077 — Quesiti: quattro famiglie di schemi per costo
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **numeri ⚖️ da tarare col simulatore**
+- Scelta di Luis: per ogni costo quattro famiglie di schemi distinte dall'effetto sull'azienda: **buon affare** (molto positivo), **investimento** (positivo), **neutro** (zero), **spreco** (negativo). Bonus e malus di reparto restano quelli del costo (30 → +2/−1, 50 → +3/−2, 80 → +5/−3, D-070). Ogni quesito riceve, nella versione principale e nell'alternativa, la famiglia coerente con la sua frase di spiegazione: i testi già approvati (D-030…D-033) restano validi. Effetto medio sull'azienda proporzionale al costo (da verificare col simulatore e, se serve, con i valori delle famiglie).
+- Sostituisce l'assegnazione a rotazione provvisoria di D-071.
+- Rif.: GDD §8.2, §8.6 · D-045, D-070, D-071 · docs/contenuti/quesiti.md

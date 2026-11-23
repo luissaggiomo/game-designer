@@ -1,171 +1,102 @@
-import { creaEAvvia } from "./aiuti.js";
+/**
+ * Le carte della partita e l'algoritmo di equità (GDD §8.6 · D-068, D-069, D-070).
+ */
 import { describe, expect, it } from "vitest";
-import { caricaAmbiente, type Ambiente } from "../src/contenuti.js";
-import { applica } from "../src/motore.js";
+import { caricaAmbiente } from "../src/contenuti.js";
+import { creaEAvvia } from "./aiuti.js";
 import type { Partita, RepartoId } from "../src/tipi.js";
 
 const ambiente = caricaAmbiente();
 
-function crea(n: number, seme: number, amb: Ambiente = ambiente): Partita {
-  const esito = creaEAvvia(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, amb);
+function nuova(n: number, seme: number): Partita {
+  const esito = creaEAvvia(Array.from({ length: n }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), seme, ambiente);
   if (!esito.ok) throw new Error(esito.errore);
   return esito.partita;
 }
 
-/** Avanza (senza azioni: tutti "no" per tempo scaduto) finché la condizione è vera. */
-function avanzaFinche(p: Partita, condizione: (p: Partita) => boolean, amb: Ambiente = ambiente): Partita {
-  let attuale = p;
-  for (let i = 0; i < 300 && condizione(attuale); i++) {
-    const esito = applica(attuale, { tipo: "AVANZA_FASE" }, amb);
-    if (!esito.ok) break;
-    attuale = esito.partita;
+const occupati = (p: Partita) => p.reparti.filter((r) => r.occupatoDa).map((r) => r.id);
+
+/** Totali di bonus e malus di ogni reparto occupato sulle 12 carte. */
+function totali(p: Partita) {
+  const bonus = new Map<RepartoId, number>(occupati(p).map((r) => [r, 0]));
+  const malus = new Map<RepartoId, number>(occupati(p).map((r) => [r, 0]));
+  for (const carta of p.carte.flat()) {
+    for (const [r, e] of Object.entries(carta.effettiPrivati) as [RepartoId, { punti?: number }][]) {
+      const punti = e.punti ?? 0;
+      if (punti > 0) bonus.set(r, bonus.get(r)! + punti);
+      if (punti < 0) malus.set(r, malus.get(r)! - punti);
+    }
   }
-  return attuale;
+  return { bonus, malus };
 }
+const scarto = (m: Map<RepartoId, number>) => Math.max(...m.values()) - Math.min(...m.values());
 
-const finoAlTrimestre = (t: number) => (p: Partita) => !(p.trimestre === t && p.fase.nome === "RAPPORTO");
-const reparti = (p: Partita) => new Set(p.reparti.filter((r) => r.occupatoDa).map((r) => r.id));
-
-describe("cassa (D-018)", () => {
-  it("trimestre 1: 100 K", () => {
-    expect(crea(5, 1).azienda.cassa).toBe(100);
+describe("le carte della partita (D-068)", () => {
+  it("12 carte: a ogni trimestre una da 30, una da 50 e una da 80, tutte diverse", () => {
+    const p = nuova(5, 3);
+    expect(p.carte).toHaveLength(4);
+    for (const trimestre of p.carte) expect(trimestre.map((c) => c.costo)).toEqual([30, 50, 80]);
+    const modelli = p.carte.flat().map((c) => c.modelloId);
+    expect(new Set(modelli).size).toBe(12);
   });
 
-  it("niente speso nel T1 → T2 con 150 K (tetto), non 200", () => {
-    expect(avanzaFinche(crea(5, 1), finoAlTrimestre(2)).azienda.cassa).toBe(150);
+  it("ogni carta rispetta i trimestri ammessi del suo quesito", () => {
+    const p = nuova(6, 9);
+    p.carte.forEach((trimestre, i) => {
+      for (const c of trimestre) expect(ambiente.mazzo.find((m) => m.id === c.modelloId)!.trimestri).toContain(i + 1);
+    });
   });
 
-  it("60 K spesi nel T1 → T2 con 40 + 100 = 140 K", () => {
-    const p = crea(5, 1);
-    p.azienda.cassa = 40;
-    expect(avanzaFinche(p, finoAlTrimestre(2)).azienda.cassa).toBe(140);
+  it("la grande vale quanto le due piccole: stessi bonus e malus totali nel trimestre (D-070)", () => {
+    const p = nuova(7, 21);
+    for (const [piccola, media, grande] of p.carte) {
+      const somma = (c: typeof piccola, segno: 1 | -1) =>
+        Object.values(c!.effettiPrivati).reduce((s, e) => s + (Math.sign(e?.punti ?? 0) === segno ? Math.abs(e!.punti!) : 0), 0);
+      expect(somma(grande, 1)).toBe(somma(piccola, 1) + somma(media, 1));
+      expect(somma(grande, -1)).toBe(somma(piccola, -1) + somma(media, -1));
+    }
+  });
+
+  it("i reparti vacanti non ricevono mai effetti", () => {
+    const p = nuova(4, 5);
+    const vacanti = p.reparti.filter((r) => !r.occupatoDa).map((r) => r.id);
+    for (const c of p.carte.flat()) for (const r of vacanti) expect(c.effettiPrivati[r]).toBeUndefined();
   });
 });
 
-describe("ordine del giorno, modello B (D-008, D-014, D-023)", () => {
-  it("ogni trimestre il numero di quesiti previsto dalla scaletta", () => {
-    let p = crea(5, 3);
-    for (let t = 1; t <= 4; t++) {
-      p = avanzaFinche(p, finoAlTrimestre(t));
-      expect(p.proposteTrimestre.length).toBe(ambiente.config.votazioniPerTrimestre[t - 1]);
+describe("algoritmo di equità (D-069)", () => {
+  it.each([4, 5, 6, 7, 8])("con %i giocatori ogni reparto ha gli stessi bonus e malus totali (al massimo 1 punto di differenza)", (n) => {
+    for (let seme = 1; seme <= 25; seme++) {
+      const p = nuova(n, seme);
+      const { bonus, malus } = totali(p);
+      expect(scarto(bonus), `bonus, ${n} giocatori, seme ${seme}`).toBeLessThanOrEqual(ambiente.config.proposte.tolleranzaEquita);
+      expect(scarto(malus), `malus, ${n} giocatori, seme ${seme}`).toBeLessThanOrEqual(ambiente.config.proposte.tolleranzaEquita);
+      expect(p.equita!.scarto).toBe(Math.max(scarto(bonus), scarto(malus)));
     }
   });
 
-  it("nessun quesito si ripete nella stessa partita", () => {
-    for (let seme = 0; seme < 50; seme++) {
-      const fine = avanzaFinche(crea(5, seme), (p) => p.fase.nome !== "FINE");
-      expect(new Set(fine.proposteUscite).size).toBe(fine.proposteUscite.length);
-    }
-  });
-
-  it("effetti e pesi solo per i reparti occupati: i vacanti non contano mai (D-006)", () => {
-    for (let seme = 0; seme < 60; seme++) {
-      let p = crea(4, seme);
-      const occupati = reparti(p);
-      for (let t = 1; t <= 4; t++) {
-        p = avanzaFinche(p, finoAlTrimestre(t));
-        for (const q of p.proposteTrimestre) {
-          for (const r of Object.keys(q.pesi)) expect(occupati.has(r as RepartoId)).toBe(true);
-          for (const r of Object.keys(q.effettiPrivati)) expect(occupati.has(r as RepartoId)).toBe(true);
-          // Ogni reparto occupato vede un effetto (anche neutro) sul proprio telefono.
-          expect(Object.keys(q.effettiPrivati).length).toBe(occupati.size);
-        }
+  it.each([4, 5, 6, 7, 8])("con %i giocatori nessun reparto ha un bonus sia nella grande sia nelle piccole dello stesso trimestre", (n) => {
+    for (let seme = 1; seme <= 25; seme++) {
+      const p = nuova(n, seme);
+      expect(p.equita!.violazioni, `${n} giocatori, seme ${seme}`).toBe(0);
+      for (const [piccola, media, grande] of p.carte) {
+        const conBonus = (c: typeof piccola) => Object.entries(c!.effettiPrivati).filter(([, e]) => (e?.punti ?? 0) > 0).map(([r]) => r);
+        const lati = new Set([...conBonus(piccola), ...conBonus(media)]);
+        for (const r of conBonus(grande)) expect(lati.has(r)).toBe(false);
       }
     }
   });
 
-  it("gli effetti assegnati sono esattamente quelli dello schema del quesito (versione estratta, D-045)", () => {
-    const p = crea(8, 7);
-    for (const q of p.proposteTrimestre) {
-      const m = ambiente.mazzo.find((x) => x.id === q.modelloId)!;
-      const schema = ambiente.schemi[q.spiegazione === m.alternativa?.spiegazione ? m.alternativa.schema : m.schema]!;
-      const assegnati = Object.values(q.effettiPrivati).map((e) => e!.punti ?? 0).filter((x) => x !== 0).sort();
-      expect(assegnati).toEqual(schema.ruoli.map((r) => r.punti).filter((x) => x !== 0).sort());
-      expect(q.effettoAzienda).toBe(schema.effettoAzienda);
+  it("in una carta un reparto ha al massimo un ruolo", () => {
+    const p = nuova(4, 8);
+    for (const c of p.carte.flat()) {
+      const schema = Object.values(ambiente.schemi).find((s) => s.costo === c.costo)!;
+      const coinvolti = Object.values(c.effettiPrivati).filter((e) => (e?.punti ?? 0) !== 0).length;
+      expect(coinvolti).toBeLessThanOrEqual(Math.max(...Object.values(ambiente.schemi).filter((x) => x.costo === schema.costo).map((x) => x.ruoli.length)));
     }
   });
 
-  it("uguaglianza tra reparti: a fine partita ogni reparto è stato favorito lo stesso numero di volte (±1)", () => {
-    for (const n of [4, 5, 6, 7, 8]) {
-      for (let seme = 0; seme < 40; seme++) {
-        const fine = avanzaFinche(crea(n, seme), (p) => p.fase.nome !== "FINE");
-        const conteggi = [...reparti(fine)].map((r) => fine.conteggioFavoriti[r] ?? 0);
-        expect(Math.max(...conteggi) - Math.min(...conteggi), `${n} giocatori, seme ${seme}`).toBeLessThanOrEqual(1);
-      }
-    }
-  });
-
-  it("su molte partite ogni reparto riceve in media gli stessi punti potenziali dai quesiti", () => {
-    const somma = new Map<string, number>();
-    let partite = 0;
-    for (let seme = 0; seme < 300; seme++) {
-      let p = crea(6, seme);
-      for (let t = 1; t <= 4; t++) {
-        p = avanzaFinche(p, finoAlTrimestre(t));
-        for (const q of p.proposteTrimestre) for (const [r, e] of Object.entries(q.effettiPrivati)) somma.set(r, (somma.get(r) ?? 0) + (e!.punti ?? 0));
-      }
-      partite++;
-    }
-    const medie = [...somma.values()].map((v) => v / partite);
-    // Variabilità del caso con 300 partite: circa ±0,25 per reparto; uno squilibrio vero (come col
-    // vecchio mazzo segnaposto) darebbe differenze di diversi punti.
-    expect(Math.max(...medie) - Math.min(...medie)).toBeLessThan(1.2);
-  });
-
-  it("stesso seme → stessa partita intera (estrazioni e ruoli compresi)", () => {
-    const a = avanzaFinche(crea(6, 77), (p) => p.fase.nome !== "FINE");
-    const b = avanzaFinche(crea(6, 77), (p) => p.fase.nome !== "FINE");
-    expect(a).toEqual(b);
-  });
-});
-
-describe("controllo dei contenuti", () => {
-  it("mazzo, schemi, frasi e segreti predefiniti sono validi", () => {
-    expect(() => caricaAmbiente()).not.toThrow();
-    expect(ambiente.mazzo.length).toBeGreaterThanOrEqual(40);
-  });
-});
-
-describe("versioni dei quesiti: schema principale o alternativo (D-045)", () => {
-  const conProbabilita = (probabilita: number): Ambiente => ({
-    ...ambiente,
-    config: { ...ambiente.config, selezione: { ...ambiente.config.selezione, probabilitaAlternativa: probabilita } },
-  });
-  /** Effetto sull'azienda e spiegazione di ogni quesito estratto nel 1° trimestre, su molti semi. */
-  const estratti = (amb: Ambiente) =>
-    Array.from({ length: 60 }, (_, i) => crea(5, i + 1, amb)).flatMap((p) =>
-      p.proposteTrimestre.map((x) => ({ modello: amb.mazzo.find((m) => m.id === x.modelloId)!, effetto: x.effettoAzienda, spiegazione: x.spiegazione })),
-    );
-
-  it("ogni quesito del mazzo ha un'alternativa con un effetto sull'azienda diverso", () => {
-    for (const m of ambiente.mazzo) {
-      expect(m.alternativa).toBeDefined();
-      expect(ambiente.schemi[m.alternativa!.schema]!.effettoAzienda).not.toBe(ambiente.schemi[m.schema]!.effettoAzienda);
-    }
-  });
-
-  it("nel mazzo ogni schema compare tante volte come alternativa quante come principale (taratura invariata)", () => {
-    const conta = (f: (m: Ambiente["mazzo"][number]) => string) =>
-      ambiente.mazzo.reduce<Record<string, number>>((acc, m) => ({ ...acc, [f(m)]: (acc[f(m)] ?? 0) + 1 }), {});
-    expect(conta((m) => m.alternativa!.schema)).toEqual(conta((m) => m.schema));
-  });
-
-  it("con probabilità 0 esce sempre la versione principale, con 1 sempre l'alternativa, ognuna con la sua spiegazione", () => {
-    for (const e of estratti(conProbabilita(0))) {
-      expect(e.effetto).toBe(ambiente.schemi[e.modello.schema]!.effettoAzienda);
-      expect(e.spiegazione).toBe(e.modello.spiegazione);
-    }
-    for (const e of estratti(conProbabilita(1))) {
-      expect(e.effetto).toBe(ambiente.schemi[e.modello.alternativa!.schema]!.effettoAzienda);
-      expect(e.spiegazione).toBe(e.modello.alternativa!.spiegazione);
-    }
-  });
-
-  it("con la probabilità predefinita escono entrambe le versioni, in modo riproducibile col seme", () => {
-    const tutti = estratti(ambiente);
-    const alternative = tutti.filter((e) => e.spiegazione === e.modello.alternativa!.spiegazione).length;
-    expect(alternative).toBeGreaterThan(tutti.length * 0.3);
-    expect(alternative).toBeLessThan(tutti.length * 0.7);
-    expect(crea(5, 7).proposteTrimestre).toEqual(crea(5, 7).proposteTrimestre);
+  it("stesso seme → stesse carte (riproducibile)", () => {
+    expect(nuova(6, 42).carte).toEqual(nuova(6, 42).carte);
   });
 });

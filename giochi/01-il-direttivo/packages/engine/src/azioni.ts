@@ -14,6 +14,9 @@ export type AzioneSistema = { tipo: "AVANZA_FASE" };
 export type AzioneGiocatore = { da: GiocatoreId } & (
   /** Prima della partita: uno dei tre obiettivi proposti (D-048). */
   | { tipo: "SCEGLI_OBIETTIVO"; obiettivo: string }
+  /** Primo voto del trimestre: un pacchetto di proposte (D-068), elencate per id. */
+  | { tipo: "VOTA_PACCHETTO"; pacchetto: string[] }
+  /** Secondo voto: sì o no al pacchetto principale (D-068). */
   | { tipo: "VOTA"; voto: Voto }
   | { tipo: "MOSSA_PRIVATA"; scelta: SceltaMossa }
   | {
@@ -43,19 +46,15 @@ type ContenutoEvento =
   | { tipo: "OBIETTIVO_REGISTRATO"; da: GiocatoreId; causa: string }
   /** Riservato all'interessato: tempo scaduto, obiettivo estratto a caso (D-048). */
   | { tipo: "OBIETTIVO_ASSEGNATO"; causa: string }
-  | { tipo: "ORDINE_DEL_GIORNO"; proposte: { id: string; titolo: string; costo: number }[]; causa: string }
+  | { tipo: "ORDINE_DEL_GIORNO"; proposte: { id: string; titolo: string; costo: number }[]; pacchetti: string[][]; causa: string }
   /** Dice solo CHI ha votato, non cosa: i voti si rivelano alla chiusura (D-019). */
-  | { tipo: "VOTO_REGISTRATO"; da: GiocatoreId; propostaId: string; causa: string }
-  /** Alla chiusura si rivelano tutti i voti (D-019); "TEMPO_SCADUTO" vale come no (D-060). */
-  | {
-      tipo: "VOTAZIONE_CHIUSA";
-      propostaId: string;
-      approvata: boolean;
-      si: number;
-      soglia: number;
-      voti: Partial<Record<GiocatoreId, Voto | "TEMPO_SCADUTO">>;
-      causa: string;
-    }
+  | { tipo: "VOTO_REGISTRATO"; da: GiocatoreId; causa: string }
+  /** Primo voto chiuso: chi ha votato quale pacchetto (palese alla chiusura, D-019, D-068). */
+  | { tipo: "VOTO_PACCHETTO_CHIUSO"; voti: Partial<Record<GiocatoreId, string[] | "TEMPO_SCADUTO">>; approvato?: string[]; causa: string }
+  /** Secondo voto: il pacchetto principale e quante proposte ha l'alternativa coperta (D-068). */
+  | { tipo: "SECONDO_VOTO_APERTO"; principale: string[]; proposteAlternativa: number; causa: string }
+  /** Secondo voto chiuso: chi ha votato sì o no; "TEMPO_SCADUTO" vale no. */
+  | { tipo: "SECONDO_VOTO_CHIUSO"; voti: Partial<Record<GiocatoreId, Voto | "TEMPO_SCADUTO">>; approvato: string[]; principaleApprovato: boolean; causa: string }
   /** Dice solo CHI ha scelto, mai cosa. */
   | { tipo: "MOSSA_REGISTRATA"; da: GiocatoreId; causa: string }
   /** Quanti hanno giocato per l'azienda, mai chi (GDD §9, D-061). */
@@ -70,14 +69,14 @@ type ContenutoEvento =
   | { tipo: "RISULTATI_RINVIATI"; causa: string }
   /** Pubblico, nel Rapporto: quale informazione serve e a chi, mai chi l'ha ricevuta (D-061). */
   | { tipo: "SEGRETO_ANNUNCIATO"; segretoId: string; utile: string; causa: string }
-  /** Riservato alla fonte: "dato certo, arrivato al tuo reparto" (D-015, D-035). */
+  /** Riservato alla fonte: "arrivato al tuo reparto" (D-074: nessuna certezza che sia vero). */
   | { tipo: "SEGRETO_RICEVUTO"; copiaId: string; causa: string }
   /** Riservato al destinatario. */
   | { tipo: "MESSAGGIO_RICEVUTO"; messaggioId: string; causa: string }
   /** Riservato alla spia. */
   | { tipo: "SEGRETO_CONSEGNATO"; copiaId: string; causa: string }
-  /** Pubblico: quale segreto è arrivato in tempo, senza il valore (D-021, D-038, D-061). */
-  | { tipo: "SEGRETO_IN_TEMPO"; segretoId: string; causa: string }
+  /** Pubblico, ai Risultati: un segreto è arrivato a destinazione, vero, finto o manomesso che sia (D-074). */
+  | { tipo: "SEGRETO_ARRIVATO"; segretoId: string; causa: string }
   /** Pubblico: quale segreto ha usato il concorrente, e se era falso (GDD §11.3–11.4). */
   | { tipo: "SEGRETO_USATO"; concorrente: string; segretoId: string; falso: boolean; variazione: number; causa: string }
   /** Licenziamento: il ruolo viene rivelato subito (GDD §15). */

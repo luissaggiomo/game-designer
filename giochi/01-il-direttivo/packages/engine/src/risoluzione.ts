@@ -7,7 +7,7 @@
  * 2. effetti delle proposte approvate: punti di reparto (privati) ed effetto reale sull'azienda (pubblico);
  * 3. mosse dei concorrenti;
  * 4. corsa di mercato aggiornata.
- * I segreti passati ai concorrenti si aggiungeranno con le regole dei segreti.
+ * 3bis. segreti: arrivi annunciati, valore di quelli che scadono, segreti usati dai concorrenti (D-072…D-074).
  */
 import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
@@ -117,7 +117,7 @@ function risolviMossePrivate(partita: Partita, ambiente: Ambiente, casuale: Casu
 
 function applicaEffettiProposte(partita: Partita): Evento[] {
   const eventi: Evento[] = [];
-  for (const p of partita.proposteTrimestre.filter((x) => x.esito?.approvata)) {
+  for (const p of partita.proposteTrimestre.filter((x) => x.approvata)) {
     // Effetti privati sui reparti (i vacanti non accumulano punti).
     for (const r of partita.reparti) {
       const punti = p.effettiPrivati[r.id]?.punti;

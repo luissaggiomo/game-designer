@@ -12,7 +12,9 @@ describe("simulatore", { timeout: 30_000 }, () => {
       for (let seme = 1; seme <= 10; seme++) {
         const d = simulaPartita(n, seme, ambiente);
         expect(d.dettaglio).toHaveLength(n);
-        expect(d.votazioni).toHaveLength(10); // scaletta 2-3-3-2
+        expect(d.votazioni).toHaveLength(4); // un voto del pacchetto a trimestre (D-068)
+        expect(d.votazioni.every((x) => x.costo >= ambiente.config.proposte.investimentoMinimo && x.costo <= x.cassa)).toBe(true);
+        expect(d.equita.violazioni).toBe(0);
         expect(["AZIENDA", "CONCORRENTE", "PAREGGIO"]).toContain(d.mercato);
       }
     }

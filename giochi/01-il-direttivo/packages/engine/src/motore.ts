@@ -12,7 +12,7 @@ import { chiudiSceltaObiettivi, scegliObiettivo } from "./obiettivi.js";
 import { registraMossa } from "./risoluzione.js";
 import { inviaMessaggio, passaAlConcorrente } from "./segreti.js";
 import type { Partita } from "./tipi.js";
-import { chiudiVotazione, registraVoto } from "./votazioni.js";
+import { chiudiSecondoVoto, chiudiVotoPacchetto, votaPacchetto, votaSecondo } from "./votazioni.js";
 
 export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): Esito {
   switch (azione.tipo) {
@@ -20,8 +20,10 @@ export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): E
       return avanzaFase(partita, ambiente);
     case "SCEGLI_OBIETTIVO":
       return scegliObiettivo(partita, azione);
+    case "VOTA_PACCHETTO":
+      return votaPacchetto(partita, azione);
     case "VOTA":
-      return registraVoto(partita, azione);
+      return votaSecondo(partita, azione);
     case "MOSSA_PRIVATA":
       return registraMossa(partita, azione);
     case "INVIA_MESSAGGIO":
@@ -40,8 +42,10 @@ function chiudiFase(partita: Partita, ambiente: Ambiente): Evento[] {
   switch (partita.fase.nome) {
     case "SCELTA_OBIETTIVI":
       return chiudiSceltaObiettivi(partita, ambiente);
-    case "VOTAZIONE":
-      return chiudiVotazione(partita, ambiente);
+    case "VOTO_PACCHETTO":
+      return chiudiVotoPacchetto(partita, ambiente);
+    case "SECONDO_VOTO":
+      return chiudiSecondoVoto(partita, ambiente);
     case "DOMANDA":
       return chiudiDomanda(partita, ambiente);
     case "NOMINA":

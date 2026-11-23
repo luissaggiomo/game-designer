@@ -3,6 +3,37 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-23 — 0.2.17
+
+### Design
+- Approvati da Luis i dettagli di D-057 («Intermediario»), D-061 (quale segreto è arrivato, conteggio subito nel 4° trimestre, «Squadra» riscritti, avviso "potrebbero esserci spie" con 8 giocatori) e D-062 (conversione dei costi).
+- D-063 (provvisoria): un turno di ballottaggio **senza nessun voto** si ripete una volta; se resta vuoto, nessun licenziamento (prima: due turni vuoti licenziavano entrambi i candidati).
+- D-064: poteri speciali dei reparti rinviati a dopo le prime serate.
+- D-065…D-067 (prototipo): bot = robot del simulatore con opzione "bot spia sì/no" e carattere rivelato a fine partita; timer in config con chiusura anticipata, pausa e avanti; prime prove sul PC di Luis in rete locale.
+- D-068…D-071 (provvisorie, solo nel GDD: il codice segue): **voto del trimestre a pacchetti** — tre proposte 30/50/80, discussione di X minuti, voto segreto del pacchetto (almeno 51 K, entro la cassa), una testa un voto, maggioranza dei membri, altrimenti secondo voto sul più votato con alternativa coperta; cassa senza tetto; **algoritmo di equità** (stessi bonus e malus per reparto sulle 12 carte, ±1); **valore proporzionale al costo**; obiettivi e quesiti da riscrivere a regole fissate. Nuovi punti aperti 32 (scadenza dei segreti) e 33 (riscrittura).
+- D-072…D-074 (provvisorie, solo nel GDD): segreti con **scadenza a fine del trimestre successivo** (anche per la spia), **4° trimestre senza nuovi segreti**, **catena minima** di X colleghi (1-1-2-2-2) con passaggi mancanti e destinatari già serviti disattivati, **un segreto vero e uno finto** a trimestre (quello della spia è sempre il finto), arrivi annunciati per ogni versione, valore contato alla scadenza.
+- D-075: l'equilibrio della spia si misura su 1/N (vittorie neutre); da ricontrollare la spia prima in classifica con 4 giocatori (34%).
+- D-076 (provvisoria): approvata la riscrittura di 16 obiettivi personali per il voto del pacchetto (da implementare e tarare).
+- D-077 (provvisoria): quesiti con quattro famiglie di schemi per costo (buon affare, investimento, neutro, spreco), coerenti con le frasi di spiegazione (da implementare).
+- GDD §20: punto 4 allineato a D-054/D-056; punti 5, 6, 11, 18, 24 aggiornati.
+
+### Aggiunto
+- Tredicesimo report (docs/simulazioni/2026-11-23-simulazione-13.md); `crescitaMediaProposteESegreti` ritarata a 3,41 (D-056).
+- Motore: **voto del pacchetto** (fasi DISCUSSIONE, VOTO_PACCHETTO, SECONDO_VOTO; azione VOTA_PACCHETTO; eventi VOTO_PACCHETTO_CHIUSO, SECONDO_VOTO_APERTO, SECONDO_VOTO_CHIUSO), **algoritmo di equità** delle 12 carte (`proposte.ts`: assegnazione golosa + scalata, carte compatibili con i reparti smistati, nuove serie se serve; 3000 partite di prova tutte in tolleranza), **segreti vero/finto** con ruoli equilibrati, catena minima, scadenza e valore contato alla scadenza (evento SEGRETO_ARRIVATO).
+- Viste: voto del pacchetto (voti rivelati alla chiusura, alternativa mai), passaggi mancanti e colleghi già serviti sui segreti, "finto" solo per la spia sui propri.
+- Test: voto del pacchetto, equità delle carte, segreti (riscritti); riservatezza estesa a carte, alternativa e finti. 176 test.
+- `schemi.json`: 12 schemi provvisori proporzionali al costo (D-070, D-071), assegnati ai quesiti a rotazione; controllo automatico dei totali di bonus e malus per costo.
+
+### Modificato
+- `config.json`: `proposte` (costi, investimento minimo 51, valore per costo, equità) al posto di `votazioniPerTrimestre`; cassa senza tetto; segreti con `ultimoTrimestre`, `passaggiMinimi` e probabilità dei tipi (al posto del limite "mai due da custodire").
+- Simulatore: robot che votano il pacchetto (interesse del reparto; il cooperativo preferisce investire di più) e il secondo voto, fanno avanzare i segreti lungo la catena scegliendo il collega di cui si fidano di più; la spia evita il finto noto e "scommette" solo a volte sugli altri. Report: sezioni "Cassa e voto del pacchetto", equità delle carte, segreti veri/finti.
+
+### Corretto
+- Motore: ballottaggio senza voti (D-063), con tre nuovi test.
+
+### Rimosso
+- Pesi dei reparti, scaletta 2-3-3-2, favoriti, tetto della cassa, collegamento segreto → votazione, etichetta "dato certo".
+
 ## 2026-11-23 — 0.2.16
 
 ### Design

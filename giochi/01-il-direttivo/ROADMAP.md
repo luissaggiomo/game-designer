@@ -19,15 +19,20 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 ## Fase 2 · Motore e simulazione
 - ✅ Impianto del codice (pacchetti, test, controllo tipi) — 22/11/2026
 - ✅ Motore: stato, azioni, macchina a stati delle fasi — 22/11/2026 (sotto-fasi del finale insieme alle regole del finale)
-- ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (segnaposto), segreti e messaggi
+- ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (D-054, D-056), segreti e messaggi
 - ✅ Finale "Rinnovo dei contratti" e punteggio (D-058, D-059; demansionamento eliminato, D-057)
 - ✅ Viste filtrate + test di riservatezza (partite casuali da 4 a 8 giocatori, controllo a ogni passo)
 - 🔄 Contenuti in JSON — quesiti: 40 veri con due versioni ciascuno (D-030…D-034, D-045) ✅; segreti: 36 veri (D-035…D-039) ✅; obiettivi personali: 34 con regole di verifica (D-046…D-055) ✅, soglie di messaggi e segreti ⚖️ da tarare nelle serate
-- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-23-simulazione-12.md (1 avviso: soglie degli obiettivi su messaggi e segreti, da tarare nelle serate)
-- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-062 — in corso (dodicesimo report, dopo la semplificazione D-057…D-062: spia vincente 18–32% con una spia, 40–45% con due; il finale dipende molto da quanto facilmente si risponde "sì, c'è una spia", da osservare nelle serate; la cassa resta poco vincolante)
+- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-23-simulazione-13.md (avviso atteso: obiettivi da riscrivere, D-071)
+- 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-062 — in corso (dodicesimo report, dopo la semplificazione D-057…D-062: spia vincente 18–32% con una spia, 40–45% con due; il finale dipende molto da quanto facilmente si risponde "sì, c'è una spia", da osservare nelle serate; la cassa resta poco vincolante → D-068)
+- ✅ Voto del trimestre a pacchetti, equità delle carte, segreti vero/finto con catena e scadenza (D-063…D-074) — nel motore, nei robot e nel tredicesimo report; concorrente ritarato (3,41)
+- ✅ Equilibrio spie: metro 1/N, risultati in linea (D-075); da ricontrollare la spia prima in classifica con 4 giocatori (34%)
+- ⬜ Implementare obiettivi riscritti (D-076) e famiglie di schemi dei quesiti (D-077), tarare le soglie, quattordicesimo report
+- ⬜ Cancello fase 2 → 3
 
 ## Fase 3 · Prototipo locale giocabile
-- ⬜ Scelta hosting (DG-006)
+- ✅ Bot, timer e prove in locale decisi (D-065…D-067); poteri speciali rinviati (D-064)
+- ⬜ Scelta hosting (DG-006) — prima della serata con altre persone
 - ⬜ Server, stanze, QR, riconnessione
 - ⬜ Prova di compatibilità su dispositivi reali: smart TV, chiavetta, iPhone, Android (D-004)
 - ⬜ Schermata TV e schermata telefono
