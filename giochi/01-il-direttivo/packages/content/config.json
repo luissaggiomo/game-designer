@@ -29,11 +29,11 @@
     "finoA7Giocatori": 1,
     "con8Giocatori": 2,
     "nomi": ["Concorrente A", "Concorrente B"],
-    "crescitaBase": 2.4,
-    "crescitaPerGiocatore": 0.1,
-    "eventoCasuale": [-1, 0, 1, 2]
+    "quotaAziendalistaRiferimento": 0.45,
+    "crescitaMediaProposteESegreti": 2.93,
+    "eventoCasuale": [-1, 0, 1]
   },
-  "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6). Crescita a trimestre = crescitaBase + crescitaPerGiocatore × numero di giocatori (la parte decimale diventa +1 con quella probabilità) + evento casuale: la parte per giocatore compensa il fatto che le mosse private pesano di più con più giocatori.",
+  "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6). D-056: il concorrente avanza quanto l'azienda media. Crescita a trimestre = numero di giocatori × effetto medio della mossa privata se la quota 'quotaAziendalistaRiferimento' sceglie per l'azienda (con i valori attuali 0,45 → −0,1 a testa; scelta di Luis, era 0,55) + 'crescitaMediaProposteESegreti' (effetto medio per trimestre di proposte approvate e segreti arrivati in tempo, misurato col simulatore: sezione 'Crescita dell'azienda' del report) + evento casuale (a media zero: −1 / 0 / +1); la parte decimale diventa +1 con quella probabilità. ⚖️",
   "messaggi": {
     "perTrimestre": 2,
     "perTrimestreDemansionato": 1,
@@ -44,14 +44,14 @@
   "_messaggi": "GDD §10, §13.2. costoAnonimo: l'anonimo costa entrambi i messaggi; il demansionato non può mandare anonimi (D-021). quando: DAL_RAPPORTO_ALLE_VOTAZIONI oppure TUTTO_IL_TRIMESTRE (D-021, da valutare giocando).",
   "segreti": {
     "perTrimestre": 2,
-    "penalitaFalsoConcorrente": 2,
+    "penalitaFalsoConcorrente": 4,
     "tipi": {
       "DA_FAR_GIRARE": { "azienda": 2, "concorrente": 1, "puntiSpia": 1 },
-      "NORMALE": { "azienda": 1, "concorrente": 1, "puntiSpia": 2 },
-      "DA_CUSTODIRE": { "azienda": 1, "concorrente": 2, "puntiSpia": 3, "massimoPerTrimestre": 1 }
+      "NORMALE": { "azienda": 1, "concorrente": 2, "puntiSpia": 2 },
+      "DA_CUSTODIRE": { "azienda": 1, "concorrente": 3, "puntiSpia": 3, "massimoPerTrimestre": 1 }
     }
   },
-  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso. Tipi «a bilancia» (D-038): quanto vale il segreto per l'azienda se arriva in tempo al reparto utile, per il concorrente se esce, e i punti alla spia se il concorrente lo usa; 'massimoPerTrimestre' = mai due 'da custodire' nello stesso trimestre (D-039). Fonte e reparto utile si scelgono alla distribuzione, con fonti bilanciate tra i reparti (D-023, D-005). D-054: valore per il concorrente ridotto a 1 / 1 / 2 (era 1 / 2 / 3) per frenare le spie; i punti alla spia restano 1 / 2 / 3.",
+  "_segreti": "GDD §11, Architettura §10.5. SEGNAPOSTO da tarare: segreti distribuiti a trimestre, penalità del concorrente per un segreto falso. Tipi «a bilancia» (D-038): quanto vale il segreto per l'azienda se arriva in tempo al reparto utile, per il concorrente se esce, e i punti alla spia se il concorrente lo usa; 'massimoPerTrimestre' = mai due 'da custodire' nello stesso trimestre (D-039). Fonte e reparto utile si scelgono alla distribuzione, con fonti bilanciate tra i reparti (D-023, D-005). D-056: valore per il concorrente 1 / 2 / 3 (ripristinato dopo D-054) e penalità per un dato falso 4 (era 2).",
   "quesitiConAstensione": { "quotaDelMazzo": 0.15 },
   "_quesitiConAstensione": "D-013",
   "finale": { "rispostaVerificaPredefinita": "SI" },

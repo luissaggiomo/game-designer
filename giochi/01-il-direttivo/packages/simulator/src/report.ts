@@ -161,6 +161,17 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
   const trimestriConRicarica = partite.reduce((s, p) => s + Math.max(0, p.cassaInizioTrimestre.length - 1), 0);
   sezioni.push(`\nTetto della cassa (150 K) raggiunto in ${pct(partite.reduce((s, p) => s + p.tettoRaggiunto, 0), trimestriConRicarica)} dei trimestri 2–4.`);
 
+  // 5b. Crescita dell'azienda (D-056): serve a tarare la velocità del concorrente.
+  sezioni.push("\n### Crescita dell'azienda da proposte e segreti (D-056)\n\nEffetto medio per trimestre delle proposte approvate e dei segreti arrivati in tempo, nelle partite **senza spie**: è il valore da usare per `concorrenti.crescitaMediaProposteESegreti`.\n");
+  const righeCrescita = numeri.map((n) => {
+    const g = perN(n).filter((p) => p.spie === 0);
+    const valori = g.flatMap((p) => p.crescitaProposteESegreti);
+    return [n, g.length, dec(media(valori), 2)];
+  });
+  sezioni.push(tabella(["Giocatori", "Partite senza spie", "Proposte + segreti a trimestre"], righeCrescita));
+  const tutteSenzaSpie = partite.filter((p) => p.spie === 0).flatMap((p) => p.crescitaProposteESegreti);
+  sezioni.push(`\nMedia generale: **${dec(media(tutteSenzaSpie), 2)}** a trimestre.`);
+
   // 6. Segreti.
   sezioni.push("\n## 6. Segreti\n");
   const seg = partite.map((p) => p.segreti);

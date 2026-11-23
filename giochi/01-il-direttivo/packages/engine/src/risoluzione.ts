@@ -39,8 +39,14 @@ export function risolviTrimestre(partita: Partita, ambiente: Ambiente): Evento[]
   };
 
   eventi.push(risolviMossePrivate(partita, ambiente, casuale));
+  const quotaDopoMosse = partita.azienda.quota;
   eventi.push(...applicaEffettiProposte(partita, ambiente));
+  const quotaDopoProposte = partita.azienda.quota;
   eventi.push(...risolviSegreti(partita, ambiente));
+  // Storico (solo server): quanto hanno reso all'azienda proposte e segreti (D-056).
+  const registro = partita.storicoTrimestri.at(-1)!;
+  registro.effettoProposte = quotaDopoProposte - quotaDopoMosse;
+  registro.effettoSegreti = partita.azienda.quota - quotaDopoProposte;
   eventi.push(...muoviConcorrenti(partita, ambiente, casuale));
 
   const concorrenti: Record<string, number> = {};
@@ -144,10 +150,13 @@ function applicaEffettiProposte(partita: Partita, ambiente: Ambiente): Evento[] 
 }
 
 function muoviConcorrenti(partita: Partita, ambiente: Ambiente, casuale: Casuale): Evento[] {
-  const { crescitaBase, crescitaPerGiocatore, eventoCasuale } = ambiente.config.concorrenti;
-  // Crescita attesa = base + per giocatore × giocatori; la parte decimale diventa +1 con quella probabilità
-  // (arrotondamento "a probabilità": niente gradini tra un numero di giocatori e l'altro).
-  const attesa = crescitaBase + crescitaPerGiocatore * partita.giocatori.length;
+  const { quotaAziendalistaRiferimento: q, crescitaMediaProposteESegreti, eventoCasuale } = ambiente.config.concorrenti;
+  // D-056: il concorrente avanza quanto l'azienda media, cioè un direttivo che sceglie "per l'azienda"
+  // nella quota q dei casi: effetto medio della mossa privata per giocatore, più l'effetto medio di
+  // proposte e segreti. La parte decimale diventa +1 con quella probabilità (niente gradini).
+  const { azienda, reparto } = ambiente.config.mossaPrivata;
+  const perGiocatore = q * azienda.deltaAzienda + (1 - q) * reparto.deltaAzienda;
+  const attesa = Math.max(0, crescitaMediaProposteESegreti + perGiocatore * partita.giocatori.length);
   return partita.concorrenti.map((c) => {
     const crescita = Math.floor(attesa) + (casuale.probabilita(attesa - Math.floor(attesa)) ? 1 : 0);
     const evento = casuale.scegli(eventoCasuale);

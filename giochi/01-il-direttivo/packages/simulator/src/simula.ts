@@ -66,6 +66,8 @@ export interface DatiPartita {
   /** Cassa dopo l'ultima votazione di ogni trimestre e minima dopo le votazioni (obiettivi sulla cassa). */
   cassaFineTrimestre: number[];
   cassaMinimaDopoVoti: number;
+  /** Per trimestre: effetto sull'azienda di proposte approvate e segreti arrivati in tempo (D-056). */
+  crescitaProposteESegreti: number[];
   tettoRaggiunto: number;
   demansionamenti: { trimestre: number; spia: boolean }[];
   segreti: { totali: number; inTempo: number; passati: number; passatiFalsi: number };
@@ -98,7 +100,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     robot.set(g.id, new Robot(g.id, profilo, ambiente, creaCasuale(casuale.intero(1, 2 ** 31))));
   }
 
-  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti"> & { mosse: DatiPartita["mosse"] } = {
+  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti" | "crescitaProposteESegreti"> & { mosse: DatiPartita["mosse"] } = {
     giocatori: n,
     seme,
     spie: 0,
@@ -196,6 +198,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     mercato,
     cassaFineTrimestre: p.storicoTrimestri.map((t) => t.cassaFine),
     cassaMinimaDopoVoti: Math.min(...p.storicoVotazioni.map((r) => r.cassaDopo)),
+    crescitaProposteESegreti: p.storicoTrimestri.map((t) => (t.effettoProposte ?? 0) + (t.effettoSegreti ?? 0)),
     ...(spie.length > 0
       ? {
           vincitoreFazione: spie.some((s) => {

@@ -26,8 +26,10 @@ export interface Configurazione {
     finoA7Giocatori: number;
     con8Giocatori: number;
     nomi: string[];
-    crescitaBase: number;
-    crescitaPerGiocatore: number;
+    /** Quota di scelte "per l'azienda" del direttivo di riferimento (D-056). */
+    quotaAziendalistaRiferimento: number;
+    /** Effetto medio per trimestre di proposte approvate e segreti arrivati in tempo (D-056, dal simulatore). */
+    crescitaMediaProposteESegreti: number;
     eventoCasuale: number[];
   };
   messaggi: {
@@ -141,6 +143,7 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("autogestione.probabilitaMossaAzienda", c.autogestione.probabilitaMossaAzienda);
   probabilita("selezione.fattoreStessaCategoria", c.selezione.fattoreStessaCategoria);
   probabilita("selezione.probabilitaAlternativa", c.selezione.probabilitaAlternativa);
+  probabilita("concorrenti.quotaAziendalistaRiferimento", c.concorrenti.quotaAziendalistaRiferimento);
   const tipiObiettivi = Object.keys(c.obiettivi?.punti ?? {});
   if (tipiObiettivi.length !== c.obiettivi?.proposti) problemi.push("obiettivi: servono i punti di tanti tipi quanti sono gli obiettivi proposti (uno per tipo)");
   for (const [tipo, punti] of Object.entries(c.obiettivi?.punti ?? {})) {

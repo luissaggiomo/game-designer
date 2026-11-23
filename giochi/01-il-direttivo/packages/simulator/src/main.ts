@@ -4,8 +4,8 @@
  *   corepack pnpm simula                       → 1000 partite per ogni numero di giocatori (4–8)
  *   corepack pnpm simula -- --partite 200      → meno partite (più veloce)
  *   corepack pnpm simula -- --giocatori 5      → solo partite a 5 giocatori
- *   corepack pnpm simula -- --base 2.4 --pergiocatore 0.1   → prova una crescita dei concorrenti diversa
- *                                                 da config.json (senza modificarlo)
+ *   corepack pnpm simula -- --base 2.4 --quota 0.55   → prova una crescita dei concorrenti diversa
+ *                                                 da config.json (senza modificarlo, D-056)
  *   corepack pnpm simula -- --uscita prova     → scrive prova.md, prova-partite.csv, prova-giocatori.csv
  *
  * Risultati in packages/simulator/output/: report.md (da leggere), partite.csv e giocatori.csv (per Excel).
@@ -30,11 +30,15 @@ const semeIniziale = Number(argomento("seme", "1"));
 
 const ambiente = caricaAmbiente();
 // Prova di una crescita dei concorrenti diversa (solo simulazione normale; nello studio --base è un elenco).
-if (!studio && (process.argv.includes("--base") || process.argv.includes("--pergiocatore"))) {
+if (!studio && (process.argv.includes("--base") || process.argv.includes("--quota"))) {
   const c = ambiente.config.concorrenti;
   ambiente.config = {
     ...ambiente.config,
-    concorrenti: { ...c, crescitaBase: Number(argomento("base", String(c.crescitaBase))), crescitaPerGiocatore: Number(argomento("pergiocatore", String(c.crescitaPerGiocatore))) },
+    concorrenti: {
+      ...c,
+      crescitaMediaProposteESegreti: Number(argomento("base", String(c.crescitaMediaProposteESegreti))),
+      quotaAziendalistaRiferimento: Number(argomento("quota", String(c.quotaAziendalistaRiferimento))),
+    },
   };
 }
 const nomeUscita = argomento("uscita", "report");
@@ -44,7 +48,7 @@ mkdirSync(cartella, { recursive: true });
 
 if (studio) {
   const elenco = (nome: string, predefinito: string) => argomento(nome, predefinito).split(",").map(Number);
-  const griglia = { crescitaBase: elenco("base", "1,2,3"), crescitaPerGiocatore: elenco("pergiocatore", "0,0.25,0.5,0.75") };
+  const griglia = { crescitaBase: elenco("base", "1,2,3"), quota: elenco("quota", "0.5,0.55,0.6") };
   const t0 = Date.now();
   const righe = studioConcorrenti(ambiente, griglia, partitePerN, giocatori);
   const durata = ((Date.now() - t0) / 1000).toFixed(0);
@@ -61,7 +65,7 @@ for (const n of giocatori) {
 }
 const secondi = ((Date.now() - inizio) / 1000).toFixed(1);
 
-const crescita = `Crescita dei concorrenti: ${ambiente.config.concorrenti.crescitaBase} + ${ambiente.config.concorrenti.crescitaPerGiocatore} × giocatori.`;
+const crescita = `Concorrenti (D-056): direttivo di riferimento al ${Math.round(ambiente.config.concorrenti.quotaAziendalistaRiferimento * 100)}% di scelte aziendaliste, effetto medio di proposte e segreti ${ambiente.config.concorrenti.crescitaMediaProposteESegreti} a trimestre.`;
 const intestazione = `${crescita} ${risultati.length} partite simulate (${partitePerN} per ciascun numero di giocatori: ${giocatori.join(", ")}), semi da ${semeIniziale}. Durata: ${secondi} s. Data: ${new Date().toISOString().slice(0, 10)}.`;
 const { markdown, avvisi } = creaReport(risultati, intestazione, ambiente);
 const csv = creaCsv(risultati);

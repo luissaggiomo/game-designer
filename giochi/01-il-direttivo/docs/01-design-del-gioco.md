@@ -398,14 +398,14 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 ✅ *(provvisorio — D-021)* Quando succede, la TV dice solo *"Un'informazione è arrivata in tempo al reparto giusto"*, **senza dire quale e senza il numero** *(D-038: il "+N" rivelerebbe il tipo del segreto)*; la quota di mercato si aggiorna comunque.
 ✅ *(provvisorio — D-021)* La spia può passare un segreto al concorrente **solo nel trimestre in cui è uscito**; l'effetto si vede ai Risultati, e la TV dice quale segreto il concorrente ha usato (§11.3).
 ✅ *(D-005, D-024)* **Fonte e reparto utile di ogni segreto si scelgono al momento della distribuzione**, tra i reparti con un direttore attivo (come i quesiti, D-023); le fonti si distribuiscono in modo equilibrato. Chi possiede una copia vede a quale reparto serve.
-⚖️ Da tarare: 2 segreti a trimestre, penalità 2 per il concorrente che usa un dato falso.
+⚖️ Da tarare: 2 segreti a trimestre, penalità **4** per il concorrente che usa un dato falso *(D-056, era 2: "forti rallentamenti")*.
 ✅ *(provvisorio, numeri ⚖️ da verificare col simulatore — D-035…D-039)* **Lista dei segreti e loro valore:** 36 segreti con titoli "da corridoio aziendale" (nessun reparto nel titolo); 28 escono in qualsiasi trimestre, 4 solo in T1–T2, 4 solo in T3–T4. Ogni scheda porta scritto il suo **tipo "a bilancia"**:
 
 | Tipo | Azienda se arriva in tempo | Concorrente se esce | Punti alla spia se usato |
 |---|---|---|---|
 | Da far girare | +2 | +1 | 1 |
-| Normale | +1 | +1 *(D-054, era +2)* | 2 |
-| Da custodire | +1 | +2 *(D-054, era +3)* | 3 |
+| Normale | +1 | +2 *(D-056: ripristinato dopo D-054)* | 2 |
+| Da custodire | +1 | +3 *(D-056: ripristinato dopo D-054)* | 3 |
 
 Mai due "da custodire" nello stesso trimestre. Lista completa: [contenuti/segreti.md](contenuti/segreti.md).
 ✅ *(provvisorio, da verificare col simulatore — D-015)* **Provenienza visibile:**
@@ -422,7 +422,7 @@ Mai due "da custodire" nello stesso trimestre. Lista completa: [contenuti/segret
 ✅ *(provvisorio, da verificare col simulatore — D-011)* **1 concorrente da 4 a 7 giocatori, 2 concorrenti con 8.** Il numero dipende solo dal numero di giocatori, così non rivela quante spie ci sono.
 ✅ *(provvisorio — D-011)* **Il concorrente di una spia vince se a fine anno supera l'azienda**, anche se non supera l'altro concorrente. Con due spie rivali possono quindi vincere entrambe.
 
-✅ *(provvisorio, ⚖️ — D-054)* Il concorrente deve faticare a battere l'azienda: crescita base ridotta (2,4 a trimestre più 0,1 per giocatore) e segreti che gli rendono meno (tabella §11.5). La vittoria dell'azienda senza spie non è un obiettivo di taratura: ogni giocatore punta a vincere personalmente.
+✅ *(provvisorio, ⚖️ — D-054, D-056)* **Il concorrente avanza quanto l'azienda media**: a ogni trimestre cresce quanto crescerebbe l'azienda se il direttivo facesse il **45%** ⚖️ di scelte aziendaliste (effetto medio delle mosse private, delle proposte approvate e dei segreti arrivati in tempo), più un evento casuale. Accelera con i segreti veri ricevuti dalle spie (+1 / +2 / +3) e frena forte con quelli falsi (−4). Senza spie, quindi, l'azienda vince se gioca per l'azienda più del 45% delle volte. La vittoria dell'azienda senza spie non è un obiettivo di taratura: ogni giocatore punta a vincere personalmente (D-054).
 
 🔴 Da definire:
 - il comportamento di base: crescita propria, eventi, casualità;

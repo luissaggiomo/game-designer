@@ -3,6 +3,20 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-23 — 0.2.15
+
+### Design
+- D-056 (provvisoria): il concorrente avanza quanto l'azienda media al **45%** di scelte aziendaliste (scelta di Luis dopo le prove a 55 / 50 / 45%): parte dei giocatori + effetto medio di proposte e segreti (2,93 a trimestre) + evento casuale −1 / 0 / +1; segreti veri +1 / +2 / +3, falsi −4. D-054: corretta la nota di verifica.
+
+### Aggiunto
+- Undicesimo report (docs/simulazioni/2026-11-23-simulazione-11.md): spia vincente con una spia 15–25% (era 28–35%), con due spie 34–39% (era 53–57%).
+- Simulatore: sezione "Crescita dell'azienda da proposte e segreti" (misura il valore da usare per il concorrente) e opzione `--quota` per provare un'altra quota di riferimento.
+
+### Modificato
+- `config.json`: `concorrenti.quotaAziendalistaRiferimento` (0,45) e `crescitaMediaProposteESegreti` (2,93) al posto di `crescitaBase` / `crescitaPerGiocatore`; evento casuale −1 / 0 / +1; segreti per il concorrente 1 / 2 / 3, penalità del falso 4.
+- Motore: nuova formula di crescita del concorrente; lo storico dei trimestri registra l'effetto di proposte e segreti.
+- Simulatore: lo studio dei concorrenti prova crescita base × quota.
+
 ## 2026-11-23 — 0.2.14
 
 ### Design

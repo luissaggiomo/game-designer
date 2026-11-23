@@ -427,10 +427,12 @@ USO DA PARTE DI UNA SPIA (PASSA_AL_CONCORRENTE):
 ### 10.6 Concorrenti
 ```
 a ogni RISOLUZIONE, per ogni concorrente:
-  quota += crescitaBase (es. 1)
-         + evento casuale (dal mazzo eventi concorrente, es. −1..+2)
-         + effetti dei segreti ricevuti in questo trimestre
-         − penalità per segreti falsi
+  quota += crescita media dell'azienda (D-056):
+              numero giocatori × [q × deltaAzienda "per l'azienda" + (1−q) × deltaAzienda "per il reparto"]
+              + crescitaMediaProposteESegreti        (q = quotaAziendalistaRiferimento, 0,45)
+         + evento casuale (−1 / 0 / +1, media zero)
+         + effetti dei segreti veri ricevuti in questo trimestre (+1 / +2 / +3)
+         − penalità per segreti falsi (4)
          + reazione: se l'azienda ha approvato una proposta di "attacco", −1
   Marketing (se attivo) riceve in anticipo l'anteprima di una mossa concorrente
 ```

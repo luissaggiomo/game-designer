@@ -188,6 +188,9 @@ export interface RegistroTrimestre {
   cassaInizio: number;
   /** Cassa dopo l'ultima votazione del trimestre. */
   cassaFine: number;
+  /** Quanto hanno reso all'azienda le proposte approvate e i segreti arrivati in tempo (D-056). */
+  effettoProposte?: number;
+  effettoSegreti?: number;
 }
 
 /** "Momento" di un voto personale: il numero del trimestre (fase 6) oppure il finale. */

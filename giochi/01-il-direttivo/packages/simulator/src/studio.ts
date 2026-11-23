@@ -17,7 +17,7 @@ import { simulaPartita, type DatiPartita } from "./simula.js";
 
 export interface RigaStudio {
   crescitaBase: number;
-  crescitaPerGiocatore: number;
+  quota: number;
   vittoriaAzienda: number;
   vittoriaPerN: Record<number, number>;
   quotaMediaAziendaliste: number;
@@ -26,19 +26,19 @@ export interface RigaStudio {
 
 export function studioConcorrenti(
   base: Ambiente,
-  griglia: { crescitaBase: number[]; crescitaPerGiocatore: number[] },
+  griglia: { crescitaBase: number[]; quota: number[] },
   partitePerN: number,
   giocatori: number[],
 ): RigaStudio[] {
   const righe: RigaStudio[] = [];
   for (const crescitaBase of griglia.crescitaBase) {
-    for (const crescitaPerGiocatore of griglia.crescitaPerGiocatore) {
+    for (const quota of griglia.quota) {
       const ambiente: Ambiente = {
         ...base,
         config: {
           ...base.config,
           spie: { ...base.config.spie, probabilitaNessunaSpia: 1 }, // solo partite senza spie
-          concorrenti: { ...base.config.concorrenti, crescitaBase, crescitaPerGiocatore },
+          concorrenti: { ...base.config.concorrenti, crescitaMediaProposteESegreti: crescitaBase, quotaAziendalistaRiferimento: quota },
         },
       };
       const normali: DatiPartita[] = [];
@@ -54,13 +54,13 @@ export function studioConcorrenti(
       for (const n of giocatori) vittoriaPerN[n] = vince(normali.filter((p) => p.giocatori === n));
       righe.push({
         crescitaBase,
-        crescitaPerGiocatore,
+        quota,
         vittoriaAzienda: vince(normali),
         vittoriaPerN,
         quotaMediaAziendaliste: normali.reduce((s, p) => s + p.mosse.aziendaliste, 0) / Math.max(1, normali.reduce((s, p) => s + p.mosse.totali, 0)),
         soglia: stimaSoglia(variabili),
       });
-      console.log(`  crescita ${crescitaBase} + ${crescitaPerGiocatore}×giocatori: azienda ${(vince(normali) * 100).toFixed(0)}%`);
+      console.log(`  proposte e segreti ${crescitaBase}, riferimento ${quota}: azienda ${(vince(normali) * 100).toFixed(0)}%`);
     }
   }
   return righe;
@@ -74,12 +74,12 @@ export function reportStudio(righe: RigaStudio[], intestazione: string): string 
     "# Studio di taratura dei concorrenti — Il Direttivo\n",
     intestazione,
     "\nPartite **senza spie**. Obiettivo: l'azienda vince **circa il 60%** delle volte con il mix normale di giocatori (metà cooperativi, metà egoisti), in modo simile da 4 a 8 giocatori; la **soglia** indica quale quota di scelte \"per l'azienda\" serve per vincere più spesso di quanto si perde.\n",
-    `| Crescita base | Per giocatore | Vince l'azienda | ${giocatori.map((n) => `${n} gioc.`).join(" | ")} | Scelte aziendaliste (media) | Soglia |`,
+    `| Proposte e segreti | Quota di riferimento | Vince l'azienda | ${giocatori.map((n) => `${n} gioc.`).join(" | ")} | Scelte aziendaliste (media) | Soglia |`,
     `|---|---|---|${giocatori.map(() => "---").join("|")}|---|---|`,
     ...righe.map(
       (r) =>
-        `| ${r.crescitaBase} | ${r.crescitaPerGiocatore} | ${pct(r.vittoriaAzienda)} | ${giocatori.map((n) => pct(r.vittoriaPerN[n] ?? 0)).join(" | ")} | ${pct(r.quotaMediaAziendaliste)} | ${r.soglia === null ? "—" : pct(r.soglia)} |`,
+        `| ${r.crescitaBase} | ${r.quota} | ${pct(r.vittoriaAzienda)} | ${giocatori.map((n) => pct(r.vittoriaPerN[n] ?? 0)).join(" | ")} | ${pct(r.quotaMediaAziendaliste)} | ${r.soglia === null ? "—" : pct(r.soglia)} |`,
     ),
-    "\n**Combinazioni più vicine al 60%:** " + migliori.map((r) => `crescita ${r.crescitaBase} + ${r.crescitaPerGiocatore}×giocatori (${pct(r.vittoriaAzienda)}, soglia ${r.soglia === null ? "—" : pct(r.soglia)})`).join(" · "),
+    "\n**Combinazioni più vicine al 60%:** " + migliori.map((r) => `proposte e segreti ${r.crescitaBase}, riferimento ${r.quota} (${pct(r.vittoriaAzienda)}, soglia ${r.soglia === null ? "—" : pct(r.soglia)})`).join(" · "),
   ].join("\n");
 }

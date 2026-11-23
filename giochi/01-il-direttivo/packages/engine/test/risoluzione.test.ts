@@ -14,7 +14,7 @@ function ambienteFisso(modifiche: { autogestione?: Partial<Ambiente["config"]["a
     config: {
       ...base.config,
       mossaPrivata: { ...base.config.mossaPrivata, rumore: [0] },
-      concorrenti: { ...base.config.concorrenti, eventoCasuale: [0], crescitaBase: 1, crescitaPerGiocatore: 0 },
+      concorrenti: { ...base.config.concorrenti, eventoCasuale: [0], crescitaMediaProposteESegreti: 1, quotaAziendalistaRiferimento: 0.5 },
       autogestione: { ...base.config.autogestione, mossaPrivataDemansionati: false, ...modifiche.autogestione },
     },
   };
