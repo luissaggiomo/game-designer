@@ -90,7 +90,7 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     obiettivi: {},
     storicoVotazioni: [],
     storicoTrimestri: [],
-    finale: { verifica: {}, nomine: {}, ballottaggio: [], esitiVerifica: [], licenziamenti: [], storicoNomine: [] },
+    finale: { verifica: {}, nomine: {}, ballottaggio: [], esitiVerifica: [], licenziamenti: [] },
   };
 
   // 5. Obiettivi personali: tre a testa, uno per tipo (D-046, D-049).

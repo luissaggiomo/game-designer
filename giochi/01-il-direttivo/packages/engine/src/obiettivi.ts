@@ -95,6 +95,8 @@ export interface EsitoTraguardo {
   /** Avanzamento (assente se A_FINE_PARTITA). */
   valore?: number;
   soglia: number;
+  /** Traguardo "mai…" / "nessun…" mancato (es. la cassa è scesa sotto il minimo). */
+  violato?: boolean;
 }
 
 /** Valuta i due traguardi dell'obiettivo scelto da un giocatore. */
@@ -114,14 +116,13 @@ export function valutaObiettivo(partita: Partita, ambiente: Ambiente, id: Giocat
       conoscenza,
       ...(t.parametro !== undefined ? { parametro: t.parametro } : {}),
       trimestri: ambiente.config.trimestri,
-      cassaMassima: ambiente.config.cassa.massima,
     });
     const raggiunto = valore >= soglia && !violato;
     let stato: StatoTraguardo;
     if (conoscenza === "COMPLETA") stato = raggiunto ? "RAGGIUNTO" : "NON_RAGGIUNTO";
     else if (violato) stato = "NON_RAGGIUNTO";
     else stato = raggiunto && !misura.soloAFine ? "RAGGIUNTO" : "IN_CORSO";
-    return { ...base, stato, valore };
+    return { ...base, stato, valore, ...(violato ? { violato: true } : {}) };
   });
 }
 

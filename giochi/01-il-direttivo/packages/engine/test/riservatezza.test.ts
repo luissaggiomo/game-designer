@@ -21,7 +21,7 @@ const FASI_FINE = new Set(["PUNTEGGIO", "LETTURA_MESSAGGI", "FINE"]);
 const CHIAVI_VIETATE = [
   "catena", "statoCasuale", "seme", "mossePrivate", "spieTraAttivi", "effettiPrivati", "effettoAzienda", "nomine", "revocata", "possessore",
   // Obiettivi personali e loro storici (solo server, D-047, D-052).
-  "proposti", "storicoVotazioni", "storicoTrimestri", "decisivi", "mosseScelte", "alterataDa", "modificataDalMittente", "storicoNomine", "aziendalista", "misura",
+  "proposti", "storicoVotazioni", "storicoTrimestri", "decisivi", "mosseScelte", "alterataDa", "modificataDalMittente", "aziendalista", "misura",
 ];
 
 /** Identificativi degli obiettivi (es. "T2-07") presenti in un testo. */

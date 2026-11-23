@@ -151,7 +151,7 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 
 ~~🟡 Esempi iniziali~~ *(superati da D-050: niente bersagli precisi come "[Reparto X] demansionato")*.
 
-✅ *(provvisorio, soglie ⚖️ da tarare col simulatore — D-052)* **Lista:** 36 obiettivi, 12 per tipo, di cui 4 aziendalisti per tipo. Regole di verifica: l'avanzamento sul telefono conta solo ciò che il giocatore può già sapere, il resto si verifica a fine partita; contano solo le scelte del giocatore (non voti scaduti, mosse del computer, astensioni); i voti con peso 0 non contano. Lista completa: [contenuti/obiettivi.md](contenuti/obiettivi.md).
+✅ *(provvisorio, soglie ⚖️ da tarare col simulatore — D-052)* **Lista:** 34 obiettivi (12 di tipo 1, 11 di tipo 2, 11 di tipo 3 dopo la ritaratura D-053), di cui 4 aziendalisti per tipo. Regole di verifica: l'avanzamento sul telefono conta solo ciò che il giocatore può già sapere, il resto si verifica a fine partita; contano solo le scelte del giocatore (non voti scaduti, mosse del computer, astensioni); i voti con peso 0 non contano. Lista completa: [contenuti/obiettivi.md](contenuti/obiettivi.md).
 
 ---
 
@@ -404,8 +404,8 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 | Tipo | Azienda se arriva in tempo | Concorrente se esce | Punti alla spia se usato |
 |---|---|---|---|
 | Da far girare | +2 | +1 | 1 |
-| Normale | +1 | +2 | 2 |
-| Da custodire | +1 | +3 | 3 |
+| Normale | +1 | +1 *(D-054, era +2)* | 2 |
+| Da custodire | +1 | +2 *(D-054, era +3)* | 3 |
 
 Mai due "da custodire" nello stesso trimestre. Lista completa: [contenuti/segreti.md](contenuti/segreti.md).
 ✅ *(provvisorio, da verificare col simulatore — D-015)* **Provenienza visibile:**
@@ -421,6 +421,8 @@ Mai due "da custodire" nello stesso trimestre. Lista completa: [contenuti/segret
 ✅ Avanzano grazie ai segreti ricevuti dalle spie, e perdono punti con i segreti falsi.
 ✅ *(provvisorio, da verificare col simulatore — D-011)* **1 concorrente da 4 a 7 giocatori, 2 concorrenti con 8.** Il numero dipende solo dal numero di giocatori, così non rivela quante spie ci sono.
 ✅ *(provvisorio — D-011)* **Il concorrente di una spia vince se a fine anno supera l'azienda**, anche se non supera l'altro concorrente. Con due spie rivali possono quindi vincere entrambe.
+
+✅ *(provvisorio, ⚖️ — D-054)* Il concorrente deve faticare a battere l'azienda: crescita base ridotta (2,4 a trimestre più 0,1 per giocatore) e segreti che gli rendono meno (tabella §11.5). La vittoria dell'azienda senza spie non è un obiettivo di taratura: ogni giocatore punta a vincere personalmente.
 
 🔴 Da definire:
 - il comportamento di base: crescita propria, eventi, casualità;

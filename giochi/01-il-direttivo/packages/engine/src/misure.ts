@@ -23,7 +23,6 @@ export interface ContestoMisura {
   conoscenza: Conoscenza;
   parametro?: number;
   trimestri: number;
-  cassaMassima: number;
 }
 
 export interface ValoreMisura {
@@ -280,10 +279,6 @@ export const MISURE: Record<string, Misura> = {
       return { valore: sotto ? 0 : 1, violato: sotto };
     },
   },
-  CASSA_AL_TETTO_ULTIMO_TRIMESTRE: {
-    // Dall'inizio dell'ultimo trimestre in poi (finale compreso) il trimestre resta l'ultimo.
-    calcola: (c) => conta(c.p.trimestre === c.trimestri && c.p.cassaInizioTrimestre >= c.cassaMassima ? 1 : 0),
-  },
 
   // Demansionamenti e promozioni (pubblici).
   VOTI_PERSONALI_PROPOSTI: {
@@ -291,38 +286,6 @@ export const MISURE: Record<string, Misura> = {
   },
   VOTI_PERSONALI_APPROVATI: {
     calcola: (c) => conta(contaSe(c.p.storicoVotiPersonali, (v) => v.momento !== "FINALE" && v.proponente === c.id && v.approvato)),
-  },
-  MAI_BERSAGLIO_DI_DEMANSIONAMENTO: {
-    soloAFine: true,
-    calcola: (c) => {
-      const inCorso = c.p.votoPersonale?.tipo === "DEMANSIONAMENTO" && c.p.votoPersonale.bersaglio === c.id;
-      const bersaglio = inCorso || c.p.storicoVotiPersonali.some((v) => v.tipo === "DEMANSIONAMENTO" && v.bersaglio === c.id);
-      return { valore: bersaglio ? 0 : 1, violato: bersaglio };
-    },
-  },
-
-  // Finale (pubblico).
-  FINALE_SENZA_ACCUSE: {
-    soloAFine: true,
-    calcola: (c) => {
-      const nominato = c.p.finale.storicoNomine.some((n) => Object.values(n.nomine).includes(c.id));
-      // Nella decisione finale il tempo scaduto vale "licenzia" (D-029): chi non ha votato SÌ conta.
-      const licenzia = c.p.storicoVotiPersonali.some(
-        (v) => v.momento === "FINALE" && v.bersaglio === c.id && c.p.giocatori.some((g) => g.id !== c.id && v.voti[g.id] !== "SI"),
-      );
-      const violato = nominato || licenzia;
-      return { valore: violato ? 0 : 1, violato };
-    },
-  },
-  NO_ALLA_VERIFICA: { calcola: (c) => conta(c.p.finale.esitiVerifica.some((e) => e.votiNo.includes(c.id)) ? 1 : 0) },
-  NOMINA_DOPO_IL_TUO_NO: {
-    calcola: (c) =>
-      conta(
-        contaSe(
-          c.p.finale.esitiVerifica.filter((e) => e.votiNo.includes(c.id)),
-          (e) => c.p.finale.licenziamenti.some((l) => l.giro === e.giro && l.nominatoDa.includes(c.id)),
-        ),
-      ),
   },
 };
 

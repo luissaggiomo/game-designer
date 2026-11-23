@@ -4,6 +4,9 @@
  *   corepack pnpm simula                       → 1000 partite per ogni numero di giocatori (4–8)
  *   corepack pnpm simula -- --partite 200      → meno partite (più veloce)
  *   corepack pnpm simula -- --giocatori 5      → solo partite a 5 giocatori
+ *   corepack pnpm simula -- --base 2.4 --pergiocatore 0.1   → prova una crescita dei concorrenti diversa
+ *                                                 da config.json (senza modificarlo)
+ *   corepack pnpm simula -- --uscita prova     → scrive prova.md, prova-partite.csv, prova-giocatori.csv
  *
  * Risultati in packages/simulator/output/: report.md (da leggere), partite.csv e giocatori.csv (per Excel).
  */
@@ -26,6 +29,16 @@ const giocatori = argomento("giocatori", "4,5,6,7,8").split(",").map(Number);
 const semeIniziale = Number(argomento("seme", "1"));
 
 const ambiente = caricaAmbiente();
+// Prova di una crescita dei concorrenti diversa (solo simulazione normale; nello studio --base è un elenco).
+if (!studio && (process.argv.includes("--base") || process.argv.includes("--pergiocatore"))) {
+  const c = ambiente.config.concorrenti;
+  ambiente.config = {
+    ...ambiente.config,
+    concorrenti: { ...c, crescitaBase: Number(argomento("base", String(c.crescitaBase))), crescitaPerGiocatore: Number(argomento("pergiocatore", String(c.crescitaPerGiocatore))) },
+  };
+}
+const nomeUscita = argomento("uscita", "report");
+const prefissoCsv = nomeUscita === "report" ? "" : `${nomeUscita}-`;
 const cartella = join(dirname(fileURLToPath(import.meta.url)), "..", "output");
 mkdirSync(cartella, { recursive: true });
 
@@ -48,13 +61,14 @@ for (const n of giocatori) {
 }
 const secondi = ((Date.now() - inizio) / 1000).toFixed(1);
 
-const intestazione = `${risultati.length} partite simulate (${partitePerN} per ciascun numero di giocatori: ${giocatori.join(", ")}), semi da ${semeIniziale}. Durata: ${secondi} s. Data: ${new Date().toISOString().slice(0, 10)}.`;
-const { markdown, avvisi } = creaReport(risultati, intestazione);
+const crescita = `Crescita dei concorrenti: ${ambiente.config.concorrenti.crescitaBase} + ${ambiente.config.concorrenti.crescitaPerGiocatore} × giocatori.`;
+const intestazione = `${crescita} ${risultati.length} partite simulate (${partitePerN} per ciascun numero di giocatori: ${giocatori.join(", ")}), semi da ${semeIniziale}. Durata: ${secondi} s. Data: ${new Date().toISOString().slice(0, 10)}.`;
+const { markdown, avvisi } = creaReport(risultati, intestazione, ambiente);
 const csv = creaCsv(risultati);
 
-writeFileSync(join(cartella, "report.md"), markdown, "utf-8");
-writeFileSync(join(cartella, "partite.csv"), csv.partite, "utf-8");
-writeFileSync(join(cartella, "giocatori.csv"), csv.giocatori, "utf-8");
+writeFileSync(join(cartella, `${nomeUscita}.md`), markdown, "utf-8");
+writeFileSync(join(cartella, `${prefissoCsv}partite.csv`), csv.partite, "utf-8");
+writeFileSync(join(cartella, `${prefissoCsv}giocatori.csv`), csv.giocatori, "utf-8");
 
-console.log(`\nFatto in ${secondi} s. Report: ${join(cartella, "report.md")}`);
+console.log(`\nFatto in ${secondi} s. Report: ${join(cartella, `${nomeUscita}.md`)}`);
 console.log(avvisi.length === 0 ? "Nessun avviso." : `Avvisi:\n${avvisi.map((a) => `  ⚠️ ${a.testo}`).join("\n")}`);

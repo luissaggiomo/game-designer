@@ -1,6 +1,7 @@
 # Il Direttivo — Obiettivi personali
 
-> Punto aperto 3 del GDD. Decisioni D-046…D-052 (in `DECISIONI.md`).
+> Punto aperto 3 del GDD. Decisioni D-046…D-053 (in `DECISIONI.md`).
+> D-053 (ritaratura dopo il report 09): soglie ritoccate (indicate con "era …", valore della lista approvata in D-052), rimossi 2.7 Intoccabile e 3.6 Sentinella, sistemati i traguardi invertiti. D-055: seconda taratura delle soglie col simulatore. Gli obiettivi su messaggi, segreti e proposte personali restano da tarare nelle serate.
 > Dati: `packages/content/obiettivi.json` (testi e soglie) · punti in `packages/content/config.json` (`obiettivi.punti`).
 > Soglie ⚖️: si tarano col simulatore (D-051), i punti restano fissi.
 
@@ -39,49 +40,49 @@ Legenda: 👁 visibile agli altri · 🔒 invisibile (lo sa solo il computer) ·
 
 | # | Nome | Obiettivo | Soglie ⚖️ |
 |---|---|---|---|
-| 1.1 | Bastian contrario 👁 | Voti in modo opposto all'esito | 2 / 4 |
-| 1.2 | Ago della bilancia 👁 | Il tuo voto è decisivo | 2 / 4 |
-| 1.3 | Forbici 👁 | Voti NO alla proposta più costosa del trimestre, e viene respinta | 1 / 3 trimestri |
+| 1.1 | Bastian contrario 👁 | Voti in modo opposto all'esito | 3 / 5 *(era 2 / 4)* |
+| 1.2 | Ago della bilancia 👁 | Il tuo voto è decisivo | 3 / 4 *(era 2 / 4)* |
+| 1.3 | Forbici 👁 | Voti NO alla proposta più costosa del trimestre, e viene respinta | 3 / 4 trimestri *(era 1 / 3)* |
 | 1.4 | Passaparola 🔒 | Inoltri copie di segreti ad altri giocatori | 3 / 6 |
 | 1.5 | Falsario 🔒 | Inoltri copie modificate di segreti | 1 / 3 |
 | 1.6 | Centralino ✉️ | Ricevi messaggi da giocatori diversi | metà degli altri / tutti |
 | 1.7 | Confidente 🔒 | Ricevi copie di segreti da giocatori diversi | 2 / 3 |
-| 1.8 | Cassaforte 👁 | Trimestri chiusi con almeno 50 K in cassa | 1 / 3 |
+| 1.8 | Cassaforte 👁 | Trimestri chiusi con almeno 120 K in cassa *(era 50 K)* | 1 / 3 |
 | 1.9 | 🏢 Gioco di squadra 🔒 | Scegli "per l'azienda" nella mossa privata | 3 / 4 trimestri |
-| 1.10 | 🏢 In linea 👁 | Voti come l'esito | 5 / 7 |
-| 1.11 | 🏢 Occhio clinico 👁 | Voti SÌ a proposte che si rivelano positive | 2 / 4 |
+| 1.10 | 🏢 In linea 👁 | Voti come l'esito | 5 / 8 *(era 5 / 7)* |
+| 1.11 | 🏢 Occhio clinico 👁 | Voti SÌ a proposte che si rivelano positive | 1 / 3 *(era 2 / 4)* |
 | 1.12 | 🏢 Postino 🔒 | Copie vere inoltrate da te arrivano in tempo al reparto a cui servono | 1 / 2 |
 
-## Tipo 2 · Doppio (+3 accessibile / +7 impegnativo)
+## Tipo 2 · Doppio (+3 accessibile / +7 impegnativo) — 11 obiettivi
 
 | # | Nome | Facile (+3) | Difficile (+7) |
 |---|---|---|---|
-| 2.1 | Voce critica 👁 | Voti NO a 3 proposte che vengono approvate | Il tuo voto decide il respingimento di 2 proposte |
+| 2.1 | Voce critica 👁 | Il tuo voto decide il respingimento di 2 proposte | Voti NO a 2 proposte che vengono approvate *(scambiati; era 3)* |
 | 2.2 | Riformatore 👁 | Proponi una votazione di demansionamento o di promozione | Una votazione personale proposta da te viene approvata |
 | 2.3 | Archivista 🔒 | Ricevi copie di segreti da 2 giocatori diversi | A fine anno possiedi copie di 5 segreti diversi |
 | 2.4 | Disinformatore 🔒 | Inoltri una copia modificata | Un concorrente usa un dato falso partito da una tua copia modificata |
 | 2.5 | Popolare ✉️ | Ricevi un messaggio anonimo | Ricevi più messaggi di chiunque altro (pari merito vale) |
 | 2.6 | Fantasma ✉️ | Ricevi messaggi da metà degli altri | Mandi un anonimo in tutti e 4 i trimestri |
-| 2.7 | Intoccabile 👁 | Non sei mai bersaglio di una proposta di demansionamento | Chiudi il finale senza nomine e senza voti "licenzia" contro di te |
-| 2.8 | Forbici d'oro 👁 | Voti NO alla proposta più costosa in 2 trimestri | A fine anno la cassa ha almeno 80 K |
-| 2.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 2 trimestri | Nessun trimestre con mossa privata complessiva "in calo" |
-| 2.10 | 🏢 Occhio clinico 👁 | Voti SÌ a 2 proposte positive | Voti NO a 2 proposte approvate che si rivelano dannose |
+| ~~2.7~~ | ~~Intoccabile~~ | *rimosso (D-053): troppo facile* | |
+| 2.8 | Forbici d'oro 👁 | Voti NO alla proposta più costosa in tutti i 4 trimestri *(era 2)* | A fine anno la cassa ha almeno 150 K *(era 80 K)* |
+| 2.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 3 trimestri *(era 2)* | Nessun trimestre con mossa privata complessiva "in calo" |
+| 2.10 | 🏢 Occhio clinico 👁 | Voti SÌ a 2 proposte positive | Voti NO ad almeno 1 proposta approvata che si rivela dannosa *(era 2)* |
 | 2.11 | 🏢 Postino 🔒 | Inoltri una copia vera al reparto a cui serve | 2 segreti arrivano in tempo grazie a te |
-| 2.12 | 🏢 Consenso 👁 | Voti come l'esito 4 volte | Il tuo voto è decisivo per approvare 2 proposte positive |
+| 2.12 | 🏢 Consenso 👁 | Voti come l'esito 6 volte *(era 4)* | Il tuo voto è decisivo per approvare 2 proposte positive |
 
-## Tipo 3 · Doppio (+4 un po' complesso / +6 più impegnativo)
+## Tipo 3 · Doppio (+4 un po' complesso / +6 più impegnativo) — 11 obiettivi
 
 | # | Nome | Facile (+4) | Difficile (+6) |
 |---|---|---|---|
-| 3.1 | Ago d'oro 👁 | Il tuo voto è decisivo in 2 votazioni | Sei decisivo in 3 trimestri diversi |
-| 3.2 | Voce solitaria 👁 | Voti in modo opposto all'esito 3 volte | In 2 votazioni sei l'unico ad aver votato così |
+| 3.1 | Ago d'oro 👁 | Il tuo voto è decisivo in 3 votazioni *(era 2)* | Sei decisivo in 4 trimestri diversi *(era 3)* |
+| 3.2 | Voce solitaria 👁 | Voti in modo opposto all'esito 3 volte | In almeno 1 votazione sei l'unico ad aver votato così *(era 2)* |
 | 3.3 | Rete 🔒 | Un segreto di cui sei fonte arriva ad almeno 2 giocatori | Una copia inoltrata da te passa per almeno 3 giocatori |
 | 3.4 | Canarino 🔒 | Inoltri versioni diverse dello stesso segreto a 2 giocatori | Un concorrente usa una delle tue versioni |
 | 3.5 | Crocevia ✉️ | Ricevi messaggi da tutti gli altri | Ricevi messaggi da almeno 2 giocatori in ogni trimestre |
-| 3.6 | Sentinella 👁 | Rispondi NO alla domanda di verifica | Il tuo NO apre la nomina e il più nominato ha anche il tuo voto |
-| 3.7 | Tesoriere 👁 | La cassa non scende mai sotto 30 K dopo le votazioni | A inizio T4 la cassa è al tetto (150 K) |
-| 3.8 | Controcorrente 👁 | Voti NO a 2 proposte approvate | Voti SÌ a 2 proposte respinte |
-| 3.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 3 trimestri | Mossa privata complessiva "in crescita" in 2 trimestri |
-| 3.10 | 🏢 Occhio clinico 👁 | Voti SÌ a 3 proposte positive | Con almeno 3 SÌ dati, nessuno su una proposta dannosa |
+| ~~3.6~~ | ~~Sentinella~~ | *rimosso (D-053): faceva aprire nomine anche senza spie* | |
+| 3.7 | Tesoriere 👁 | La cassa non scende mai sotto 40 K dopo le votazioni *(era 30 K)* | A fine anno la cassa ha almeno 150 K *(era: al tetto a inizio T4)* |
+| 3.8 | Controcorrente 👁 | Voti SÌ a 2 proposte respinte | Voti NO a 2 proposte approvate *(scambiati)* |
+| 3.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 3 trimestri | Mossa privata complessiva "in crescita" in tutti i 4 trimestri *(era 2)* |
+| 3.10 | 🏢 Occhio clinico 👁 | Voti SÌ ad almeno 1 proposta positiva *(era 3)* | Con almeno 2 SÌ dati, nessuno su una proposta dannosa *(era 3)* |
 | 3.11 | 🏢 Custode 🔒 | Un segreto arriva in tempo grazie a te | Nessun segreto di cui sei fonte finisce a un concorrente (con almeno 2 ricevuti) |
-| 3.12 | 🏢 Maggioranza 👁 | Voti come l'esito in tutte le votazioni di un trimestre da 3 | Voti come l'esito 8 volte |
+| 3.12 | 🏢 Maggioranza 👁 | Voti come l'esito in tutte le votazioni di un trimestre *(era: da 3)* | Voti come l'esito 8 volte |

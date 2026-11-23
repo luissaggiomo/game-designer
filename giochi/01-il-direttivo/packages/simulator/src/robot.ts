@@ -61,7 +61,6 @@ type Intenzione =
   | "CANARINO"
   | "ANONIMO"
   | "PROPONI"
-  | "VERIFICA_NO"
   | "NON_CONSEGNARE_FONTE";
 
 const INTENZIONI: Record<string, Intenzione> = {
@@ -78,7 +77,6 @@ const INTENZIONI: Record<string, Intenzione> = {
   TRIMESTRI_CASSA_MINIMA: "RISPARMIA",
   CASSA_FINE_ANNO: "RISPARMIA",
   CASSA_MAI_SOTTO: "RISPARMIA",
-  CASSA_AL_TETTO_ULTIMO_TRIMESTRE: "RISPARMIA",
   MOSSE_AZIENDA: "MOSSA_AZIENDA",
   TRIMESTRI_NON_IN_CALO: "MOSSA_AZIENDA",
   TRIMESTRI_IN_CRESCITA: "MOSSA_AZIENDA",
@@ -94,8 +92,6 @@ const INTENZIONI: Record<string, Intenzione> = {
   TRIMESTRI_CON_ANONIMO_INVIATO: "ANONIMO",
   VOTI_PERSONALI_PROPOSTI: "PROPONI",
   VOTI_PERSONALI_APPROVATI: "PROPONI",
-  NO_ALLA_VERIFICA: "VERIFICA_NO",
-  NOMINA_DOPO_IL_TUO_NO: "VERIFICA_NO",
   FONTE_MAI_AL_CONCORRENTE: "NON_CONSEGNARE_FONTE",
 };
 
@@ -276,8 +272,7 @@ export class Robot {
         if (io.stato !== "ATTIVO") break;
         const altri = v.giocatori.filter((g) => g.stato === "ATTIVO" && g.id !== this.id).map((g) => g.id);
         const sospettoMassimo = this.piuSospetto(altri)?.valore ?? 0;
-        const no = !spia && (sospettoMassimo >= SOGLIA_SOSPETTO || this.vuole(v, "VERIFICA_NO"));
-        azioni.push({ tipo: "VERIFICA_FINALE", da: this.id, soloOnesti: !no });
+        azioni.push({ tipo: "VERIFICA_FINALE", da: this.id, soloOnesti: spia || sospettoMassimo < SOGLIA_SOSPETTO });
         break;
       }
       case "NOMINA": {

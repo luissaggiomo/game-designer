@@ -127,8 +127,6 @@ export function chiudiNomina(partita: Partita): Evento[] {
   const { giro, ballottaggio: eraBallottaggio } = partita.fase;
   const f = partita.finale;
   const nomine = Object.entries(f.nomine) as [GiocatoreId, GiocatoreId][];
-  // Le nomine si rivelano a tutti: si conservano per gli obiettivi (D-052).
-  f.storicoNomine.push({ giro: partita.fase.nome === "NOMINA" ? partita.fase.giro : 0, ballottaggio: partita.fase.nome === "NOMINA" && partita.fase.ballottaggio, nomine: { ...f.nomine } });
   f.nomine = {};
 
   // Rivelazione una alla volta, in ordine casuale (riproducibile col seme).

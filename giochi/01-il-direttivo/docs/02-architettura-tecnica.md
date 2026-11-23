@@ -434,7 +434,7 @@ a ogni RISOLUZIONE, per ogni concorrente:
          + reazione: se l'azienda ha approvato una proposta di "attacco", −1
   Marketing (se attivo) riceve in anticipo l'anteprima di una mossa concorrente
 ```
-Obiettivo di taratura: senza spie, l'azienda vince in circa il 55–65% dei casi giocando in modo ragionevole. Con una spia attiva e non scoperta, la percentuale deve scendere sensibilmente. ⚖️
+Obiettivo di taratura: con una spia attiva e non scoperta la vittoria dell'azienda deve scendere sensibilmente; riferimento di Luis con 4 giocatori e 1 spia: circa 20% spia, 80% onesti. La vittoria dell'azienda senza spie (in origine 55–65%) è **solo informativa** (D-054): ogni giocatore punta a vincere personalmente. ⚖️
 
 ### 10.7 Autogestione
 ```

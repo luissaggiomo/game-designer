@@ -578,3 +578,30 @@ Modello di voce:
 - Scelta di Luis: approvata la lista di **36 obiettivi, 12 per tipo, di cui 4 aziendalisti per tipo**, e le regole di verifica: **R1** avanzamento rinviato a fine partita quando rivelerebbe un'informazione nascosta (copie vere/false, catena, risultati del 4° trimestre) · **R2** contano solo le scelte del giocatore (non voti scaduti, mosse del computer, astensioni) · **R3** i voti con peso 0 non contano.
 - Dettagli tecnici (Claude, senza effetto sulle regole): "voto decisivo" = se avessi votato al contrario l'esito sarebbe stato opposto (con il tempo scaduto che vale "no", "senza il tuo voto" non renderebbe mai decisivo un "no"); R1 vale anche per i mittenti anonimi nei conteggi "da giocatori diversi" e per i conteggi dei messaggi ricevuti dagli altri.
 - Lista completa: [docs/contenuti/obiettivi.md](docs/contenuti/obiettivi.md) · dati: `packages/content/obiettivi.json` · Rif.: GDD §4.4 · D-046…D-051
+
+## D-053 — Obiettivi personali: prima ritaratura dopo il nono report
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: report 09 (prima simulazione con gli obiettivi). Quasi tutti i traguardi erano fuori dagli obiettivi di taratura (D-051); Sentinella faceva aprire nomine anche senza spie (onesti licenziati nel finale quasi raddoppiati: da 0,11–0,28 a 0,21–0,48 a partita); Intoccabile era troppo facile (90% / 70%); in quattro obiettivi il difficile riusciva più spesso del facile.
+- Scelte di Luis:
+  1. **Soglie** degli obiettivi su voti, cassa e mossa privata ritoccate come proposto (in docs/contenuti/obiettivi.md i valori precedenti sono indicati con "era …").
+  2. Obiettivi su **messaggi, segreti e proposte di demansionamento lasciati così**: i robot scrivono e inoltrano meno delle persone, si tarano nelle serate.
+  3. **Rimossi Sentinella (3.6) e Intoccabile (2.7).** Restano 34 obiettivi: 12 di tipo 1, 11 di tipo 2 e 11 di tipo 3, sempre 4 aziendalisti per tipo (bastano per 8 giocatori senza ripetizioni, D-048).
+  4. **Traguardi invertiti sistemati:** in Voce critica (2.1) e Controcorrente (3.8) facile e difficile si scambiano; in Tesoriere (3.7) il facile passa a 40 K e il difficile diventa "a fine anno almeno 100 K" (la cassa al tetto nell'ultimo trimestre riusciva all'82%); in Squadra (3.9) il difficile passa a 3 trimestri "in crescita".
+- Rif.: GDD §4.4 · D-051, D-052 · docs/simulazioni/2026-11-23-simulazione-09.md
+
+## D-054 — Più difficile per il concorrente battere l'azienda (meno vittorie delle spie)
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore**
+- Contesto: report 09 — la spia vince troppo spesso (4 giocatori e 1 spia: 30%, riferimento 20%; 2 spie: 55–60%). Premessa di Luis: **l'obiettivo di ogni giocatore è vincere personalmente, non far vincere l'azienda**; che l'azienda senza spie vinca spesso non è un problema, perché la competizione tra gli onesti resta accesa e l'esito della corsa si scopre solo alla fine (D-029). L'obiettivo di taratura "senza spie l'azienda vince nel 55–65%" diventa **solo informativo**.
+- Prove col simulatore (400 partite per numero di giocatori): crescita dei concorrenti 2,7 → 2,4 → 2,1 abbassa la spia a 4 giocatori solo da 33% a 30% e 29%, perché nelle partite con spia il concorrente avanza soprattutto con i segreti consegnati.
+- Alternative: A) solo rallentare la crescita · B) ridurre il valore dei segreti per il concorrente · C) margine di vittoria (il concorrente deve staccare l'azienda di almeno 2) · D) A leggera + B.
+- Scelta di Luis: **D** — `concorrenti.crescitaBase` da 2,7 a **2,4** e valore dei segreti per il concorrente da 1 / 2 / 3 a **1 / 1 / 2** (da far girare / normale / da custodire). I punti alla spia per segreto usato restano 1 / 2 / 3 (D-038). ⚖️
+- Effetto: colpisce soprattutto lo strumento della spia; si attenua la differenza tra "da far girare" e "normale" per il concorrente (resta per l'azienda e per i punti della spia). Rivede in parte D-038.
+- Verifica (report 10, 5000 partite): il concorrente vince molto meno nelle partite con una spia (da 54–71% a 49–63%), ma **la spia vincente scende appena** (4 giocatori: 30% → 28%; 5–8 giocatori: 29–35%), perché quando il concorrente vince la spia spesso non è stata scoperta, e le spie scoperte restano poche da 5 giocatori in su (34–46%). La leva decisiva sembra quindi la scoperta della spia (accuse e finale), da osservare nelle serate.
+- Rif.: GDD §11.5, §12 · D-011, D-024, D-038 · docs/simulazioni/2026-11-23-simulazione-09.md
+
+## D-055 — Obiettivi personali: seconda taratura delle soglie (delegata a Claude)
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: dopo D-053 i traguardi facili erano quasi tutti a posto, molti difficili troppo duri (~20%) e il tipo 1 rendeva meno degli altri (3,0 punti contro 4,1). Luis ha delegato i ritocchi ("fai le dovute analisi ed applica i ritocchi necessari").
+- Metodo: il simulatore registra il valore raggiunto da ogni giocatore su ogni traguardo e suggerisce la soglia intera (o l'importo di cassa) più vicina al 65% di riuscita per il facile e al 30% per il difficile (sezione "Soglie suggerite" del report). Applicato solo a voti, cassa e mossa privata; messaggi, segreti e proposte personali restano alle serate (D-053).
+- Ritocchi: Ago della bilancia difficile 5 → 4 · Forbici facile 2 → 3 trimestri · Cassaforte 80 → 120 K · In linea facile 6 → 5 · Occhio clinico 1.11 1/3 (era 2/4) · Voce critica difficile 3 → 2 · Forbici d'oro facile 4 trimestri (tutti), difficile 150 K · Consenso facile 5 → 6 · Tesoriere difficile 100 → 150 K · Squadra 3.9 difficile "in crescita" in tutti i 4 trimestri · Occhio clinico 3.10 facile 2 → 1 · Maggioranza difficile 7 → 8.
+- Rif.: GDD §4.4 · D-051, D-053 · docs/contenuti/obiettivi.md

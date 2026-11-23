@@ -46,11 +46,11 @@ function registro(r: Partial<RegistroVotazione>): RegistroVotazione {
 }
 
 describe("contenuti degli obiettivi", () => {
-  it("la lista è valida: 36 obiettivi, 12 per tipo, 4 aziendalisti per tipo (D-052)", () => {
+  it("la lista è valida: 34 obiettivi (12 / 11 / 11), 4 aziendalisti per tipo (D-052, D-053)", () => {
     expect(controllaObiettivi(ambiente.obiettivi, ambiente.config, MISURE_NOTE)).toEqual([]);
-    for (const tipo of [1, 2, 3]) {
+    for (const [tipo, quanti] of [[1, 12], [2, 11], [3, 11]] as const) {
       const delTipo = ambiente.obiettivi.filter((o) => o.tipo === tipo);
-      expect(delTipo).toHaveLength(12);
+      expect(delTipo).toHaveLength(quanti);
       expect(delTipo.filter((o) => o.aziendalista)).toHaveLength(4);
     }
   });
@@ -144,8 +144,8 @@ describe("scelta dell'obiettivo (D-048)", () => {
 
 describe("verifica dei traguardi (D-052)", () => {
   it("tipo 1 graduale: i due gradini si sommano (+3 e +5)", () => {
-    const p = conObiettivo("T1-01"); // Bastian contrario 2 / 4
-    p.storicoVotazioni = [1, 2, 3, 4].map((i) => registro({ propostaId: `p${i}`, approvata: true, voti: { g1: "NO" } }));
+    const p = conObiettivo("T1-01"); // Bastian contrario 3 / 5
+    p.storicoVotazioni = [1, 2, 3, 4, 5].map((i) => registro({ propostaId: `p${i}`, approvata: true, voti: { g1: "NO" } }));
     expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE").map((t) => t.stato)).toEqual(["RAGGIUNTO", "RAGGIUNTO"]);
     expect(vociObiettivo(p, ambiente, p.giocatori.find((g) => g.id === "g1")!).reduce((s, v) => s + v.punti, 0)).toBe(8);
   });
@@ -196,10 +196,10 @@ describe("verifica dei traguardi (D-052)", () => {
   });
 
   it("i traguardi 'mai…' restano in corso fino alla fine e cadono appena violati", () => {
-    const p = conObiettivo("T2-07"); // Intoccabile
+    const p = conObiettivo("T3-07"); // Tesoriere: la cassa non scende mai sotto 40 K
     expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[0]!.stato).toBe("IN_CORSO");
     expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.stato).toBe("RAGGIUNTO");
-    p.storicoVotiPersonali.push({ tipo: "DEMANSIONAMENTO", bersaglio: "g1", proponente: "g2", momento: 1, voti: {}, approvato: false, si: 0, soglia: 3 });
+    p.storicoVotazioni.push(registro({ cassaDopo: 20 }));
     expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[0]!.stato).toBe("NON_RAGGIUNTO");
   });
 
@@ -251,10 +251,10 @@ describe("punteggio e rivelazione finale (D-047)", () => {
   });
 
   it("i traguardi raggiunti entrano nel punteggio, anche per chi è stato licenziato (D-049)", () => {
-    let p = conObiettivo("T2-07"); // Intoccabile: il facile si raggiunge se nessuno propone il demansionamento
+    let p = conObiettivo("T3-07"); // Tesoriere: senza voti non si approva nulla e la cassa non scende mai
     p.giocatori.find((g) => g.id === "g1")!.stato = "LICENZIATO";
     p = finoAlPunteggio(p);
     const voci = p.punteggi!.g1!.voci.filter((v) => v.testo.startsWith("Obiettivo"));
-    expect(voci.map((v) => v.punti)).toContain(3);
+    expect(voci.map((v) => v.punti)).toContain(4);
   });
 });

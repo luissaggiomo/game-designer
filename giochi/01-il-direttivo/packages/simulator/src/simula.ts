@@ -41,7 +41,18 @@ export interface DatiGiocatore {
   favorito: number;
   pesoVotoAnno: number;
   /** Obiettivo personale scelto e traguardi raggiunti (D-046…D-052). */
-  obiettivo: { id: string; nome: string; tipo: number; aziendalista: boolean; facile: boolean; difficile: boolean; punti: number; aCaso: boolean };
+  obiettivo: {
+    id: string;
+    nome: string;
+    tipo: number;
+    aziendalista: boolean;
+    facile: boolean;
+    difficile: boolean;
+    punti: number;
+    aCaso: boolean;
+    /** Valore raggiunto su ciascun traguardo (null = traguardo "mai…" mancato), per stimare le soglie. */
+    valori: (number | null)[];
+  };
 }
 
 export interface DatiPartita {
@@ -52,6 +63,9 @@ export interface DatiPartita {
   mercato: "AZIENDA" | "CONCORRENTE" | "PAREGGIO";
   votazioni: { trimestre: number; posizione: number; approvata: boolean; perFondi: boolean }[];
   cassaInizioTrimestre: number[];
+  /** Cassa dopo l'ultima votazione di ogni trimestre e minima dopo le votazioni (obiettivi sulla cassa). */
+  cassaFineTrimestre: number[];
+  cassaMinimaDopoVoti: number;
   tettoRaggiunto: number;
   demansionamenti: { trimestre: number; spia: boolean }[];
   segreti: { totali: number; inTempo: number; passati: number; passatiFalsi: number };
@@ -84,7 +98,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     robot.set(g.id, new Robot(g.id, profilo, ambiente, creaCasuale(casuale.intero(1, 2 ** 31))));
   }
 
-  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale"> & { mosse: DatiPartita["mosse"] } = {
+  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti"> & { mosse: DatiPartita["mosse"] } = {
     giocatori: n,
     seme,
     spie: 0,
@@ -180,6 +194,8 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     spie: spie.length,
     configurazioneSpie: spie.length === 0 ? "0" : spie.length === 1 ? "1" : concorrentiSpie.size === 1 ? "2 alleate" : "2 rivali",
     mercato,
+    cassaFineTrimestre: p.storicoTrimestri.map((t) => t.cassaFine),
+    cassaMinimaDopoVoti: Math.min(...p.storicoVotazioni.map((r) => r.cassaDopo)),
     ...(spie.length > 0
       ? {
           vincitoreFazione: spie.some((s) => {
@@ -216,7 +232,8 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
         const t = valutaObiettivo(p, ambiente, g.id, "COMPLETA");
         const facile = t[0]?.stato === "RAGGIUNTO";
         const difficile = t[1]?.stato === "RAGGIUNTO";
-        return { id: m.id, nome: m.nome, tipo: m.tipo, aziendalista: m.aziendalista, facile, difficile, punti: t.filter((x) => x.stato === "RAGGIUNTO").reduce((s, x) => s + x.punti, 0), aCaso: o.sceltoACaso === true };
+        const valori = t.map((x) => (x.violato ? null : (x.valore ?? 0)));
+        return { id: m.id, nome: m.nome, tipo: m.tipo, aziendalista: m.aziendalista, facile, difficile, punti: t.filter((x) => x.stato === "RAGGIUNTO").reduce((s, x) => s + x.punti, 0), aCaso: o.sceltoACaso === true, valori };
       })(),
     })),
   };

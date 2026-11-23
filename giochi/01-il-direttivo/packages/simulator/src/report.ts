@@ -2,6 +2,7 @@
  * Report del simulatore: tabelle riassuntive (Markdown) e dati grezzi (CSV).
  * Le metriche sono quelle indicate nelle decisioni D-005…D-022 e nell'Architettura §14.
  */
+import type { Ambiente } from "@il-direttivo/engine";
 import type { DatiPartita } from "./simula.js";
 
 const pct = (parte: number, totale: number) => (totale === 0 ? "—" : `${((100 * parte) / totale).toFixed(0)}%`);
@@ -20,14 +21,14 @@ export interface Avviso {
   testo: string;
 }
 
-export function creaReport(partite: DatiPartita[], intestazione: string): { markdown: string; avvisi: Avviso[] } {
+export function creaReport(partite: DatiPartita[], intestazione: string, ambiente?: Ambiente): { markdown: string; avvisi: Avviso[] } {
   const avvisi: Avviso[] = [];
   const numeri = [...new Set(partite.map((p) => p.giocatori))].sort();
   const perN = (n: number) => partite.filter((p) => p.giocatori === n);
   const sezioni: string[] = [`# Report del simulatore — Il Direttivo\n\n${intestazione}\n`];
 
   // 1. Corsa di mercato.
-  sezioni.push("## 1. Chi vince la corsa di mercato\n\nObiettivo (Architettura §10.6): **senza spie l'azienda vince nel 55–65% dei casi**; con una spia attiva, sensibilmente meno.\n");
+  sezioni.push("## 1. Chi vince la corsa di mercato\n\nCon una spia attiva l'azienda deve vincere sensibilmente meno. La vittoria dell'azienda senza spie è **solo informativa** (D-054: ogni giocatore punta a vincere personalmente).\n");
   const righeMercato: (string | number)[][] = [];
   for (const n of numeri) {
     for (const conf of ["0", "1", "2 alleate", "2 rivali"] as const) {
@@ -35,10 +36,6 @@ export function creaReport(partite: DatiPartita[], intestazione: string): { mark
       if (gruppo.length === 0) continue;
       const az = gruppo.filter((p) => p.mercato === "AZIENDA").length;
       righeMercato.push([n, conf, gruppo.length, pct(az, gruppo.length), pct(gruppo.filter((p) => p.mercato === "CONCORRENTE").length, gruppo.length), pct(gruppo.filter((p) => p.mercato === "PAREGGIO").length, gruppo.length)]);
-      if (conf === "0" && gruppo.length >= 30) {
-        const quota = az / gruppo.length;
-        if (quota < 0.55 || quota > 0.65) avvisi.push({ testo: `Con ${n} giocatori e nessuna spia l'azienda vince nel ${pct(az, gruppo.length)} dei casi (obiettivo 55–65%).` });
-      }
     }
   }
   sezioni.push(tabella(["Giocatori", "Spie", "Partite", "Vince l'azienda", "Vince un concorrente", "Pareggio"], righeMercato));
@@ -140,6 +137,7 @@ export function creaReport(partite: DatiPartita[], intestazione: string): { mark
 
   // 4b. Obiettivi personali (D-046…D-052).
   sezioni.push(...sezioneObiettivi(partite, avvisi));
+  if (ambiente) sezioni.push(...sezioneSoglie(partite, ambiente));
 
   // 5. Cassa e votazioni (D-008, D-014, D-018).
   sezioni.push("\n## 5. Cassa e votazioni\n");
@@ -259,6 +257,62 @@ function sezioneObiettivi(partite: DatiPartita[], avvisi: Avviso[]): string[] {
   sezioni.push(tabella(["Giocatori", "Punti obiettivo medi", "Reparto più basso", "Reparto più alto"], righeReparti));
   if (scartoPeggiore > 0.6) avvisi.push({ testo: `Obiettivi: a parità di giocatori, tra i reparti i punti medi differiscono fino a ${dec(scartoPeggiore)} punti (D-005).` });
   return sezioni;
+}
+
+/**
+ * Soglie suggerite (D-051): dai valori raggiunti da chi ha scelto un obiettivo, la soglia intera che
+ * porta la riuscita più vicina al 65% (facile) e al 30% (difficile). Solo per i traguardi con soglia
+ * numerica fissa e senza parametro (per la cassa il valore dipende dal parametro). Stima prudente:
+ * i robot smettono di insistere quando un traguardo è raggiunto, quindi oltre la soglia attuale i
+ * valori sono un po' sottostimati.
+ */
+function sezioneSoglie(partite: DatiPartita[], ambiente: Ambiente): string[] {
+  const tutti = partite.flatMap((p) => p.dettaglio);
+  const righe: (string | number)[][] = [];
+  for (const o of ambiente.obiettivi) {
+    const gs = tutti.filter((g) => g.obiettivo.id === o.id);
+    if (gs.length < 30) continue;
+    const suggerite: number[] = [];
+    o.traguardi.forEach((t, i) => {
+      if (t.parametro !== undefined) {
+        // Obiettivi sulla cassa: si cerca l'importo (a passi di 10 K) invece della soglia.
+        const giochi = partite.filter((p) => p.dettaglio.some((g) => g.obiettivo.id === o.id));
+        const riesce = (p: DatiPartita, k: number): boolean => {
+          if (t.misura === "TRIMESTRI_CASSA_MINIMA") return p.cassaFineTrimestre.filter((c) => c >= k).length >= (t.soglia as number);
+          if (t.misura === "CASSA_FINE_ANNO") return (p.cassaFineTrimestre.at(-1) ?? 0) >= k;
+          if (t.misura === "CASSA_MAI_SOTTO") return p.cassaMinimaDopoVoti >= k;
+          return false;
+        };
+        const quota = (k: number) => giochi.filter((p) => riesce(p, k)).length / giochi.length;
+        const obiettivo = i === 0 ? 0.65 : 0.3;
+        let migliore = t.parametro;
+        for (let k = 0; k <= 150; k += 10) if (Math.abs(quota(k) - obiettivo) < Math.abs(quota(migliore) - obiettivo)) migliore = k;
+        suggerite.push(NaN);
+        righe.push([o.id, o.nome, i === 0 ? "facile" : "difficile", `${t.parametro} K (${pct(quota(t.parametro) * giochi.length, giochi.length)})`, migliore === t.parametro ? "=" : `${migliore} K (${pct(quota(migliore) * giochi.length, giochi.length)})`, giochi.length]);
+        return;
+      }
+      if (typeof t.soglia !== "number") {
+        suggerite.push(NaN);
+        righe.push([o.id, o.nome, i === 0 ? "facile" : "difficile", String(t.soglia), "—", "—"]);
+        return;
+      }
+      const valori = gs.map((g) => g.obiettivo.valori[i] ?? -1);
+      const quota = (s: number) => valori.filter((v) => v >= s).length / valori.length;
+      const obiettivo = i === 0 ? 0.65 : 0.3;
+      let migliore = t.soglia;
+      for (let s = 1; s <= 12; s++) {
+        // Nel tipo 1 il difficile deve restare sopra il facile (D-046).
+        if (o.tipo === 1 && i === 1 && !(s > (suggerite[0] ?? 0))) continue;
+        if (Math.abs(quota(s) - obiettivo) < Math.abs(quota(migliore) - obiettivo)) migliore = s;
+      }
+      suggerite.push(migliore);
+      righe.push([o.id, o.nome, i === 0 ? "facile" : "difficile", `${t.soglia} (${pct(quota(t.soglia) * valori.length, valori.length)})`, migliore === t.soglia ? "=" : `${migliore} (${pct(quota(migliore) * valori.length, valori.length)})`, valori.length]);
+    });
+  }
+  return [
+    "\n### Soglie suggerite (stima)\n\nSoglia attuale con la sua riuscita, e la soglia intera che porterebbe la riuscita più vicina al 65% (facile) o al 30% (difficile). Per la cassa si suggerisce l'importo in K (nel tipo 1 i due gradini condividono l'importo: scegliere un valore intermedio). \"—\" = soglia simbolica (dipende dal numero di giocatori); \"=\" = già la migliore.\n",
+    tabella(["Obiettivo", "Nome", "Traguardo", "Attuale", "Suggerita", "Scelte"], righe),
+  ];
 }
 
 /** Quota di scelte aziendaliste oltre la quale l'azienda vince almeno metà delle volte (stima a scaglioni del 5%). */

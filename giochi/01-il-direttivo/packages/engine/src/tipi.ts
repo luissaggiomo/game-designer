@@ -117,7 +117,7 @@ export interface Partita {
   concorrenti: Concorrente[];
   /** Quota di mercato e cassa (in K€, D-018). */
   azienda: { quota: number; cassa: number };
-  /** Cassa all'inizio del trimestre in corso, dopo il budget (per gli obiettivi). */
+  /** Cassa all'inizio del trimestre in corso, dopo il budget (storico per gli obiettivi). */
   cassaInizioTrimestre: number;
   /** Ordine del giorno del trimestre, nell'ordine annunciato nel Rapporto (D-008). */
   proposteTrimestre: PropostaIstanza[];
@@ -224,8 +224,6 @@ export interface StatoFinale {
   ballottaggio: GiocatoreId[];
   esitiVerifica: EsitoVerifica[];
   licenziamenti: { giocatore: GiocatoreId; giro: number; nominatoDa: GiocatoreId[] }[];
-  /** Tutte le nomine rivelate (pubbliche alla rivelazione), per gli obiettivi. */
-  storicoNomine: { giro: number; ballottaggio: boolean; nomine: Partial<Record<GiocatoreId, GiocatoreId>> }[];
 }
 
 export interface Punteggio {

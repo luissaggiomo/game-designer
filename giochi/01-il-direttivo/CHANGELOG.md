@@ -3,6 +3,22 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-23 — 0.2.14
+
+### Design
+- D-055 (provvisoria): seconda taratura delle soglie degli obiettivi (voti, cassa, mossa privata) con le stime del simulatore.
+- D-054 (provvisoria): più difficile per il concorrente battere l'azienda — crescita base 2,7 → 2,4, valore dei segreti per il concorrente 1/2/3 → 1/1/2; la vittoria dell'azienda senza spie diventa solo informativa (ogni giocatore punta a vincere personalmente).
+- D-053 (provvisoria): prima ritaratura degli obiettivi dopo il report 09 — soglie ritoccate (voti, cassa, mossa privata), rimossi Sentinella e Intoccabile (34 obiettivi), sistemati i traguardi con il difficile più facile del facile; messaggi e segreti lasciati alle serate.
+
+### Aggiunto
+- Decimo report (docs/simulazioni/2026-11-23-simulazione-10.md).
+
+### Modificato
+- `config.json` secondo D-054 (crescita base 2,4; segreti per il concorrente 1 / 1 / 2); la vittoria dell'azienda senza spie non genera più avvisi nel report.
+- `obiettivi.json` secondo D-053 e D-055; tolte le misure non più usate (verifica, nomine, bersaglio di demansionamento, cassa al tetto) e lo storico delle nomine.
+- Simulatore: il report suggerisce le soglie degli obiettivi (valore raggiunto da ogni giocatore su ogni traguardo, cassa di fine trimestre e minima); i dati di ogni partita simulata registrano questi valori.
+- Simulatore: opzioni `--base` / `--pergiocatore` per provare una crescita dei concorrenti diversa senza toccare config.json, e `--uscita` per il nome del report.
+
 ## 2026-11-23 — 0.2.13
 
 ### Design
