@@ -1,7 +1,7 @@
 # Il Direttivo — Obiettivi personali
 
 > Punto aperto 3 del GDD. Decisioni D-046…D-053 (in `DECISIONI.md`).
-> D-053 (ritaratura dopo il report 09): soglie ritoccate (indicate con "era …", valore della lista approvata in D-052), rimossi 2.7 Intoccabile e 3.6 Sentinella, sistemati i traguardi invertiti. D-055: seconda taratura delle soglie col simulatore. Gli obiettivi su messaggi, segreti e proposte personali restano da tarare nelle serate.
+> D-053 (ritaratura dopo il report 09): soglie ritoccate (indicate con "era …", valore della lista approvata in D-052), rimossi 2.7 Intoccabile e 3.6 Sentinella, sistemati i traguardi invertiti. D-055: seconda taratura delle soglie col simulatore. D-057 e D-061 (23/11/2026): «Intermediario» al posto di «Riformatore», «Squadra» riscritti con il conteggio "N su M per l'azienda". Gli obiettivi su messaggi, segreti e proposte personali restano da tarare nelle serate.
 > Dati: `packages/content/obiettivi.json` (testi e soglie) · punti in `packages/content/config.json` (`obiettivi.punti`).
 > Soglie ⚖️: si tarano col simulatore (D-051), i punti restano fissi.
 
@@ -18,7 +18,7 @@
 
 - L'obiettivo scelto si vede **solo sul proprio telefono**, con l'avanzamento; al punteggio **la TV rivela l'obiettivo di ognuno** e com'è andato; gli scartati non si mostrano mai (D-047).
 - **Spie:** ricevono solo obiettivi **aziendalisti** (🏢), uno per tipo; gli onesti pescano da tutto il mazzo (D-049).
-- Nessun obiettivo compare due volte nella stessa partita (D-048). Demansionati e licenziati conservano i punti (D-049).
+- Nessun obiettivo compare due volte nella stessa partita (D-048). I licenziati conservano i punti (D-049).
 
 ## Termini
 
@@ -30,7 +30,7 @@
 ## Regole di verifica (D-052)
 
 - **R1 · Avanzamento rinviato quando rivelerebbe un segreto.** Sul telefono l'avanzamento conta solo ciò che il giocatore può già sapere; il resto si aggiunge a fine partita. I traguardi che dipendono da informazioni nascoste mostrano **"si verifica a fine partita"**: quelli sulle copie vere o false e sulla catena dei passaggi (1.12, 2.4 difficile, 2.11, 3.3, 3.4 difficile, 3.11), quelli sui messaggi ricevuti dagli altri (2.5 difficile). Gli effetti del 4° trimestre (proposte, mossa privata complessiva) contano solo al punteggio (D-029). I messaggi e le copie ricevuti in **anonimo** contano tra i "giocatori diversi" solo a fine partita (altrimenti il contatore svelerebbe se l'anonimo è qualcuno di nuovo).
-- **R2 · Contano solo le tue scelte.** Voti scaduti, mosse private fatte dal computer (demansionati) e astensioni non contano.
+- **R2 · Contano solo le tue scelte.** Voti scaduti e scelte predefinite non contano.
 - **R3 · Voti con peso 0 non contano** (il reparto non vota in quella proposta).
 - Traguardi "mai…" / "nessun…": si considerano raggiunti solo a fine partita.
 
@@ -58,14 +58,14 @@ Legenda: 👁 visibile agli altri · 🔒 invisibile (lo sa solo il computer) ·
 | # | Nome | Facile (+3) | Difficile (+7) |
 |---|---|---|---|
 | 2.1 | Voce critica 👁 | Il tuo voto decide il respingimento di 2 proposte | Voti NO a 2 proposte che vengono approvate *(scambiati; era 3)* |
-| 2.2 | Riformatore 👁 | Proponi una votazione di demansionamento o di promozione | Una votazione personale proposta da te viene approvata |
+| 2.2 | 🟡 Intermediario 🔒 *(D-057: sostituisce Riformatore)* | Inoltra 2 copie di segreti ad altri giocatori | Una copia inoltrata da te passa per almeno 3 giocatori |
 | 2.3 | Archivista 🔒 | Ricevi copie di segreti da 2 giocatori diversi | A fine anno possiedi copie di 5 segreti diversi |
 | 2.4 | Disinformatore 🔒 | Inoltri una copia modificata | Un concorrente usa un dato falso partito da una tua copia modificata |
 | 2.5 | Popolare ✉️ | Ricevi un messaggio anonimo | Ricevi più messaggi di chiunque altro (pari merito vale) |
 | 2.6 | Fantasma ✉️ | Ricevi messaggi da metà degli altri | Mandi un anonimo in tutti e 4 i trimestri |
 | ~~2.7~~ | ~~Intoccabile~~ | *rimosso (D-053): troppo facile* | |
 | 2.8 | Forbici d'oro 👁 | Voti NO alla proposta più costosa in tutti i 4 trimestri *(era 2)* | A fine anno la cassa ha almeno 150 K *(era 80 K)* |
-| 2.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 3 trimestri *(era 2)* | Nessun trimestre con mossa privata complessiva "in calo" |
+| 2.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 3 trimestri *(era 2)* | 🟡 In ogni trimestre almeno metà del direttivo gioca per l'azienda *(D-061, era: nessun trimestre "in calo")* |
 | 2.10 | 🏢 Occhio clinico 👁 | Voti SÌ a 2 proposte positive | Voti NO ad almeno 1 proposta approvata che si rivela dannosa *(era 2)* |
 | 2.11 | 🏢 Postino 🔒 | Inoltri una copia vera al reparto a cui serve | 2 segreti arrivano in tempo grazie a te |
 | 2.12 | 🏢 Consenso 👁 | Voti come l'esito 6 volte *(era 4)* | Il tuo voto è decisivo per approvare 2 proposte positive |
@@ -82,7 +82,7 @@ Legenda: 👁 visibile agli altri · 🔒 invisibile (lo sa solo il computer) ·
 | ~~3.6~~ | ~~Sentinella~~ | *rimosso (D-053): faceva aprire nomine anche senza spie* | |
 | 3.7 | Tesoriere 👁 | La cassa non scende mai sotto 40 K dopo le votazioni *(era 30 K)* | A fine anno la cassa ha almeno 150 K *(era: al tetto a inizio T4)* |
 | 3.8 | Controcorrente 👁 | Voti SÌ a 2 proposte respinte | Voti NO a 2 proposte approvate *(scambiati)* |
-| 3.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 3 trimestri | Mossa privata complessiva "in crescita" in tutti i 4 trimestri *(era 2)* |
+| 3.9 | 🏢 Squadra 🔒 | "Per l'azienda" in 3 trimestri | 🟡 Più di metà del direttivo gioca per l'azienda in tutti i 4 trimestri *(D-061, era: "in crescita" in tutti i 4)* |
 | 3.10 | 🏢 Occhio clinico 👁 | Voti SÌ ad almeno 1 proposta positiva *(era 3)* | Con almeno 2 SÌ dati, nessuno su una proposta dannosa *(era 3)* |
 | 3.11 | 🏢 Custode 🔒 | Un segreto arriva in tempo grazie a te | Nessun segreto di cui sei fonte finisce a un concorrente (con almeno 2 ricevuti) |
 | 3.12 | 🏢 Maggioranza 👁 | Voti come l'esito in tutte le votazioni di un trimestre *(era: da 3)* | Voti come l'esito 8 volte |

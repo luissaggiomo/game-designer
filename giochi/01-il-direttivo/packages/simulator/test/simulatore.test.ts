@@ -22,11 +22,13 @@ describe("simulatore", { timeout: 30_000 }, () => {
     expect(simulaPartita(6, 42, ambiente)).toEqual(simulaPartita(6, 42, ambiente));
   });
 
-  it("nelle partite con spie succedono cose da spie (segreti consegnati, demansionamenti)", () => {
+  it("nelle partite con spie succedono cose da spie; il finale licenzia qualcuno e a volte va al ballottaggio (D-058)", () => {
     const partite = Array.from({ length: 60 }, (_, i) => simulaPartita(6, i + 1, ambiente));
     const conSpie = partite.filter((p) => p.spie > 0);
     expect(conSpie.reduce((s, p) => s + p.segreti.passati, 0)).toBeGreaterThan(0);
-    expect(partite.reduce((s, p) => s + p.demansionamenti.length, 0)).toBeGreaterThan(0);
+    expect(conSpie.reduce((s, p) => s + p.spieLicenziate, 0)).toBeGreaterThan(0);
+    expect(partite.some((p) => p.finale.ballottaggi > 0)).toBe(true);
+    expect(partite.every((p) => p.finale.domande.length >= 1)).toBe(true);
   });
 
   it("i robot scelgono il proprio obiettivo (nessuno a caso) e a volte raggiungono i traguardi (D-046…D-052)", () => {

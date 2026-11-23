@@ -1,5 +1,5 @@
 /**
- * Punteggio finale (GDD §16 · Architettura §10.10 · D-011, D-022).
+ * Punteggio finale (GDD §16 · Architettura §10.10 · D-011, D-022, D-059).
  * Ogni voce è spiegata in una frase. Obiettivi personali: D-046…D-052.
  */
 import type { Evento } from "./azioni.js";
@@ -28,8 +28,7 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
   // Punti di reparto accumulati in partita.
   for (const g of partita.giocatori) aggiungi(g.id, "Punti del tuo reparto", g.puntiReparto);
 
-  // Obiettivo personale: ogni traguardo raggiunto vale i suoi punti, anche per demansionati e
-  // licenziati (D-046, D-049).
+  // Obiettivo personale: ogni traguardo raggiunto vale i suoi punti, anche per i licenziati (D-046, D-049).
   for (const g of partita.giocatori) for (const voce of vociObiettivo(partita, ambiente, g)) aggiungi(g.id, voce.testo, voce.punti);
 
   // Corsa di mercato: l'azienda vince se supera ogni concorrente; un concorrente vince se supera
@@ -49,68 +48,7 @@ export function calcolaPunteggi(partita: Partita, ambiente: Ambiente): Evento[] 
     aggiungi(p.spia, "Segreto usato dal tuo concorrente", ambiente.config.segreti.tipi[tipo].puntiSpia);
   }
 
-  // Domanda di verifica del finale.
-  for (const e of partita.finale.esitiVerifica) {
-    if (e.tuttiSi && e.spieTraAttivi.length === 0) {
-      for (const g of onesti) aggiungi(g.id, "Tutti sì, e nel direttivo c'erano davvero solo onesti", v.tuttiSiNessunaSpia);
-    } else if (e.tuttiSi) {
-      for (const id of e.spieTraAttivi) aggiungi(id, "Tutti hanno detto sì, ma tu eri ancora nel direttivo", v.tuttiSiConSpia);
-    } else if (e.spieTraAttivi.length === 0) {
-      for (const id of e.votiNo) aggiungi(id, "Falso allarme: hai detto no, ma non c'erano spie", v.falsoAllarme);
-    }
-  }
-
-  // Spie licenziate: nominate nel finale oppure ancora demansionate a fine anno (= contratto non
-  // rinnovato, D-027). In entrambi i casi la spia è scoperta: penalità a lei, bonus agli onesti.
-  for (const s of spie.filter((x) => x.stato === "LICENZIATO")) {
-    for (const g of onesti) aggiungi(g.id, `Spia licenziata (${nome(s.id)})`, v.spiaLicenziataBonusOnesti);
-    aggiungi(s.id, "Sei stata scoperta e licenziata", v.spiaLicenziataPenalita);
-  }
-
-  // Accuse giuste o sbagliate (D-029): un solo valore per la nomina e uno per il voto, uguali
-  // per bonus e penalità e per onesti e spie. Accusare una spia (non la propria alleata) dà
-  // punti; accusare un onesto li toglie. Nessun bonus alle spie quando un onesto è licenziato.
-  const esitoAccusa = (accusatore: GiocatoreId, accusato: GiocatoreId): 1 | -1 | 0 => {
-    const cAccusato = concorrenteDi(accusato);
-    if (cAccusato === null) return -1;
-    return concorrenteDi(accusatore) === cAccusato ? 0 : 1;
-  };
-
-  // Nomine del finale.
-  for (const l of partita.finale.licenziamenti) {
-    for (const da of l.nominatoDa) {
-      const e = esitoAccusa(da, l.giocatore);
-      if (e === 1) aggiungi(da, `Hai nominato la spia ${nome(l.giocatore)}`, v.accusaNomina);
-      if (e === -1) aggiungi(da, `Hai nominato un onesto (${nome(l.giocatore)})`, -v.accusaNomina);
-    }
-  }
-
-  // Decisione finale sui demansionati (D-028, D-029). Votano tutti tranne l'interessato; il tempo
-  // scaduto vale "licenzia" (conserva lo stato: il demansionato resta fuori) e conta come voto.
-  for (const d of partita.storicoVotiPersonali.filter((x) => x.tipo === "PROMOZIONE" && x.momento === "FINALE")) {
-    for (const g of partita.giocatori.filter((x) => x.id !== d.bersaglio)) {
-      const scelta = d.voti[g.id] ?? "NO";
-      const e = esitoAccusa(g.id, d.bersaglio);
-      if (!d.approvato && scelta === "NO") {
-        if (e === 1) aggiungi(g.id, `Hai votato per licenziare la spia ${nome(d.bersaglio)}`, v.accusaVoto);
-        if (e === -1) aggiungi(g.id, `Hai votato per licenziare un onesto (${nome(d.bersaglio)})`, -v.accusaVoto);
-      }
-      if (d.approvato && scelta === "SI" && concorrenteDi(d.bersaglio) !== null) {
-        aggiungi(g.id, `Hai votato per promuovere una spia (${nome(d.bersaglio)})`, -v.accusaVoto);
-      }
-    }
-  }
-
-  // Onesto licenziato (nominato o non promosso a fine anno): penalità (D-026).
-  for (const g of onesti.filter((x) => x.stato === "LICENZIATO")) aggiungi(g.id, "Sei stato licenziato", v.onestoLicenziatoPenalita);
-
-  // Demansionamenti di onesti durante la partita (🟡 GDD §13.3).
-  for (const voto of partita.storicoVotiPersonali.filter((x) => x.tipo === "DEMANSIONAMENTO" && x.approvato)) {
-    if (concorrenteDi(voto.bersaglio) !== null) continue;
-    for (const [id, scelta] of Object.entries(voto.voti)) {
-      if (scelta === "SI") aggiungi(id, `Hai votato per demansionare un onesto (${nome(voto.bersaglio)})`, v.demansionamentoOnestoPenalitaPerVoto);
-    }
-  }
+  // Finale: nessun punto per accuse e licenziamenti (D-059). Resta solo D-025, più sopra.
 
   partita.punteggi = punteggi;
   const classifica = partita.giocatori

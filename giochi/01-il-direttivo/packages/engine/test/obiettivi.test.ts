@@ -150,9 +150,9 @@ describe("verifica dei traguardi (D-052)", () => {
     expect(vociObiettivo(p, ambiente, p.giocatori.find((g) => g.id === "g1")!).reduce((s, v) => s + v.punti, 0)).toBe(8);
   });
 
-  it("contano solo i voti espressi: astensioni e voti scaduti no (R2)", () => {
+  it("contano solo i voti espressi: i voti scaduti no (R2)", () => {
     const p = conObiettivo("T1-01");
-    p.storicoVotazioni = [registro({ approvata: true, voti: { g1: "ASTENUTO" } }), registro({ approvata: true, voti: {} }), registro({ approvata: false, voti: { g1: "SI" } })];
+    p.storicoVotazioni = [registro({ approvata: true, voti: {} }), registro({ approvata: false, voti: { g1: "SI" } })];
     expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.valore).toBe(1);
   });
 
@@ -173,7 +173,7 @@ describe("verifica dei traguardi (D-052)", () => {
   it("gli effetti si contano solo quando sono rivelati: l'ultimo trimestre al punteggio (D-029, R1)", () => {
     const p = conObiettivo("T1-11"); // Occhio clinico: SÌ a proposte positive
     p.storicoVotazioni = [registro({ trimestre: 1, voti: { g1: "SI" } }), registro({ trimestre: 2, voti: { g1: "SI" } })];
-    p.storicoTrimestri = [{ trimestre: 1, mosseScelte: {}, andamento: "STABILE", cassaInizio: 100, cassaFine: 70 }];
+    p.storicoTrimestri = [{ trimestre: 1, mosseScelte: {}, perAzienda: 3, partecipanti: 5, cassaInizio: 100, cassaFine: 70 }];
     p.trimestre = 2;
     expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[0]!.valore).toBe(1);
     expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.valore).toBe(2);
@@ -256,5 +256,26 @@ describe("punteggio e rivelazione finale (D-047)", () => {
     p = finoAlPunteggio(p);
     const voci = p.punteggi!.g1!.voci.filter((v) => v.testo.startsWith("Obiettivo"));
     expect(voci.map((v) => v.punti)).toContain(4);
+  });
+});
+
+describe("obiettivi sul conteggio della mossa privata (D-061)", () => {
+  const trimestre = (t: number, perAzienda: number, partecipanti = 5) => ({ trimestre: t, mosseScelte: {}, perAzienda, partecipanti, cassaInizio: 100, cassaFine: 50 });
+
+  it("«Squadra» 2.9: almeno metà del direttivo per l'azienda in ogni trimestre; cade appena un trimestre non ci arriva", () => {
+    const p = conObiettivo("T2-09");
+    p.storicoTrimestri = [trimestre(1, 3), trimestre(2, 4)];
+    expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[1]!.stato).toBe("IN_CORSO");
+    p.storicoTrimestri.push(trimestre(3, 2));
+    expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[1]!.stato).toBe("NON_RAGGIUNTO");
+    p.storicoTrimestri = [trimestre(1, 3), trimestre(2, 3), trimestre(3, 4), trimestre(4, 5)];
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[1]!.stato).toBe("RAGGIUNTO");
+  });
+
+  it("«Squadra» 3.9: più di metà in tutti i 4 trimestri (con 4 giocatori, 2 su 4 non basta)", () => {
+    const p = conObiettivo("T3-09");
+    p.storicoTrimestri = [trimestre(1, 3, 4), trimestre(2, 3, 4), trimestre(3, 2, 4), trimestre(4, 4, 4)];
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[1]!.valore).toBe(3);
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[1]!.stato).toBe("NON_RAGGIUNTO");
   });
 });

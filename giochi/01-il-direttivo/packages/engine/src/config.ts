@@ -8,7 +8,8 @@ import type { RepartoId, SceltaMossa, TipoSegreto } from "./tipi.js";
 export interface Configurazione {
   giocatori: { minimo: number; massimo: number };
   trimestri: number;
-  reparti: { base: RepartoId[]; aggiuntiviInOrdine: RepartoId[] };
+  /** "nomi": come la TV chiama ogni reparto (es. negli annunci dei segreti, D-061). */
+  reparti: { base: RepartoId[]; aggiuntiviInOrdine: RepartoId[]; nomi: Record<RepartoId, string> };
   votazioniPerTrimestre: number[];
   cassa: { perTrimestre: number; massima: number; unita: string };
   selezione: { fattoreStessaCategoria: number; probabilitaAlternativa: number };
@@ -34,7 +35,6 @@ export interface Configurazione {
   };
   messaggi: {
     perTrimestre: number;
-    perTrimestreDemansionato: number;
     caratteriTestoLibero: number;
     costoAnonimo: number;
     quando: "DAL_RAPPORTO_ALLE_VOTAZIONI" | "TUTTO_IL_TRIMESTRE";
@@ -57,25 +57,13 @@ export interface Configurazione {
       }
     >;
   };
-  quesitiConAstensione: { quotaDelMazzo: number };
-  finale: { rispostaVerificaPredefinita: "SI" | "NO" };
+  /** Risposta di chi non risponde in tempo alla domanda "C'è una spia?" (D-058: "NO"). */
+  finale: { rispostaDomandaPredefinita: "SI" | "NO" };
+  /** Nel finale non ci sono punti per accuse e licenziamenti (D-059). */
   punteggio: {
     aziendaVince: number;
     concorrenteVince: number;
-    tuttiSiNessunaSpia: number;
-    tuttiSiConSpia: number;
-    falsoAllarme: number;
-    spiaLicenziataBonusOnesti: number;
-    spiaLicenziataPenalita: number;
-    /** Penalità all'onesto licenziato, per accusa o perché ancora demansionato (D-026). */
-    onestoLicenziatoPenalita: number;
-    /** Accusa con la nomina finale: +valore se giusta (una spia non alleata), −valore se un onesto (D-029). */
-    accusaNomina: number;
-    /** Voto nella decisione sui demansionati: stessi segni, valore più basso (D-029). */
-    accusaVoto: number;
-    demansionamentoOnestoPenalitaPerVoto: number;
   };
-  autogestione: { mossaPrivataDemansionati: boolean; probabilitaMossaAzienda: number; fattoreEffetti: number };
   /** Obiettivi personali (D-046…D-052). */
   obiettivi: {
     /** Quanti obiettivi riceve ognuno: uno per tipo (D-046). */
@@ -100,6 +88,7 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   if (new Set(tuttiIReparti).size !== tuttiIReparti.length) {
     problemi.push("Un reparto compare più di una volta nell'elenco dei reparti");
   }
+  for (const r of tuttiIReparti) if (!c.reparti.nomi?.[r]) problemi.push(`Manca il nome del reparto ${r} (reparti.nomi)`);
   if (tuttiIReparti.length < c.giocatori.massimo) {
     problemi.push(`Servono almeno ${c.giocatori.massimo} reparti (uno per giocatore), ce ne sono ${tuttiIReparti.length}`);
   }
@@ -118,12 +107,11 @@ export function controllaConfigurazione(c: Configurazione): string[] {
     problemi.push('La scelta predefinita della mossa privata deve essere "REPARTO" o "AZIENDA"');
   }
   if (c.concorrenti.eventoCasuale.length === 0) problemi.push("L'evento casuale dei concorrenti non può essere vuoto");
-  probabilita("autogestione.fattoreEffetti", c.autogestione.fattoreEffetti);
   if (!["DAL_RAPPORTO_ALLE_VOTAZIONI", "TUTTO_IL_TRIMESTRE"].includes(c.messaggi.quando)) {
     problemi.push('messaggi.quando deve essere "DAL_RAPPORTO_ALLE_VOTAZIONI" o "TUTTO_IL_TRIMESTRE"');
   }
-  if (!["SI", "NO"].includes(c.finale.rispostaVerificaPredefinita)) {
-    problemi.push('finale.rispostaVerificaPredefinita deve essere "SI" o "NO"');
+  if (!["SI", "NO"].includes(c.finale.rispostaDomandaPredefinita)) {
+    problemi.push('finale.rispostaDomandaPredefinita deve essere "SI" o "NO"');
   }
   if (c.messaggi.costoAnonimo < 1) problemi.push("Il costo del messaggio anonimo deve essere almeno 1");
   if (c.segreti.perTrimestre < 0) problemi.push("I segreti per trimestre non possono essere negativi");
@@ -139,8 +127,6 @@ export function controllaConfigurazione(c: Configurazione): string[] {
   probabilita("spie.probabilitaNessunaSpia", c.spie.probabilitaNessunaSpia);
   probabilita("spie.con8Giocatori.probabilitaDueSpie", c.spie.con8Giocatori.probabilitaDueSpie);
   probabilita("spie.con8Giocatori.probabilitaStessoConcorrente", c.spie.con8Giocatori.probabilitaStessoConcorrente);
-  probabilita("quesitiConAstensione.quotaDelMazzo", c.quesitiConAstensione.quotaDelMazzo);
-  probabilita("autogestione.probabilitaMossaAzienda", c.autogestione.probabilitaMossaAzienda);
   probabilita("selezione.fattoreStessaCategoria", c.selezione.fattoreStessaCategoria);
   probabilita("selezione.probabilitaAlternativa", c.selezione.probabilitaAlternativa);
   probabilita("concorrenti.quotaAziendalistaRiferimento", c.concorrenti.quotaAziendalistaRiferimento);

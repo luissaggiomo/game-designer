@@ -2,16 +2,14 @@
  * Estrazione dell'ordine del giorno del trimestre (Architettura §10.2 · D-008, D-013, D-014, D-023).
  *
  * Modello B (D-023): si estraggono i quesiti (ammessi nel trimestre, non ancora usciti, preferendo
- * categorie diverse); poi i RUOLI dello schema si assegnano ai reparti occupati e non in
- * autogestione. Il ruolo migliore va al reparto finora meno "favorito" (D-014), gli altri a caso:
+ * categorie diverse); poi i RUOLI dello schema si assegnano ai reparti occupati. Il ruolo migliore va al reparto finora meno "favorito" (D-014), gli altri a caso:
  * così tutti i reparti sono uguali per costruzione, e i vacanti non ricevono mai un ruolo (D-006).
  *
  * Versioni (D-045): un quesito può uscire con il suo schema alternativo (probabilità in config), così
  * l'effetto sull'azienda non si impara a memoria tra una serata e l'altra.
  *
- * Pesi effettivi: i ruoli hanno il loro peso, gli altri reparti occupati (anche demansionati, la
- * cui assenza pesa sulla soglia, §8.4) hanno "pesoAltri"; i vacanti 0. Nei quesiti con astensione
- * tutti i reparti occupati pesano 1 (D-013).
+ * Pesi effettivi: i ruoli hanno il loro peso, gli altri reparti occupati hanno "pesoAltri"; i
+ * vacanti 0. Niente quesiti con astensione (D-060).
  */
 import type { Ambiente, ModelloProposta } from "./contenuti.js";
 import type { Casuale } from "./rng.js";
@@ -21,7 +19,7 @@ export function estraiOrdineDelGiorno(partita: Partita, ambiente: Ambiente, casu
   const { config, mazzo, schemi, frasi } = ambiente;
   const quante = config.votazioniPerTrimestre[partita.trimestre - 1] ?? 0;
   const occupati = partita.reparti.filter((r) => r.occupatoDa).map((r) => r.id);
-  const conRuolo = partita.reparti.filter((r) => r.occupatoDa && !r.autogestione).map((r) => r.id);
+  const conRuolo = occupati;
 
   const ammissibile = (m: ModelloProposta, ammettiRipetuti: boolean) =>
     m.trimestri.includes(partita.trimestre) && (ammettiRipetuti || !partita.proposteUscite.includes(m.id));
@@ -68,7 +66,7 @@ export function estraiOrdineDelGiorno(partita: Partita, ambiente: Ambiente, casu
 
     const pesi: Partial<Record<RepartoId, Peso>> = {};
     for (const r of occupati) {
-      const p: Peso = m.astensioneAmmessa ? 1 : (assegnati.get(r)?.peso ?? schema.pesoAltri);
+      const p: Peso = assegnati.get(r)?.peso ?? schema.pesoAltri;
       if (p > 0) pesi[r] = p;
     }
 
@@ -90,7 +88,6 @@ export function estraiOrdineDelGiorno(partita: Partita, ambiente: Ambiente, casu
       titolo: m.titolo,
       categoria: m.categoria,
       costo: m.costo,
-      astensioneAmmessa: m.astensioneAmmessa ?? false,
       spiegazione: alternativa?.spiegazione ?? m.spiegazione,
       pesi,
       effettiPrivati,

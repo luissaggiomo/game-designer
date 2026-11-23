@@ -5,7 +5,7 @@
 import type { Fase, GiocatoreId, ModelloMessaggio, Partita, SceltaMossa, ValoreCampo, Voto } from "./tipi.js";
 
 /** Azioni di sistema, inviate dal server (per esempio allo scadere di un timer). */
-export type AzioneSistema = { tipo: "AVANZA_FASE" } | { tipo: "CHIUDI_VOTO_PERSONALE" };
+export type AzioneSistema = { tipo: "AVANZA_FASE" };
 
 /**
  * Azioni dei giocatori. Quelle non ancora gestite dal motore vengono rifiutate:
@@ -28,12 +28,9 @@ export type AzioneGiocatore = { da: GiocatoreId } & (
       campi?: Record<string, ValoreCampo>;
     }
   | { tipo: "PASSA_AL_CONCORRENTE"; copiaSegretoId: string }
-  | { tipo: "PROPONI_DEMANSIONAMENTO"; bersaglio: GiocatoreId }
-  | { tipo: "VOTA_DEMANSIONAMENTO"; voto: "SI" | "NO" }
-  | { tipo: "PROPONI_PROMOZIONE"; bersaglio: GiocatoreId }
-  | { tipo: "VOTA_PROMOZIONE"; voto: "SI" | "NO" }
-  /** Finale: "nel direttivo sono rimasti solo onesti?" (risposta segreta). */
-  | { tipo: "VERIFICA_FINALE"; soloOnesti: boolean }
+  /** Finale: "C'è una spia nel direttivo?" (voto palese, rivelato a fine voto, D-058). */
+  | { tipo: "DOMANDA_SPIA"; risposta: "SI" | "NO" }
+  /** Finale: un nome nel giro dei nomi, oppure un voto nel ballottaggio (D-058). */
   | { tipo: "NOMINA_SPIA"; bersaglio: GiocatoreId }
 );
 
@@ -49,7 +46,7 @@ type ContenutoEvento =
   | { tipo: "ORDINE_DEL_GIORNO"; proposte: { id: string; titolo: string; costo: number }[]; causa: string }
   /** Dice solo CHI ha votato, non cosa: i voti si rivelano alla chiusura (D-019). */
   | { tipo: "VOTO_REGISTRATO"; da: GiocatoreId; propostaId: string; causa: string }
-  /** Alla chiusura si rivelano tutti i voti (D-019); "TEMPO_SCADUTO" vale come no (D-007). */
+  /** Alla chiusura si rivelano tutti i voti (D-019); "TEMPO_SCADUTO" vale come no (D-060). */
   | {
       tipo: "VOTAZIONE_CHIUSA";
       propostaId: string;
@@ -61,8 +58,8 @@ type ContenutoEvento =
     }
   /** Dice solo CHI ha scelto, mai cosa. */
   | { tipo: "MOSSA_REGISTRATA"; da: GiocatoreId; causa: string }
-  /** Solo l'esito complessivo, mai il numero (GDD §9). */
-  | { tipo: "ESITO_MOSSE_PRIVATE"; andamento: "IN_CALO" | "STABILE" | "IN_CRESCITA"; causa: string }
+  /** Quanti hanno giocato per l'azienda, mai chi (GDD §9, D-061). */
+  | { tipo: "ESITO_MOSSE_PRIVATE"; perAzienda: number; partecipanti: number; causa: string }
   /** Effetto reale di una proposta approvata sull'azienda (GDD §8.2). */
   | { tipo: "EFFETTO_PROPOSTA"; propostaId: string; effettoAzienda: number; causa: string }
   | { tipo: "MOSSA_CONCORRENTE"; concorrente: string; variazione: number; causa: string }
@@ -71,36 +68,29 @@ type ContenutoEvento =
   | { tipo: "FUGA_DI_NOTIZIE"; concorrente: string; segretoId: string; causa: string }
   /** Ultimo trimestre: risultati nascosti fino al punteggio (D-029). */
   | { tipo: "RISULTATI_RINVIATI"; causa: string }
+  /** Pubblico, nel Rapporto: quale informazione serve e a chi, mai chi l'ha ricevuta (D-061). */
+  | { tipo: "SEGRETO_ANNUNCIATO"; segretoId: string; utile: string; causa: string }
   /** Riservato alla fonte: "dato certo, arrivato al tuo reparto" (D-015, D-035). */
   | { tipo: "SEGRETO_RICEVUTO"; copiaId: string; causa: string }
   /** Riservato al destinatario. */
   | { tipo: "MESSAGGIO_RICEVUTO"; messaggioId: string; causa: string }
   /** Riservato alla spia. */
   | { tipo: "SEGRETO_CONSEGNATO"; copiaId: string; causa: string }
-  /** Pubblico, senza dire quale segreto (D-021, S2). */
-  | { tipo: "SEGRETO_IN_TEMPO"; causa: string }
+  /** Pubblico: quale segreto è arrivato in tempo, senza il valore (D-021, D-038, D-061). */
+  | { tipo: "SEGRETO_IN_TEMPO"; segretoId: string; causa: string }
   /** Pubblico: quale segreto ha usato il concorrente, e se era falso (GDD §11.3–11.4). */
   | { tipo: "SEGRETO_USATO"; concorrente: string; segretoId: string; falso: boolean; variazione: number; causa: string }
-  /** Promozioni e demansionamenti (GDD §13): proposta pubblica, voti rivelati alla chiusura. */
-  | { tipo: "VOTO_PERSONALE_APERTO"; voto: "PROMOZIONE" | "DEMANSIONAMENTO"; bersaglio: GiocatoreId; proponente: GiocatoreId; causa: string }
-  | { tipo: "VOTO_PERSONALE_REGISTRATO"; da: GiocatoreId; causa: string }
-  | {
-      tipo: "VOTO_PERSONALE_CHIUSO";
-      voto: "PROMOZIONE" | "DEMANSIONAMENTO";
-      bersaglio: GiocatoreId;
-      approvato: boolean;
-      si: number;
-      soglia: number;
-      voti: Partial<Record<GiocatoreId, "SI" | "NO" | "TEMPO_SCADUTO">>;
-      causa: string;
-    }
   /** Licenziamento: il ruolo viene rivelato subito (GDD §15). */
   | { tipo: "LICENZIAMENTO"; giocatore: GiocatoreId; spia: boolean; causa: string }
   /** Dice solo chi ha risposto / nominato, mai cosa. */
   | { tipo: "RISPOSTA_REGISTRATA"; da: GiocatoreId; causa: string }
-  | { tipo: "ESITO_VERIFICA"; tuttiSi: boolean; votiNo: GiocatoreId[]; causa: string }
-  | { tipo: "BALLOTTAGGIO"; candidati: GiocatoreId[]; causa: string }
-  /** Le nomine, nell'ordine in cui la TV le mostra una alla volta. */
+  /** Domanda del finale: voto palese (D-058). */
+  | { tipo: "ESITO_DOMANDA"; giro: number; si: GiocatoreId[]; no: GiocatoreId[]; procede: boolean; causa: string }
+  | { tipo: "BALLOTTAGGIO"; candidati: GiocatoreId[]; turno: number; causa: string }
+  /** Percorso a tre: avvertimento prima della seconda votazione (D-058). */
+  | { tipo: "AVVISO_BALLOTTAGGIO"; causa: string }
+  | { tipo: "NESSUN_LICENZIAMENTO"; causa: string }
+  /** Nomi o voti di ballottaggio, nell'ordine in cui la TV li mostra uno alla volta. */
   | { tipo: "RIVELAZIONE_NOMINE"; nomine: { da: GiocatoreId; bersaglio: GiocatoreId }[]; causa: string }
   | { tipo: "PUNTEGGI"; classifica: { giocatore: GiocatoreId; totale: number }[]; causa: string };
 

@@ -9,15 +9,16 @@ import type { Configurazione } from "./config.js";
 import { estraiOrdineDelGiorno } from "./proposte.js";
 import { risolviTrimestre } from "./risoluzione.js";
 import { distribuisciSegreti } from "./segreti.js";
-import { apriDecisioneFinale, duePossibiliSpie, prossimoDemansionato } from "./finale.js";
+import { duePossibiliSpie, licenziatiNelGiro } from "./finale.js";
 import { calcolaPunteggi } from "./punteggio.js";
 import { creaCasuale } from "./rng.js";
 import type { Fase, Partita } from "./tipi.js";
 
-/** Nel finale: decisione sul prossimo demansionato, oppure la domanda di verifica se non ne restano (D-028). */
-function dopoLeDecisioni(partita: Partita, trimestre: number): { fase: Fase; trimestre: number } {
-  const bersaglio = prossimoDemansionato(partita);
-  return bersaglio ? { fase: { nome: "DECISIONE_FINALE", bersaglio }, trimestre } : { fase: { nome: "VERIFICA", giro: 1 }, trimestre };
+/** Fine di un giro del finale: con 8 giocatori, se nel primo giro è uscito uno solo, secondo giro (D-058). */
+function dopoIlGiro(partita: Partita, giro: number, trimestre: number): { fase: Fase; trimestre: number } {
+  return duePossibiliSpie(partita) && giro === 1 && licenziatiNelGiro(partita, 1) === 1
+    ? { fase: { nome: "DOMANDA", giro: 2 }, trimestre }
+    : { fase: { nome: "PUNTEGGIO" }, trimestre };
 }
 
 /** Fase successiva a quella attuale; null se la partita è finita. */
@@ -41,25 +42,15 @@ export function faseSuccessiva(partita: Partita, config: Configurazione): { fase
     case "MOSSA_PRIVATA":
       return { fase: { nome: "RISOLUZIONE" }, trimestre };
     case "RISOLUZIONE":
-      return { fase: { nome: "DEMANSIONAMENTO" }, trimestre };
-    case "DEMANSIONAMENTO":
-      return trimestre < config.trimestri
-        ? { fase: { nome: "RAPPORTO" }, trimestre: trimestre + 1 }
-        : dopoLeDecisioni(partita, trimestre);
-    // Finale (GDD §15). Le chiusure di decisione, verifica e nomina sono già avvenute quando si calcola la fase successiva.
-    case "DECISIONE_FINALE":
-      return dopoLeDecisioni(partita, trimestre);
-    case "VERIFICA": {
-      const ultimo = partita.finale.esitiVerifica.at(-1);
-      return ultimo?.tuttiSi
-        ? { fase: { nome: "PUNTEGGIO" }, trimestre }
-        : { fase: { nome: "NOMINA", giro: fase.giro, ballottaggio: false }, trimestre };
-    }
+      return trimestre < config.trimestri ? { fase: { nome: "RAPPORTO" }, trimestre: trimestre + 1 } : { fase: { nome: "DOMANDA", giro: 1 }, trimestre };
+    // Finale (GDD §15, D-058). Le chiusure di domanda, nomi e ballottaggi sono già avvenute quando si calcola la fase successiva.
+    case "DOMANDA":
+      return partita.finale.esitiDomanda.at(-1)?.procede ? { fase: { nome: "NOMINA", giro: fase.giro }, trimestre } : { fase: { nome: "PUNTEGGIO" }, trimestre };
     case "NOMINA":
-      if (partita.finale.ballottaggio.length > 0) return { fase: { nome: "NOMINA", giro: fase.giro, ballottaggio: true }, trimestre };
-      return duePossibiliSpie(partita) && fase.giro === 1
-        ? { fase: { nome: "VERIFICA", giro: 2 }, trimestre }
-        : { fase: { nome: "PUNTEGGIO" }, trimestre };
+    case "BALLOTTAGGIO": {
+      const b = partita.finale.ballottaggio;
+      return b ? { fase: { nome: "BALLOTTAGGIO", giro: fase.giro, turno: b.turno }, trimestre } : dopoIlGiro(partita, fase.giro, trimestre);
+    }
     case "PUNTEGGIO":
       return { fase: { nome: "LETTURA_MESSAGGI" }, trimestre };
     case "LETTURA_MESSAGGI":
@@ -75,12 +66,11 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
   switch (partita.fase.nome) {
     case "RISOLUZIONE":
       return risolviTrimestre(partita, ambiente);
-    case "DECISIONE_FINALE":
-      return apriDecisioneFinale(partita);
-    case "VERIFICA":
-      partita.finale.verifica = {};
+    case "DOMANDA":
+      partita.finale.risposte = {};
       return [];
     case "NOMINA":
+    case "BALLOTTAGGIO":
       partita.finale.nomine = {};
       return [];
     case "PUNTEGGIO": {
@@ -111,10 +101,8 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
     causa: `Budget del trimestre: +${config.cassa.perTrimestre} ${unita}. In cassa ${dopo} ${unita}${tetto}.`,
   });
 
-  // Quota messaggi: riparte, non si accumula (GDD §10.1, §13.2).
-  for (const g of partita.giocatori) {
-    g.quotaMessaggi = g.stato === "DEMANSIONATO" ? config.messaggi.perTrimestreDemansionato : config.messaggi.perTrimestre;
-  }
+  // Quota messaggi: riparte, non si accumula (GDD §10.1).
+  for (const g of partita.giocatori) g.quotaMessaggi = config.messaggi.perTrimestre;
 
   // Ordine del giorno: estratto e annunciato subito, nell'ordine in cui si voterà (D-008).
   const casuale = creaCasuale(partita.statoCasuale);
@@ -148,14 +136,12 @@ export function descriviFase(fase: Fase, trimestre: number): string {
       return `Trimestre ${trimestre}: mossa privata`;
     case "RISOLUZIONE":
       return `Trimestre ${trimestre}: risultati`;
-    case "DEMANSIONAMENTO":
-      return `Trimestre ${trimestre}: promozioni e demansionamento`;
-    case "DECISIONE_FINALE":
-      return "Il finale: promuovere o licenziare?";
-    case "VERIFICA":
-      return `Il finale: nel direttivo sono rimasti solo onesti? (giro ${fase.giro})`;
+    case "DOMANDA":
+      return fase.giro === 1 ? "Rinnovo dei contratti: c'è una spia nel direttivo?" : "Rinnovo dei contratti: c'è ancora una spia nel direttivo?";
     case "NOMINA":
-      return fase.ballottaggio ? "Il finale: ballottaggio" : `Il finale: chi è la spia? (giro ${fase.giro})`;
+      return "Rinnovo dei contratti: chi è la spia? Fate un nome";
+    case "BALLOTTAGGIO":
+      return `Rinnovo dei contratti: ballottaggio (votazione ${fase.turno})`;
     case "PUNTEGGIO":
       return "Punteggi";
     case "LETTURA_MESSAGGI":

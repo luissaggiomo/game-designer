@@ -7,8 +7,7 @@
 import type { Azione, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import { descriviFase, entraNellaFase, faseSuccessiva } from "./fasi.js";
-import { chiudiDecisioneFinale, chiudiNomina, chiudiVerifica, nominaSpia, rispondiVerifica } from "./finale.js";
-import { chiudiVotoPersonale, proponiDemansionamento, proponiPromozione, votaPersonale } from "./personali.js";
+import { chiudiBallottaggio, chiudiDomanda, chiudiNomina, nominaSpia, rispondiDomanda } from "./finale.js";
 import { chiudiSceltaObiettivi, scegliObiettivo } from "./obiettivi.js";
 import { registraMossa } from "./risoluzione.js";
 import { inviaMessaggio, passaAlConcorrente } from "./segreti.js";
@@ -19,13 +18,6 @@ export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): E
   switch (azione.tipo) {
     case "AVANZA_FASE":
       return avanzaFase(partita, ambiente);
-    case "CHIUDI_VOTO_PERSONALE": {
-      if (!partita.votoPersonale) return { ok: false, errore: "Non c'è nessuna votazione in corso" };
-      // La decisione finale si chiude solo con AVANZA_FASE (che licenzia chi non è promosso).
-      if (partita.fase.nome === "DECISIONE_FINALE") return { ok: false, errore: "La decisione finale si chiude allo scadere del tempo" };
-      const nuova = structuredClone(partita);
-      return { ok: true, partita: nuova, eventi: chiudiVotoPersonale(nuova) };
-    }
     case "SCEGLI_OBIETTIVO":
       return scegliObiettivo(partita, azione);
     case "VOTA":
@@ -36,15 +28,8 @@ export function applica(partita: Partita, azione: Azione, ambiente: Ambiente): E
       return inviaMessaggio(partita, azione, ambiente);
     case "PASSA_AL_CONCORRENTE":
       return passaAlConcorrente(partita, azione);
-    case "PROPONI_PROMOZIONE":
-      return proponiPromozione(partita, azione);
-    case "PROPONI_DEMANSIONAMENTO":
-      return proponiDemansionamento(partita, azione, ambiente);
-    case "VOTA_PROMOZIONE":
-    case "VOTA_DEMANSIONAMENTO":
-      return votaPersonale(partita, azione);
-    case "VERIFICA_FINALE":
-      return rispondiVerifica(partita, azione);
+    case "DOMANDA_SPIA":
+      return rispondiDomanda(partita, azione);
     case "NOMINA_SPIA":
       return nominaSpia(partita, azione);
   }
@@ -57,14 +42,12 @@ function chiudiFase(partita: Partita, ambiente: Ambiente): Evento[] {
       return chiudiSceltaObiettivi(partita, ambiente);
     case "VOTAZIONE":
       return chiudiVotazione(partita, ambiente);
-    case "DEMANSIONAMENTO":
-      return chiudiVotoPersonale(partita);
-    case "DECISIONE_FINALE":
-      return chiudiDecisioneFinale(partita);
-    case "VERIFICA":
-      return chiudiVerifica(partita, ambiente);
+    case "DOMANDA":
+      return chiudiDomanda(partita, ambiente);
     case "NOMINA":
       return chiudiNomina(partita);
+    case "BALLOTTAGGIO":
+      return chiudiBallottaggio(partita);
     default:
       return [];
   }

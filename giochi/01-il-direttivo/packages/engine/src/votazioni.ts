@@ -1,12 +1,9 @@
 /**
  * Votazione pesata (GDD §8.3–8.4bis · Architettura §10.3).
  *
- * - Votano solo i direttori ATTIVI con peso maggiore di 0.
- * - Caso normale: soglia = metà più uno del peso dei reparti occupati, demansionati compresi;
- *   i vacanti non contano (D-006). Solo SÌ/NO.
- * - Quesito con astensione: pesi tutti 1, soglia = metà più uno del peso di chi ha votato SÌ o NO
- *   più il peso dei demansionati, che vale come un "no" fisso (D-007, D-013).
- * - Tempo scaduto = "no"; nei quesiti con astensione = astensione (D-029, rivede D-013).
+ * - Votano i direttori con peso maggiore di 0. Solo SÌ/NO: niente astensione (D-060).
+ * - Soglia = metà più uno del peso dei reparti occupati; i vacanti non contano (D-006).
+ * - Tempo scaduto = "no" (conserva lo stato delle cose, D-029, D-060).
  *   Pareggio = respinta (segue dalla soglia "metà più uno").
  * - Approvata solo se c'è abbastanza cassa (costo ≤ cassa).
  */
@@ -27,11 +24,9 @@ export function registraVoto(partita: Partita, azione: Extract<AzioneGiocatore, 
   if (!proposta) return { ok: false, errore: "Ora non si sta votando nessuna proposta" };
   const g = partita.giocatori.find((x) => x.id === azione.da);
   if (!g) return { ok: false, errore: "Giocatore sconosciuto" };
-  if (g.stato !== "ATTIVO") return { ok: false, errore: "Chi è demansionato non vota al tavolo del direttivo" };
+  if (g.stato !== "ATTIVO") return { ok: false, errore: "Vota solo chi è nel direttivo" };
   if (pesoDi(proposta, g) === 0) return { ok: false, errore: "Il tuo reparto ha peso 0 in questa votazione: puoi solo parlare" };
-  if (azione.voto === "ASTENUTO" && !proposta.astensioneAmmessa) {
-    return { ok: false, errore: "In questa votazione non è ammessa l'astensione" };
-  }
+  if (azione.voto !== "SI" && azione.voto !== "NO") return { ok: false, errore: "Si vota solo SÌ o NO" };
 
   // Il voto si può cambiare fino alla chiusura: vale l'ultimo (D-019).
   const nuova = structuredClone(partita);
@@ -49,30 +44,17 @@ export function registraVoto(partita: Partita, azione: Extract<AzioneGiocatore, 
 /** Calcola l'esito di una proposta (senza modificare nulla). */
 export function calcolaEsito(partita: Partita, proposta: PropostaIstanza, unita: string): EsitoVotazione {
   const aventiDiritto = partita.giocatori.filter((g) => g.stato === "ATTIVO" && pesoDi(proposta, g) > 0);
-  // Tempo scaduto = conserva lo stato delle cose (D-029): "no"; nei quesiti con astensione = astensione.
-  const votoDi = (g: Giocatore) => proposta.voti[g.id] ?? (proposta.astensioneAmmessa ? "ASTENUTO" : "NO");
+  // Tempo scaduto = conserva lo stato delle cose (D-029, D-060): "no".
   const votiPerTempoScaduto = aventiDiritto.filter((g) => proposta.voti[g.id] === undefined).length;
-
-  const si = aventiDiritto.filter((g) => votoDi(g) === "SI").reduce((s, g) => s + pesoDi(proposta, g), 0);
-  const pesoDemansionati = partita.giocatori
-    .filter((g) => g.stato === "DEMANSIONATO")
-    .reduce((s, g) => s + pesoDi(proposta, g), 0);
-
-  let base: number;
-  if (proposta.astensioneAmmessa) {
-    const pesoVotanti = aventiDiritto.filter((g) => votoDi(g) !== "ASTENUTO").reduce((s, g) => s + pesoDi(proposta, g), 0);
-    base = pesoVotanti + pesoDemansionati;
-  } else {
-    // Peso di tutti i reparti occupati (i pesi effettivi contengono già solo gli occupati, D-006).
-    base = Object.values(proposta.pesi).reduce<number>((s, p) => s + (p ?? 0), 0);
-  }
+  const si = aventiDiritto.filter((g) => proposta.voti[g.id] === "SI").reduce((s, g) => s + pesoDi(proposta, g), 0);
+  // Peso di tutti i reparti occupati (i pesi effettivi contengono già solo gli occupati, D-006).
+  const base = Object.values(proposta.pesi).reduce<number>((s, p) => s + (p ?? 0), 0);
   const soglia = Math.floor(base / 2) + 1;
   const votiSufficienti = si >= soglia;
   const fondiSufficienti = proposta.costo <= partita.azienda.cassa;
   const approvata = votiSufficienti && fondiSufficienti;
 
-  const comeScaduto = proposta.astensioneAmmessa ? "astenuti" : '"no"';
-  const scaduti = votiPerTempoScaduto > 0 ? ` (${votiPerTempoScaduto} ${comeScaduto} per tempo scaduto)` : "";
+  const scaduti = votiPerTempoScaduto > 0 ? ` (${votiPerTempoScaduto} "no" per tempo scaduto)` : "";
   let motivo: string;
   if (approvata) motivo = `Approvata: ${si} sì, ne servivano ${soglia}${scaduti}.`;
   else if (!votiSufficienti) motivo = `Respinta: ${si} sì, ne servivano ${soglia}${scaduti}.`;
@@ -83,7 +65,7 @@ export function calcolaEsito(partita: Partita, proposta: PropostaIstanza, unita:
 
 /**
  * Voti decisivi (obiettivi, D-052): chi, votando al contrario, avrebbe ribaltato l'esito.
- * Contano solo i SÌ e i NO espressi (niente astensioni né tempo scaduto, R2).
+ * Contano solo i SÌ e i NO espressi (niente tempo scaduto, R2).
  */
 function votiDecisivi(partita: Partita, proposta: PropostaIstanza, approvata: boolean, unita: string): GiocatoreId[] {
   return Object.entries(proposta.voti).flatMap(([id, voto]) => {

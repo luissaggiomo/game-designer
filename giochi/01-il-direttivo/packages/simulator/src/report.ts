@@ -68,22 +68,32 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
   }
   sezioni.push(tabella(["Giocatori", "Spie", "Partite", "Vincono gli onesti", "Vince la spia"], righeFazione));
 
-  // 2. Spie.
-  sezioni.push("\n## 2. Spie: scoperte ed errori\n");
+  // 2. Finale "Rinnovo dei contratti" (D-058).
+  sezioni.push("\n## 2. Finale: rinnovo dei contratti (D-058)\n\nLa domanda \"C'è una spia?\" passa con almeno metà di sì. \"Doppio\" = due licenziati per stallo ripetuto a due; \"Ultima a vuoto\" = percorso a tre finito senza licenziati.\n");
   sezioni.push(
     tabella(
-      ["Giocatori", "Spie licenziate (su spie presenti)", "Onesti licenziati nel finale (per partita)", "Demansionamenti per partita", "…di cui su spie"],
+      ["Giocatori", "Spie licenziate (su spie presenti)", "Onesti licenziati (per partita)", "Domanda passa (con spie)", "Domanda passa (senza spie)", "Partite con ballottaggio", "Doppio", "Ultima a vuoto"],
       numeri.map((n) => {
         const g = perN(n);
         const spie = g.reduce((s, p) => s + p.spie, 0);
-        const dem = g.flatMap((p) => p.demansionamenti);
-        return [n, pct(g.reduce((s, p) => s + p.spieLicenziate, 0), spie), dec(media(g.map((p) => p.onestiLicenziatiNelFinale)), 2), dec(media(g.map((p) => p.demansionamenti.length)), 2), pct(dem.filter((d) => d.spia).length, dem.length)];
+        const conSpie = g.filter((p) => p.spie > 0);
+        const senza = g.filter((p) => p.spie === 0);
+        return [
+          n,
+          pct(g.reduce((s, p) => s + p.spieLicenziate, 0), spie),
+          dec(media(g.map((p) => p.onestiLicenziatiNelFinale)), 2),
+          pct(conSpie.filter((p) => p.finale.domande[0]).length, conSpie.length),
+          pct(senza.filter((p) => p.finale.domande[0]).length, senza.length),
+          pct(g.filter((p) => p.finale.ballottaggi > 0).length, g.length),
+          pct(g.filter((p) => p.finale.doppio).length, g.length),
+          pct(g.filter((p) => p.finale.nessunoAllUltima).length, g.length),
+        ];
       }),
     ),
   );
 
   // 3. Equità tra reparti (D-005).
-  sezioni.push("\n## 3. Equità tra reparti (D-005)\n\nPer ogni reparto: punteggio medio, percentuale di partite vinte (punteggio più alto), peso di voto disponibile nell'anno, segreti ricevuti come fonte, volte \"favorito\" dall'ordine del giorno, percentuale di demansionamenti subiti.\n");
+  sezioni.push("\n## 3. Equità tra reparti (D-005)\n\nPer ogni reparto: punteggio medio, percentuale di partite vinte (punteggio più alto), peso di voto disponibile nell'anno, segreti ricevuti come fonte, volte \"favorito\" dall'ordine del giorno, percentuale di licenziamenti subiti nel finale.\n");
   for (const n of numeri) {
     const giocatori = perN(n).flatMap((p) => p.dettaglio);
     const reparti = [...new Set(giocatori.map((g) => g.reparto))];
@@ -99,7 +109,7 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
     sezioni.push(`\n**${n} giocatori** (vittoria attesa se tutti pari: ${pct(1, n)})\n`);
     sezioni.push(
       tabella(
-        ["Reparto", "Punteggio medio", "Vittorie", "Peso voto/anno", "Segreti come fonte", "Favorito", "Demansionato"],
+        ["Reparto", "Punteggio medio", "Vittorie", "Peso voto/anno", "Segreti come fonte", "Favorito", "Licenziato"],
         righe.map(({ r, punteggio, vittorie: v, gs }) => [
           r,
           dec(punteggio),
@@ -107,7 +117,7 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
           dec(media(gs.map((g) => g.pesoVotoAnno))),
           dec(media(gs.map((g) => g.segretiComeFonte))),
           dec(media(gs.map((g) => g.favorito))),
-          pct(gs.filter((g) => g.demansionato).length, gs.length),
+          pct(gs.filter((g) => g.licenziato).length, gs.length),
         ]),
       ),
     );
@@ -159,7 +169,8 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
     ),
   );
   const trimestriConRicarica = partite.reduce((s, p) => s + Math.max(0, p.cassaInizioTrimestre.length - 1), 0);
-  sezioni.push(`\nTetto della cassa (150 K) raggiunto in ${pct(partite.reduce((s, p) => s + p.tettoRaggiunto, 0), trimestriConRicarica)} dei trimestri 2–4.`);
+  const respinteFondi = voti.filter((v) => v.perFondi).length;
+  sezioni.push(`\nTetto della cassa (${ambiente?.config.cassa.massima ?? 150} K) raggiunto in ${pct(partite.reduce((s, p) => s + p.tettoRaggiunto, 0), trimestriConRicarica)} dei trimestri 2–4. Proposte respinte per mancanza di fondi: ${pct(respinteFondi, voti.length)} di tutte le votazioni.`);
 
   // 5b. Crescita dell'azienda (D-056): serve a tarare la velocità del concorrente.
   sezioni.push("\n### Crescita dell'azienda da proposte e segreti (D-056)\n\nEffetto medio per trimestre delle proposte approvate e dei segreti arrivati in tempo, nelle partite **senza spie**: è il valore da usare per `concorrenti.crescitaMediaProposteESegreti`.\n");
@@ -188,7 +199,7 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
   sezioni.push("\n## 7. Avvisi automatici\n");
   sezioni.push(avvisi.length === 0 ? "Nessuno." : avvisi.map((a) => `- ⚠️ ${a.testo}`).join("\n"));
   sezioni.push(
-    "\n## 8. Limiti\n\n- I robot non parlano, non mentono a voce e non persuadono: la parte \"psicologica\" si misura solo nelle serate di prova.\n- Contenuti veri (40 quesiti, 36 segreti con valori variabili e tipi a bilancia, D-030…D-039), ma i robot non leggono i testi: votano sui numeri e non usano il tipo dei segreti per decidere a chi darli.\n- Obiettivi personali (D-046…D-052): i robot scelgono metà delle volte secondo il profilo e metà a caso, e li perseguono con regole semplici (robot.ts). Non sanno \"leggere la sala\": gli obiettivi che chiedono di indovinare l'esito di un voto o l'effetto sull'azienda risultano più difficili che per una persona. I messaggi di solo testo sono simulati con una probabilità fissa.\n- Il comportamento dei robot (soglie di voto, sospetti, accuse) è una semplificazione descritta in packages/simulator/src/robot.ts.",
+    "\n## 8. Limiti\n\n- I robot non parlano, non mentono a voce e non persuadono: la parte \"psicologica\" si misura solo nelle serate di prova.\n- Contenuti veri (40 quesiti a 30 / 50 / 80 K, 36 segreti con valori variabili e tipi a bilancia, D-030…D-039, D-062), ma i robot non leggono i testi: votano sui numeri e non usano il tipo dei segreti per decidere a chi darli.\n- Obiettivi personali (D-046…D-052): i robot scelgono metà delle volte secondo il profilo e metà a caso, e li perseguono con regole semplici (robot.ts). Non sanno \"leggere la sala\": gli obiettivi che chiedono di indovinare l'esito di un voto o l'effetto sull'azienda risultano più difficili che per una persona. I messaggi di solo testo sono simulati con una probabilità fissa.\n- Il comportamento dei robot (soglie di voto, sospetti, accuse) è una semplificazione descritta in packages/simulator/src/robot.ts. Nel finale (D-058) un onesto risponde \"sì, c'è una spia\" se ha un sospetto concreto (o per istinto, 30%), poi nomina chi sospetta di più; la spia prudente dice \"sì\" metà delle volte per mimetizzarsi, quella aggressiva sempre \"no\", e le spie nominano a caso. I robot non usano il conteggio \"3 su 5 per l'azienda\" né gli annunci dei segreti (D-061): quegli indizi servono alle persone, e il loro effetto si vedrà solo nelle serate.",
   );
   return { markdown: sezioni.join("\n"), avvisi };
 }
@@ -336,12 +347,12 @@ export function stimaSoglia(partite: DatiPartita[]): number | null {
 }
 
 export function creaCsv(partite: DatiPartita[]): { partite: string; giocatori: string } {
-  const righeP = ["giocatori;seme;spie;configurazione_spie;mercato;votazioni_approvate;votazioni_totali;demansionamenti;segreti_in_tempo;segreti_passati;spie_licenziate;onesti_licenziati_finale"];
-  const righeG = ["giocatori;seme;reparto;spia;profilo;punteggio;punti_reparto;vincitore;demansionato;licenziato;segreti_come_fonte;favorito;peso_voto_anno;obiettivo;tipo_obiettivo;facile;difficile;punti_obiettivo"];
+  const righeP = ["giocatori;seme;spie;configurazione_spie;mercato;votazioni_approvate;votazioni_totali;domanda_passa;ballottaggi;segreti_in_tempo;segreti_passati;spie_licenziate;onesti_licenziati_finale"];
+  const righeG = ["giocatori;seme;reparto;spia;profilo;punteggio;punti_reparto;vincitore;licenziato;segreti_come_fonte;favorito;peso_voto_anno;obiettivo;tipo_obiettivo;facile;difficile;punti_obiettivo"];
   for (const p of partite) {
-    righeP.push([p.giocatori, p.seme, p.spie, p.configurazioneSpie, p.mercato, p.votazioni.filter((v) => v.approvata).length, p.votazioni.length, p.demansionamenti.length, p.segreti.inTempo, p.segreti.passati, p.spieLicenziate, p.onestiLicenziatiNelFinale].join(";"));
+    righeP.push([p.giocatori, p.seme, p.spie, p.configurazioneSpie, p.mercato, p.votazioni.filter((v) => v.approvata).length, p.votazioni.length, p.finale.domande[0] ? 1 : 0, p.finale.ballottaggi, p.segreti.inTempo, p.segreti.passati, p.spieLicenziate, p.onestiLicenziatiNelFinale].join(";"));
     for (const g of p.dettaglio) {
-      righeG.push([p.giocatori, p.seme, g.reparto, g.spia ? 1 : 0, g.profilo, g.punteggio, g.puntiReparto, g.vincitore ? 1 : 0, g.demansionato ? 1 : 0, g.licenziato ? 1 : 0, g.segretiComeFonte, g.favorito, g.pesoVotoAnno, g.obiettivo.id, g.obiettivo.tipo, g.obiettivo.facile ? 1 : 0, g.obiettivo.difficile ? 1 : 0, g.obiettivo.punti].join(";"));
+      righeG.push([p.giocatori, p.seme, g.reparto, g.spia ? 1 : 0, g.profilo, g.punteggio, g.puntiReparto, g.vincitore ? 1 : 0, g.licenziato ? 1 : 0, g.segretiComeFonte, g.favorito, g.pesoVotoAnno, g.obiettivo.id, g.obiettivo.tipo, g.obiettivo.facile ? 1 : 0, g.obiettivo.difficile ? 1 : 0, g.obiettivo.punti].join(";"));
     }
   }
   return { partite: righeP.join("\n"), giocatori: righeG.join("\n") };

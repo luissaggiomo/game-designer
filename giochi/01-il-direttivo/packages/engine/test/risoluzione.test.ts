@@ -8,14 +8,13 @@ import type { Partita, PropostaIstanza, RepartoId, SceltaMossa } from "../src/ti
 const base = caricaAmbiente();
 
 /** Ambiente senza casualità nei risultati, per controllare i conti esatti. */
-function ambienteFisso(modifiche: { autogestione?: Partial<Ambiente["config"]["autogestione"]> } = {}): Ambiente {
+function ambienteFisso(): Ambiente {
   return {
     ...base,
     config: {
       ...base.config,
       mossaPrivata: { ...base.config.mossaPrivata, rumore: [0] },
       concorrenti: { ...base.config.concorrenti, eventoCasuale: [0], crescitaMediaProposteESegreti: 1, quotaAziendalistaRiferimento: 0.5 },
-      autogestione: { ...base.config.autogestione, mossaPrivataDemansionati: false, ...modifiche.autogestione },
     },
   };
 }
@@ -48,23 +47,23 @@ function risolvi(p: Partita, amb: Ambiente): { partita: Partita; eventi: Evento[
   return { partita: esito.partita, eventi: esito.eventi };
 }
 
-const andamento = (eventi: Evento[]) => eventi.find((e) => e.tipo === "ESITO_MOSSE_PRIVATE");
+const esitoMosse = (eventi: Evento[]) => eventi.find((e) => e.tipo === "ESITO_MOSSE_PRIVATE");
 
 describe("mossa privata (GDD §9)", () => {
   const amb = ambienteFisso();
 
-  it("tutti per l'azienda: azienda in crescita, nessun punto di reparto", () => {
+  it("tutti per l'azienda: +1 a testa per l'azienda, nessun punto di reparto", () => {
     const p = scegli(inMossaPrivata(5, amb), amb, { ACQUISTI: "AZIENDA", PRODUZIONE: "AZIENDA", VENDITE: "AZIENDA", MARKETING: "AZIENDA", FINANZA: "AZIENDA" });
     const { partita, eventi } = risolvi(p, amb);
-    expect(andamento(eventi)).toMatchObject({ andamento: "IN_CRESCITA" });
+    expect(esitoMosse(eventi)).toMatchObject({ perAzienda: 5, partecipanti: 5 });
     expect(partita.azienda.quota).toBe(5);
     expect(partita.giocatori.every((g) => g.puntiReparto === 0)).toBe(true);
   });
 
-  it("tutti per il reparto: +1 a testa, azienda in calo", () => {
+  it("tutti per il reparto: +1 a testa al reparto, −1 a testa all'azienda", () => {
     const p = scegli(inMossaPrivata(5, amb), amb, { ACQUISTI: "REPARTO", PRODUZIONE: "REPARTO", VENDITE: "REPARTO", MARKETING: "REPARTO", FINANZA: "REPARTO" });
     const { partita, eventi } = risolvi(p, amb);
-    expect(andamento(eventi)).toMatchObject({ andamento: "IN_CALO" });
+    expect(esitoMosse(eventi)).toMatchObject({ perAzienda: 0, partecipanti: 5 });
     expect(partita.azienda.quota).toBe(-5);
     expect(partita.giocatori.every((g) => g.puntiReparto === 1)).toBe(true);
   });
@@ -74,10 +73,20 @@ describe("mossa privata (GDD §9)", () => {
     expect(partita.azienda.quota).toBe(5);
   });
 
-  it("la TV vede solo l'andamento, mai un numero", () => {
+  it("la TV vede quanti hanno giocato per l'azienda, mai chi (D-061)", () => {
     const p = scegli(inMossaPrivata(5, amb), amb, { ACQUISTI: "REPARTO", PRODUZIONE: "REPARTO" });
-    const evento = andamento(risolvi(p, amb).eventi);
-    expect(evento?.causa).not.toMatch(/\d/);
+    const evento = esitoMosse(risolvi(p, amb).eventi);
+    expect(evento?.causa).toBe("Mossa privata: 3 su 5 hanno giocato per l'azienda.");
+    for (const g of p.giocatori) expect(evento?.causa).not.toContain(g.nome);
+  });
+
+  it("nel 4° trimestre il conteggio si annuncia subito, i numeri del mercato no (D-029, D-061)", () => {
+    const p = scegli(inMossaPrivata(5, amb), amb, { ACQUISTI: "REPARTO" });
+    p.trimestre = 4;
+    const { partita, eventi } = risolvi(p, amb);
+    expect(esitoMosse(eventi)?.causa).toContain("4 su 5");
+    expect(eventi.some((e) => e.tipo === "CORSA_DI_MERCATO")).toBe(false);
+    expect(partita.risultatiRinviati?.eventi.some((e) => e.tipo === "ESITO_MOSSE_PRIVATE")).toBe(false);
   });
 
   it("l'evento di registrazione dice chi ha scelto, non cosa", () => {
@@ -86,30 +95,26 @@ describe("mossa privata (GDD §9)", () => {
     expect(esito.ok && JSON.stringify(esito.eventi)).not.toContain("REPARTO");
   });
 
-  it("il demansionato non fa la mossa privata; fuori fase è rifiutata", () => {
+  it("il licenziato non fa la mossa privata; fuori fase è rifiutata", () => {
     const p = inMossaPrivata(5, amb);
-    p.giocatori.find((g) => g.repartoId === "MARKETING")!.stato = "DEMANSIONATO";
+    p.giocatori.find((g) => g.repartoId === "MARKETING")!.stato = "LICENZIATO";
     expect(applica(p, { tipo: "MOSSA_PRIVATA", da: idDi(p, "MARKETING"), scelta: "AZIENDA" }, amb).ok).toBe(false);
     p.fase = { nome: "RISOLUZIONE" };
     expect(applica(p, { tipo: "MOSSA_PRIVATA", da: idDi(p, "VENDITE"), scelta: "AZIENDA" }, amb).ok).toBe(false);
   });
 
-  it("i reparti vacanti non fanno la mossa privata; quello del demansionato sì, scelta dal computer (D-020)", () => {
-    const conAutogestione = ambienteFisso({ autogestione: { mossaPrivataDemansionati: true, probabilitaMossaAzienda: 1 } });
+  it("i reparti vacanti non fanno la mossa privata (D-020)", () => {
     // 4 giocatori (4 reparti vacanti): contano solo le 4 mosse "azienda" predefinite.
-    expect(risolvi(inMossaPrivata(4, conAutogestione), conAutogestione).partita.azienda.quota).toBe(4);
-    // Un demansionato: il suo reparto gioca comunque per l'azienda, guidato dal computer.
-    const p = inMossaPrivata(4, conAutogestione);
-    p.giocatori.find((g) => g.repartoId === "VENDITE")!.stato = "DEMANSIONATO";
-    p.reparti.find((r) => r.id === "VENDITE")!.autogestione = true;
-    expect(risolvi(p, conAutogestione).partita.azienda.quota).toBe(4);
+    const { partita, eventi } = risolvi(inMossaPrivata(4, amb), amb);
+    expect(partita.azienda.quota).toBe(4);
+    expect(esitoMosse(eventi)).toMatchObject({ perAzienda: 4, partecipanti: 4 });
   });
 });
 
 describe("effetti delle proposte approvate (GDD §8.2, §14)", () => {
   const amb = ambienteFisso();
   const approvata = (effetti: PropostaIstanza["effettiPrivati"], effettoAzienda: number, approvataSi = true): PropostaIstanza => ({
-    id: "p", modelloId: "p", titolo: "Prova", categoria: "X", costo: 10, astensioneAmmessa: false, spiegazione: "Spiegazione di prova",
+    id: "p", modelloId: "p", titolo: "Prova", categoria: "X", costo: 10, spiegazione: "Spiegazione di prova",
     pesi: {}, effettiPrivati: effetti, effettoAzienda, voti: {},
     esito: { approvata: approvataSi, si: 0, soglia: 0, votiPerTempoScaduto: 0, motivo: "" },
   });
@@ -131,18 +136,6 @@ describe("effetti delle proposte approvate (GDD §8.2, §14)", () => {
     const { partita } = risolvi(p, amb);
     expect(punti(partita, "VENDITE")).toBe(0);
     expect(partita.azienda.quota).toBe(5);
-  });
-
-  it("reparto in autogestione: effetti ridotti, 'rende poco ma non fa disastri'", () => {
-    const p = inMossaPrivata(5, amb);
-    p.giocatori.find((g) => g.repartoId === "VENDITE")!.stato = "DEMANSIONATO";
-    p.giocatori.find((g) => g.repartoId === "PRODUZIONE")!.stato = "DEMANSIONATO";
-    p.reparti.find((r) => r.id === "VENDITE")!.autogestione = true;
-    p.reparti.find((r) => r.id === "PRODUZIONE")!.autogestione = true;
-    p.proposteTrimestre = [approvata({ VENDITE: { punti: 3, testo: "" }, PRODUZIONE: { punti: -3, testo: "" } }, 0)];
-    const { partita } = risolvi(p, amb);
-    expect(punti(partita, "VENDITE")).toBe(1); // 3 × 0,5 = 1,5 → 1
-    expect(punti(partita, "PRODUZIONE")).toBe(-1); // −3 × 0,5 = −1,5 → −1
   });
 
   it("i punti di reparto non compaiono negli eventi pubblici", () => {

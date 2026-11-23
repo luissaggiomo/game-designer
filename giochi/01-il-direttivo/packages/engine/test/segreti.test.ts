@@ -15,7 +15,6 @@ const amb: Ambiente = {
     ...base.config,
     mossaPrivata: { ...base.config.mossaPrivata, rumore: [0] },
     concorrenti: { ...base.config.concorrenti, eventoCasuale: [0], crescitaMediaProposteESegreti: 0, quotaAziendalistaRiferimento: 0.5 },
-    autogestione: { ...base.config.autogestione, mossaPrivataDemansionati: false },
   },
 };
 
@@ -104,12 +103,6 @@ describe("messaggi privati (GDD §10, D-021)", () => {
     expect(rifiutata(dopo1, { tipo: "INVIA_MESSAGGIO", da: a.id, a: b.id, anonimo: true, modello: "SOLO_TESTO", testo: "due" })).toBe(true);
   });
 
-  it("il demansionato non può mandare anonimi (D-021)", () => {
-    const q = structuredClone(p);
-    q.giocatori.find((g) => g.id === a.id)!.stato = "DEMANSIONATO";
-    expect(rifiutata(q, { tipo: "INVIA_MESSAGGIO", da: a.id, a: b.id, anonimo: true, modello: "SOLO_TESTO", testo: "x" })).toBe(true);
-  });
-
   it("testo oltre 80 caratteri, messaggio a se stessi o vuoto: rifiutati", () => {
     expect(rifiutata(p, { tipo: "INVIA_MESSAGGIO", da: a.id, a: b.id, anonimo: false, modello: "SOLO_TESTO", testo: "x".repeat(81) })).toBe(true);
     expect(rifiutata(p, { tipo: "INVIA_MESSAGGIO", da: a.id, a: a.id, anonimo: false, modello: "SOLO_TESTO", testo: "ciao" })).toBe(true);
@@ -176,7 +169,7 @@ describe("segreto arrivato in tempo (D-021)", () => {
     const senza = quotaDopoRisultati(p);
     const con = quotaDopoRisultati(conSegreto);
     expect(con.azienda.quota - senza.azienda.quota).toBe(s.valoreAzienda);
-    // L'evento pubblico non nomina il segreto (D-021, S2).
+    // L'evento pubblico dice quale segreto è arrivato (il titolo è già pubblico, D-061), ma non il valore (D-038).
     let q = conSegreto;
     const eventi: Evento[] = [];
     while (q.fase.nome !== "RISOLUZIONE") {
@@ -186,7 +179,8 @@ describe("segreto arrivato in tempo (D-021)", () => {
     }
     const inTempo = eventi.find((e) => e.tipo === "SEGRETO_IN_TEMPO");
     expect(inTempo).toBeDefined();
-    expect(inTempo!.causa).not.toContain(s.titolo);
+    expect(inTempo!.causa).toContain(s.titolo);
+    expect(inTempo!.causa).not.toMatch(/\+\d/);
   });
 
   it("copia arrivata dopo la chiusura del voto collegato → nessun valore", () => {
@@ -379,5 +373,24 @@ describe("contenuti veri dei segreti (D-035…D-039)", () => {
     const e = eventi.find((x) => x.tipo === "SEGRETO_IN_TEMPO");
     expect(e).toBeDefined();
     expect(e!.causa).not.toMatch(/\d/);
+  });
+});
+
+describe("annuncio dei segreti in TV (D-061)", () => {
+  it("nel Rapporto la TV annuncia ogni segreto e il reparto a cui serve, mai chi l'ha ricevuto", () => {
+    const esito = creaEAvvia(Array.from({ length: 5 }, (_, i) => ({ id: `g${i + 1}`, nome: `G${i + 1}` })), 21, amb);
+    if (!esito.ok) throw new Error(esito.errore);
+    const p = esito.partita;
+    const annunci = esito.eventi.filter((e) => e.tipo === "SEGRETO_ANNUNCIATO");
+    expect(annunci).toHaveLength(p.segreti.length);
+    for (const e of annunci) {
+      if (e.tipo !== "SEGRETO_ANNUNCIATO") continue;
+      const s = p.segreti.find((x) => x.id === e.segretoId)!;
+      expect(e.riservatoA).toBeUndefined();
+      expect(e.causa).toContain(amb.config.reparti.nomi[s.utile]);
+      expect(e.causa).toContain(s.titolo);
+      expect(e.causa).toContain(p.proposteTrimestre.find((x) => x.id === s.propostaCollegataId)!.titolo);
+      for (const g of p.giocatori) expect(e.causa).not.toContain(g.nome);
+    }
   });
 });

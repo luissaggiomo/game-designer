@@ -6,7 +6,8 @@
  *   fonti sono bilanciate tra i reparti (D-005). Chi possiede una copia sa a quale reparto serve.
  * - Il dato vero si estrae campo per campo tra i valori possibili (D-036, D-037); il tipo "a
  *   bilancia" decide quanto vale per l'azienda e per il concorrente (D-038, valori in config).
- * - Messaggi: quota per trimestre, anonimo = costa entrambi i messaggi (vietato ai demansionati),
+ * - Annuncio pubblico (D-061): la TV dice quale informazione serve e a quale reparto, mai chi l'ha.
+ * - Messaggi: quota per trimestre, anonimo = costa entrambi i messaggi,
  *   testo libero breve; si possono inoltrare segreti, anche modificati (copia falsa).
  * - Un segreto vale per l'azienda se il reparto utile ne ha una copia VERA prima della chiusura
  *   della votazione collegata (D-021).
@@ -92,9 +93,15 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
     };
     partita.copieSegreto.push(copia);
     eventi.push({
+      tipo: "SEGRETO_ANNUNCIATO",
+      segretoId,
+      utile: utile.repartoId,
+      causa: `${config.reparti.nomi[utile.repartoId]} ha bisogno di informazioni su «${modello.titolo}» prima della votazione «${collegata.titolo}»!`,
+    });
+    eventi.push({
       tipo: "SEGRETO_RICEVUTO",
       copiaId: copia.id,
-      causa: `Dato certo, arrivato al tuo reparto: ${modello.titolo} (serve al reparto ${utile.repartoId})`,
+      causa: `Dato certo, arrivato al tuo reparto: ${modello.titolo} (serve a ${config.reparti.nomi[utile.repartoId]})`,
       riservatoA: [fonte.id],
     });
   }
@@ -105,7 +112,7 @@ export function distribuisciSegreti(partita: Partita, ambiente: Ambiente, casual
 function messaggiAmmessi(fase: Fase, ambiente: Ambiente): boolean {
   const alTavolo = ["RAPPORTO", "DISCUSSIONE", "VOTAZIONE"].includes(fase.nome);
   if (ambiente.config.messaggi.quando === "DAL_RAPPORTO_ALLE_VOTAZIONI") return alTavolo;
-  return alTavolo || ["MOSSA_PRIVATA", "RISOLUZIONE", "DEMANSIONAMENTO"].includes(fase.nome);
+  return alTavolo || ["MOSSA_PRIVATA", "RISOLUZIONE"].includes(fase.nome);
 }
 
 export function inviaMessaggio(
@@ -128,9 +135,6 @@ export function inviaMessaggio(
   if (azione.modello === "SOLO_TESTO" && !azione.testo) return { ok: false, errore: "Il messaggio è vuoto" };
 
   const costo = azione.anonimo ? config.messaggi.costoAnonimo : 1;
-  if (azione.anonimo && mittente.stato === "DEMANSIONATO") {
-    return { ok: false, errore: "Chi è demansionato non può mandare messaggi anonimi" };
-  }
   if (mittente.quotaMessaggi < costo) {
     return { ok: false, errore: azione.anonimo ? "Il messaggio anonimo costa entrambi i messaggi del trimestre" : "Hai finito i messaggi di questo trimestre" };
   }
@@ -138,7 +142,7 @@ export function inviaMessaggio(
   // Inoltro di un segreto: controllo prima di modificare qualcosa.
   let copiaOrigine: CopiaSegreto | undefined;
   if (azione.modello === "SEGRETO") {
-    copiaOrigine = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === mittente.id && !c.revocata);
+    copiaOrigine = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === mittente.id);
     if (!copiaOrigine) return { ok: false, errore: "Puoi inoltrare solo un segreto che possiedi" };
     const sconosciuti = Object.keys(azione.campi ?? {}).filter((k) => !(k in copiaOrigine!.campi));
     if (sconosciuti.length > 0) return { ok: false, errore: `Campi inesistenti: ${sconosciuti.join(", ")}` };
@@ -200,7 +204,7 @@ export function passaAlConcorrente(partita: Partita, azione: Extract<AzioneGioca
   if (!["RAPPORTO", "DISCUSSIONE", "VOTAZIONE", "MOSSA_PRIVATA"].includes(partita.fase.nome)) {
     return { ok: false, errore: "Ora non puoi consegnare segreti" };
   }
-  const copia = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === spia.id && !c.revocata);
+  const copia = partita.copieSegreto.find((c) => c.id === azione.copiaSegretoId && c.possessore === spia.id);
   if (!copia) return { ok: false, errore: "Puoi consegnare solo un segreto che possiedi" };
   const segreto = partita.segreti.find((s) => s.id === copia.segretoId)!;
   if (segreto.trimestre !== partita.trimestre) return { ok: false, errore: "Questo segreto è scaduto" };
@@ -240,8 +244,8 @@ export function risolviSegreti(partita: Partita, ambiente: Ambiente): Evento[] {
   const eventi: Evento[] = [];
   for (const s of partita.segreti.filter((x) => x.trimestre === partita.trimestre && x.arrivatoInTempo)) {
     partita.azienda.quota += s.valoreAzienda;
-    // Senza numero: il "+N" rivelerebbe il tipo del segreto (D-038).
-    eventi.push({ tipo: "SEGRETO_IN_TEMPO", causa: "Un'informazione è arrivata in tempo al reparto giusto." });
+    // Quale segreto (il titolo è già pubblico, D-061), ma senza numero: il "+N" rivelerebbe il tipo (D-038).
+    eventi.push({ tipo: "SEGRETO_IN_TEMPO", segretoId: s.id, causa: `L'informazione «${s.titolo}» è arrivata in tempo a ${ambiente.config.reparti.nomi[s.utile]}.` });
   }
   for (const p of partita.segretiPassati.filter((x) => x.trimestre === partita.trimestre)) {
     const copia = partita.copieSegreto.find((c) => c.id === p.copiaId)!;

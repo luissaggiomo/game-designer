@@ -48,7 +48,7 @@ function azioneCasuale(p: Partita, r: Casuale): Azione {
     () => ({ tipo: "SCEGLI_OBIETTIVO", da: g.id, obiettivo: r.scegli(p.obiettivi[r.probabilita(0.8) ? g.id : altro.id]?.proposti ?? ["T1-01"]) }),
     () => ({ tipo: "AVANZA_FASE" }),
     () => ({ tipo: "AVANZA_FASE" }),
-    () => ({ tipo: "VOTA", da: g.id, voto: r.scegli(["SI", "NO", "ASTENUTO"] as const) }),
+    () => ({ tipo: "VOTA", da: g.id, voto: r.scegli(["SI", "NO"] as const) }),
     () => ({ tipo: "MOSSA_PRIVATA", da: g.id, scelta: r.scegli(["REPARTO", "AZIENDA"] as const) }),
     () => ({ tipo: "INVIA_MESSAGGIO", da: g.id, a: altro.id, anonimo: r.probabilita(0.3), modello: "SOLO_TESTO", testo: "parola" }),
     () => {
@@ -61,12 +61,9 @@ function azioneCasuale(p: Partita, r: Casuale): Azione {
       };
     },
     () => (mieCopie.length > 0 ? { tipo: "PASSA_AL_CONCORRENTE", da: g.id, copiaSegretoId: r.scegli(mieCopie).id } : { tipo: "AVANZA_FASE" }),
-    () => ({ tipo: "PROPONI_DEMANSIONAMENTO", da: g.id, bersaglio: altro.id }),
-    () => ({ tipo: "PROPONI_PROMOZIONE", da: g.id, bersaglio: altro.id }),
-    () => ({ tipo: "VOTA_DEMANSIONAMENTO", da: g.id, voto: r.scegli(["SI", "NO"] as const) }),
-    () => ({ tipo: "VOTA_PROMOZIONE", da: g.id, voto: r.scegli(["SI", "NO"] as const) }),
-    () => ({ tipo: "CHIUDI_VOTO_PERSONALE" }),
-    () => ({ tipo: "VERIFICA_FINALE", da: g.id, soloOnesti: r.probabilita(0.6) }),
+    () => ({ tipo: "DOMANDA_SPIA", da: g.id, risposta: r.scegli(["SI", "NO"] as const) }),
+    () => ({ tipo: "DOMANDA_SPIA", da: g.id, risposta: "SI" }),
+    () => ({ tipo: "NOMINA_SPIA", da: g.id, bersaglio: altro.id }),
     () => ({ tipo: "NOMINA_SPIA", da: g.id, bersaglio: altro.id }),
   ];
   return r.scegli(scelte)();
@@ -109,11 +106,10 @@ function controllaVistaGiocatore(p: Partita, id: string): void {
     if (!vera.esito) expect(prop.voti).toBeUndefined();
   }
 
-  // Copie dei segreti: solo le mie, non revocate, senza mittente se anonime.
+  // Copie dei segreti: solo le mie, senza mittente se anonime.
   for (const c of v.mieiSegreti) {
     const vera = p.copieSegreto.find((x) => x.id === c.id)!;
     expect(vera.possessore).toBe(id);
-    expect(vera.revocata).not.toBe(true);
     if (c.provenienza.tipo === "GIOCATORE" && c.provenienza.anonimo) expect(c.provenienza.da).toBeUndefined();
   }
 
@@ -125,10 +121,13 @@ function controllaVistaGiocatore(p: Partita, id: string): void {
   }
 
   // Le mie scelte segrete: solo le mie (mai quelle degli altri).
-  if (v.mieiVoti.verifica !== undefined) expect(v.mieiVoti.verifica).toBe(p.finale.verifica[id]);
+  if (v.mieiVoti.domanda !== undefined) expect(v.mieiVoti.domanda === "SI").toBe(p.finale.risposte[id]);
   if (v.mieiVoti.nomina !== undefined) expect(v.mieiVoti.nomina).toBe(p.finale.nomine[id]);
   if (v.mieiVoti.mossaPrivata !== undefined) expect(v.mieiVoti.mossaPrivata).toBe(p.mossePrivate[id]);
-  expect(chiaviPresenti(v.finale).has("verifica")).toBe(false);
+  // Finale: risposte e nomi in corso non compaiono mai nella parte comune (D-058).
+  expect(chiaviPresenti(v.finale).has("risposte")).toBe(false);
+  expect(chiaviPresenti(v.finale).has("nomine")).toBe(false);
+  if (p.fase.nome === "DOMANDA") expect(v.finale.esitiDomanda.length).toBe(p.finale.esitiDomanda.length);
 
   // Segreti consegnati: solo i miei.
   for (const s of v.segretiConsegnati) expect(p.segretiPassati.find((x) => x.copiaId === s.copiaId && x.spia === id)).toBeDefined();
@@ -174,14 +173,17 @@ function controllaEventi(p: Partita, eventi: Evento[]): void {
     for (const e of eventiPer(eventi, d)) {
       if (e.riservatoA) expect(d.tipo === "GIOCATORE" && e.riservatoA.includes(d.id)).toBe(true);
       // Gli eventi di registrazione dicono chi ha agito, mai cosa.
-      if (e.tipo === "VOTO_REGISTRATO" || e.tipo === "MOSSA_REGISTRATA" || e.tipo === "RISPOSTA_REGISTRATA" || e.tipo === "VOTO_PERSONALE_REGISTRATO" || e.tipo === "OBIETTIVO_REGISTRATO") {
+      if (e.tipo === "VOTO_REGISTRATO" || e.tipo === "MOSSA_REGISTRATA" || e.tipo === "RISPOSTA_REGISTRATA" || e.tipo === "OBIETTIVO_REGISTRATO") {
         expect(Object.keys(e).sort()).toEqual(["causa", "da", ...(e.tipo === "VOTO_REGISTRATO" ? ["propostaId"] : []), "tipo"].sort());
       }
       // L'obiettivo estratto a caso è riservato all'interessato; nessun evento contiene identificativi di obiettivi.
       if (e.tipo === "OBIETTIVO_ASSEGNATO") expect(e.riservatoA).toHaveLength(1);
       expect(idObiettivi(JSON.stringify(e)).size).toBe(0);
-      // L'esito delle mosse private non contiene numeri.
-      if (e.tipo === "ESITO_MOSSE_PRIVATE") expect(e.causa).not.toMatch(/\d/);
+      // L'annuncio di un segreto non dice chi l'ha ricevuto (D-061).
+      if (e.tipo === "SEGRETO_ANNUNCIATO") {
+        expect(e.riservatoA).toBeUndefined();
+        for (const g of p.giocatori) expect(e.causa).not.toContain(g.nome);
+      }
     }
   }
 }

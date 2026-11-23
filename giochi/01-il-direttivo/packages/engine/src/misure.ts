@@ -10,8 +10,8 @@
  *   Le misure "rinviate" non mostrano nulla ("si verifica a fine partita").
  * - "COMPLETA": verifica finale al punteggio, con tutte le informazioni del server.
  *
- * Regole comuni: contano solo le scelte del giocatore (R2: niente voti scaduti, astensioni, mosse
- * del computer); i voti con peso 0 non esistono (R3).
+ * Regole comuni: contano solo le scelte del giocatore (R2: niente voti scaduti né scelte
+ * predefinite); i voti con peso 0 non esistono (R3).
  */
 import type { CopiaSegreto, GiocatoreId, Partita, RegistroVotazione, SceltaMossa } from "./tipi.js";
 
@@ -143,17 +143,18 @@ export const MISURE: Record<string, Misura> = {
     },
   },
 
-  // Mossa privata (solo le scelte vere: chi non sceglie o è demansionato non conta, R2).
+  // Mossa privata (solo le scelte vere: chi non sceglie non conta, R2).
   MOSSE_AZIENDA: { calcola: (c) => conta(mosse(c, "AZIENDA")) },
-  TRIMESTRI_NON_IN_CALO: {
+  // Conteggio pubblico "3 su 5 per l'azienda" (D-061), annunciato anche nel 4° trimestre.
+  TRIMESTRI_META_AZIENDA: {
     soloAFine: true,
     calcola: (c) => {
-      const noti = c.p.storicoTrimestri.filter((t) => trimestreNoto(c, t.trimestre));
-      return { valore: contaSe(noti, (t) => t.andamento !== "IN_CALO"), violato: noti.some((t) => t.andamento === "IN_CALO") };
+      const t = c.p.storicoTrimestri;
+      return { valore: contaSe(t, (x) => 2 * x.perAzienda >= x.partecipanti), violato: t.some((x) => 2 * x.perAzienda < x.partecipanti) };
     },
   },
-  TRIMESTRI_IN_CRESCITA: {
-    calcola: (c) => conta(contaSe(c.p.storicoTrimestri, (t) => trimestreNoto(c, t.trimestre) && t.andamento === "IN_CRESCITA")),
+  TRIMESTRI_MAGGIORANZA_AZIENDA: {
+    calcola: (c) => conta(contaSe(c.p.storicoTrimestri, (x) => 2 * x.perAzienda > x.partecipanti)),
   },
 
   // Segreti.
@@ -170,7 +171,7 @@ export const MISURE: Record<string, Misura> = {
   },
   SEGRETI_POSSEDUTI: {
     soloAFine: true,
-    calcola: (c) => conta(new Set(c.p.copieSegreto.filter((x) => x.possessore === c.id && !x.revocata).map((x) => x.segretoId)).size),
+    calcola: (c) => conta(new Set(c.p.copieSegreto.filter((x) => x.possessore === c.id).map((x) => x.segretoId)).size),
   },
   SEGRETI_IN_TEMPO_GRAZIE_A_TE: {
     rinviata: true,
@@ -280,13 +281,6 @@ export const MISURE: Record<string, Misura> = {
     },
   },
 
-  // Demansionamenti e promozioni (pubblici).
-  VOTI_PERSONALI_PROPOSTI: {
-    calcola: (c) => conta(contaSe(c.p.storicoVotiPersonali, (v) => v.momento !== "FINALE" && v.proponente === c.id)),
-  },
-  VOTI_PERSONALI_APPROVATI: {
-    calcola: (c) => conta(contaSe(c.p.storicoVotiPersonali, (v) => v.momento !== "FINALE" && v.proponente === c.id && v.approvato)),
-  },
 };
 
 export const MISURE_NOTE = new Set(Object.keys(MISURE));

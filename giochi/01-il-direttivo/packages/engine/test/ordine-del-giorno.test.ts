@@ -74,20 +74,6 @@ describe("ordine del giorno, modello B (D-008, D-014, D-023)", () => {
     }
   });
 
-  it("un reparto demansionato non riceve ruoli, ma il suo peso resta (soglia, §8.4)", () => {
-    for (let seme = 0; seme < 40; seme++) {
-      let p = crea(5, seme);
-      p.giocatori.find((g) => g.repartoId === "PRODUZIONE")!.stato = "DEMANSIONATO";
-      p.reparti.find((r) => r.id === "PRODUZIONE")!.autogestione = true;
-      p = avanzaFinche(p, finoAlTrimestre(2));
-      for (const q of p.proposteTrimestre) {
-        expect(q.effettiPrivati.PRODUZIONE?.punti ?? 0).toBe(0);
-        const schema = ambiente.schemi[ambiente.mazzo.find((m) => m.id === q.modelloId)!.schema]!;
-        expect(q.pesi.PRODUZIONE ?? 0).toBe(q.astensioneAmmessa ? 1 : schema.pesoAltri);
-      }
-    }
-  });
-
   it("gli effetti assegnati sono esattamente quelli dello schema del quesito (versione estratta, D-045)", () => {
     const p = crea(8, 7);
     for (const q of p.proposteTrimestre) {

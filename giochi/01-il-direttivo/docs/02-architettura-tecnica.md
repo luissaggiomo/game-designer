@@ -182,11 +182,8 @@ type Azione =
   | { tipo: "INVIA_MESSAGGIO"; a: GiocatoreId; anonimo: boolean;
       modello: ModelloMsg; testo?: string; segreto?: InoltroSegreto }
   | { tipo: "PASSA_AL_CONCORRENTE"; segretoCopiaId: string }   // solo spie
-  | { tipo: "PROPONI_DEMANSIONAMENTO"; bersaglio: GiocatoreId }
-  | { tipo: "VOTA_DEMANSIONAMENTO"; voto: "SI" | "NO" }
-  | { tipo: "VOTA_PROMOZIONE"; bersaglio: GiocatoreId; voto: "SI" | "NO" }
-  | { tipo: "VERIFICA_FINALE"; soloOnesti: boolean }
-  | { tipo: "NOMINA_SPIA"; bersaglio: GiocatoreId }
+  | { tipo: "DOMANDA_SPIA"; risposta: "SI" | "NO" }               // finale: "C'è una spia?" (D-058)
+  | { tipo: "NOMINA_SPIA"; bersaglio: GiocatoreId }               // finale: nome o voto di ballottaggio
   | { tipo: "USA_POTERE"; parametri: unknown }
   | { tipo: "VISIBILITA"; visibile: boolean };                 // pausa caffè
 ```
@@ -194,14 +191,13 @@ type Azione =
 ### 7.3 Validazione lato server
 Ogni azione viene controllata prima di passare al motore:
 - è la fase giusta?
-- il giocatore ha diritto di farla (voto: peso maggiore di 0 e non demansionato; azione da spia: è una spia)?
+- il giocatore ha diritto di farla (voto: peso maggiore di 0 e non licenziato; ballottaggio: non candidato; azione da spia: è una spia)?
 - ha ancora quota (messaggi)?
 - i riferimenti esistono e gli appartengono (per esempio, possiede la copia del segreto che inoltra)?
 
 ### 7.4 Timer
 - I timer stanno **sul server**. I client mostrano solo un conto alla rovescia basato sull'orario di scadenza ricevuto.
-- Alla scadenza, chi non ha agito riceve una **scelta predefinita**: voto → **"NO"** (D-007; in TV "No (tempo scaduto)"); mossa privata → "azienda".
-- Quesiti con `astensioneAmmessa: true`: tempo scaduto = "NO" anche qui (D-013).
+- Alla scadenza, chi non ha agito riceve una **scelta predefinita** che conserva lo stato delle cose (D-029, D-060): voto → **"NO"** (in TV "No (tempo scaduto)"); domanda "C'è una spia?" → **"No"**; nomi e ballottaggio → nessun voto; mossa privata → "azienda"; obiettivo → a caso.
 
 ---
 
@@ -228,8 +224,7 @@ interface Giocatore {
   id: string; nome: string; loc: string;          // casa/TV di appartenenza
   repartoId: RepartoId;
   fazione: "ONESTO" | { spiaDi: ConcorrenteId };
-  stato: "ATTIVO" | "DEMANSIONATO" | "LICENZIATO";
-  demansionatoDalTrimestre?: number;
+  stato: "ATTIVO" | "LICENZIATO";                // niente demansionamento (D-057)
   puntiReparto: number;
   quotaMessaggi: number;
   poteriUsati: string[];
@@ -240,7 +235,7 @@ interface Giocatore {
 interface Reparto {
   id: RepartoId;                                  // "ACQUISTI" | "PRODUZIONE" | ...
   occupatoDa?: GiocatoreId;                       // assente = vacante
-  autogestione: boolean;                          // vacante oppure demansionato
+  autogestione: boolean;                          // vacante (D-057)
 }
 
 interface PropostaIstanza {
@@ -307,19 +302,16 @@ LOBBY
                     │    ├─ DISCUSSIONE k (messaggi abilitati, timer)
                     │    └─ VOTAZIONE k   (palese, timer, esito subito in TV)
                     ├─ MOSSA_PRIVATA      (timer)
-                    ├─ RISOLUZIONE        (calcoli + animazioni TV)
-                    └─ DEMANSIONAMENTO    (facoltativo: proposta → voto)
-              └─► FINALE
-                    ├─ DECISIONE_FINALE  (una per demansionato: promuovi/licenzia, D-028)
-                    ├─ VERIFICA          (sì/no segreto)
-                    │    ├─ tutti sì ───────────────────────────┐
-                    │    └─ almeno un no → RIVELA_NO            │
-                    ├─ NOMINA            (segreta)              │
-                    ├─ RIVELAZIONE_NOMINE (una alla volta)      │
-                    ├─ BALLOTTAGGIO      (se parità)            │
-                    ├─ LICENZIAMENTO     (rivelazione ruolo)    │
-                    └─ SECONDO_GIRO?     (solo se 2 spie possibili) ─► VERIFICA
-              └─► PUNTEGGIO ◄───────────────────────────────────┘
+                    └─ RISOLUZIONE        (calcoli + animazioni TV)
+              └─► FINALE "Rinnovo dei contratti" (D-058)
+                    ├─ DOMANDA giro g    ("C'è una spia?" palese; sì < metà → PUNTEGGIO)
+                    ├─ NOMINA giro g     (un nome a testa; > metà dei nomi fatti → licenziato)
+                    ├─ BALLOTTAGGIO g, turno 1..3 (se nessuno ha la maggioranza)
+                    │    percorso DUE: stallo → turno 2; stallo → licenziati entrambi
+                    │    percorso TRE: stallo → turno 2 (avviso); stallo → turno 3 con
+                    │                  nomi ripetuti bloccati; stallo → nessun licenziato
+                    └─ 8 giocatori e un solo licenziato al giro 1 → DOMANDA giro 2
+              └─► PUNTEGGIO
                     └─► LETTURA_MESSAGGI
                           └─► FINE
 ```
@@ -368,36 +360,31 @@ input: N giocatori (4..8), seme
 
 ### 10.3 Risoluzione di una votazione
 ```
-se proposta.astensioneAmmessa: pesi = 1 per ogni reparto occupato   ("votazione del consiglio", D-013)
-
-sì         = Σ pesi dei giocatori ATTIVI che hanno votato SÌ
-caso normale:
-  pesoTotale = Σ pesi dei reparti OCCUPATI (anche se demansionati)
-               (i reparti vacanti dall'inizio non contano — D-006, provvisorio)
-  soglia     = floor(pesoTotale / 2) + 1
-quesito con astensione (D-007, D-013):
-  pesoVotanti = Σ pesi di chi ha votato SÌ o NO + Σ pesi dei demansionati (no fisso)
-  soglia      = floor(pesoVotanti / 2) + 1
+sì         = Σ pesi dei giocatori ATTIVI che hanno votato SÌ    (solo SÌ/NO, niente astensione — D-060)
+pesoTotale = Σ pesi dei reparti OCCUPATI (i vacanti non contano — D-006)
+soglia     = floor(pesoTotale / 2) + 1
 approvata  = (sì ≥ soglia) E (costo ≤ cassa)
 pareggio   → respinta
 se approvata: cassa −= costo; effetti privati e aziendale messi in coda per la RISOLUZIONE
 ```
-Esempio: pesi 2+2+1+1+2 = 8 → soglia 5. Con un reparto di peso 2 demansionato, i 5 sì vanno trovati tra i 6 rimasti.
+Esempio: pesi 2+2+1+1+2 = 8 → soglia 5.
 
 ### 10.4 Mossa privata
 ```
-per ogni giocatore attivo (in autogestione: scelta "azienda" con probabilità alta):
+per ogni membro del direttivo (i reparti vacanti non partecipano; tempo scaduto = "azienda"):
   REPARTO → puntiReparto += a ; deltaAzienda −= b
   AZIENDA → puntiReparto += 0 ; deltaAzienda += c
   (a, b, c iniziali: 1, 1, 1; eventi possono modificarli)
 deltaAzienda += rumore ∈ {−1, 0, +1}
-TV mostra soltanto: deltaAzienda < 0 → "in calo" | = 0 → "stabile" | > 0 → "in crescita"
+TV mostra: "N su M hanno giocato per l'azienda" (mai chi; D-061). Nel 4° trimestre si annuncia subito.
 ```
 
 ### 10.5 Segreti: distribuzione, inoltro, uso
 ```
 DISTRIBUZIONE (fase RAPPORTO):
   per ogni segreto del trimestre → una CopiaSegreto (provenienza GIOCO)
+  evento pubblico SEGRETO_ANNUNCIATO: "<reparto utile> ha bisogno di informazioni su «titolo»
+  prima della votazione «proposta collegata»!" — mai chi l'ha ricevuto (D-061)
   al reparto "fonte" (≠ repartoUtile, così condividere ha un senso)
   ogni campo vero si estrae tra i valori delle versioni del modello (D-037)
   al massimo segreti.tipi[tipo].massimoPerTrimestre dello stesso tipo (D-039)
@@ -442,57 +429,38 @@ Obiettivo di taratura: con una spia attiva e non scoperta la vittoria dell'azien
 ```
 voto:          nessuno (il reparto non vota)
 mossa privata: "azienda" con probabilità alta (es. 80%)
-segreti:       ricevuti dal reparto in autogestione → nessuno li usa né li inoltra
-effetti:       gli effetti privati verso il reparto vengono applicati con un fattore ridotto
-               ("rende poco, non fa disastri")
+segreti:       non sono mai fonte né reparto utile (si scelgono tra i membri del direttivo)
+effetti:       nessuno accumula punti (D-057: l'autogestione riguarda solo i reparti vacanti)
 proposte:      non vengono generate proposte che lo riguardano specificamente
 ```
 
-### 10.8 Demansionamento e promozione
-```
-PROPOSTA: un giocatore attivo propone un bersaglio (limiti: 1 per trimestre,
-          non lo stesso bersaglio due volte di fila — 🟡)
-VOTO:     1 a testa tra gli attivi, il bersaglio escluso (D-009); soglia: metà più uno degli aventi diritto, pareggio = respinta (D-012)
-          solo SÌ/NO, nessuna astensione; tempo scaduto = NO (D-007)
-EFFETTI:  stato = DEMANSIONATO; reparto in autogestione;
-          revoca delle copie segreto del proprio reparto; quota messaggi = 1
-          il ruolo NON viene rivelato
-PROMOZIONE (D-010): nella fase DEMANSIONAMENTO, PRIMA della proposta di demansionamento
-          ammessa se trimestre_corrente ≥ demansionatoDalTrimestre + 1 (un trimestre intero fuori)
-          proposta da un attivo o richiesta dal demansionato; max 1 richiesta/trimestre per persona
-          voto 1 a testa tra gli attivi (il demansionato non vota), solo SÌ/NO, tempo scaduto = NO
-          esito: stato = ATTIVO; reparto ripristinato
-```
+### 10.8 Demansionamento e promozione — eliminato (D-057)
 
-### 10.9 Finale
+### 10.9 Finale "Rinnovo dei contratti" (D-058)
 ```
-0. i numeri del 4° trimestre restano nascosti fino a PUNTEGGIO; le fughe di notizie
-   si annunciano subito come FUGA_DI_NOTIZIE, senza numeri (D-029, variante B)
-1-2. per ogni DEMANSIONATO, uno alla volta: voto palese "promuovere o licenziare?" (D-028);
-     votano tutti tranne l'interessato, tempo scaduto = licenzia (D-029)
-     promosso → ATTIVO (vota sui successivi); altrimenti → LICENZIATO, rivela ruolo
-3. VERIFICA: ogni attivo vota segretamente sì/no
-   se tutti sì → PUNTEGGIO
-   altrimenti → rivela l'elenco di chi ha votato no
-4. NOMINA: ogni attivo nomina un altro giocatore (non se stesso)
-5. RIVELAZIONE: la TV mostra le nomine una alla volta (ordine casuale)
-6. conteggio:
-     un solo massimo → licenziato
-     parità         → BALLOTTAGGIO tra i pari merito (stessa procedura)
-     nuova parità   → tutti i pari merito licenziati
-7. rivela il ruolo di ogni licenziato
-8. se possibili 2 spie E giro == 1 → torna a VERIFICA (giro 2)
-9. PUNTEGGIO
+0. i numeri del 4° trimestre restano nascosti fino a PUNTEGGIO; le fughe di notizie e il
+   conteggio della mossa privata si annunciano subito (D-029 variante B, D-061)
+1. DOMANDA: ogni membro risponde "C'è una spia?"; tempo scaduto = No; voti rivelati a fine voto
+   sì × 2 ≥ membri → NOMINA, altrimenti → PUNTEGGIO
+2. NOMINA: ogni membro fa un nome (non se stesso); rivelazione una alla volta (ordine casuale)
+   votanti = chi ha fatto un nome
+   un solo primo con voti ≥ floor(votanti / 2) + 1 → licenziato, ruolo rivelato
+   altrimenti candidati = primi pari merito (se più d'uno) oppure primo + tutti i secondi
+              percorso = DUE se i candidati sono 2, TRE se sono di più
+3. BALLOTTAGGIO turno t: votano i membri non candidati (se non ce ne sono, tutti, non per sé)
+   un solo candidato col massimo dei voti → licenziato
+   stallo, percorso DUE: t=1 → t=2 stessi candidati; t=2 → licenziati entrambi
+   stallo, percorso TRE: t=1 → AVVISO + t=2 tra i primi; t=2 → t=3 tra i primi, e chi ha
+          votato lo stesso nome a t=1 e t=2 non può votarlo; t=3 → nessun licenziato
+4. 8 giocatori, giro 1 con esattamente un licenziato → DOMANDA giro 2; altrimenti PUNTEGGIO
 ```
-
 ### 10.10 Punteggio
 ```
 per ogni giocatore:
   totale = puntiReparto
          + Σ obiettivi raggiunti (facile / difficile)
          + bonus fazione (azienda vince → onesti; concorrente X vince → spie di X)
-         + esiti del finale (tabella §16.2 del design)
-         + penalità per demansionamenti di onesti votati (🟡)
+         (nessun punto per accuse e licenziamenti — D-059; la spia licenziata perde il bonus — D-025)
          + punti spia per segreti usati (🔴)
 ```
 L'esito "azienda vince" si calcola a fine anno: quota dell'azienda maggiore di quella di ogni concorrente.
@@ -503,7 +471,7 @@ L'esito "concorrente X vince" (bonus alle spie di X): quota di X maggiore di que
 ## 11. Messaggi privati e "pausa caffè"
 
 ### 11.1 Messaggi
-- **Quota:** ricaricata a ogni trimestre (default 2; 1 per i demansionati). Non si accumula.
+- **Quota:** ricaricata a ogni trimestre (default 2). Non si accumula.
 - **Anonimo:** consuma 2 unità. Il destinatario vede "Mittente anonimo".
 - **Testo libero:** massimo 80 caratteri, filtrato contro l'invio di codice o link.
 - **Finestra temporale:** 🔴 da decidere se i messaggi sono permessi in tutte le fasi o solo in DISCUSSIONE.
@@ -574,10 +542,9 @@ Tutti i contenuti sono file JSON validati da uno schema all'avvio.
   "id": "nuovo-macchinario",
   "titolo": "Nuovo macchinario per la linea 2",
   "categoria": "INVESTIMENTI",
-  "costo": 40,
+  "costo": 50,                       // solo 30 / 50 / 80 (D-062)
   "riguarda": ["PRODUZIONE"],
   "trimestri": [1, 2, 3],
-  "astensioneAmmessa": false,
   "pesi": { "PRODUZIONE": 2, "ACQUISTI": 1, "VENDITE": 1, "MARKETING": 1 },   // facoltativo: se assente valgono i pesi della categoria
   "effettiPrivati": {
     "PRODUZIONE": { "punti": -2, "testo": "Più costi di gestione per il tuo reparto" },
@@ -717,7 +684,7 @@ il-direttivo/
 
 ## 19. Test
 
-- **Unitari sul motore:** ogni regola ha test con casi limite (parità, soglia con demansionati, segreti falsi, doppio ballottaggio, partita senza spie).
+- **Unitari sul motore:** ogni regola ha test con casi limite (parità, segreti falsi, ballottaggi a due e a tre, nomi bloccati, partita senza spie).
 - **Proprietà fondamentale delle viste:** un test automatico verifica che **nessuna vista di un giocatore contenga dati che non dovrebbe vedere** (ruoli altrui, flag "falsa", effetti privati altrui, catena dei segreti).
 - **Partite riprodotte:** dato seme più sequenza di azioni, il risultato deve essere sempre identico.
 - **Prove manuali con più telefoni:** una lista di controllo per ogni rilascio (ingresso con QR, riconnessione, schermo acceso, pausa caffè).

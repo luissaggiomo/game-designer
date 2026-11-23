@@ -35,7 +35,6 @@ export interface DatiGiocatore {
   punteggio: number;
   puntiReparto: number;
   vincitore: boolean;
-  demansionato: boolean;
   licenziato: boolean;
   segretiComeFonte: number;
   favorito: number;
@@ -69,7 +68,17 @@ export interface DatiPartita {
   /** Per trimestre: effetto sull'azienda di proposte approvate e segreti arrivati in tempo (D-056). */
   crescitaProposteESegreti: number[];
   tettoRaggiunto: number;
-  demansionamenti: { trimestre: number; spia: boolean }[];
+  /** Finale "Rinnovo dei contratti" (D-058). */
+  finale: {
+    /** Esito della domanda in ogni giro (true = si procede con i nomi). */
+    domande: boolean[];
+    /** Votazioni di ballottaggio fatte (tutti i turni). */
+    ballottaggi: number;
+    /** Doppio licenziamento per stallo ripetuto a due. */
+    doppio: boolean;
+    /** Ultima votazione del percorso a tre finita senza licenziati. */
+    nessunoAllUltima: boolean;
+  };
   segreti: { totali: number; inTempo: number; passati: number; passatiFalsi: number };
   /**
    * Esito per fazione (benchmark di Luis, 22/11/2026): vince la spia se il suo concorrente supera
@@ -77,7 +86,7 @@ export interface DatiPartita {
    * Presente solo nelle partite con spie.
    */
   vincitoreFazione?: "ONESTI" | "SPIE";
-  /** Mosse private scelte dai direttori attivi (non quelle automatiche dell'autogestione). */
+  /** Mosse private dei membri del direttivo (chi non sceglie conta "per l'azienda"). */
   mosse: { totali: number; aziendaliste: number };
   spieLicenziate: number;
   onestiLicenziatiNelFinale: number;
@@ -100,7 +109,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     robot.set(g.id, new Robot(g.id, profilo, ambiente, creaCasuale(casuale.intero(1, 2 ** 31))));
   }
 
-  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti" | "crescitaProposteESegreti"> & { mosse: DatiPartita["mosse"] } = {
+  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti" | "crescitaProposteESegreti" | "finale"> & { mosse: DatiPartita["mosse"] } = {
     giocatori: n,
     seme,
     spie: 0,
@@ -108,7 +117,6 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     votazioni: [],
     cassaInizioTrimestre: [],
     tettoRaggiunto: 0,
-    demansionamenti: [],
     mosse: { totali: 0, aziendaliste: 0 },
   };
   const pesoVoto = new Map<RepartoId, number>();
@@ -135,10 +143,6 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       if (e.tipo === "VOTAZIONE_CHIUSA" && prima.fase.nome === "VOTAZIONE") {
         dati.votazioni.push({ trimestre: prima.trimestre, posizione: prima.fase.votazione, approvata: e.approvata, perFondi: e.causa.includes("mancanza di fondi") });
       }
-      if (e.tipo === "VOTO_PERSONALE_CHIUSO" && e.voto === "DEMANSIONAMENTO" && e.approvato) {
-        const bersaglio = p.giocatori.find((g) => g.id === e.bersaglio)!;
-        dati.demansionamenti.push({ trimestre: prima.trimestre, spia: bersaglio.fazione.tipo === "SPIA" });
-      }
       if (e.tipo === "CASSA_RICARICATA") {
         dati.cassaInizioTrimestre.push(e.cassa);
         if (e.cassa >= ambiente.config.cassa.massima) dati.tettoRaggiunto++;
@@ -148,27 +152,8 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
 
   for (let passi = 0; passi < 500 && p.fase.nome !== "FINE"; passi++) {
     const fase = p.fase.nome;
-    if (fase === "DECISIONE_FINALE") {
-      // Il voto "promuovere o licenziare?" è già aperto: votano tutti, poi AVANZA_FASE lo chiude.
-      for (const [id, rob] of robot) prova(rob.votaPersonale(vistaGiocatore(p, id, ambiente)));
-    } else if (fase === "DEMANSIONAMENTO") {
-      // Proposte una alla volta: chi ha una proposta la presenta, tutti votano, si chiude.
-      for (let giro = 0; giro < 8; giro++) {
-        let aperta = false;
-        for (const id of casuale.mescola([...robot.keys()])) {
-          if (prova(robot.get(id)!.proponi(vistaGiocatore(p, id, ambiente)))) {
-            aperta = true;
-            break;
-          }
-        }
-        if (!aperta) break;
-        for (const [id, rob] of robot) prova(rob.votaPersonale(vistaGiocatore(p, id, ambiente)));
-        prova({ tipo: "CHIUDI_VOTO_PERSONALE" });
-      }
-    } else {
-      for (const id of casuale.mescola([...robot.keys()])) {
-        for (const azione of robot.get(id)!.agisci(vistaGiocatore(p, id, ambiente))) prova(azione);
-      }
+    for (const id of casuale.mescola([...robot.keys()])) {
+      for (const azione of robot.get(id)!.agisci(vistaGiocatore(p, id, ambiente))) prova(azione);
     }
     const primaDiAvanzare = p;
     if (fase === "MOSSA_PRIVATA") {
@@ -189,7 +174,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
   const mercato = p.concorrenti.every((c) => quota > c.quota) ? "AZIENDA" : p.concorrenti.some((c) => c.quota > quota) ? "CONCORRENTE" : "PAREGGIO";
   const punteggi = p.punteggi ?? {};
   const massimo = Math.max(...p.giocatori.map((g) => punteggi[g.id]?.totale ?? 0));
-  const demansionatiMai = new Set(p.storicoVotiPersonali.filter((v) => v.tipo === "DEMANSIONAMENTO" && v.approvato).map((v) => v.bersaglio));
+  const ballottaggi = p.finale.votazioni.filter((v) => v.tipo === "BALLOTTAGGIO");
 
   return {
     ...dati,
@@ -199,6 +184,12 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     cassaFineTrimestre: p.storicoTrimestri.map((t) => t.cassaFine),
     cassaMinimaDopoVoti: Math.min(...p.storicoVotazioni.map((r) => r.cassaDopo)),
     crescitaProposteESegreti: p.storicoTrimestri.map((t) => (t.effettoProposte ?? 0) + (t.effettoSegreti ?? 0)),
+    finale: {
+      domande: p.finale.esitiDomanda.map((e) => e.procede),
+      ballottaggi: ballottaggi.length,
+      doppio: [1, 2].some((giro) => p.finale.licenziamenti.filter((l) => l.giro === giro).length === 2),
+      nessunoAllUltima: ballottaggi.some((v) => v.turno === 3) && !p.finale.licenziamenti.some((l) => l.giro === ballottaggi.find((v) => v.turno === 3)!.giro),
+    },
     ...(spie.length > 0
       ? {
           vincitoreFazione: spie.some((s) => {
@@ -224,7 +215,6 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
       punteggio: punteggi[g.id]?.totale ?? 0,
       puntiReparto: g.puntiReparto,
       vincitore: (punteggi[g.id]?.totale ?? 0) === massimo,
-      demansionato: demansionatiMai.has(g.id),
       licenziato: g.stato === "LICENZIATO",
       segretiComeFonte: p.conteggioFontiSegreti[g.repartoId] ?? 0,
       favorito: p.conteggioFavoriti[g.repartoId] ?? 0,

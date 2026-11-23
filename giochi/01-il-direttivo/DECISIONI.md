@@ -617,3 +617,55 @@ Modello di voce:
 - Verifica (report 11, 5000 partite): spia vincente con una spia **23 / 25 / 22 / 23 / 15%** (4…8 giocatori; report 10: 28–35%), con due spie 39% alleate / 34% rivali (era 57 / 53%); spie scoperte invariate (35–58%); azienda senza spie 71–86% (solo informativo); soglia stimata 55%. Punteggi: cooperativi 21,1 / egoisti 18,0 (vittorie 15 / 20%), spie prudenti 17% e aggressive 28% di vittorie.
 - Effetto atteso: senza spie l'azienda batte il concorrente se il direttivo gioca per l'azienda più del 45% delle volte; con una spia il risultato dipende soprattutto dai segreti, e un segreto falso costa caro al concorrente (trappola del canarino più forte).
 - Rif.: GDD §11.5, §12 · D-011, D-038, D-054 · punto aperto 4
+
+## D-057 — Via il demansionamento (e la promozione)
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: l'analisi generale (docs/analisi/2026-11-23-analisi-generale.md, punto 2.8) mostra che il demansionamento costa molte regole (fase 6, promozione, durata minima, limiti, peso nella soglia, autogestione, decisione nel finale) e si usa poco: 0,1–0,5 volte a partita nel simulatore.
+- Scelta di Luis: **eliminare del tutto demansionamento e promozione**. Durante la partita nessuno perde il voto; l'unico licenziamento è nel finale (D-058).
+- Conseguenze: sparisce la fase 6 del trimestre; i reparti in autogestione sono solo quelli vacanti; spariscono il messaggio ridotto e il divieto di anonimi per il demansionato, la perdita dei segreti, il voto di demansionamento/promozione e la decisione finale sui demansionati. Superano o svuotano: D-009, D-010, D-012, D-020 (parte sui demansionati), D-021 (parte sui demansionati), D-022 (parti sul demansionamento), D-028; punti aperti 8, 9, 20, 21, 23 chiusi; il 22 resta solo per l'idea "punti extra nel finale".
+- Si perde l'indizio "le fughe si fermano quando il sospettato è fuori"; resta la trappola del canarino (dare il dato modificato solo al sospettato).
+- Obiettivo T2-02 «Riformatore» (chiedeva un demansionamento o una promozione): sostituito da 🟡 «Intermediario» (proposta di Claude): inoltra 2 copie di segreti ad altri giocatori / una copia inoltrata da te passa per almeno 3 giocatori.
+- Rif.: GDD §7.2, §8.3–8.4, §13 (eliminato), §14, §15 · analisi generale T3, T4
+
+## D-058 — Il finale "Rinnovo dei contratti"
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Contesto: con la vecchia sequenza (decisione sui demansionati, domanda di verifica, nomina, parità) il finale aveva 10 passaggi e la domanda di verifica era quasi sempre inutile (analisi generale, punto 2.9).
+- Scelta di Luis (dopo la discussione del 23/11/2026):
+  1. Dopo il 4° trimestre, senza conoscere l'esito della corsa (D-029), il direttivo vota **"C'è una spia nel direttivo?"** Sì / No. **Voto palese**: i voti si mostrano quando hanno votato tutti. **Chi non risponde in tempo vale "No".** Si procede se i **sì sono almeno la metà** dei membri (50/50 = si procede).
+  2. Se si procede, ognuno fa **un nome** (non il proprio). Viene **licenziato subito** chi raccoglie **più della metà** dei nomi fatti (metà più uno, **contata sui votanti**: chi non fa un nome non conta). Ruolo rivelato subito.
+  3. Altrimenti si va al **ballottaggio** tra il più nominato e il secondo; se ci sono pari merito vanno tutti (in testa o al secondo posto). **Chi è al ballottaggio non vota**; se fuori dal ballottaggio non resta nessuno a votare, votano anche i candidati (non per sé stessi). Vince chi ha più voti da solo (con due candidati significa metà più uno dei voti dati).
+  4. **Ballottaggio a due:** in caso di stallo si rivota una volta; al secondo stallo **vengono licenziati entrambi**.
+  5. **Ballottaggio a tre o più:** in caso di stallo si rivota tra chi è ancora in testa, e la TV avverte chiaramente che se non c'è accordo si farà un'**ultima votazione** in cui **chi ha votato lo stesso nome nelle due votazioni precedenti non potrà votarlo** (chi ha cambiato voto ha tutti i nomi disponibili), e che se lo stallo si ripete **non verrà licenziato nessuno**. Chi entra nel percorso a tre ci resta anche se la parità si restringe a due.
+  6. **Con 8 giocatori** (possibili due spie): se nel primo giro è stato licenziato **uno solo**, si fa un secondo giro dalla domanda "C'è ancora una spia?". Se ne sono stati licenziati due (doppio stallo) o nessuno, il secondo giro non si fa.
+  7. Votano solo i membri del direttivo non licenziati; nel finale ogni voto vale 1.
+- Sostituisce: §15.1 precedente, D-028 (decisione sui demansionati), la domanda di verifica di D-029 (restano validi il principio "tempo scaduto = conserva lo stato" e il finale senza conoscere la corsa).
+- Rif.: GDD §15 · analisi generale T3
+
+## D-059 — Finale senza punti sulle accuse e sul licenziamento
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare col simulatore e nelle serate**
+- Scelta di Luis: tolti **tutti** i punti legati al finale: ±5 alla nomina, ±3 al voto sui demansionati, bonus e penalità della domanda di verifica (+3 / +8 / −2), −5 all'onesto licenziato, −5 alla spia licenziata, +2 a ogni onesto quando una spia è licenziata, penalità per chi demansionava un onesto. Resta solo **D-025**: la spia licenziata non prende il +10 della vittoria del suo concorrente.
+- Motivo: non incentivare il gioco egoistico (Luis non vuole per ora rafforzare gli effetti privati, S3 dell'analisi) e avere un finale con meno regole: si vota solo se c'è una spia e chi è.
+- Conseguenza accettata: far licenziare un onesto non costa nulla a chi lo vota; il finale diventa anche una resa dei conti tra rivali in classifica. Sparisce anche §4.3 "una spia che fa licenziare una spia rivale prende punti".
+- Rif.: GDD §4.3, §16 · D-025, D-026, D-027, D-029
+
+## D-060 — Via l'astensione: il tempo scaduto conserva sempre lo stato delle cose
+- Data: 2026-11-23 · Stato: ✅ provvisoria
+- Scelta di Luis: tolti i quesiti "con astensione" (eccezione di D-007, D-013, D-034: 6 quesiti su 40). Motivo: una regola in più che spegne le discussioni invece di accenderle.
+- Regola unica del tempo scaduto (D-029 confermato): **conserva lo stato delle cose**, e ci si astiene solo dove è consentito. Proposta: "no". Domanda "C'è una spia?": "No". Nome e ballottaggio: nessun voto. Restano due scelte predefinite che non sono voti: mossa privata = "per l'azienda" (D-020), obiettivo = estratto a caso (D-048).
+- Rif.: GDD §8.4bis · analisi generale T1, T2
+
+## D-061 — Più indizi in TV: quanti hanno giocato per l'azienda, quali dati girano
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **da verificare nelle serate**
+- S1 (Luis: approvato): ai Risultati la TV dice **"3 su 5 hanno giocato per l'azienda"** invece di "in calo / stabile / in crescita". Contano tutti i membri del direttivo; chi non sceglie in tempo conta "per l'azienda" (D-020). Non si sa chi.
+- S2 (Luis: approvato, con il suo testo): nel Rapporto la TV annuncia ogni segreto del trimestre con il reparto a cui serve, senza dire chi l'ha ricevuto, nello stile *"Ufficio Vendite ha bisogno di informazioni sull'offerta della gara di primavera prima della scadenza!"* (la scadenza è la votazione collegata). In piccolo, sempre visibile: *"ATTENZIONE: una spia potrebbe essersi infiltrata tra voi!"*; 🟡 con 8 giocatori *"potrebbero esserci spie tra voi"* (proposta di Claude, chiude il punto 🔴 di §4.2).
+- 🟡 Dettagli di Claude: (a) quando un segreto arriva in tempo la TV dice **quale** (il titolo è già pubblico); (b) nel 4° trimestre il conteggio "per l'azienda" si annuncia subito, come le fughe di notizie, perché è un indizio per il finale (i numeri del mercato restano nascosti, D-029); (c) gli obiettivi «Squadra» (2.9 e 3.9), che parlavano di impegno "in calo / in crescita", si riscrivono con il conteggio: "in ogni trimestre almeno metà del direttivo gioca per l'azienda" e "in tutti i 4 trimestri più di metà del direttivo gioca per l'azienda".
+- Rinviati (Luis): S3 (più peso agli effetti privati) no per ora; S4 (carta indagine) da considerare in futuro; S5 (evento per trimestre) solo se il gioco risulta ripetitivo.
+- Rif.: GDD §9, §11.5, §17 · analisi generale S1, S2
+
+## D-062 — Costi delle proposte a cifre tonde: 30 / 50 / 80 K
+- Data: 2026-11-23 · Stato: ✅ provvisoria — **⚖️ da verificare col simulatore**
+- Contesto: cassa al tetto nel 73% dei trimestri e 0–9% di proposte bocciate per mancanza di fondi (analisi generale, punto 2.4).
+- Scelta di Luis: budget invariato (100 K a trimestre, tetto 150 K: cifre tonde e facili); costi delle proposte solo **30, 50 o 80 K**.
+- 🟡 Conversione (Claude): i costi attuali fino a 40 K → 30; da 45 a 60 K → 50; da 70 K in su → 80.
+- Obiettivi personali: **resta la scelta fra tre** (Luis, T6 respinto: "prendersi in parte la responsabilità del proprio destino").
+- Rif.: GDD §6, §8.6 · D-018 · analisi generale T5, T6

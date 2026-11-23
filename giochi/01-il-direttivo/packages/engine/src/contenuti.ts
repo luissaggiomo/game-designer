@@ -36,7 +36,6 @@ export interface ModelloProposta {
   costo: number;
   schema: string;
   trimestri: number[];
-  astensioneAmmessa?: boolean;
   /** Frase per la TV che spiega l'effetto reale sull'azienda (D-033). */
   spiegazione: string;
   /** Secondo schema possibile, con la sua spiegazione, estratto a ogni partita (D-045). */

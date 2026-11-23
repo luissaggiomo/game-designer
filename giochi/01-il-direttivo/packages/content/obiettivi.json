@@ -41,9 +41,9 @@
     { "id": "T2-01", "nome": "Voce critica", "tipo": 2, "aziendalista": false, "traguardi": [
       { "testo": "Il tuo voto decide il respingimento di {soglia} proposte", "misura": "DECISIVI_PER_RESPINGERE", "soglia": 2 },
       { "testo": "Vota NO a {soglia} proposte che vengono approvate", "misura": "NO_SU_APPROVATE", "soglia": 2 } ] },
-    { "id": "T2-02", "nome": "Riformatore", "tipo": 2, "aziendalista": false, "traguardi": [
-      { "testo": "Proponi (o chiedi) una votazione di demansionamento o di promozione", "misura": "VOTI_PERSONALI_PROPOSTI", "soglia": 1 },
-      { "testo": "Una votazione di demansionamento o di promozione proposta da te viene approvata", "misura": "VOTI_PERSONALI_APPROVATI", "soglia": 1 } ] },
+    { "id": "T2-02", "nome": "Intermediario", "tipo": 2, "aziendalista": false, "traguardi": [
+      { "testo": "Inoltra {soglia} copie di segreti ad altri giocatori", "misura": "SEGRETI_INOLTRATI", "soglia": 2 },
+      { "testo": "Una copia inoltrata da te passa per almeno {soglia} giocatori", "misura": "CATENA_DOPO_DI_TE", "soglia": 3 } ] },
     { "id": "T2-03", "nome": "Archivista", "tipo": 2, "aziendalista": false, "traguardi": [
       { "testo": "Ricevi copie di segreti da {soglia} giocatori diversi", "misura": "MITTENTI_SEGRETI_DIVERSI", "soglia": 2 },
       { "testo": "A fine anno possiedi copie di {soglia} segreti diversi", "misura": "SEGRETI_POSSEDUTI", "soglia": 5 } ] },
@@ -61,7 +61,7 @@
       { "testo": "A fine anno la cassa ha almeno {parametro} K", "misura": "CASSA_FINE_ANNO", "soglia": 1, "parametro": 150 } ] },
     { "id": "T2-09", "nome": "Squadra", "tipo": 2, "aziendalista": true, "traguardi": [
       { "testo": "Scegli \"per l'azienda\" nella mossa privata in {soglia} trimestri", "misura": "MOSSE_AZIENDA", "soglia": 3 },
-      { "testo": "Nessun trimestre con l'impegno dei reparti \"in calo\"", "misura": "TRIMESTRI_NON_IN_CALO", "soglia": "TUTTI_I_TRIMESTRI" } ] },
+      { "testo": "In ogni trimestre almeno metà del direttivo gioca per l'azienda", "misura": "TRIMESTRI_META_AZIENDA", "soglia": "TUTTI_I_TRIMESTRI" } ] },
     { "id": "T2-10", "nome": "Occhio clinico", "tipo": 2, "aziendalista": true, "traguardi": [
       { "testo": "Vota SÌ a {soglia} proposte che si rivelano positive per l'azienda", "misura": "SI_POSITIVE", "soglia": 2 },
       { "testo": "Vota NO ad almeno {soglia} proposta approvata che si rivela dannosa per l'azienda", "misura": "NO_SU_DANNOSE", "soglia": 1 } ] },
@@ -95,7 +95,7 @@
       { "testo": "Vota NO a {soglia} proposte che vengono approvate", "misura": "NO_SU_APPROVATE", "soglia": 2 } ] },
     { "id": "T3-09", "nome": "Squadra", "tipo": 3, "aziendalista": true, "traguardi": [
       { "testo": "Scegli \"per l'azienda\" nella mossa privata in {soglia} trimestri", "misura": "MOSSE_AZIENDA", "soglia": 3 },
-      { "testo": "L'impegno dei reparti è \"in crescita\" in tutti i {soglia} trimestri", "misura": "TRIMESTRI_IN_CRESCITA", "soglia": 4 } ] },
+      { "testo": "Più di metà del direttivo gioca per l'azienda in tutti i {soglia} trimestri", "misura": "TRIMESTRI_MAGGIORANZA_AZIENDA", "soglia": 4 } ] },
     { "id": "T3-10", "nome": "Occhio clinico", "tipo": 3, "aziendalista": true, "traguardi": [
       { "testo": "Vota SÌ ad almeno {soglia} proposta che si rivela positiva per l'azienda", "misura": "SI_POSITIVE", "soglia": 1 },
       { "testo": "Vota SÌ ad almeno {soglia} proposte approvate, e a nessuna che si riveli dannosa", "misura": "SI_SENZA_DANNOSE", "soglia": 2 } ] },

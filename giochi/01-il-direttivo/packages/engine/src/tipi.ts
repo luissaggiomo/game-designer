@@ -17,7 +17,7 @@ export type RepartoId =
 export type GiocatoreId = string;
 export type ConcorrenteId = string;
 export type Peso = 0 | 1 | 2;
-export type Voto = "SI" | "NO" | "ASTENUTO";
+export type Voto = "SI" | "NO";
 export type SceltaMossa = "REPARTO" | "AZIENDA";
 
 export type Fazione = { tipo: "ONESTO" } | { tipo: "SPIA"; concorrente: ConcorrenteId };
@@ -27,9 +27,8 @@ export interface Giocatore {
   nome: string;
   repartoId: RepartoId;
   fazione: Fazione;
-  stato: "ATTIVO" | "DEMANSIONATO" | "LICENZIATO";
-  /** Trimestre in cui è stato demansionato (serve per la durata minima, D-010). */
-  demansionatoDalTrimestre?: number;
+  /** Niente demansionamento (D-057): si è attivi fino all'eventuale licenziamento nel finale. */
+  stato: "ATTIVO" | "LICENZIATO";
   puntiReparto: number;
   /** Messaggi privati ancora disponibili nel trimestre (non accumulabili, GDD §10.1). */
   quotaMessaggi: number;
@@ -40,7 +39,7 @@ export interface Reparto {
   id: RepartoId;
   /** Assente = reparto vacante dall'inizio. */
   occupatoDa?: GiocatoreId;
-  /** Vero se vacante oppure se il direttore è demansionato (GDD §14). */
+  /** Vero se il reparto è vacante (GDD §14, D-057). */
   autogestione: boolean;
 }
 
@@ -67,10 +66,9 @@ export interface PropostaIstanza {
   titolo: string;
   categoria: string;
   costo: number;
-  astensioneAmmessa: boolean;
   /** Frase che spiega in TV l'effetto reale, mostrata ai risultati (D-033): mai prima. */
   spiegazione: string;
-  /** Pesi effettivi: solo reparti occupati (D-006); tutti 1 nei quesiti con astensione (D-013). */
+  /** Pesi effettivi: solo reparti occupati (D-006). */
   pesi: Partial<Record<RepartoId, Peso>>;
   /** Effetti privati per reparto: SEGRETI, ognuno vede solo il proprio. */
   effettiPrivati: Partial<Record<RepartoId, { punti?: number; testo: string }>>;
@@ -89,12 +87,13 @@ export type Fase =
   | { nome: "VOTAZIONE"; votazione: number }
   | { nome: "MOSSA_PRIVATA" }
   | { nome: "RISOLUZIONE" }
-  | { nome: "DEMANSIONAMENTO" }
-  // Finale (GDD §15, Architettura §9 e §10.9)
-  /** Decisione obbligatoria su un demansionato: promuoverlo o licenziarlo (D-028). */
-  | { nome: "DECISIONE_FINALE"; bersaglio: GiocatoreId }
-  | { nome: "VERIFICA"; giro: number }
-  | { nome: "NOMINA"; giro: number; ballottaggio: boolean }
+  // Finale "Rinnovo dei contratti" (GDD §15, D-058)
+  /** "C'è una spia nel direttivo?" Sì / No, voto palese. */
+  | { nome: "DOMANDA"; giro: number }
+  /** Ognuno fa un nome. */
+  | { nome: "NOMINA"; giro: number }
+  /** Ballottaggio tra i più nominati: turno 1, 2 (dopo uno stallo) e 3 (ultima votazione, percorso a tre). */
+  | { nome: "BALLOTTAGGIO"; giro: number; turno: number }
   | { nome: "PUNTEGGIO" }
   | { nome: "LETTURA_MESSAGGI" }
   | { nome: "FINE" };
@@ -138,9 +137,6 @@ export interface Partita {
   conteggioFontiSegreti: Partial<Record<RepartoId, number>>;
   /** Numeratore per creare identificativi unici in modo riproducibile. */
   contatore: number;
-  /** Votazione di promozione o demansionamento in corso (una alla volta). */
-  votoPersonale?: VotoPersonale;
-  storicoVotiPersonali: VotoPersonaleChiuso[];
   /** Obiettivi personali: i tre proposti e quello scelto (solo server, D-046…D-048). */
   obiettivi: Partial<Record<GiocatoreId, ObiettiviGiocatore>>;
   /** Storico delle votazioni sulle proposte, per verificare gli obiettivi (solo server). */
@@ -184,7 +180,10 @@ export interface RegistroTrimestre {
   trimestre: number;
   /** Mosse private scelte davvero dai direttori (non quelle predefinite o del computer, D-052 R2). */
   mosseScelte: Partial<Record<GiocatoreId, SceltaMossa>>;
-  andamento: "IN_CALO" | "STABILE" | "IN_CRESCITA";
+  /** Quanti membri del direttivo hanno giocato per l'azienda (pubblico, D-061), compresi i tempi scaduti. */
+  perAzienda: number;
+  /** Membri del direttivo che facevano la mossa privata. */
+  partecipanti: number;
   cassaInizio: number;
   /** Cassa dopo l'ultima votazione del trimestre. */
   cassaFine: number;
@@ -193,40 +192,42 @@ export interface RegistroTrimestre {
   effettoSegreti?: number;
 }
 
-/** "Momento" di un voto personale: il numero del trimestre (fase 6) oppure il finale. */
-export type MomentoVoto = number | "FINALE";
-
-export interface VotoPersonale {
-  tipo: "PROMOZIONE" | "DEMANSIONAMENTO";
-  bersaglio: GiocatoreId;
-  proponente: GiocatoreId;
-  momento: MomentoVoto;
-  voti: Partial<Record<GiocatoreId, "SI" | "NO">>;
+/** Ballottaggio in corso nel finale (D-058). */
+export interface Ballottaggio {
+  candidati: GiocatoreId[];
+  /** "DUE": stallo ripetuto = licenziati entrambi. "TRE" (tre o più candidati all'inizio): ultima votazione con i nomi ripetuti bloccati, poi nessun licenziato. */
+  percorso: "DUE" | "TRE";
+  turno: number;
+  /** Voti dei turni precedenti (per bloccare, al turno 3, il nome votato due volte di fila). */
+  votiPrecedenti: Partial<Record<GiocatoreId, GiocatoreId>>[];
 }
 
-export interface VotoPersonaleChiuso extends VotoPersonale {
-  approvato: boolean;
-  si: number;
-  soglia: number;
-}
-
-export interface EsitoVerifica {
+export interface EsitoDomanda {
   giro: number;
-  tuttiSi: boolean;
-  votiNo: GiocatoreId[];
-  /** Spie presenti tra gli attivi al momento della domanda (solo server, per il punteggio). */
-  spieTraAttivi: GiocatoreId[];
+  /** Voto palese: chi ha risposto sì e chi no (il tempo scaduto vale "No", D-058). */
+  si: GiocatoreId[];
+  no: GiocatoreId[];
+  tempoScaduto: GiocatoreId[];
+  procede: boolean;
+}
+
+/** Una votazione chiusa del finale (nomi o ballottaggio), pubblica dopo la rivelazione. */
+export interface VotazioneFinale {
+  giro: number;
+  tipo: "NOMI" | "BALLOTTAGGIO";
+  turno: number;
+  voti: { da: GiocatoreId; per: GiocatoreId }[];
 }
 
 export interface StatoFinale {
-  /** Risposte segrete alla domanda "nel direttivo sono rimasti solo onesti?" (giro in corso). */
-  verifica: Partial<Record<GiocatoreId, boolean>>;
-  /** Nomine segrete (giro o ballottaggio in corso). */
+  /** Risposte alla domanda "C'è una spia?" del giro in corso. */
+  risposte: Partial<Record<GiocatoreId, boolean>>;
+  /** Nomi (o voti di ballottaggio) del turno in corso: segreti fino alla rivelazione. */
   nomine: Partial<Record<GiocatoreId, GiocatoreId>>;
-  /** Candidati del ballottaggio in corso (vuoto = nessun ballottaggio). */
-  ballottaggio: GiocatoreId[];
-  esitiVerifica: EsitoVerifica[];
-  licenziamenti: { giocatore: GiocatoreId; giro: number; nominatoDa: GiocatoreId[] }[];
+  ballottaggio?: Ballottaggio;
+  esitiDomanda: EsitoDomanda[];
+  votazioni: VotazioneFinale[];
+  licenziamenti: { giocatore: GiocatoreId; giro: number; votatoDa: GiocatoreId[] }[];
 }
 
 export interface Punteggio {
@@ -271,8 +272,6 @@ export interface CopiaSegreto {
   provenienza: { tipo: "GIOCO" } | { tipo: "GIOCATORE"; da: GiocatoreId; anonimo: boolean };
   /** Percorso completo dei passaggi (solo server, lettura finale e poteri d'indagine). */
   catena: GiocatoreId[];
-  /** Vero se il possessore l'ha persa perché demansionato (dato del proprio reparto, D-022). */
-  revocata?: boolean;
   /** Vero se chi l'ha inoltrata ha cambiato dei campi (solo server, per gli obiettivi). */
   modificataDalMittente?: boolean;
   /** Chi ha modificato i campi lungo il percorso di questa copia (solo server). */

@@ -2,10 +2,9 @@
  * Mossa privata e risultati del trimestre (GDD §7.2 fase 5, §8.2, §9, §12, §14 · Architettura §10.4, §10.6, §10.7).
  *
  * Alla RISOLUZIONE, in quest'ordine:
- * 1. mosse private: punti di reparto (privati) e andamento dell'azienda; la TV vede solo
- *    "in calo / stabile / in crescita", mai il numero;
- * 2. effetti delle proposte approvate: punti di reparto (privati, ridotti se in autogestione)
- *    ed effetto reale sull'azienda (pubblico);
+ * 1. mosse private: punti di reparto (privati) e andamento dell'azienda; la TV vede quanti hanno
+ *    giocato per l'azienda, mai chi (D-061);
+ * 2. effetti delle proposte approvate: punti di reparto (privati) ed effetto reale sull'azienda (pubblico);
  * 3. mosse dei concorrenti;
  * 4. corsa di mercato aggiornata.
  * I segreti passati ai concorrenti si aggiungeranno con le regole dei segreti.
@@ -21,7 +20,7 @@ export function registraMossa(partita: Partita, azione: Extract<AzioneGiocatore,
   if (partita.fase.nome !== "MOSSA_PRIVATA") return { ok: false, errore: "Ora non è il momento della mossa privata" };
   const g = partita.giocatori.find((x) => x.id === azione.da);
   if (!g) return { ok: false, errore: "Giocatore sconosciuto" };
-  if (g.stato !== "ATTIVO") return { ok: false, errore: "Chi è demansionato non fa la mossa privata: il suo reparto è in autogestione" };
+  if (g.stato !== "ATTIVO") return { ok: false, errore: "La mossa privata la fanno solo i membri del direttivo" };
 
   const nuova = structuredClone(partita);
   nuova.mossePrivate[g.id] = azione.scelta; // si può cambiare fino alla chiusura: vale l'ultima
@@ -40,7 +39,7 @@ export function risolviTrimestre(partita: Partita, ambiente: Ambiente): Evento[]
 
   eventi.push(risolviMossePrivate(partita, ambiente, casuale));
   const quotaDopoMosse = partita.azienda.quota;
-  eventi.push(...applicaEffettiProposte(partita, ambiente));
+  eventi.push(...applicaEffettiProposte(partita));
   const quotaDopoProposte = partita.azienda.quota;
   eventi.push(...risolviSegreti(partita, ambiente));
   // Storico (solo server): quanto hanno reso all'azienda proposte e segreti (D-056).
@@ -63,49 +62,41 @@ export function risolviTrimestre(partita: Partita, ambiente: Ambiente): Evento[]
   partita.statoCasuale = casuale.stato();
 
   // Ultimo trimestre: i numeri del mercato si scoprono solo alla fine, dopo il finale (D-029), così
-  // le decisioni del finale si prendono senza sapere chi ha vinto la corsa. Le fughe di notizie si
-  // annunciano subito, senza numeri: sono indizi che servono al finale (variante B).
+  // le decisioni del finale si prendono senza sapere chi ha vinto la corsa. Le fughe di notizie e il
+  // conteggio della mossa privata si annunciano subito: sono indizi che servono al finale (variante B, D-061).
   if (partita.trimestre >= ambiente.config.trimestri) {
-    partita.risultatiRinviati = { eventi, quote: quotePrima };
+    partita.risultatiRinviati = { eventi: eventi.filter((e) => e.tipo !== "ESITO_MOSSE_PRIVATE"), quote: quotePrima };
+    const mosse = eventi.filter((e) => e.tipo === "ESITO_MOSSE_PRIVATE");
     const fughe: Evento[] = eventi.flatMap((e) => {
       if (e.tipo !== "SEGRETO_USATO") return [];
       const titolo = partita.segreti.find((s) => s.id === e.segretoId)!.titolo;
       const nome = partita.concorrenti.find((c) => c.id === e.concorrente)!.nome;
       return [{ tipo: "FUGA_DI_NOTIZIE" as const, concorrente: e.concorrente, segretoId: e.segretoId, causa: `Un'informazione è finita a ${nome}: «${titolo}».` }];
     });
-    return [...fughe, { tipo: "RISULTATI_RINVIATI", causa: "I numeri del mercato dell'ultimo trimestre si scopriranno alla fine, dopo il finale." }];
+    return [...mosse, ...fughe, { tipo: "RISULTATI_RINVIATI", causa: "I numeri del mercato dell'ultimo trimestre si scopriranno alla fine, dopo il finale." }];
   }
   return eventi;
 }
 
 function risolviMossePrivate(partita: Partita, ambiente: Ambiente, casuale: Casuale): Evento {
-  const { config } = ambiente;
-  const valori = config.mossaPrivata;
+  const valori = ambiente.config.mossaPrivata;
   let delta = 0;
+  let perAzienda = 0;
 
-  // Direttori attivi: la loro scelta, oppure quella predefinita se il tempo è scaduto.
-  for (const g of partita.giocatori.filter((x) => x.stato === "ATTIVO")) {
+  // Membri del direttivo: la loro scelta, oppure quella predefinita se il tempo è scaduto (D-020).
+  // I reparti vacanti non partecipano.
+  const membri = partita.giocatori.filter((x) => x.stato === "ATTIVO");
+  for (const g of membri) {
     const scelta: SceltaMossa = partita.mossePrivate[g.id] ?? valori.sceltaPredefinita;
     const v = scelta === "REPARTO" ? valori.reparto : valori.azienda;
+    if (scelta === "AZIENDA") perAzienda++;
     g.puntiReparto += v.puntiReparto;
     delta += v.deltaAzienda;
-  }
-
-  // Reparti dei demansionati: sceglie il computer. I reparti vacanti non partecipano (D-020).
-  if (config.autogestione.mossaPrivataDemansionati) {
-    for (const r of partita.reparti.filter((x) => x.autogestione && x.occupatoDa)) {
-      const scelta: SceltaMossa = casuale.probabilita(config.autogestione.probabilitaMossaAzienda) ? "AZIENDA" : "REPARTO";
-      const v = scelta === "REPARTO" ? valori.reparto : valori.azienda;
-      const direttore = partita.giocatori.find((g) => g.id === r.occupatoDa);
-      if (direttore) direttore.puntiReparto += v.puntiReparto;
-      delta += v.deltaAzienda;
-    }
   }
 
   delta += casuale.scegli(valori.rumore);
   partita.azienda.quota += delta;
 
-  const andamento = delta < 0 ? "IN_CALO" : delta === 0 ? "STABILE" : "IN_CRESCITA";
   // Storico per gli obiettivi: solo le mosse scelte davvero dai direttori attivi (D-052 R2).
   const mosseScelte: Partial<Record<string, SceltaMossa>> = {};
   for (const g of partita.giocatori.filter((x) => x.stato === "ATTIVO")) {
@@ -115,25 +106,25 @@ function risolviMossePrivate(partita: Partita, ambiente: Ambiente, casuale: Casu
   partita.storicoTrimestri.push({
     trimestre: partita.trimestre,
     mosseScelte,
-    andamento,
+    perAzienda,
+    partecipanti: membri.length,
     cassaInizio: partita.cassaInizioTrimestre,
     cassaFine: partita.azienda.cassa,
   });
-  const testo = { IN_CALO: "in calo", STABILE: "stabile", IN_CRESCITA: "in crescita" }[andamento];
-  return { tipo: "ESITO_MOSSE_PRIVATE", andamento, causa: `Impegno dei reparti questo trimestre: ${testo}.` };
+  const verbo = perAzienda === 1 ? "ha giocato" : "hanno giocato";
+  return { tipo: "ESITO_MOSSE_PRIVATE", perAzienda, partecipanti: membri.length, causa: `Mossa privata: ${perAzienda} su ${membri.length} ${verbo} per l'azienda.` };
 }
 
-function applicaEffettiProposte(partita: Partita, ambiente: Ambiente): Evento[] {
-  const fattore = ambiente.config.autogestione.fattoreEffetti;
+function applicaEffettiProposte(partita: Partita): Evento[] {
   const eventi: Evento[] = [];
   for (const p of partita.proposteTrimestre.filter((x) => x.esito?.approvata)) {
-    // Effetti privati sui reparti: ridotti se il reparto è in autogestione ("rende poco, non fa disastri").
+    // Effetti privati sui reparti (i vacanti non accumulano punti).
     for (const r of partita.reparti) {
       const punti = p.effettiPrivati[r.id]?.punti;
       if (punti === undefined) continue;
       const direttore = partita.giocatori.find((g) => g.id === r.occupatoDa);
       if (!direttore) continue; // reparto vacante: nessuno accumula punti
-      direttore.puntiReparto += r.autogestione ? Math.trunc(punti * fattore) : punti;
+      direttore.puntiReparto += punti;
     }
     // Effetto reale sull'azienda: pubblico.
     partita.azienda.quota += p.effettoAzienda;

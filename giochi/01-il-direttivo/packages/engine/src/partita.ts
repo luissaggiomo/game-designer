@@ -86,11 +86,10 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     segretiPassati: [],
     conteggioFontiSegreti: {},
     contatore: 0,
-    storicoVotiPersonali: [],
     obiettivi: {},
     storicoVotazioni: [],
     storicoTrimestri: [],
-    finale: { verifica: {}, nomine: {}, ballottaggio: [], esitiVerifica: [], licenziamenti: [] },
+    finale: { risposte: {}, nomine: {}, esitiDomanda: [], votazioni: [], licenziamenti: [] },
   };
 
   // 5. Obiettivi personali: tre a testa, uno per tipo (D-046, D-049).

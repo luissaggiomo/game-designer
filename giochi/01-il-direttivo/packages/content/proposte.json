@@ -1,11 +1,11 @@
 {
-  "_nota": "Mazzo dei quesiti (D-023, modello B): ogni quesito ha uno schema di effetto; i ruoli si assegnano ai reparti al momento dell'estrazione. Titoli 'a doppia faccia' (D-030, D-031); 'testi': frasi su misura per ogni reparto e segno (D-032); 'spiegazione': frase per la TV sull'effetto reale (D-033). 'alternativa' (D-045): secondo schema con la sua spiegazione, estratto a ogni partita con la probabilità in config.json (selezione.probabilitaAlternativa), così l'effetto non si impara a memoria. Costi in K€ (D-018).",
+  "_nota": "Mazzo dei quesiti (D-023, modello B): ogni quesito ha uno schema di effetto; i ruoli si assegnano ai reparti al momento dell'estrazione. Titoli 'a doppia faccia' (D-030, D-031); 'testi': frasi su misura per ogni reparto e segno (D-032); 'spiegazione': frase per la TV sull'effetto reale (D-033). 'alternativa' (D-045): secondo schema con la sua spiegazione, estratto a ogni partita con la probabilità in config.json (selezione.probabilitaAlternativa), così l'effetto non si impara a memoria. Costi in K€ (D-018), solo 30 / 50 / 80 (D-062). Niente quesiti con astensione (D-060).",
   "proposte": [
     {
       "id": "nuovo-gestionale-aziendale",
       "titolo": "Nuovo gestionale aziendale (l'ennesimo)",
       "categoria": "INVESTIMENTI",
-      "costo": 60,
+      "costo": 50,
       "schema": "PROTAGONISTA",
       "trimestri": [
         1,
@@ -56,7 +56,7 @@
       "id": "riorganizzazione-degli-uffici-in-open-sp",
       "titolo": "Riorganizzazione degli uffici in open space",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 45,
+      "costo": 50,
       "schema": "COPPIA",
       "trimestri": [
         1,
@@ -108,7 +108,7 @@
       "id": "taglio-del-10-alle-spese-generali",
       "titolo": "Taglio del 10% alle spese generali",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 25,
+      "costo": 30,
       "schema": "SACRIFICIO",
       "trimestri": [
         1,
@@ -211,7 +211,7 @@
       "id": "consulenza-strategica-di-una-societa-fam",
       "titolo": "Consulenza strategica di una società famosa",
       "categoria": "INVESTIMENTI",
-      "costo": 70,
+      "costo": 80,
       "schema": "PAREGGIO",
       "trimestri": [
         1,
@@ -263,7 +263,7 @@
       "id": "certificazione-di-qualita-internazionale",
       "titolo": "Certificazione di qualità internazionale",
       "categoria": "INVESTIMENTI",
-      "costo": 55,
+      "costo": 50,
       "schema": "AZIENDALE",
       "trimestri": [
         1,
@@ -314,7 +314,7 @@
       "id": "budget-extra-per-il-reparto-piu-convince",
       "titolo": "Fondo per l'innovazione interna",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 40,
+      "costo": 30,
       "schema": "EGOISTICO",
       "trimestri": [
         1,
@@ -366,7 +366,7 @@
       "id": "fiera-di-settore-a-milano",
       "titolo": "Fiera di settore a Milano",
       "categoria": "CAMPAGNE",
-      "costo": 60,
+      "costo": 50,
       "schema": "PROTAGONISTA",
       "trimestri": [
         1,
@@ -417,7 +417,7 @@
       "id": "fusione-di-due-reparti-per-un-anno",
       "titolo": "Prestito di personale tra reparti per un anno",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 35,
+      "costo": 30,
       "schema": "COPPIA",
       "trimestri": [
         2,
@@ -468,7 +468,7 @@
       "id": "nuova-sede-di-rappresentanza-in-centro",
       "titolo": "Nuova sede di rappresentanza in centro",
       "categoria": "INVESTIMENTI",
-      "costo": 95,
+      "costo": 80,
       "schema": "RISCHIO",
       "trimestri": [
         1,
@@ -519,7 +519,7 @@
       "id": "settimana-corta-sperimentale",
       "titolo": "Settimana corta sperimentale",
       "categoria": "PERSONALE",
-      "costo": 40,
+      "costo": 30,
       "schema": "PAREGGIO",
       "trimestri": [
         1,
@@ -527,7 +527,6 @@
         3,
         4
       ],
-      "astensioneAmmessa": true,
       "spiegazione": "Personale più riposato e meno assenze: piccolo guadagno di produttività",
       "alternativa": {
         "schema": "SACRIFICIO",
@@ -572,7 +571,7 @@
       "id": "corso-di-formazione-obbligatorio-per-tut",
       "titolo": "Corso di formazione obbligatorio per tutti",
       "categoria": "PERSONALE",
-      "costo": 25,
+      "costo": 30,
       "schema": "AZIENDALE",
       "trimestri": [
         1,
@@ -580,7 +579,6 @@
         3,
         4
       ],
-      "astensioneAmmessa": true,
       "spiegazione": "Il corso funziona davvero: errori dimezzati in tutta l'azienda",
       "alternativa": {
         "schema": "EGOISTICO",
@@ -625,7 +623,7 @@
       "id": "auto-aziendale-nuova",
       "titolo": "Auto di rappresentanza per le visite ai clienti",
       "categoria": "PERSONALE",
-      "costo": 45,
+      "costo": 50,
       "schema": "EGOISTICO",
       "trimestri": [
         1,
@@ -677,7 +675,7 @@
       "id": "accordo-quadro-con-un-fornitore-unico",
       "titolo": "Accordo quadro con un fornitore unico",
       "categoria": "FORNITURE",
-      "costo": 55,
+      "costo": 50,
       "schema": "SACRIFICIO",
       "trimestri": [
         1,
@@ -729,7 +727,7 @@
       "id": "campagna-pubblicitaria-in-televisione",
       "titolo": "Campagna pubblicitaria in televisione",
       "categoria": "CAMPAGNE",
-      "costo": 90,
+      "costo": 80,
       "schema": "PROTAGONISTA",
       "trimestri": [
         1,
@@ -780,7 +778,7 @@
       "id": "digitalizzazione-di-tutti-gli-archivi",
       "titolo": "Digitalizzazione di tutti gli archivi",
       "categoria": "INVESTIMENTI",
-      "costo": 60,
+      "costo": 50,
       "schema": "COPPIA",
       "trimestri": [
         1,
@@ -831,7 +829,7 @@
       "id": "assunzione-di-un-super-esperto",
       "titolo": "Assunzione di un super-esperto (carissimo)",
       "categoria": "PERSONALE",
-      "costo": 75,
+      "costo": 80,
       "schema": "RISCHIO",
       "trimestri": [
         1,
@@ -883,7 +881,7 @@
       "id": "nuove-regole-sulle-trasferte",
       "titolo": "Nuove regole sulle trasferte",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 20,
+      "costo": 30,
       "schema": "PAREGGIO",
       "trimestri": [
         1,
@@ -935,7 +933,7 @@
       "id": "piano-di-risparmio-energetico",
       "titolo": "Piano di risparmio energetico",
       "categoria": "INVESTIMENTI",
-      "costo": 55,
+      "costo": 50,
       "schema": "AZIENDALE",
       "trimestri": [
         1,
@@ -987,14 +985,13 @@
       "id": "premio-di-produzione-per-un-solo-reparto",
       "titolo": "Premio di risultato legato agli obiettivi",
       "categoria": "PERSONALE",
-      "costo": 40,
+      "costo": 30,
       "schema": "EGOISTICO",
       "trimestri": [
         2,
         3,
         4
       ],
-      "astensioneAmmessa": true,
       "spiegazione": "Il premio scatena invidie e la corsa agli obiettivi facili: l'azienda ci perde",
       "alternativa": {
         "schema": "AZIENDALE",
@@ -1039,7 +1036,7 @@
       "id": "partecipazione-a-una-gara-d-appalto-pubb",
       "titolo": "Partecipazione a una gara d'appalto pubblica",
       "categoria": "CAMPAGNE",
-      "costo": 70,
+      "costo": 80,
       "schema": "SACRIFICIO",
       "trimestri": [
         1,
@@ -1091,7 +1088,7 @@
       "id": "sistema-di-videosorveglianza",
       "titolo": "Sistema di videosorveglianza (anche in mensa)",
       "categoria": "INVESTIMENTI",
-      "costo": 45,
+      "costo": 50,
       "schema": "PROTAGONISTA",
       "trimestri": [
         1,
@@ -1099,7 +1096,6 @@
         3,
         4
       ],
-      "astensioneAmmessa": true,
       "spiegazione": "Furti azzerati e assicurazione più bassa: le telecamere si ripagano",
       "alternativa": {
         "schema": "PAREGGIO",
@@ -1195,7 +1191,7 @@
       "id": "lancio-di-una-linea-di-prodotti-economic",
       "titolo": "Lancio di una linea di prodotti economici",
       "categoria": "CAMPAGNE",
-      "costo": 75,
+      "costo": 80,
       "schema": "RISCHIO",
       "trimestri": [
         1,
@@ -1246,7 +1242,7 @@
       "id": "riunione-settimanale-obbligatoria-del-lu",
       "titolo": "Riunione settimanale obbligatoria del lunedì",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 15,
+      "costo": 30,
       "schema": "PAREGGIO",
       "trimestri": [
         1,
@@ -1254,7 +1250,6 @@
         3,
         4
       ],
-      "astensioneAmmessa": true,
       "spiegazione": "Le riunioni del lunedì evitano qualche lavoro doppio: guadagno modesto",
       "alternativa": {
         "schema": "SACRIFICIO",
@@ -1299,7 +1294,7 @@
       "id": "revisione-completa-dei-contratti-con-i-c",
       "titolo": "Revisione completa dei contratti con i clienti",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 35,
+      "costo": 30,
       "schema": "AZIENDALE",
       "trimestri": [
         1,
@@ -1351,7 +1346,7 @@
       "id": "sponsorizzazione-della-squadra-di-calcio",
       "titolo": "Sponsorizzazione della squadra di calcio locale",
       "categoria": "CAMPAGNE",
-      "costo": 55,
+      "costo": 50,
       "schema": "EGOISTICO",
       "trimestri": [
         1,
@@ -1403,7 +1398,7 @@
       "id": "rinnovo-dei-computer-di-tutta-l-azienda",
       "titolo": "Rinnovo dei computer di tutta l'azienda",
       "categoria": "INVESTIMENTI",
-      "costo": 70,
+      "costo": 80,
       "schema": "SACRIFICIO",
       "trimestri": [
         1,
@@ -1455,7 +1450,7 @@
       "id": "programma-di-benessere-aziendale",
       "titolo": "Programma di benessere aziendale (yoga alle 7)",
       "categoria": "PERSONALE",
-      "costo": 35,
+      "costo": 30,
       "schema": "PROTAGONISTA",
       "trimestri": [
         1,
@@ -1507,7 +1502,7 @@
       "id": "esternalizzazione-dei-servizi-interni",
       "titolo": "Esternalizzazione dei servizi interni",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 40,
+      "costo": 30,
       "schema": "COPPIA",
       "trimestri": [
         2,
@@ -1558,7 +1553,7 @@
       "id": "apertura-di-un-ufficio-all-estero",
       "titolo": "Apertura di un ufficio all'estero",
       "categoria": "INVESTIMENTI",
-      "costo": 95,
+      "costo": 80,
       "schema": "RISCHIO",
       "trimestri": [
         1,
@@ -1608,7 +1603,7 @@
       "id": "codice-di-abbigliamento-aziendale",
       "titolo": "Codice di abbigliamento aziendale",
       "categoria": "PERSONALE",
-      "costo": 15,
+      "costo": 30,
       "schema": "PAREGGIO",
       "trimestri": [
         1,
@@ -1616,7 +1611,6 @@
         3,
         4
       ],
-      "astensioneAmmessa": true,
       "spiegazione": "Un'aria più professionale: i clienti notano la differenza, un po'",
       "alternativa": {
         "schema": "PROTAGONISTA",
@@ -1661,7 +1655,7 @@
       "id": "controllo-di-gestione-mensile-su-tutti-i",
       "titolo": "Controllo di gestione mensile su tutti i reparti",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 40,
+      "costo": 30,
       "schema": "AZIENDALE",
       "trimestri": [
         1,
@@ -1713,7 +1707,7 @@
       "id": "ufficio-nuovo-per-un-solo-direttore",
       "titolo": "Ristrutturazione del piano direzionale",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 40,
+      "costo": 30,
       "schema": "EGOISTICO",
       "trimestri": [
         1,
@@ -1765,7 +1759,7 @@
       "id": "scorte-di-sicurezza-per-sei-mesi",
       "titolo": "Scorte di sicurezza per sei mesi",
       "categoria": "FORNITURE",
-      "costo": 60,
+      "costo": 50,
       "schema": "SACRIFICIO",
       "trimestri": [
         1,
@@ -1816,7 +1810,7 @@
       "id": "concorso-a-premi-per-i-clienti",
       "titolo": "Concorso a premi per i clienti",
       "categoria": "CAMPAGNE",
-      "costo": 45,
+      "costo": 50,
       "schema": "PROTAGONISTA",
       "trimestri": [
         2,
@@ -1867,7 +1861,7 @@
       "id": "turni-di-lavoro-anche-il-sabato",
       "titolo": "Turni di lavoro anche il sabato",
       "categoria": "PERSONALE",
-      "costo": 25,
+      "costo": 30,
       "schema": "COPPIA",
       "trimestri": [
         1,
@@ -1919,7 +1913,7 @@
       "id": "acquisto-di-un-piccolo-concorrente-in-cr",
       "titolo": "Acquisto di un piccolo concorrente in crisi",
       "categoria": "INVESTIMENTI",
-      "costo": 95,
+      "costo": 80,
       "schema": "RISCHIO",
       "trimestri": [
         2,
@@ -1969,7 +1963,7 @@
       "id": "app-aziendale-per-i-clienti",
       "titolo": "App aziendale per i clienti",
       "categoria": "INVESTIMENTI",
-      "costo": 75,
+      "costo": 80,
       "schema": "PAREGGIO",
       "trimestri": [
         1,
@@ -2020,7 +2014,7 @@
       "id": "bilancio-sociale-e-di-sostenibilita",
       "titolo": "Bilancio sociale e di sostenibilità",
       "categoria": "ORGANIZZAZIONE",
-      "costo": 25,
+      "costo": 30,
       "schema": "AZIENDALE",
       "trimestri": [
         1,

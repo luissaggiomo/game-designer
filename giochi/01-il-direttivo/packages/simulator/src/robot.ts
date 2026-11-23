@@ -40,8 +40,15 @@ export const PROFILI: Record<Profilo["nome"], Profilo> = {
   SPIA_AGGRESSIVA: { nome: "SPIA_AGGRESSIVA", egoismo: 0.85, sogliaVoto: 2, condivisione: 0.3, sabotaggio: 0.8, prudente: false, impegno: 0.3 },
 };
 
-/** Sospetto oltre il quale un robot onesto accusa (propone il demansionamento, risponde "no", nomina). */
-const SOGLIA_SOSPETTO = 3;
+/**
+ * Finale (D-058): un onesto risponde "sì, c'è una spia" se sospetta qualcuno almeno così tanto;
+ * altrimenti risponde sì solo per istinto, con PROBABILITA_SI_SENZA_INDIZI (nel finale non ci sono
+ * punti in gioco, D-059: dire sì non costa nulla).
+ */
+const SOGLIA_SOSPETTO = 1.5;
+const PROBABILITA_SI_SENZA_INDIZI = 0.3;
+/** Le spie prudenti rispondono "sì" per mimetizzarsi con questa probabilità; le aggressive dicono sempre "no". */
+const PROBABILITA_SI_SPIA_PRUDENTE = 0.5;
 
 /** Probabilità di un messaggio di solo testo a inizio trimestre ("chiacchiere" che nella realtà ci sono sempre). */
 const PROBABILITA_CHIACCHIERA = 0.35;
@@ -60,7 +67,6 @@ type Intenzione =
   | "FALSIFICA"
   | "CANARINO"
   | "ANONIMO"
-  | "PROPONI"
   | "NON_CONSEGNARE_FONTE";
 
 const INTENZIONI: Record<string, Intenzione> = {
@@ -78,8 +84,8 @@ const INTENZIONI: Record<string, Intenzione> = {
   CASSA_FINE_ANNO: "RISPARMIA",
   CASSA_MAI_SOTTO: "RISPARMIA",
   MOSSE_AZIENDA: "MOSSA_AZIENDA",
-  TRIMESTRI_NON_IN_CALO: "MOSSA_AZIENDA",
-  TRIMESTRI_IN_CRESCITA: "MOSSA_AZIENDA",
+  TRIMESTRI_META_AZIENDA: "MOSSA_AZIENDA",
+  TRIMESTRI_MAGGIORANZA_AZIENDA: "MOSSA_AZIENDA",
   SEGRETI_INOLTRATI: "INOLTRA",
   FONTE_ARRIVATA_A_GIOCATORI: "INOLTRA",
   CATENA_DOPO_DI_TE: "INOLTRA",
@@ -90,8 +96,6 @@ const INTENZIONI: Record<string, Intenzione> = {
   VERSIONI_DIVERSE_INOLTRATE: "CANARINO",
   VERSIONE_CANARINO_USATA: "CANARINO",
   TRIMESTRI_CON_ANONIMO_INVIATO: "ANONIMO",
-  VOTI_PERSONALI_PROPOSTI: "PROPONI",
-  VOTI_PERSONALI_APPROVATI: "PROPONI",
   FONTE_MAI_AL_CONCORRENTE: "NON_CONSEGNARE_FONTE",
 };
 
@@ -250,14 +254,13 @@ export class Robot {
         const effetto = v.mieiEffetti[proposta.id]?.punti ?? 0;
         // Obiettivi sul voto: soglia più bassa (più SÌ) o più alta (più selettivo).
         const soglia = p.sogliaVoto - (this.vuole(v, "VOTA_SI") ? 1 : 0) + (this.vuole(v, "SELETTIVO") ? 1 : 0);
-        let voto: "SI" | "NO" | "ASTENUTO" = effetto >= soglia ? "SI" : "NO";
+        let voto: "SI" | "NO" = effetto >= soglia ? "SI" : "NO";
         if (spia && r.probabilita(p.sabotaggio)) voto = "NO";
         if (voto === "SI" && this.vuole(v, "VOTA_NO") && r.probabilita(0.4)) voto = "NO";
         if (this.vuole(v, "VOTA_CONTRO") && r.probabilita(0.35)) voto = voto === "SI" ? "NO" : "SI";
         const piuCostosa = Math.max(...v.ordineDelGiorno.map((x) => x.costo));
         if (proposta.costo === piuCostosa && this.vuole(v, "NO_PIU_COSTOSA")) voto = "NO";
         if (proposta.costo >= 40 && this.vuole(v, "RISPARMIA") && r.probabilita(0.5)) voto = "NO";
-        if (proposta.astensioneAmmessa && effetto === 0 && r.probabilita(0.5)) voto = "ASTENUTO";
         azioni.push({ tipo: "VOTA", da: this.id, voto });
         break;
       }
@@ -268,20 +271,29 @@ export class Robot {
           azioni.push({ tipo: "MOSSA_PRIVATA", da: this.id, scelta: perAzienda ? "AZIENDA" : "REPARTO" });
         }
         break;
-      case "VERIFICA": {
+      case "DOMANDA": {
         if (io.stato !== "ATTIVO") break;
         const altri = v.giocatori.filter((g) => g.stato === "ATTIVO" && g.id !== this.id).map((g) => g.id);
         const sospettoMassimo = this.piuSospetto(altri)?.valore ?? 0;
-        azioni.push({ tipo: "VERIFICA_FINALE", da: this.id, soloOnesti: spia || sospettoMassimo < SOGLIA_SOSPETTO });
+        const si = spia
+          ? p.prudente && r.probabilita(PROBABILITA_SI_SPIA_PRUDENTE)
+          : sospettoMassimo >= SOGLIA_SOSPETTO || r.probabilita(PROBABILITA_SI_SENZA_INDIZI);
+        azioni.push({ tipo: "DOMANDA_SPIA", da: this.id, risposta: si ? "SI" : "NO" });
         break;
       }
-      case "NOMINA": {
+      case "NOMINA":
+      case "BALLOTTAGGIO": {
         if (io.stato !== "ATTIVO") break;
-        const ammessi = (v.finale.ballottaggio.length > 0 ? v.finale.ballottaggio : v.giocatori.filter((g) => g.stato === "ATTIVO").map((g) => g.id)).filter(
-          (id) => id !== this.id && !v.io.alleati.includes(id),
+        const b = v.finale.ballottaggio;
+        if (v.fase.nome === "BALLOTTAGGIO" && (!b || !b.votanti.includes(this.id))) break; // chi è candidato non vota
+        const possibili = (b && v.fase.nome === "BALLOTTAGGIO" ? b.candidati : v.giocatori.filter((g) => g.stato === "ATTIVO").map((g) => g.id)).filter(
+          (id) => id !== this.id && id !== v.mieiVoti.nomeBloccato,
         );
-        if (ammessi.length === 0) break;
-        const bersaglio = spia ? r.scegli(ammessi) : this.piuSospetto(ammessi)!.id;
+        // Le spie evitano i propri alleati, se possono.
+        const ammessi = possibili.filter((id) => !v.io.alleati.includes(id));
+        const scelta = ammessi.length > 0 ? ammessi : possibili;
+        if (scelta.length === 0) break;
+        const bersaglio = spia ? r.scegli(scelta) : this.piuSospetto(scelta)!.id;
         azioni.push({ tipo: "NOMINA_SPIA", da: this.id, bersaglio });
         break;
       }
@@ -289,27 +301,6 @@ export class Robot {
         break;
     }
     return azioni;
-  }
-
-  /** Fase 6: una proposta (promozione o demansionamento), se il robot ne ha una. */
-  proponi(v: VistaGiocatore): Azione | undefined {
-    const io = v.giocatori.find((g) => g.id === this.id)!;
-    if (io.stato === "DEMANSIONATO") return { tipo: "PROPONI_PROMOZIONE", da: this.id, bersaglio: this.id };
-    if (io.stato !== "ATTIVO" || v.fase.nome !== "DEMANSIONAMENTO") return undefined;
-    const altri = v.giocatori.filter((g) => g.stato === "ATTIVO" && g.id !== this.id && !v.io.alleati.includes(g.id)).map((g) => g.id);
-    if (altri.length === 0) return undefined;
-    if (this.spia(v)) {
-      return this.casuale.probabilita(0.15) ? { tipo: "PROPONI_DEMANSIONAMENTO", da: this.id, bersaglio: this.casuale.scegli(altri) } : undefined;
-    }
-    const sospettato = this.piuSospetto(altri);
-    if (sospettato && sospettato.valore >= SOGLIA_SOSPETTO) return { tipo: "PROPONI_DEMANSIONAMENTO", da: this.id, bersaglio: sospettato.id };
-    // Obiettivo "Riformatore": proporre una promozione o un demansionamento anche con meno sospetti.
-    if (this.vuole(v, "PROPONI") && this.casuale.probabilita(0.5)) {
-      const demansionato = v.giocatori.find((g) => g.stato === "DEMANSIONATO" && g.id !== this.id);
-      if (demansionato) return { tipo: "PROPONI_PROMOZIONE", da: this.id, bersaglio: demansionato.id };
-      if (sospettato && sospettato.valore > 0) return { tipo: "PROPONI_DEMANSIONAMENTO", da: this.id, bersaglio: sospettato.id };
-    }
-    return undefined;
   }
 
   /** Messaggi in più per gli obiettivi sui segreti (oltre alla condivisione con il reparto utile). */
@@ -338,19 +329,5 @@ export class Robot {
       azioni.push(invia(destinatari[0]!, false));
     }
     return azioni;
-  }
-
-  /** Voto sulla promozione o sul demansionamento in corso. */
-  votaPersonale(v: VistaGiocatore): Azione | undefined {
-    const voto = v.votoPersonale;
-    const io = v.giocatori.find((g) => g.id === this.id)!;
-    // Nella decisione finale votano anche demansionati e licenziati (D-029).
-    if (!voto || (io.stato !== "ATTIVO" && v.fase.nome !== "DECISIONE_FINALE") || voto.bersaglio === this.id) return undefined;
-    const sospetto = this.sospetto.get(voto.bersaglio) ?? 0;
-    const alleato = v.io.alleati.includes(voto.bersaglio);
-    let si: boolean;
-    if (voto.tipo === "PROMOZIONE") si = this.spia(v) ? alleato || this.casuale.probabilita(0.5) : sospetto < 2;
-    else si = this.spia(v) ? !alleato && this.casuale.probabilita(0.7) : sospetto >= 2 || this.casuale.probabilita(0.2);
-    return { tipo: voto.tipo === "PROMOZIONE" ? "VOTA_PROMOZIONE" : "VOTA_DEMANSIONAMENTO", da: this.id, voto: si ? "SI" : "NO" };
   }
 }

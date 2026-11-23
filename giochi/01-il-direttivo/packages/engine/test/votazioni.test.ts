@@ -22,7 +22,6 @@ function inVotazione(proposta: Partial<PropostaIstanza> = {}): Partita {
       titolo: "Proposta di prova",
       categoria: "INVESTIMENTI",
       costo: 40,
-      astensioneAmmessa: false,
       spiegazione: "Spiegazione di prova",
       pesi: { PRODUZIONE: 2, FINANZA: 2, ACQUISTI: 1, VENDITE: 1, MARKETING: 2 }, // totale 8 → soglia 5
       effettiPrivati: {},
@@ -93,20 +92,10 @@ describe("votazione pesata — caso normale", () => {
   });
 });
 
-describe("votazione pesata — demansionati, pesi 0, permessi", () => {
-  const conMarketingDemansionato = () => {
+describe("votazione pesata — pesi 0, permessi", () => {
+  it("un licenziato non può votare", () => {
     const p = inVotazione();
-    p.giocatori.find((g) => g.repartoId === "MARKETING")!.stato = "DEMANSIONATO";
-    return p;
-  };
-
-  it("il peso del demansionato resta nella soglia: servono ancora 5 sì su 6 disponibili (§8.4)", () => {
-    const { proposta } = chiudi(vota(conMarketingDemansionato(), { PRODUZIONE: "SI", FINANZA: "SI", ACQUISTI: "NO", VENDITE: "NO" }));
-    expect(proposta.esito).toMatchObject({ approvata: false, si: 4, soglia: 5 });
-  });
-
-  it("il demansionato non può votare", () => {
-    const p = conMarketingDemansionato();
+    p.giocatori.find((g) => g.repartoId === "MARKETING")!.stato = "LICENZIATO";
     const esito = applica(p, { tipo: "VOTA", da: idDi(p, "MARKETING"), voto: "SI" }, ambiente);
     expect(esito.ok).toBe(false);
   });
@@ -117,9 +106,9 @@ describe("votazione pesata — demansionati, pesi 0, permessi", () => {
     expect(esito.ok).toBe(false);
   });
 
-  it("l'astensione è rifiutata nei quesiti normali", () => {
+  it("l'astensione non esiste (D-060)", () => {
     const p = inVotazione();
-    const esito = applica(p, { tipo: "VOTA", da: idDi(p, "PRODUZIONE"), voto: "ASTENUTO" }, ambiente);
+    const esito = applica(p, { tipo: "VOTA", da: idDi(p, "PRODUZIONE"), voto: "ASTENUTO" as never }, ambiente);
     expect(esito.ok).toBe(false);
   });
 
@@ -128,28 +117,5 @@ describe("votazione pesata — demansionati, pesi 0, permessi", () => {
     p.fase = { nome: "DISCUSSIONE", votazione: 1 };
     const esito = applica(p, { tipo: "VOTA", da: idDi(p, "PRODUZIONE"), voto: "SI" }, ambiente);
     expect(esito.ok).toBe(false);
-  });
-});
-
-describe("quesiti con astensione vera (D-007, D-013)", () => {
-  const conAstensione = () =>
-    inVotazione({ astensioneAmmessa: true, pesi: { PRODUZIONE: 1, FINANZA: 1, ACQUISTI: 1, VENDITE: 1, MARKETING: 1 } });
-
-  it("la soglia si calcola solo su chi vota: 2 sì, 1 no, 2 astenuti → approvata", () => {
-    const { proposta } = chiudi(vota(conAstensione(), { PRODUZIONE: "SI", FINANZA: "SI", ACQUISTI: "NO", VENDITE: "ASTENUTO", MARKETING: "ASTENUTO" }));
-    expect(proposta.esito).toMatchObject({ approvata: true, si: 2, soglia: 2 });
-  });
-
-  it("il demansionato conta come un 'no' fisso: 2 sì, 1 no, 1 astenuto + 1 demansionato → respinta", () => {
-    const p = conAstensione();
-    p.giocatori.find((g) => g.repartoId === "MARKETING")!.stato = "DEMANSIONATO";
-    const { proposta } = chiudi(vota(p, { PRODUZIONE: "SI", FINANZA: "SI", ACQUISTI: "NO", VENDITE: "ASTENUTO" }));
-    expect(proposta.esito).toMatchObject({ approvata: false, si: 2, soglia: 3 });
-  });
-
-  it("qui il tempo scaduto vale astensione (D-029, rivede D-013)", () => {
-    const { proposta } = chiudi(vota(conAstensione(), { PRODUZIONE: "SI", FINANZA: "SI" }));
-    // 3 astenuti per tempo scaduto: base 2 → soglia 2, 2 sì → approvata
-    expect(proposta.esito).toMatchObject({ approvata: true, si: 2, soglia: 2, votiPerTempoScaduto: 3 });
   });
 });

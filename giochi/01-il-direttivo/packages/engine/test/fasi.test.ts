@@ -32,9 +32,9 @@ function giocaFinoAllaFine(p: Partita): { fasi: string[]; finale: Partita } {
 }
 
 describe("macchina a stati delle fasi", () => {
-  it("trimestre 1: rapporto, 2 cicli discussione → voto, mossa privata, risultati, demansionamento", () => {
+  it("trimestre 1: rapporto, 2 cicli discussione → voto, mossa privata, risultati (niente demansionamento, D-057)", () => {
     const { fasi } = giocaFinoAllaFine(nuova());
-    expect(fasi.slice(0, 9)).toEqual([
+    expect(fasi.slice(0, 8)).toEqual([
       "1:RAPPORTO",
       "1:DISCUSSIONE#1",
       "1:VOTAZIONE#1",
@@ -42,7 +42,6 @@ describe("macchina a stati delle fasi", () => {
       "1:VOTAZIONE#2",
       "1:MOSSA_PRIVATA",
       "1:RISOLUZIONE",
-      "1:DEMANSIONAMENTO",
       "2:RAPPORTO",
     ]);
   });
@@ -62,11 +61,11 @@ describe("macchina a stati delle fasi", () => {
 
   it("dopo il 4° trimestre: finale, punteggio, lettura dei messaggi, fine", () => {
     const { fasi, finale } = giocaFinoAllaFine(nuova());
-    // Nessun demansionato: niente decisioni finali (D-028), si passa subito alla verifica;
-    // nessuno risponde → tutti "sì" (D-029) → niente nomina.
+    // Dopo i risultati del 4° trimestre: la domanda "C'è una spia?"; nessuno risponde → "No" (D-058)
+    // → niente nomi, si passa al punteggio.
     expect(fasi.slice(-5)).toEqual([
-      "4:DEMANSIONAMENTO",
-      "4:VERIFICA",
+      "4:RISOLUZIONE",
+      "4:DOMANDA",
       "4:PUNTEGGIO",
       "4:LETTURA_MESSAGGI",
       "4:FINE",
@@ -96,23 +95,22 @@ describe("macchina a stati delle fasi", () => {
     }
   });
 
-  it("a ogni nuovo trimestre la quota messaggi riparte (2, oppure 1 se demansionato)", () => {
+  it("a ogni nuovo trimestre la quota messaggi riparte", () => {
     let p = nuova();
     p.giocatori[0]!.quotaMessaggi = 0;
     p.giocatori[1]!.quotaMessaggi = 0;
-    p.giocatori[1]!.stato = "DEMANSIONATO";
     while (!(p.trimestre === 2 && p.fase.nome === "RAPPORTO")) {
       const esito = applica(p, { tipo: "AVANZA_FASE" }, ambiente);
       if (!esito.ok) throw new Error(esito.errore);
       p = esito.partita;
     }
     expect(p.giocatori[0]!.quotaMessaggi).toBe(config.messaggi.perTrimestre);
-    expect(p.giocatori[1]!.quotaMessaggi).toBe(config.messaggi.perTrimestreDemansionato);
+    expect(p.giocatori[1]!.quotaMessaggi).toBe(config.messaggi.perTrimestre);
   });
 
-  it("le azioni dei giocatori non ancora gestite vengono rifiutate senza toccare la partita", () => {
+  it("le azioni fuori fase vengono rifiutate senza toccare la partita", () => {
     const p = nuova();
-    const esito = applica(p, { tipo: "PROPONI_DEMANSIONAMENTO", da: "g1", bersaglio: "g2" }, ambiente);
+    const esito = applica(p, { tipo: "NOMINA_SPIA", da: "g1", bersaglio: "g2" }, ambiente);
     expect(esito.ok).toBe(false);
   });
 });

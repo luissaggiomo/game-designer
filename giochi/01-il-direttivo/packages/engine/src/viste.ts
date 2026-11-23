@@ -12,6 +12,7 @@
  */
 import type { Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
+import { nomeBloccato, votantiBallottaggio } from "./finale.js";
 import { modello, testoTraguardo, valutaObiettivo, type StatoTraguardo } from "./obiettivi.js";
 import type {
   Fase,
@@ -35,7 +36,7 @@ export interface GiocatorePubblico {
   id: GiocatoreId;
   nome: string;
   repartoId: RepartoId;
-  stato: "ATTIVO" | "DEMANSIONATO" | "LICENZIATO";
+  stato: "ATTIVO" | "LICENZIATO";
   pauseCaffe: number;
   /** Solo per i licenziati (ruolo rivelato) e dal punteggio in poi. */
   fazione?: Fazione;
@@ -46,7 +47,6 @@ export interface PropostaPubblica {
   titolo: string;
   categoria: string;
   costo: number;
-  astensioneAmmessa: boolean;
   /** I pesi sono sempre visibili in TV prima del voto (GDD §8.3). */
   pesi: Partial<Record<RepartoId, Peso>>;
   /** Chi ha già votato (non cosa), finché la votazione è aperta (D-019). */
@@ -54,13 +54,6 @@ export interface PropostaPubblica {
   /** Dopo la chiusura: voti rivelati ed esito. */
   voti?: Partial<Record<GiocatoreId, Voto>>;
   esito?: { approvata: boolean; si: number; soglia: number; motivo: string };
-}
-
-export interface VotoPersonalePubblico {
-  tipo: "PROMOZIONE" | "DEMANSIONAMENTO";
-  bersaglio: GiocatoreId;
-  proponente: GiocatoreId;
-  hannoVotato: GiocatoreId[];
 }
 
 export interface MessaggioLetturaFinale {
@@ -84,20 +77,16 @@ export interface VistaComune {
   ordineDelGiorno: PropostaPubblica[];
   /** Durante la mossa privata: chi ha già scelto (non cosa). */
   hannoSceltoLaMossa: GiocatoreId[];
-  votoPersonale?: VotoPersonalePubblico;
-  votiPersonaliChiusi: {
-    tipo: "PROMOZIONE" | "DEMANSIONAMENTO";
-    bersaglio: GiocatoreId;
-    proponente: GiocatoreId;
-    approvato: boolean;
-    voti: Partial<Record<GiocatoreId, "SI" | "NO">>;
-  }[];
+  /** Finale "Rinnovo dei contratti" (D-058): i voti si vedono solo dopo la chiusura. */
   finale: {
+    /** Durante la domanda: chi ha già risposto (non cosa). */
     hannoRisposto: GiocatoreId[];
-    hannoNominato: GiocatoreId[];
-    ballottaggio: GiocatoreId[];
-    esitiVerifica: { giro: number; tuttiSi: boolean; votiNo: GiocatoreId[] }[];
-    licenziamenti: { giocatore: GiocatoreId; giro: number; nominatoDa: GiocatoreId[] }[];
+    /** Durante nomi e ballottaggi: chi ha già votato (non chi). */
+    hannoVotato: GiocatoreId[];
+    ballottaggio?: { candidati: GiocatoreId[]; percorso: "DUE" | "TRE"; turno: number; votanti: GiocatoreId[] };
+    esitiDomanda: { giro: number; si: GiocatoreId[]; no: GiocatoreId[]; procede: boolean }[];
+    votazioni: { giro: number; tipo: "NOMI" | "BALLOTTAGGIO"; turno: number; voti: { da: GiocatoreId; per: GiocatoreId }[] }[];
+    licenziamenti: { giocatore: GiocatoreId; giro: number; votatoDa: GiocatoreId[] }[];
   };
   /** Dal punteggio in poi. */
   punteggi?: Partial<Record<GiocatoreId, Punteggio>>;
@@ -180,9 +169,12 @@ export interface VistaGiocatore extends VistaComune {
   mieiVoti: {
     proposta?: Voto;
     mossaPrivata?: SceltaMossa;
-    votoPersonale?: "SI" | "NO";
-    verifica?: boolean;
+    /** Finale: la mia risposta alla domanda "C'è una spia?" (finché è aperta). */
+    domanda?: "SI" | "NO";
+    /** Finale: il mio nome o voto di ballottaggio (finché è aperto). */
     nomina?: GiocatoreId;
+    /** Finale, ultima votazione del percorso a tre: il nome che non posso più votare (D-058). */
+    nomeBloccato?: GiocatoreId;
   };
   mieiSegreti: CopiaVisibile[];
   mieiMessaggi: MessaggioVisibile[];
@@ -224,7 +216,6 @@ function vistaComune(p: Partita, ambiente: Ambiente): VistaComune {
         titolo: x.titolo,
         categoria: x.categoria,
         costo: x.costo,
-        astensioneAmmessa: x.astensioneAmmessa,
         pesi: { ...x.pesi },
         hannoVotato: x.id === votazioneAperta ? Object.keys(x.voti) : [],
         ...(chiusa ? { voti: { ...x.voti } } : {}),
@@ -232,29 +223,24 @@ function vistaComune(p: Partita, ambiente: Ambiente): VistaComune {
       };
     }),
     hannoSceltoLaMossa: p.fase.nome === "MOSSA_PRIVATA" ? Object.keys(p.mossePrivate) : [],
-    votiPersonaliChiusi: p.storicoVotiPersonali.map((v) => ({
-      tipo: v.tipo,
-      bersaglio: v.bersaglio,
-      proponente: v.proponente,
-      approvato: v.approvato,
-      voti: { ...v.voti },
-    })),
     finale: {
-      hannoRisposto: p.fase.nome === "VERIFICA" ? Object.keys(p.finale.verifica) : [],
-      hannoNominato: p.fase.nome === "NOMINA" ? Object.keys(p.finale.nomine) : [],
-      ballottaggio: [...p.finale.ballottaggio],
-      esitiVerifica: p.finale.esitiVerifica.map((e) => ({ giro: e.giro, tuttiSi: e.tuttiSi, votiNo: [...e.votiNo] })),
-      licenziamenti: p.finale.licenziamenti.map((l) => ({ giocatore: l.giocatore, giro: l.giro, nominatoDa: [...l.nominatoDa] })),
+      hannoRisposto: p.fase.nome === "DOMANDA" ? Object.keys(p.finale.risposte) : [],
+      hannoVotato: p.fase.nome === "NOMINA" || p.fase.nome === "BALLOTTAGGIO" ? Object.keys(p.finale.nomine) : [],
+      ...(p.finale.ballottaggio
+        ? {
+            ballottaggio: {
+              candidati: [...p.finale.ballottaggio.candidati],
+              percorso: p.finale.ballottaggio.percorso,
+              turno: p.finale.ballottaggio.turno,
+              votanti: votantiBallottaggio(p, p.finale.ballottaggio),
+            },
+          }
+        : {}),
+      esitiDomanda: p.finale.esitiDomanda.map((e) => ({ giro: e.giro, si: [...e.si], no: [...e.no], procede: e.procede })),
+      votazioni: p.finale.votazioni.map((v) => ({ giro: v.giro, tipo: v.tipo, turno: v.turno, voti: v.voti.map((x) => ({ ...x })) })),
+      licenziamenti: p.finale.licenziamenti.map((l) => ({ giocatore: l.giocatore, giro: l.giro, votatoDa: [...l.votatoDa] })),
     },
   };
-  if (p.votoPersonale) {
-    comune.votoPersonale = {
-      tipo: p.votoPersonale.tipo,
-      bersaglio: p.votoPersonale.bersaglio,
-      proponente: p.votoPersonale.proponente,
-      hannoVotato: Object.keys(p.votoPersonale.voti),
-    };
-  }
   if (rivelaTutti && p.punteggi) comune.punteggi = structuredClone(p.punteggi);
   if (rivelaTutti) comune.obiettivi = obiettiviRivelati(p, ambiente);
   if (p.fase.nome === "LETTURA_MESSAGGI" || p.fase.nome === "FINE") comune.letturaMessaggi = p.messaggi.map((m) => letturaFinale(p, m));
@@ -345,15 +331,15 @@ export function vistaGiocatore(p: Partita, id: GiocatoreId, ambiente: Ambiente):
   if (votoProposta) mieiVoti.proposta = votoProposta;
   const mossa = p.mossePrivate[io.id];
   if (mossa) mieiVoti.mossaPrivata = mossa;
-  const votoPers = p.votoPersonale?.voti[io.id];
-  if (votoPers) mieiVoti.votoPersonale = votoPers;
-  const verifica = p.fase.nome === "VERIFICA" ? p.finale.verifica[io.id] : undefined;
-  if (verifica !== undefined) mieiVoti.verifica = verifica;
-  const nomina = p.fase.nome === "NOMINA" ? p.finale.nomine[io.id] : undefined;
+  const risposta = p.fase.nome === "DOMANDA" ? p.finale.risposte[io.id] : undefined;
+  if (risposta !== undefined) mieiVoti.domanda = risposta ? "SI" : "NO";
+  const nomina = p.fase.nome === "NOMINA" || p.fase.nome === "BALLOTTAGGIO" ? p.finale.nomine[io.id] : undefined;
   if (nomina) mieiVoti.nomina = nomina;
+  const bloccato = p.fase.nome === "BALLOTTAGGIO" ? nomeBloccato(p.finale.ballottaggio, io.id) : undefined;
+  if (bloccato) mieiVoti.nomeBloccato = bloccato;
 
   const mieiSegreti: CopiaVisibile[] = p.copieSegreto
-    .filter((c) => c.possessore === io.id && !c.revocata)
+    .filter((c) => c.possessore === io.id)
     .map((c) => {
       const s = p.segreti.find((x) => x.id === c.segretoId)!;
       const provenienza: CopiaVisibile["provenienza"] =

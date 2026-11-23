@@ -3,6 +3,28 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-23 — 0.2.16
+
+### Design
+- D-057 (provvisoria): **eliminati demansionamento e promozione** (fase 6, autogestione dei demansionati, messaggio ridotto, perdita dei segreti, decisione finale sui demansionati). Obiettivo «Riformatore» sostituito da 🟡 «Intermediario».
+- D-058 (provvisoria): **finale "Rinnovo dei contratti"** — domanda palese "C'è una spia?" (tempo scaduto = No, si procede con almeno metà di sì), un nome a testa (licenziato chi ha più della metà dei nomi fatti), ballottaggio a due (stallo ripetuto = licenziati entrambi) o a tre e più (ultima votazione con i nomi ripetuti bloccati, poi nessun licenziato); con 8 giocatori secondo giro se è uscito uno solo.
+- D-059 (provvisoria): **nessun punto nel finale** per accuse e licenziamenti; resta solo D-025 (la spia licenziata perde il +10).
+- D-060 (provvisoria): **eliminata l'astensione**; il tempo scaduto conserva sempre lo stato delle cose.
+- D-061 (provvisoria): la TV mostra **"N su M hanno giocato per l'azienda"** (anche nel 4° trimestre, subito) e **annuncia i segreti** del trimestre con il reparto a cui servono; avviso fisso "una spia potrebbe essersi infiltrata tra voi". Obiettivi «Squadra» riscritti con il conteggio.
+- D-062 (provvisoria): costi delle proposte solo **30 / 50 / 80 K**; budget e tetto invariati; resta la scelta dell'obiettivo fra tre.
+
+### Aggiunto
+- Dodicesimo report (docs/simulazioni/2026-11-23-simulazione-12.md) con una prova di sensibilità sul comportamento nel finale.
+- `config.json`: `reparti.nomi` (nomi dei reparti per gli annunci in TV), `finale.rispostaDomandaPredefinita`.
+- Motore: fasi DOMANDA, NOMINA, BALLOTTAGGIO; eventi SEGRETO_ANNUNCIATO, ESITO_DOMANDA, AVVISO_BALLOTTAGGIO, NESSUN_LICENZIAMENTO; misure TRIMESTRI_META_AZIENDA e TRIMESTRI_MAGGIORANZA_AZIENDA; test del nuovo finale.
+
+### Modificato
+- Simulatore: i robot rispondono alla domanda e votano nomi e ballottaggi; report con la sezione "Finale: rinnovo dei contratti" e la quota di bocciature per fondi.
+- Viste: il finale mostra domanda, voti chiusi, ballottaggio con i votanti e il nome bloccato del giocatore.
+
+### Rimosso
+- `personali.ts` (promozioni e demansionamenti), quesiti con astensione, parametri `autogestione`, `quesitiConAstensione`, `messaggi.perTrimestreDemansionato` e i punti del finale in `punteggio`.
+
 ## 2026-11-23 — 0.2.15
 
 ### Design
