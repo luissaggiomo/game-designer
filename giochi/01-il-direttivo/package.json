@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b",
     "verifica": "tsc -b && vitest run",
-    "simula": "tsx packages/simulator/src/main.ts"
+    "simula": "tsx packages/simulator/src/main.ts",
+    "gioca": "tsx packages/server/src/main.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

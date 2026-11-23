@@ -21,7 +21,16 @@ export interface NuovoGiocatore {
 
 export type EsitoCreazione = { ok: true; partita: Partita; eventi: Evento[] } | { ok: false; errore: string };
 
-export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambiente: Ambiente): EsitoCreazione {
+export interface OpzioniPartita {
+  /**
+   * Chi può ricevere il ruolo di spia (D-065, D-080). Assente = tutti.
+   * Se la spia tocca a chi non può esserlo, il ruolo passa a un onesto idoneo estratto a caso;
+   * se non ce ne sono, la spia viene tolta (🟡 regola proposta, D-080 punto 2).
+   */
+  idoneiSpia?: GiocatoreId[];
+}
+
+export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambiente: Ambiente, opzioni: OpzioniPartita = {}): EsitoCreazione {
   const { config } = ambiente;
   const n = partecipanti.length;
   if (n < config.giocatori.minimo || n > config.giocatori.massimo) {
@@ -49,6 +58,7 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
   // 4. Mescolamento: chi prende quale reparto e quale fazione.
   const ordineGiocatori = casuale.mescola(partecipanti);
   const fazioniMescolate = casuale.mescola(fazioni);
+  if (opzioni.idoneiSpia) spostaSpie(ordineGiocatori, fazioniMescolate, new Set(opzioni.idoneiSpia), casuale);
 
   const giocatori: Giocatore[] = ordineGiocatori.map((p, i) => ({
     id: p.id,
@@ -98,6 +108,24 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
   // Si parte dalla scelta degli obiettivi; il Rapporto del trimestre 1 arriva con AVANZA_FASE.
   const eventi: Evento[] = [{ tipo: "FASE_INIZIATA", fase: partita.fase, trimestre: 1, causa: descriviFase(partita.fase, 1) }];
   return { ok: true, partita, eventi };
+}
+
+/**
+ * Opzione "i bot possono essere spie: no" (D-080 punto 2): una spia capitata a chi non è idoneo
+ * si scambia con un onesto idoneo estratto a caso; senza onesti idonei diventa onesta.
+ * Modifica l'elenco delle fazioni ricevuto (stesso ordine dei giocatori).
+ */
+function spostaSpie(giocatori: NuovoGiocatore[], fazioni: Fazione[], idonei: Set<GiocatoreId>, casuale: Casuale): void {
+  giocatori.forEach((g, i) => {
+    if (fazioni[i]!.tipo !== "SPIA" || idonei.has(g.id)) return;
+    const liberi = giocatori.flatMap((h, j) => (idonei.has(h.id) && fazioni[j]!.tipo === "ONESTO" ? [j] : []));
+    if (liberi.length > 0) {
+      const j = casuale.scegli(liberi);
+      [fazioni[i], fazioni[j]] = [fazioni[j]!, fazioni[i]!];
+    } else {
+      fazioni[i] = { tipo: "ONESTO" };
+    }
+  });
 }
 
 /** Restituisce N fazioni (una per giocatore, non ancora assegnate a nessuno). */

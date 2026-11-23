@@ -239,7 +239,7 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 ⚖️ Durata indicativa di un trimestre: 10–12 minuti, con timer gestiti dal gioco.
 
 ❌ *(D-068)* ~~Un ciclo discussione → voto per ogni proposta (D-008)~~: sostituito da **una discussione e un voto del pacchetto per trimestre**.
-⚖️ *(D-066)* Durata dei timer (discussione, voto, mossa privata) in config, da tarare: la fase si chiude appena tutti hanno agito; chi ha creato la partita ha "Pausa" e "Avanti". Negli ultimi secondi del voto il telefono dà un preavviso chiaro.
+⚖️ *(D-066)* Durata dei timer (discussione, voto, mossa privata) in config, da tarare: la fase si chiude appena tutti hanno agito; chi ha creato la partita (primo telefono e pagina TV, D-080) ha "Pausa" e "Avanti". Valori iniziali (D-080): Rapporto 120 s, Discussione 240 s, Voto del pacchetto 60 s, Secondo voto 45 s, Mossa privata 45 s, Risultati 60 s; finale: domanda 60 s, nomi 90 s, ballottaggio 60 s; Punteggio e Lettura dei messaggi solo con "Avanti". Negli ultimi secondi del voto il telefono dà un preavviso chiaro.
 
 ---
 
@@ -576,14 +576,14 @@ Dettagli tecnici nel documento di architettura.
 | 8 | ~~Voto per demansionare~~ | ❌ chiuso: demansionamento eliminato (D-057) |
 | 9 | ~~Promozione~~ | ❌ chiuso (D-057) |
 | 10 | Peso dei reparti vacanti nella soglia | ✅ provvisorio (D-006) |
-| 11 | Ordine delle fasi (✅ provvisorio, D-008) e durata dei timer (⚖️) | ⚖️ timer in config, chiusura anticipata, pausa e avanti (D-066); valori da tarare nelle prove |
+| 11 | Ordine delle fasi (✅ provvisorio, D-008) e durata dei timer (⚖️) | ⚖️ timer in config, chiusura anticipata, pausa e avanti (D-066); valori iniziali D-080, da tarare nelle prove |
 | 12 | Mozione personale per giocatore | 🟡 |
 | 13 | Valori di mossa privata, cassa, bonus, penalità | ⚖️ |
 | 14 | Probabilità di partita senza spie | ⚖️ |
 | 15 | Equilibrio generale (simulatore) | ⚖️ |
 | 16 | Titolo definitivo del gioco | 🔴 |
 | 17 | Numero di votazioni per partita e dimensione del mazzo di quesiti, perché la selezione "reparti occupati" (D-006) funzioni con ogni numero di giocatori | ✅ provvisorio (D-014) |
-| 18 | 💡 Idea da valutare: bot che occupano i reparti (anche con 3 umani), con livello da 1 = "solo interesse aziendale" a 5 = "solo interesse del reparto", e opzione d'avvio "i bot possono essere spie sì/no" | ✅ provvisorio per il prototipo (D-065): robot del simulatore, opzione "bot spia sì/no" (predefinita sì), carattere rivelato a fine partita; livelli 1–5 rinviati |
+| 18 | 💡 Idea da valutare: bot che occupano i reparti (anche con 3 umani), con livello da 1 = "solo interesse aziendale" a 5 = "solo interesse del reparto", e opzione d'avvio "i bot possono essere spie sì/no" | ✅ provvisorio per il prototipo (D-065): robot del simulatore, opzione "bot spia sì/no" (predefinita sì), carattere rivelato a fine partita; livelli 1–5 rinviati. D-080: nella partita vera i bot non saranno spie; nelle prove in solitario sì (spia prudente o aggressiva) |
 | 19 | ~~Quesiti "con astensione vera"~~ | ❌ chiuso: astensione eliminata (D-060) |
 | 20 | 💡 Idea da valutare: "livello di fiducia" 1–5 mosso dalle mosse private; a 5 "scudo sociale" contro il demansionamento | ❌ chiuso (D-057) |
 | 21 | ~~Soglia del voto di demansionamento/promozione~~ | ❌ chiuso (D-057) |

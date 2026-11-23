@@ -1,0 +1,18 @@
+{
+  "name": "@il-direttivo/server",
+  "private": true,
+  "type": "module",
+  "description": "Server del prototipo: stanze, QR, viste filtrate, timer, bot (Architettura §3.2, D-065…D-067, D-080).",
+  "dependencies": {
+    "@il-direttivo/content": "workspace:*",
+    "@il-direttivo/engine": "workspace:*",
+    "@il-direttivo/simulator": "workspace:*",
+    "fastify": "^5.12.8",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.6",
+    "socket.io-client": "^4.8.4"
+  }
+}

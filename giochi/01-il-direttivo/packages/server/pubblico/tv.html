@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il Direttivo — TV (pagina di prova)</title>
+<!-- Pagina PROVVISORIA del Passo 1: serve solo a provare il server. La sostituisce la schermata TV in Svelte (Passo 2). -->
+<style>
+  body { font-family: system-ui, sans-serif; background: #14181f; color: #f2f2f2; margin: 0; padding: 24px; font-size: 22px; }
+  h1 { margin: 0 0 8px; font-size: 34px; }
+  .riga { display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+  .box { background: #1f2530; border-radius: 12px; padding: 16px 20px; margin: 12px 0; }
+  .codice { font-size: 72px; letter-spacing: 12px; font-weight: 800; color: #ffd166; }
+  .qr { background: #fff; padding: 8px; border-radius: 8px; width: 240px; height: 240px; }
+  button { font-size: 20px; padding: 10px 18px; margin: 4px; border-radius: 8px; border: 0; background: #3a86ff; color: #fff; cursor: pointer; }
+  button.secondario { background: #555; }
+  .timer { font-size: 56px; font-weight: 800; color: #06d6a0; }
+  .pausa { color: #ef476f; }
+  .scollegato { opacity: .45; }
+  .log { font-size: 18px; max-height: 340px; overflow-y: auto; }
+  .log div { border-bottom: 1px solid #333; padding: 4px 0; }
+  .nota { color: #999; font-size: 16px; }
+  table { border-collapse: collapse; } td { padding: 2px 12px 2px 0; }
+</style>
+</head>
+<body>
+<h1>Il Direttivo <span class="nota">— pagina TV di prova (Passo 1)</span></h1>
+<div id="app">Collegamento al server…</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+let stato = null, codice = null, indirizzo = "", registro = [];
+const app = document.getElementById("app");
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nome = (id) => stato?.info.partecipanti.find((p) => p.id === id)?.nome ?? id;
+
+fetch("/info").then((r) => r.json()).then((d) => { indirizzo = d.indirizzo; disegna(); });
+
+function salva() { try { localStorage.setItem("direttivo-tv", JSON.stringify({ codice, token: window._token })); } catch {} }
+function leggi() { try { return JSON.parse(localStorage.getItem("direttivo-tv") || "null"); } catch { return null; } }
+
+function creaStanza() {
+  socket.emit("tv:crea", {}, (r) => { if (r.ok) { codice = r.codice; window._token = r.token; registro = []; salva(); } });
+}
+socket.on("connect", () => {
+  const vecchia = leggi();
+  if (vecchia?.codice) {
+    socket.emit("tv:entra", vecchia, (r) => { if (r.ok) { codice = r.codice; window._token = vecchia.token; } else creaStanza(); });
+  } else creaStanza();
+});
+socket.on("disconnect", () => { app.innerHTML = "Collegamento perso: riprovo…"; });
+socket.on("stato", (s) => {
+  window._ricevutoAlle = Date.now();
+  stato = s;
+  for (const e of s.eventi) registro.unshift(e.causa);
+  registro = registro.slice(0, 80);
+  disegna();
+});
+function comando(tipo, valore) { socket.emit("comando", { tipo, valore }, (r) => { if (!r.ok) alert(r.errore); }); }
+
+function tempo() {
+  const t = stato?.info.timer;
+  if (!t) return "";
+  if (t.inPausa) return `<span class="timer pausa">PAUSA${t.rimanenteMs != null ? " · " + Math.ceil(t.rimanenteMs / 1000) + " s" : ""}</span>`;
+  if (t.scadenza == null) return `<span class="nota">Si va avanti con «Avanti»</span>`;
+  // Il conto alla rovescia usa l'orario del server (corretto per la differenza di orologio).
+  const diff = t.ora - (window._ricevutoAlle ?? Date.now());
+  const resto = Math.max(0, Math.ceil((t.scadenza - (Date.now() + diff)) / 1000));
+  return `<span class="timer">${Math.floor(resto / 60)}:${String(resto % 60).padStart(2, "0")}</span>`;
+}
+setInterval(() => { const el = document.getElementById("tempo"); if (el) el.innerHTML = tempo(); }, 500);
+
+function disegna() {
+  if (!stato) return;
+  const i = stato.info, v = stato.vista;
+  const comandi = i.sonoCapo;
+  let h = `<div class="riga"><div class="box"><div>Codice stanza</div><div class="codice">${esc(i.codice)}</div>
+    <div class="nota">Telefoni: ${esc(indirizzo)}/p/${esc(i.codice)}</div></div>
+    <div class="box"><img class="qr" src="/qr/${esc(i.codice)}" alt="QR"></div>
+    <div class="box"><div><b>${esc(i.descrizioneFase)}</b></div><div id="tempo">${tempo()}</div>
+    ${i.inAttesaDi ? `<div class="nota">Mancano: ${i.inAttesaDi.length ? i.inAttesaDi.map(nome).map(esc).join(", ") : "nessuno"}</div>` : ""}</div></div>`;
+
+  h += `<div class="box"><b>Giocatori (${i.partecipanti.length})</b><br>` + i.partecipanti.map((p) =>
+    `<span class="${p.connesso ? "" : "scollegato"}">${p.bot ? "🤖" : "📱"} ${esc(p.nome)}${p.id === i.capo ? " ⭐" : ""}${i.carattereBot?.[p.id] ? " — " + esc(i.carattereBot[p.id]) : ""}</span>`).join(" &nbsp; ") + `</div>`;
+
+  if (comandi) {
+    if (i.stato === "ATTESA") {
+      h += `<div class="box"><button onclick="comando('AGGIUNGI_BOT')">+ Bot</button><button class="secondario" onclick="comando('TOGLI_BOT')">− Bot</button>
+        <label><input type="checkbox" ${i.opzioni.botSpie ? "checked" : ""} onchange="comando('BOT_SPIE', this.checked)"> I bot possono essere spie</label>
+        <button onclick="comando('AVVIA')">Avvia la partita</button></div>`;
+    } else {
+      h += `<div class="box">${i.timer.inPausa ? `<button onclick="comando('RIPRENDI')">Riprendi</button>` : `<button onclick="comando('PAUSA')">Pausa</button>`}
+        <button onclick="comando('AVANTI')">Avanti ▶</button> <button class="secondario" onclick="localStorage.removeItem('direttivo-tv'); location.reload()">Nuova stanza</button></div>`;
+    }
+  }
+
+  if (v) {
+    h += `<div class="riga"><div class="box"><b>Mercato</b><table><tr><td>Azienda</td><td>${v.azienda.quota}</td></tr>` +
+      v.concorrenti.map((c) => `<tr><td>${esc(c.nome)}</td><td>${c.quota}</td></tr>`).join("") + `</table>Cassa: ${v.azienda.cassa} K</div>`;
+    if (v.ordineDelGiorno.length) h += `<div class="box"><b>Proposte del trimestre</b><br>` + v.ordineDelGiorno.map((p) => `${esc(p.titolo)} — ${p.costo} K${p.approvata ? " ✅" : ""}`).join("<br>") + `</div>`;
+    if (v.punteggi) h += `<div class="box"><b>Punteggi</b><br>` + Object.entries(v.punteggi).sort((a, b) => b[1].totale - a[1].totale).map(([id, p]) => {
+      const g = v.giocatori.find((x) => x.id === id);
+      return `${esc(nome(id))}: <b>${p.totale}</b> ${g?.fazione ? "(" + (g.fazione.tipo === "SPIA" ? "SPIA" : "onesto") + ")" : ""}`;
+    }).join("<br>") + `</div>`;
+    h += `</div>`;
+  }
+  h += `<div class="box log"><b>Cronaca</b>${registro.map((r) => `<div>${esc(r)}</div>`).join("")}</div>`;
+  app.innerHTML = h;
+}
+</script>
+</body>
+</html>

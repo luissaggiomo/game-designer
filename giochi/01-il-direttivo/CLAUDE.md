@@ -6,7 +6,7 @@
 - **Genere:** gioco di società psicologico e politico (influenze, alleanze, spie)
 - **Giocatori:** 4–8 · **Durata:** ~45–60 min + finale
 - **Modello:** A (TV tabellone + telefoni controller). Fase online futura: più TV + audio integrato.
-- **Fase attuale:** 2 · Motore e simulazione (vedi [ROADMAP.md](ROADMAP.md))
+- **Fase attuale:** 3 · Prototipo locale giocabile (vedi [ROADMAP.md](ROADMAP.md))
 
 ## Documenti del gioco
 - [docs/01-design-del-gioco.md](docs/01-design-del-gioco.md) — **fonte di verità delle regole**
@@ -21,6 +21,11 @@
 | Solo i test | `corepack pnpm test` |
 | Avviare il simulatore (1000 partite per 4–8 giocatori, ~4 min) | `corepack pnpm simula` |
 | Simulazione veloce | `corepack pnpm simula -- --partite 100` |
+| **Avviare il server sul PC** (pagina TV + telefoni in Wi-Fi, D-067) | `corepack pnpm gioca` |
+| Server su un'altra porta, senza aprire il browser | `corepack pnpm gioca -- --porta 3001 --non-aprire` |
+
+Il server scrive il registro di ogni partita in `packages/server/registri/` (non salvato in Git).
+Le pagine in `packages/server/pubblico/` sono **provvisorie** (passo 1): le sostituiscono le schermate Svelte.
 
 Il report del simulatore esce in `packages/simulator/output/report.md` (non salvato in Git);
 i report da conservare si copiano in `docs/simulazioni/` con la data.

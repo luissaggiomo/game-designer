@@ -7,7 +7,7 @@ tutto dal browser. Uso personale.
 
 | # | Gioco | Cartella | Fase | Note |
 |---|---|---|---|---|
-| 01 | Il Direttivo *(titolo provvisorio)* | [giochi/01-il-direttivo](giochi/01-il-direttivo/) | 2 · Motore e simulazione | Gioco politico-aziendale con spie, 4–8 giocatori |
+| 01 | Il Direttivo *(titolo provvisorio)* | [giochi/01-il-direttivo](giochi/01-il-direttivo/) | 3 · Prototipo locale giocabile | Gioco politico-aziendale con spie, 4–8 giocatori |
 
 Le fasi sono descritte in [docs/PROCEDURE.md](docs/PROCEDURE.md).
 

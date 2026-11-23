@@ -30,7 +30,7 @@ Quante versioni (principale + alternativa) per famiglia:
 | 50 K | 12 | 11 | 6 | 3 | 4 |
 | 80 K | 12 | 8 | 9 | 4 | 3 |
 
-Nota (scelta di Luis 3B del 23/11/2026): nessuna frase delle carte da 80 descriveva uno spreco vero; tre versioni neutre sono diventate **spreco** con una frase ritoccata (🟡 proposte da Claude, da approvare): Nuova sede (principale), Campagna in TV (alternativa), Acquisto di un concorrente (principale). Per tenere la grande proporzionale, il buon affare da 80 sale a +6 (report 15).
+Nota (scelta di Luis 3B del 23/11/2026): nessuna frase delle carte da 80 descriveva uno spreco vero; tre versioni neutre sono diventate **spreco** con una frase ritoccata (proposte da Claude, approvate da Luis il 23/11/2026): Nuova sede (principale), Campagna in TV (alternativa), Acquisto di un concorrente (principale). Per tenere la grande proporzionale, il buon affare da 80 sale a +6 (report 15).
 
 ## Vincoli tecnici rilevati (dal motore, sola lettura)
 
@@ -253,9 +253,9 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Un tecnico di produzione nel tuo laboratorio: prototipi più realistici | I tuoi ricercatori finiscono a fare assistenza: progetti fermi |
 | IT_SICUREZZA | Ti prestano persone esperte: smaltisci le richieste arretrate | Il tuo sistemista prestato altrove: le emergenze restano tutte a te |
 
-#### Nuova sede di rappresentanza in centro — 80 K *(era 95)* · spreco 🟡 / alternativa investimento
+#### Nuova sede di rappresentanza in centro — 80 K *(era 95)* · spreco / alternativa investimento
 
-**In TV se approvata — principale (spreco, frase 🟡 proposta):** Bella sede, belle foto, stessi clienti di prima: l'affitto ci manda in perdita  
+**In TV se approvata — principale (spreco, frase approvata da Luis):** Bella sede, belle foto, stessi clienti di prima: l'affitto ci manda in perdita  
 **In TV se approvata — alternativa (investimento):** La sede in centro attira qualche cliente importante: guadagno modesto
 
 | Reparto | Se guadagna (+) | Se perde (−) |
@@ -333,10 +333,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il fornitore ti dà in anteprima i suoi materiali nuovi | Il fornitore unico non ha il materiale per il tuo prototipo |
 | IT_SICUREZZA | Ordini automatici con un solo fornitore: integrazione semplice per te | Il fornitore pretende accesso diretto ai nostri sistemi: rischi da coprire |
 
-#### Campagna pubblicitaria in televisione — 80 K *(era 90)* · buon affare / alternativa spreco 🟡
+#### Campagna pubblicitaria in televisione — 80 K *(era 90)* · buon affare / alternativa spreco
 
 **In TV se approvata — principale (buon affare):** Lo spot fa parlare di noi: il marchio guadagna terreno sui concorrenti  
-**In TV se approvata — alternativa (spreco, frase 🟡 proposta):** Spot simpatico, tutti lo ricordano, nessuno compra: soldi buttati
+**In TV se approvata — alternativa (spreco, frase approvata da Luis):** Spot simpatico, tutti lo ricordano, nessuno compra: soldi buttati
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -701,9 +701,9 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il sabato il laboratorio è silenzioso: i tuoi esperimenti più lunghi | Il sabato ti chiedono di fare assistenza alla produzione |
 | IT_SICUREZZA | Il sabato fai gli aggiornamenti in pace | Sistemi accesi anche il sabato: reperibilità per il tuo reparto |
 
-#### Acquisto di un piccolo concorrente in crisi — 80 K *(era 95)* · spreco 🟡 / alternativa buon affare
+#### Acquisto di un piccolo concorrente in crisi — 80 K *(era 95)* · spreco / alternativa buon affare
 
-**In TV se approvata — principale (spreco, frase 🟡 proposta):** I clienti del concorrente scappano, restano i suoi debiti: un buco nei conti  
+**In TV se approvata — principale (spreco, frase approvata da Luis):** I clienti del concorrente scappano, restano i suoi debiti: un buco nei conti  
 **In TV se approvata — alternativa (buon affare):** I clienti del concorrente passano a noi in blocco: affare dell'anno
 
 | Reparto | Se guadagna (+) | Se perde (−) |

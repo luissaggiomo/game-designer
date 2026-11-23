@@ -82,5 +82,28 @@
     "punti": { "1": [3, 5], "2": [3, 7], "3": [4, 6] },
     "secondiPerLaScelta": 90
   },
-  "_obiettivi": "Obiettivi personali (D-046…D-052, testi e soglie in obiettivi.json). 'proposti': quanti obiettivi riceve ognuno, uno per tipo (D-046). 'punti': per ogni tipo, punti del traguardo facile e del difficile (fissi, D-051: si tarano le soglie). 'secondiPerLaScelta': tempo massimo per scegliere prima della partita, poi estrazione a caso (D-048); lo usa il server, il motore non conta il tempo. ⚖️"
+  "_obiettivi": "Obiettivi personali (D-046…D-052, testi e soglie in obiettivi.json). 'proposti': quanti obiettivi riceve ognuno, uno per tipo (D-046). 'punti': per ogni tipo, punti del traguardo facile e del difficile (fissi, D-051: si tarano le soglie). 'secondiPerLaScelta': tempo massimo per scegliere prima della partita, poi estrazione a caso (D-048); lo usa il server, il motore non conta il tempo. ⚖️",
+  "server": {
+    "porta": 3000,
+    "secondiPerFase": {
+      "RAPPORTO": 120,
+      "DISCUSSIONE": 240,
+      "VOTO_PACCHETTO": 60,
+      "SECONDO_VOTO": 45,
+      "MOSSA_PRIVATA": 45,
+      "RISOLUZIONE": 60,
+      "DOMANDA": 60,
+      "NOMINA": 90,
+      "BALLOTTAGGIO": 60,
+      "PUNTEGGIO": null,
+      "LETTURA_MESSAGGI": null,
+      "FINE": null
+    },
+    "secondiChiusuraAnticipata": 2,
+    "secondiRitardoBot": [2, 8],
+    "oreScadenzaStanza": 6,
+    "lunghezzaCodice": 4,
+    "caratteriNome": 20
+  },
+  "_server": "Server del prototipo (D-066, D-067, D-080). 'secondiPerFase': durata di ogni fase; null = la fase va avanti solo con «Avanti» (Punteggio, Lettura dei messaggi). La scelta dell'obiettivo usa 'obiettivi.secondiPerLaScelta'. Le fasi con un'azione per tutti si chiudono 'secondiChiusuraAnticipata' dopo che l'ultimo ha agito. 'secondiRitardoBot': i bot agiscono dopo un ritardo casuale tra questi due valori, per sembrare persone. 'oreScadenzaStanza': una stanza ferma da tanto viene cancellata. 'lunghezzaCodice': caratteri del codice stanza (senza O/0, I/1). ⚖️ da tarare nelle prove."
 }

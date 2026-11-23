@@ -19,6 +19,9 @@ coverage/
 # Report generati dal simulatore
 **/simulator/output/
 
+# Registri delle partite giocate col server (debug)
+**/server/registri/
+
 # Sistema e editor
 .DS_Store
 Thumbs.db

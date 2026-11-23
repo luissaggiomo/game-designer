@@ -3,6 +3,26 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-23 — 0.3.1
+
+### Design
+- D-079: approvate da Luis le tre frasi nuove dei quesiti da 80 K (Nuova sede, Campagna in TV, Acquisto di un concorrente).
+- D-080: valori iniziali dei timer (circa 9–10 minuti a trimestre; Punteggio e Lettura dei messaggi solo con «Avanti»); comandi della partita al primo telefono e alla pagina TV; bot spia nelle prove in solitario (opzione predefinita "sì"); 🟡 regola dell'opzione "no" da confermare.
+
+### Aggiunto
+- **Server del prototipo** (`packages/server`, Fastify + Socket.IO): stanza con codice di 4 caratteri e QR con l'indirizzo della rete di casa; il motore come unica fonte di verità; a ogni dispositivo solo la sua vista e i suoi eventi; riconnessione col token (telefono) e col codice (TV); timer delle fasi con chiusura anticipata, Pausa, Riprendi e Avanti; bot = robot del simulatore con carattere a caso secondo il ruolo, rivelato a fine partita; registro delle azioni per stanza.
+- Comando unico `corepack pnpm gioca`: accende il server, apre la pagina TV, scrive l'indirizzo per i telefoni.
+- Pagine di prova **provvisorie** per TV e telefono (`packages/server/pubblico/`), da sostituire con le schermate Svelte (passi 2 e 3).
+- Motore: `inAttesaDi` (chi deve ancora agire, per la chiusura anticipata) e opzione `idoneiSpia` di `creaPartita` (bot spia sì/no; senza opzione la partita è identica a prima).
+- Parametri del server in `config.json` (sezione `server`).
+- Prova manuale di Luis del Passo 1 superata (24/11/2026, TEST-MANUALI.md).
+- Test: stanza con orologio finto (timer, pausa, avanti, chiusura anticipata, bot, comandi, riconnessione), riservatezza di tutto ciò che riceve ogni dispositivo in partite intere, **partita intera con soli bot attraverso la rete vera**, telefono che si scollega e rientra. 208 test.
+
+## 2026-11-23 — 0.3.0
+
+### Modificato
+- **Passaggio alla fase 3 · Prototipo locale giocabile**, confermato da Luis (cancello fase 2 → 3). README, ROADMAP e CLAUDE.md aggiornati; roadmap della fase 3 divisa nei cinque passi indicati da Luis.
+
 ## 2026-11-23 — 0.2.18
 
 ### Design

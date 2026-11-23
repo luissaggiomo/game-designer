@@ -6,6 +6,9 @@
     },
     {
       "path": "packages/simulator"
+    },
+    {
+      "path": "packages/server"
     }
   ]
 }

@@ -2,6 +2,22 @@
 
 Da eseguire con dispositivi veri prima di ogni serata di prova.
 
+## Passo 1 · Server sul PC di Luis (pagine di prova provvisorie)
+Avvio: dalla cartella del gioco `corepack pnpm gioca` (si apre da solo la pagina TV nel browser).
+La prima volta Windows può chiedere se Node.js può usare la rete: consentire le **reti private**.
+- [x] La pagina TV mostra codice stanza, QR e l'indirizzo per i telefoni
+- [x] Il telefono, sulla Wi-Fi di casa, entra inquadrando il QR e scrivendo il nome
+- [x] Il primo telefono entrato ha la stella ⭐ e i comandi (anche la pagina TV li ha)
+- [x] «+ Bot» e «− Bot» cambiano l'elenco; «Avvia» parte da 4 giocatori in su
+- [x] Il telefono mostra reparto, ruolo e i pulsanti della fase; la TV mostra "Mancano: …"
+- [x] Quando tutti hanno agito la fase si chiude da sola dopo circa 2 secondi
+- [x] «Pausa» ferma il conto alla rovescia (anche i bot si fermano), «Riprendi» riparte dal tempo rimasto
+- [x] «Avanti» chiude subito la fase; Punteggio e Lettura dei messaggi aspettano «Avanti»
+- [x] Ricaricando la pagina del telefono si rientra nello stesso posto; la TV mostra il telefono sbiadito mentre è scollegato
+- [x] Ricaricando la pagina TV si rientra nella stessa stanza con i comandi
+- [x] Con "I bot possono essere spie" acceso, in qualche partita a fine gioco un bot risulta SPIA_PRUDENTE o SPIA_AGGRESSIVA
+- [x] A fine partita la TV mostra punteggi, ruoli e carattere di ogni bot
+
 ## Ingresso e collegamento
 - [ ] La TV mostra QR e codice stanza (4 caratteri, senza O/0, I/1) leggibili da 3 metri
 - [ ] iPhone (Safari, iOS 16.4+) entra inquadrando il QR
@@ -40,3 +56,4 @@ Da eseguire con dispositivi veri prima di ogni serata di prova.
 ## Registro delle prove
 | Data | Dispositivi | Esito | Note |
 |---|---|---|---|
+| 24/11/2026 | PC di Luis (pagina TV) + telefono in Wi-Fi di casa | ✅ tutti i punti del Passo 1 superati | prova in solitario contro i bot |

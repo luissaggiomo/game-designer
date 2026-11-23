@@ -632,12 +632,16 @@ Limite: i robot non mentono e non persuadono come le persone. Il simulatore trov
 - **Giocatore disconnesso a lungo:** dopo un tempo limite ⚖️ il suo reparto passa temporaneamente in autogestione, finché non torna.
 - **Classifica su più serate:** tabella persistente collegata a un "gruppo" di giocatori (🔴 serve un minimo di identificazione: nome più codice gruppo).
 
+**Stato di attuazione (fase 3, passo 1 — 23/11/2026):** stato solo in memoria; ogni stanza scrive il registro delle azioni (seme + azioni) in `packages/server/registri/` (non salvato in Git), utile per riprodurre un problema. **Non ancora fatti:** snapshot su SQLite e ripresa automatica dopo un riavvio del server (se il server si spegne, la partita si perde); autogestione dei giocatori scollegati a lungo (per ora chi è scollegato riceve allo scadere la scelta predefinita, come chi non agisce, D-060).
+
 ---
 
 ## 17. Infrastruttura e hosting
 
 ### 17.1 Fase locale
-🟡 **Hosting in cloud fin da subito, anche per la fase locale.**
+✅ **Prime prove sul PC di Luis, in rete di casa, con indirizzo `http`** (D-067): comando `corepack pnpm gioca`. Senza HTTPS il telefono non tiene lo schermo acceso da solo (limite accettato per le prove in solitario).
+
+🟡 **Hosting in cloud, prima della serata con altre persone** (DG-006, da decidere al passo 5).
 Motivo: microfono e Wake Lock richiedono **HTTPS**. Un server sul portatile di casa richiederebbe certificati installati su ogni telefono: complicato per gli ospiti.
 
 - Un servizio di hosting per applicazioni Node.js con WebSocket e HTTPS automatico (per esempio Fly.io, Render, Railway, oppure un piccolo server virtuale con Caddy).

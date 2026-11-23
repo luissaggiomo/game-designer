@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Il Direttivo — telefono (pagina di prova)</title>
+<!-- Pagina PROVVISORIA del Passo 1: serve solo a provare il server. La sostituisce la schermata telefono in Svelte (Passo 3). -->
+<style>
+  body { font-family: system-ui, sans-serif; background: #f4f5f7; color: #111; margin: 0; padding: 14px; font-size: 18px; }
+  .box { background: #fff; border-radius: 12px; padding: 12px 14px; margin: 10px 0; box-shadow: 0 1px 3px #0002; }
+  button { display: block; width: 100%; font-size: 18px; padding: 14px; margin: 6px 0; border-radius: 10px; border: 0; background: #3a86ff; color: #fff; text-align: left; }
+  button.scelto { background: #06d6a0; color: #000; }
+  button.secondario { background: #777; }
+  input { font-size: 20px; padding: 12px; width: 100%; box-sizing: border-box; border-radius: 10px; border: 1px solid #aaa; }
+  .timer { font-size: 32px; font-weight: 800; }
+  .nota { color: #666; font-size: 15px; }
+  .spia { color: #c1121f; font-weight: 800; }
+  .errore { color: #c1121f; }
+</style>
+</head>
+<body>
+<div id="app">Collegamento al server…</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const app = document.getElementById("app");
+const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+let codice = (location.pathname.split("/p/")[1] || "").toUpperCase() || null;
+let stato = null, errore = "", registro = [];
+const chiave = () => "direttivo-tel-" + codice;
+const tokenSalvato = () => { try { return localStorage.getItem(chiave()); } catch { return null; } };
+const nome = (id) => stato?.info.partecipanti.find((p) => p.id === id)?.nome ?? id;
+
+socket.on("connect", () => {
+  if (codice && tokenSalvato()) socket.emit("telefono:riprendi", { codice, token: tokenSalvato() }, (r) => { if (!r.ok) { errore = r.errore; try { localStorage.removeItem(chiave()); } catch {} disegna(); } });
+  else disegna();
+});
+socket.on("disconnect", () => { app.innerHTML = "Collegamento perso: riprovo…"; });
+socket.on("stato", (s) => {
+  window._ricevutoAlle = Date.now();
+  stato = s; errore = "";
+  for (const e of s.eventi) registro.unshift(e.causa);
+  registro = registro.slice(0, 40);
+  disegna();
+});
+
+function entra() {
+  const n = document.getElementById("nome").value;
+  const c = (document.getElementById("codice")?.value || codice || "").toUpperCase();
+  socket.emit("telefono:entra", { codice: c, nome: n }, (r) => {
+    if (!r.ok) { errore = r.errore; disegna(); return; }
+    codice = r.codice;
+    try { localStorage.setItem(chiave(), r.token); } catch {}
+    if (!location.pathname.includes("/p/")) history.replaceState(null, "", "/p/" + codice);
+  });
+}
+function azione(a) { socket.emit("azione", a, (r) => { if (!r.ok) { errore = r.errore; disegna(); } }); }
+function comando(tipo, valore) { socket.emit("comando", { tipo, valore }, (r) => { if (!r.ok) alert(r.errore); }); }
+
+function tempo() {
+  const t = stato?.info.timer;
+  if (!t || stato.info.stato !== "IN_CORSO") return "";
+  if (t.inPausa) return "<span class='timer'>PAUSA</span>";
+  if (t.scadenza == null) return "";
+  const diff = t.ora - (window._ricevutoAlle ?? Date.now());
+  const resto = Math.max(0, Math.ceil((t.scadenza - (Date.now() + diff)) / 1000));
+  return `<span class="timer">${Math.floor(resto / 60)}:${String(resto % 60).padStart(2, "0")}</span>`;
+}
+setInterval(() => { const el = document.getElementById("tempo"); if (el) el.innerHTML = tempo(); }, 500);
+
+function bottone(testo, js, scelto) { return `<button class="${scelto ? "scelto" : ""}" onclick='${js}'>${testo}</button>`; }
+const J = (o) => esc(JSON.stringify(o));
+
+function azioni(v) {
+  const f = v.fase.nome, m = v.mieiVoti, io = v.giocatori.find((g) => g.id === v.io.id);
+  if (io?.stato !== "ATTIVO" && f !== "SCELTA_OBIETTIVI") return "<div class='nota'>Non sei più nel direttivo.</div>";
+  const titolo = (id) => v.ordineDelGiorno.find((p) => p.id === id);
+  const descrivi = (pac) => pac.map((id) => `${esc(titolo(id)?.titolo)} (${titolo(id)?.costo} K)`).join(" + ");
+  const punti = (pac) => pac.reduce((t, id) => t + (v.mieiEffetti[id]?.punti ?? 0), 0);
+  switch (f) {
+    case "SCELTA_OBIETTIVI":
+      if (v.obiettivo.scelto) return `Obiettivo scelto: <b>${esc(v.obiettivo.scelto.nome)}</b>`;
+      return "<b>Scegli il tuo obiettivo</b>" + (v.obiettivo.proposte ?? []).map((o) =>
+        bottone(`${esc(o.nome)} (tipo ${o.tipo})<br><span class="nota" style="color:#eef">${o.traguardi.map((t) => esc(t.testo) + " +" + t.punti).join(" · ")}</span>`, `azione(${J({ tipo: "SCEGLI_OBIETTIVO", obiettivo: o.id })})`)).join("");
+    case "VOTO_PACCHETTO":
+      return "<b>Vota un pacchetto</b>" + v.votoTrimestre.pacchetti.map((pac) =>
+        bottone(`${descrivi(pac)}<br>per il tuo reparto: ${punti(pac) >= 0 ? "+" : ""}${punti(pac)}`, `azione(${J({ tipo: "VOTA_PACCHETTO", pacchetto: pac })})`, m.pacchetto && m.pacchetto.join() === pac.join())).join("");
+    case "SECONDO_VOTO":
+      return `<b>Sì o no al pacchetto più votato?</b><br>${descrivi(v.votoTrimestre.principale ?? [])}<br><span class="nota">Se vince il no passa l'alternativa coperta (${v.votoTrimestre.proposteAlternativa} proposte)</span>` +
+        bottone("SÌ", `azione(${J({ tipo: "VOTA", voto: "SI" })})`, m.proposta === "SI") + bottone("NO", `azione(${J({ tipo: "VOTA", voto: "NO" })})`, m.proposta === "NO");
+    case "MOSSA_PRIVATA":
+      return "<b>Mossa privata</b>" + bottone("Per il mio reparto", `azione(${J({ tipo: "MOSSA_PRIVATA", scelta: "REPARTO" })})`, m.mossaPrivata === "REPARTO") +
+        bottone("Per l'azienda", `azione(${J({ tipo: "MOSSA_PRIVATA", scelta: "AZIENDA" })})`, m.mossaPrivata === "AZIENDA");
+    case "DOMANDA":
+      return "<b>C'è una spia nel direttivo?</b>" + bottone("Sì", `azione(${J({ tipo: "DOMANDA_SPIA", risposta: "SI" })})`, m.domanda === "SI") + bottone("No", `azione(${J({ tipo: "DOMANDA_SPIA", risposta: "NO" })})`, m.domanda === "NO");
+    case "NOMINA":
+    case "BALLOTTAGGIO": {
+      const b = v.finale.ballottaggio;
+      if (f === "BALLOTTAGGIO" && b && !b.votanti.includes(v.io.id)) return "Sei al ballottaggio: non voti.";
+      const candidati = f === "BALLOTTAGGIO" && b ? b.candidati : v.giocatori.filter((g) => g.stato === "ATTIVO" && g.id !== v.io.id).map((g) => g.id);
+      return `<b>${f === "NOMINA" ? "Chi è la spia?" : "Ballottaggio"}</b>` + candidati.filter((id) => id !== m.nomeBloccato).map((id) =>
+        bottone(esc(nome(id)), `azione(${J({ tipo: "NOMINA_SPIA", bersaglio: id })})`, m.nomina === id)).join("");
+    }
+    default:
+      return "<div class='nota'>Guarda la TV.</div>";
+  }
+}
+
+function disegna() {
+  if (!stato) {
+    app.innerHTML = `<div class="box"><b>Il Direttivo</b> <span class="nota">(pagina di prova)</span><br><br>
+      ${codice ? `Stanza <b>${esc(codice)}</b>` : `<input id="codice" placeholder="Codice stanza" maxlength="4" style="text-transform:uppercase">`}<br><br>
+      <input id="nome" placeholder="Il tuo nome" maxlength="20"><button onclick="entra()">Entra</button>
+      <div class="errore">${esc(errore)}</div></div>`;
+    return;
+  }
+  const i = stato.info, v = stato.vista;
+  let h = `<div class="box"><b>${esc(i.descrizioneFase)}</b> <span id="tempo">${tempo()}</span></div>`;
+  if (errore) h += `<div class="box errore">${esc(errore)}</div>`;
+  if (!v) {
+    h += `<div class="box">Sei dentro. In attesa che la partita cominci…<br><span class="nota">${i.partecipanti.map((p) => (p.bot ? "🤖 " : "📱 ") + esc(p.nome)).join(", ")}</span></div>`;
+  } else {
+    const io = v.giocatori.find((g) => g.id === v.io.id);
+    h += `<div class="box">${esc(io?.nome)} · reparto <b>${esc(v.io.repartoId)}</b> · ${v.io.fazione.tipo === "SPIA" ? `<span class="spia">SEI UNA SPIA</span> (concorrente ${esc(v.io.fazione.concorrente)})` : "onesto"} · punti reparto ${v.io.puntiReparto}</div>`;
+    h += `<div class="box">${azioni(v)}</div>`;
+    if (v.ordineDelGiorno.length) h += `<div class="box"><b>Effetti sul tuo reparto</b><br>` + v.ordineDelGiorno.map((p) => `${esc(p.titolo)} (${p.costo} K): <b>${v.mieiEffetti[p.id]?.punti ?? "?"}</b> — <span class="nota">${esc(v.mieiEffetti[p.id]?.testo)}</span>`).join("<br>") + `</div>`;
+    if (v.punteggi?.[v.io.id]) h += `<div class="box"><b>Il tuo punteggio: ${v.punteggi[v.io.id].totale}</b><br><span class="nota">${v.punteggi[v.io.id].voci.map((x) => esc(x.testo) + " " + x.punti).join("<br>")}</span></div>`;
+    h += `<div class="box nota">Segreti e messaggi: arrivano con la schermata vera (Passo 3).</div>`;
+  }
+  if (i.sonoCapo) {
+    h += `<div class="box"><b>Comandi (sei il capo partita)</b>`;
+    if (i.stato === "ATTESA") h += bottone("+ Aggiungi un bot", "comando(\"AGGIUNGI_BOT\")") + `<button class="secondario" onclick='comando("TOGLI_BOT")'>− Togli un bot</button>` +
+      `<label><input type="checkbox" style="width:auto" ${i.opzioni.botSpie ? "checked" : ""} onchange="comando('BOT_SPIE', this.checked)"> I bot possono essere spie</label>` + bottone("Avvia la partita", "comando(\"AVVIA\")");
+    else h += (i.timer.inPausa ? bottone("Riprendi", "comando(\"RIPRENDI\")") : bottone("Pausa", "comando(\"PAUSA\")")) + bottone("Avanti ▶", "comando(\"AVANTI\")");
+    h += `</div>`;
+  }
+  h += `<div class="box nota"><b>Notizie</b><br>${registro.map(esc).join("<br>")}</div>`;
+  app.innerHTML = h;
+}
+</script>
+</body>
+</html>

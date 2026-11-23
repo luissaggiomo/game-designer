@@ -5,5 +5,8 @@
   "description": "Simulatore: robot che giocano migliaia di partite per tarare i numeri (Architettura §14).",
   "dependencies": {
     "@il-direttivo/engine": "workspace:*"
+  },
+  "exports": {
+    "./robot": "./src/robot.ts"
   }
 }

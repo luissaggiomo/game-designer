@@ -1,7 +1,7 @@
 # Il Direttivo — Roadmap e avanzamento
 
-**Fase attuale:** 2 · Motore e simulazione
-**Ultimo aggiornamento:** 2026-11-23
+**Fase attuale:** 3 · Prototipo locale giocabile
+**Ultimo aggiornamento:** 2026-11-24
 
 Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 
@@ -16,7 +16,7 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Chiusura dei punti 🔴 che bloccano le regole del motore (D-006…D-015, 22/11/2026); restano i contenuti minimi, da preparare in fase 2
 - ✅ Cancello fase 1 → 2 (22/11/2026)
 
-## Fase 2 · Motore e simulazione
+## Fase 2 · Motore e simulazione ✅
 - ✅ Impianto del codice (pacchetti, test, controllo tipi) — 22/11/2026
 - ✅ Motore: stato, azioni, macchina a stati delle fasi — 22/11/2026 (sotto-fasi del finale insieme alle regole del finale)
 - ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (D-054, D-056), segreti e messaggi
@@ -27,16 +27,17 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-062 — in corso (dodicesimo report, dopo la semplificazione D-057…D-062: spia vincente 18–32% con una spia, 40–45% con due; il finale dipende molto da quanto facilmente si risponde "sì, c'è una spia", da osservare nelle serate; la cassa resta poco vincolante → D-068)
 - ✅ Voto del trimestre a pacchetti, equità delle carte, segreti vero/finto con catena e scadenza (D-063…D-074) — nel motore, nei robot e nel tredicesimo report; concorrente ritarato (3,41)
 - ✅ Equilibrio spie: metro 1/N (D-075); spia prima in classifica con 4 giocatori 22% ✅; spia vincente con 4 giocatori 19%, accettata da osservare nelle serate (D-079)
-- ✅ Obiettivi riscritti (D-076) e famiglie di schemi (D-077) implementati e tarati, correzioni D-079 — quindicesimo report; 🟡 tre frasi nuove dei quesiti da 80 K da approvare
+- ✅ Obiettivi riscritti (D-076) e famiglie di schemi (D-077) implementati e tarati, correzioni D-079 — quindicesimo report; tre frasi nuove dei quesiti da 80 K approvate da Luis
 - ✅ Ruolo dei licenziati svelato solo al punteggio (D-078)
-- 🔄 Cancello fase 2 → 3: requisiti di docs/PROCEDURE.md soddisfatti (23/11/2026), manca la conferma di Luis
+- ✅ Cancello fase 2 → 3: requisiti di docs/PROCEDURE.md soddisfatti, confermato da Luis (23/11/2026)
 
 ## Fase 3 · Prototipo locale giocabile
 - ✅ Bot, timer e prove in locale decisi (D-065…D-067); poteri speciali rinviati (D-064)
-- ⬜ Scelta hosting (DG-006) — prima della serata con altre persone
-- ⬜ Server, stanze, QR, riconnessione
-- ⬜ Prova di compatibilità su dispositivi reali: smart TV, chiavetta, iPhone, Android (D-004)
-- ⬜ Schermata TV e schermata telefono
+- ✅ Passo 1 · Server sul PC di Luis (D-067, D-080): stanza con codice e QR, viste filtrate, riconnessione, timer con Pausa/Avanti (D-066), bot (D-065), prova automatica di una partita con soli bot — codice e test fatti (23/11/2026), prova di Luis superata (24/11/2026)
+- ⬜ Passo 2 · Schermata TV (Svelte, D-004)
+- ⬜ Passo 3 · Schermata telefono
+- ⬜ Passo 4 · Prove di Luis contro i bot, con TEST-MANUALI.md
+- ⬜ Passo 5 · Prima partita in casa: prima hosting e HTTPS (DG-006) e prova di compatibilità su smart TV, chiavetta, iPhone, Android (D-004)
 - ⬜ Prima serata di prova (5–6 persone)
 
 ## Fase 4 · Rifinitura
