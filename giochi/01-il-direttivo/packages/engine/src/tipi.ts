@@ -146,11 +146,8 @@ export interface Partita {
   contatore: number;
   /** Obiettivi personali: i tre proposti e quello scelto (solo server, D-046…D-048). */
   obiettivi: Partial<Record<GiocatoreId, ObiettiviGiocatore>>;
-  /**
-   * Storico per proposta, per gli obiettivi (solo server). Con il voto del pacchetto (D-068): "SI" se
-   * il primo voto del giocatore conteneva la proposta, "NO" altrimenti. Da rivedere con gli obiettivi (D-071).
-   */
-  storicoVotazioni: RegistroVotazione[];
+  /** Storico del voto del pacchetto, un registro per trimestre, per gli obiettivi (solo server, D-076). */
+  storicoPacchetti: RegistroPacchetto[];
   /** Storico dei trimestri risolti: mosse scelte, andamento, cassa (solo server). */
   storicoTrimestri: RegistroTrimestre[];
   finale: StatoFinale;
@@ -166,23 +163,33 @@ export interface ObiettiviGiocatore {
   sceltoACaso?: boolean;
 }
 
-export interface RegistroVotazione {
-  propostaId: string;
-  trimestre: number;
-  /** Posizione nell'ordine del giorno e numero di votazioni del trimestre. */
-  posizione: number;
-  votazioniDelTrimestre: number;
+/** Dati di un pacchetto possibile del trimestre (chiave: id delle proposte unite da "+"). */
+export interface DatiPacchetto {
   costo: number;
-  /** Vero se è (una del)le proposte più costose del trimestre. */
-  piuCostosa: boolean;
-  approvata: boolean;
-  /** Effetto reale sull'azienda (noto ai giocatori solo ai Risultati, D-029 per l'ultimo trimestre). */
+  /** Contiene la proposta più cara del trimestre. */
+  conPiuCara: boolean;
+  /** Somma degli effetti sull'azienda delle sue proposte (nota ai giocatori solo ai Risultati, D-029). */
   effettoAzienda: number;
-  /** Solo i voti espressi da chi aveva diritto (niente tempo scaduto, D-052 R2). */
-  voti: Partial<Record<GiocatoreId, Voto>>;
-  /** Chi, votando al contrario, avrebbe ribaltato l'esito (D-052). */
+}
+
+/** Come si è chiuso il voto del pacchetto di un trimestre (D-068), per gli obiettivi (D-076). */
+export interface RegistroPacchetto {
+  trimestre: number;
+  /** Tutti i pacchetti validi del trimestre. */
+  pacchetti: Record<string, DatiPacchetto>;
+  /** Primo voto: chiave del pacchetto votato. Solo i voti espressi (niente tempo scaduto, D-052 R2). */
+  primiVoti: Partial<Record<GiocatoreId, string>>;
+  /** Secondo voto, se c'è stato: pacchetto principale e voti espressi. */
+  principale?: string;
+  secondiVoti: Partial<Record<GiocatoreId, Voto>>;
+  approvato: string;
+  esito: "PRIMO_VOTO" | "PRINCIPALE" | "ALTERNATIVA";
+  /**
+   * Voto decisivo (D-076): il pacchetto passa al primo voto con il minimo dei voti necessari e tu
+   * l'hai votato; oppure al secondo voto, se ribaltando il tuo voto l'esito cambierebbe.
+   */
   decisivi: GiocatoreId[];
-  /** Cassa subito dopo la votazione. */
+  /** Cassa subito dopo il pagamento. */
   cassaDopo: number;
 }
 

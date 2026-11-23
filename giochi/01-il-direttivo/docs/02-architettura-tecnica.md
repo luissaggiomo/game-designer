@@ -452,7 +452,7 @@ proposte:      non vengono generate proposte che lo riguardano specificamente
    sì × 2 ≥ membri → NOMINA, altrimenti → PUNTEGGIO
 2. NOMINA: ogni membro fa un nome (non se stesso); rivelazione una alla volta (ordine casuale)
    votanti = chi ha fatto un nome
-   un solo primo con voti ≥ floor(votanti / 2) + 1 → licenziato, ruolo rivelato
+   un solo primo con voti ≥ floor(votanti / 2) + 1 → licenziato (ruolo svelato solo al PUNTEGGIO, D-078)
    altrimenti candidati = primi pari merito (se più d'uno) oppure primo + tutti i secondi
               percorso = DUE se i candidati sono 2, TRE se sono di più
 3. BALLOTTAGGIO turno t: votano i membri non candidati (se non ce ne sono, tutti, non per sé)

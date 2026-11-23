@@ -3,8 +3,10 @@
  * motore: tutto ciò che il motore deve conoscere oltre allo stato della partita.
  * I contenuti sono controllati al caricamento: se un file è sbagliato, il gioco non parte.
  *
- * Modello B (D-023): un quesito non è legato a reparti precisi. Ha uno SCHEMA di effetto (ruoli con
- * punti) e i ruoli si assegnano ai reparti a inizio partita con l'algoritmo di equità (D-069).
+ * Modello B (D-023): un quesito non è legato a reparti precisi. Ha uno SCHEMA di effetto, cioè una
+ * famiglia (D-077: buon affare, investimento, neutro, spreco) con il suo effetto sull'azienda e alcune
+ * "forme" possibili (ruoli con punti); a inizio partita si estrae una forma e i ruoli si assegnano ai
+ * reparti con l'algoritmo di equità (D-069).
  * Niente pesi: nel voto del pacchetto ognuno vale 1 (D-068).
  */
 import datiFrasi from "@il-direttivo/content/frasi.json" with { type: "json" };
@@ -16,15 +18,17 @@ import { caricaConfigurazione, type Configurazione } from "./config.js";
 import { MISURE_NOTE } from "./misure.js";
 import type { RepartoId, TipoSegreto, ValoreCampo } from "./tipi.js";
 
-export interface Ruolo {
-  punti: number;
-}
+/** Famiglie di schemi (D-077), distinte dall'effetto sull'azienda. */
+export const FAMIGLIE = ["BUON_AFFARE", "INVESTIMENTO", "NEUTRO", "SPRECO"] as const;
+export type Famiglia = (typeof FAMIGLIE)[number];
 
 export interface Schema {
   /** Costo dei quesiti che usano questo schema: fissa il totale di bonus e malus (D-070). */
   costo: number;
+  famiglia: Famiglia;
   descrizione: string;
-  ruoli: Ruolo[];
+  /** Modi possibili di ripartire i punti tra i reparti (es. [3, -1, -1]); se ne estrae uno a partita. */
+  forme: number[][];
   effettoAzienda: number;
 }
 
@@ -104,17 +108,29 @@ export function controllaContenuti(
 
   for (const [nome, s] of Object.entries(schemi)) {
     const dove = `Schema "${nome}"`;
-    if (s.ruoli.length === 0) problemi.push(`${dove}: servono dei ruoli`);
-    if (s.ruoli.length > config.giocatori.minimo) problemi.push(`${dove}: più ruoli (${s.ruoli.length}) del minimo di giocatori`);
-    if (s.ruoli.some((r) => !Number.isInteger(r.punti) || r.punti === 0)) problemi.push(`${dove}: ogni ruolo deve avere punti interi diversi da zero`);
-    // Valore proporzionale al costo (D-070): totale dei bonus e dei malus fissato per costo.
+    if (!FAMIGLIE.includes(s.famiglia)) problemi.push(`${dove}: famiglia "${s.famiglia}" sconosciuta (D-077)`);
+    if (!Number.isInteger(s.effettoAzienda)) problemi.push(`${dove}: l'effetto sull'azienda deve essere un numero intero`);
+    if (!s.forme || s.forme.length === 0) problemi.push(`${dove}: serve almeno una forma`);
     const valore = config.proposte.valorePerCosto[String(s.costo)];
     if (!valore) problemi.push(`${dove}: costo ${s.costo} non previsto in proposte.costi`);
-    else {
-      const bonus = s.ruoli.filter((r) => r.punti > 0).reduce((t, r) => t + r.punti, 0);
-      const malus = -s.ruoli.filter((r) => r.punti < 0).reduce((t, r) => t + r.punti, 0);
-      if (bonus !== valore.bonus || malus !== valore.malus) problemi.push(`${dove}: bonus ${bonus} e malus ${malus}, per il costo ${s.costo} servono ${valore.bonus} e ${valore.malus} (D-070)`);
+    for (const [k, forma] of (s.forme ?? []).entries()) {
+      const qui = `${dove}, forma ${k + 1}`;
+      if (forma.length === 0) problemi.push(`${qui}: servono dei ruoli`);
+      if (forma.length > config.giocatori.minimo) problemi.push(`${qui}: più ruoli (${forma.length}) del minimo di giocatori`);
+      if (forma.some((p) => !Number.isInteger(p) || p === 0)) problemi.push(`${qui}: ogni ruolo deve avere punti interi diversi da zero`);
+      // Valore proporzionale al costo (D-070): totale dei bonus e dei malus fissato per costo.
+      if (valore) {
+        const bonus = forma.filter((p) => p > 0).reduce((t, p) => t + p, 0);
+        const malus = -forma.filter((p) => p < 0).reduce((t, p) => t + p, 0);
+        if (bonus !== valore.bonus || malus !== valore.malus) problemi.push(`${qui}: bonus ${bonus} e malus ${malus}, per il costo ${s.costo} servono ${valore.bonus} e ${valore.malus} (D-070)`);
+      }
     }
+  }
+  // Per ogni costo le famiglie devono avere effetti diversi (altrimenti non si distinguono, D-077).
+  for (const costo of config.proposte.costi) {
+    const delCosto = Object.values(schemi).filter((s) => s.costo === costo);
+    if (new Set(delCosto.map((s) => s.famiglia)).size !== delCosto.length) problemi.push(`Schemi da ${costo}: una famiglia ripetuta`);
+    if (new Set(delCosto.map((s) => s.effettoAzienda)).size !== delCosto.length) problemi.push(`Schemi da ${costo}: due famiglie con lo stesso effetto sull'azienda`);
   }
 
   // Frasi: ogni reparto deve avere almeno una frase positiva e una negativa (uguaglianza tra reparti, D-005).
@@ -139,8 +155,8 @@ export function controllaContenuti(
       const alt = schemi[m.alternativa.schema];
       if (!alt) problemi.push(`${dove}: schema alternativo "${m.alternativa.schema}" inesistente`);
       else if (alt.costo !== m.costo) problemi.push(`${dove}: lo schema alternativo è per un altro costo`);
-      else if (schemi[m.schema] && alt.effettoAzienda === schemi[m.schema]!.effettoAzienda) {
-        problemi.push(`${dove}: lo schema alternativo deve avere un effetto sull'azienda diverso (D-045)`);
+      else if (schemi[m.schema] && alt.famiglia === schemi[m.schema]!.famiglia) {
+        problemi.push(`${dove}: lo schema alternativo deve essere di un'altra famiglia (D-045, D-077)`);
       }
       if (!m.alternativa.spiegazione) problemi.push(`${dove}: manca la spiegazione dello schema alternativo`);
     }

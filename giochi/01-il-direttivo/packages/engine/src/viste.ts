@@ -4,7 +4,7 @@
  * Ogni dispositivo riceve SOLO ciò che deve vedere. Lo stato completo della partita non lascia
  * mai il server: da lì si costruiscono una vista per la TV e una per ciascun giocatore.
  *
- * Mai nelle viste: ruoli altrui (salvo licenziati e fine partita), il segnale "falsa" delle copie,
+ * Mai nelle viste: ruoli altrui (fino al punteggio, anche dei licenziati: D-078), il segnale "falsa" delle copie,
  * quale segreto è il finto (D-074: solo la spia lo vede, e solo per i segreti in cui è fonte o
  * destinataria), il contenuto dell'alternativa coperta (D-068), le carte dei trimestri futuri,
  * l'ordine della catena dei passaggi (D-073: si vede solo chi ha già il segreto), gli effetti privati degli altri reparti, l'effetto sull'azienda prima
@@ -40,7 +40,7 @@ export interface GiocatorePubblico {
   repartoId: RepartoId;
   stato: "ATTIVO" | "LICENZIATO";
   pauseCaffe: number;
-  /** Solo per i licenziati (ruolo rivelato) e dal punteggio in poi. */
+  /** Solo dal punteggio in poi, per tutti (D-078: i licenziati non si svelano prima). */
   fazione?: Fazione;
 }
 
@@ -229,7 +229,8 @@ function vistaComune(p: Partita, ambiente: Ambiente): VistaComune {
       repartoId: g.repartoId,
       stato: g.stato,
       pauseCaffe: g.pauseCaffe,
-      ...(rivelaTutti || g.stato === "LICENZIATO" ? { fazione: structuredClone(g.fazione) } : {}),
+      // Ruoli di tutti solo dal punteggio: neanche quelli dei licenziati prima (D-078).
+      ...(rivelaTutti ? { fazione: structuredClone(g.fazione) } : {}),
     })),
     reparti: p.reparti.map((r) => ({ id: r.id, ...(r.occupatoDa ? { occupatoDa: r.occupatoDa } : {}), autogestione: r.autogestione })),
     // Fino al punteggio le quote dell'ultimo trimestre restano nascoste (D-029).

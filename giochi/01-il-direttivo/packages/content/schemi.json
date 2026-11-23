@@ -1,194 +1,141 @@
 {
-  "_nota": "Schemi di effetto PROVVISORI (D-070, D-071): per ogni costo il totale dei bonus e dei malus di reparto è fisso (30 → +2/−1, 50 → +3/−2, 80 → +5/−3: la grande vale quanto le due piccole); l'effetto sull'azienda varia da schema a schema (anche negativo) e in media cresce col costo. I ruoli si assegnano ai reparti a inizio partita con l'algoritmo di equità (D-069). Da riscrivere insieme ai testi dei quesiti a regole fissate.",
+  "_nota": "Famiglie di schemi (D-077): per ogni costo quattro famiglie distinte dall'effetto sull'azienda (buon affare, investimento, neutro, spreco). Bonus e malus di reparto sono quelli del costo (30 → +2/−1, 50 → +3/−2, 80 → +5/−3, D-070: la grande vale quanto le due piccole). 'forme': modi possibili di ripartire quei punti tra i reparti, uguali per tutte le famiglie dello stesso costo; a ogni partita se ne estrae una, così il proprio +3 non rivela la famiglia (D-031, D-045). 'effettoAzienda' ⚖️ da tarare col simulatore: effetto medio proporzionale al costo. I ruoli si assegnano ai reparti a inizio partita con l'algoritmo di equità (D-069).",
   "schemi": {
-    "P30_UNO": {
+    "P30_BUON_AFFARE": {
       "costo": 30,
-      "descrizione": "Un reparto guadagna, uno paga poco",
-      "ruoli": [
-        {
-          "punti": 2
-        },
-        {
-          "punti": -1
-        }
-      ],
-      "effettoAzienda": 2
+      "famiglia": "BUON_AFFARE",
+      "descrizione": "Buon affare: all'azienda rende molto",
+      "effettoAzienda": 2,
+      "forme": [
+        [2, -1],
+        [1, 1, -1]
+      ]
     },
-    "P30_DUE": {
+    "P30_INVESTIMENTO": {
       "costo": 30,
-      "descrizione": "Due reparti guadagnano poco, uno paga poco",
-      "ruoli": [
-        {
-          "punti": 1
-        },
-        {
-          "punti": 1
-        },
-        {
-          "punti": -1
-        }
-      ],
-      "effettoAzienda": 1
+      "famiglia": "INVESTIMENTO",
+      "descrizione": "Investimento: all'azienda rende un po'",
+      "effettoAzienda": 1,
+      "forme": [
+        [2, -1],
+        [1, 1, -1]
+      ]
     },
-    "P30_EGO": {
+    "P30_NEUTRO": {
       "costo": 30,
-      "descrizione": "Un reparto guadagna, uno paga poco: all'azienda costa",
-      "ruoli": [
-        {
-          "punti": 2
-        },
-        {
-          "punti": -1
-        }
-      ],
-      "effettoAzienda": -1
+      "famiglia": "NEUTRO",
+      "descrizione": "Neutro: all'azienda non cambia nulla",
+      "effettoAzienda": 0,
+      "forme": [
+        [2, -1],
+        [1, 1, -1]
+      ]
     },
-    "P30_RISCHIO": {
+    "P30_SPRECO": {
       "costo": 30,
-      "descrizione": "Due reparti guadagnano poco, uno paga poco: buon affare",
-      "ruoli": [
-        {
-          "punti": 1
-        },
-        {
-          "punti": 1
-        },
-        {
-          "punti": -1
-        }
-      ],
-      "effettoAzienda": 2
+      "famiglia": "SPRECO",
+      "descrizione": "Spreco: all'azienda costa",
+      "effettoAzienda": -1,
+      "forme": [
+        [2, -1],
+        [1, 1, -1]
+      ]
     },
-    "M50_PROTAGONISTA": {
+    "M50_BUON_AFFARE": {
       "costo": 50,
-      "descrizione": "Un reparto guadagna molto, due pagano poco",
-      "ruoli": [
-        {
-          "punti": 3
-        },
-        {
-          "punti": -1
-        },
-        {
-          "punti": -1
-        }
-      ],
-      "effettoAzienda": 2
+      "famiglia": "BUON_AFFARE",
+      "descrizione": "Buon affare: all'azienda rende molto",
+      "effettoAzienda": 3,
+      "forme": [
+        [3, -1, -1],
+        [2, 1, -2],
+        [3, -2],
+        [1, 1, 1, -2]
+      ]
     },
-    "M50_COPPIA": {
+    "M50_INVESTIMENTO": {
       "costo": 50,
-      "descrizione": "Due reparti guadagnano, uno paga",
-      "ruoli": [
-        {
-          "punti": 2
-        },
-        {
-          "punti": 1
-        },
-        {
-          "punti": -2
-        }
-      ],
-      "effettoAzienda": 2
+      "famiglia": "INVESTIMENTO",
+      "descrizione": "Investimento: all'azienda rende un po'",
+      "effettoAzienda": 2,
+      "forme": [
+        [3, -1, -1],
+        [2, 1, -2],
+        [3, -2],
+        [1, 1, 1, -2]
+      ]
     },
-    "M50_EGO": {
+    "M50_NEUTRO": {
       "costo": 50,
-      "descrizione": "Un reparto guadagna molto, uno paga: all'azienda costa",
-      "ruoli": [
-        {
-          "punti": 3
-        },
-        {
-          "punti": -2
-        }
-      ],
-      "effettoAzienda": -1
+      "famiglia": "NEUTRO",
+      "descrizione": "Neutro: all'azienda non cambia nulla",
+      "effettoAzienda": 0,
+      "forme": [
+        [3, -1, -1],
+        [2, 1, -2],
+        [3, -2],
+        [1, 1, 1, -2]
+      ]
     },
-    "M50_DIFFUSO": {
+    "M50_SPRECO": {
       "costo": 50,
-      "descrizione": "Tre reparti guadagnano poco, uno paga",
-      "ruoli": [
-        {
-          "punti": 1
-        },
-        {
-          "punti": 1
-        },
-        {
-          "punti": 1
-        },
-        {
-          "punti": -2
-        }
-      ],
-      "effettoAzienda": 4
+      "famiglia": "SPRECO",
+      "descrizione": "Spreco: all'azienda costa",
+      "effettoAzienda": -2,
+      "forme": [
+        [3, -1, -1],
+        [2, 1, -2],
+        [3, -2],
+        [1, 1, 1, -2]
+      ]
     },
-    "G80_COPPIA": {
+    "G80_BUON_AFFARE": {
       "costo": 80,
-      "descrizione": "Due reparti guadagnano molto, due pagano",
-      "ruoli": [
-        {
-          "punti": 3
-        },
-        {
-          "punti": 2
-        },
-        {
-          "punti": -2
-        },
-        {
-          "punti": -1
-        }
-      ],
-      "effettoAzienda": 3
+      "famiglia": "BUON_AFFARE",
+      "descrizione": "Buon affare: all'azienda rende molto",
+      "effettoAzienda": 6,
+      "forme": [
+        [3, 2, -2, -1],
+        [4, 1, -3],
+        [3, 2, -3],
+        [5, -2, -1]
+      ]
     },
-    "G80_PROTAGONISTA": {
+    "G80_INVESTIMENTO": {
       "costo": 80,
-      "descrizione": "Un reparto guadagna moltissimo, uno poco, uno paga molto",
-      "ruoli": [
-        {
-          "punti": 4
-        },
-        {
-          "punti": 1
-        },
-        {
-          "punti": -3
-        }
-      ],
-      "effettoAzienda": 3
+      "famiglia": "INVESTIMENTO",
+      "descrizione": "Investimento: all'azienda rende un po'",
+      "effettoAzienda": 2,
+      "forme": [
+        [3, 2, -2, -1],
+        [4, 1, -3],
+        [3, 2, -3],
+        [5, -2, -1]
+      ]
     },
-    "G80_EGO": {
+    "G80_NEUTRO": {
       "costo": 80,
-      "descrizione": "Due reparti guadagnano molto, uno paga molto: all'azienda costa",
-      "ruoli": [
-        {
-          "punti": 3
-        },
-        {
-          "punti": 2
-        },
-        {
-          "punti": -3
-        }
-      ],
-      "effettoAzienda": -1
+      "famiglia": "NEUTRO",
+      "descrizione": "Neutro: all'azienda non cambia nulla",
+      "effettoAzienda": 0,
+      "forme": [
+        [3, 2, -2, -1],
+        [4, 1, -3],
+        [3, 2, -3],
+        [5, -2, -1]
+      ]
     },
-    "G80_GRANDE": {
+    "G80_SPRECO": {
       "costo": 80,
-      "descrizione": "Un reparto prende tutto, due pagano",
-      "ruoli": [
-        {
-          "punti": 5
-        },
-        {
-          "punti": -2
-        },
-        {
-          "punti": -1
-        }
-      ],
-      "effettoAzienda": 5
+      "famiglia": "SPRECO",
+      "descrizione": "Spreco: all'azienda costa",
+      "effettoAzienda": -3,
+      "forme": [
+        [3, 2, -2, -1],
+        [4, 1, -3],
+        [3, 2, -3],
+        [5, -2, -1]
+      ]
     }
   }
 }

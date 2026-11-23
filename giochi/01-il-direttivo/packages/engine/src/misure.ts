@@ -11,9 +11,15 @@
  * - "COMPLETA": verifica finale al punteggio, con tutte le informazioni del server.
  *
  * Regole comuni: contano solo le scelte del giocatore (R2: niente voti scaduti né scelte
- * predefinite); i voti con peso 0 non esistono (R3).
+ * predefinite).
+ *
+ * Voto del pacchetto (D-068, D-076): "il tuo pacchetto" è quello che hai scelto al primo voto;
+ * "passa" = è il pacchetto approvato (al primo voto, come principale o come alternativa);
+ * "positivo" / "dannoso" = somma degli effetti sull'azienda delle sue proposte maggiore / minore
+ * di zero, noto ai Risultati del trimestre (il 4° al punteggio, D-029). I voti sono pubblici dopo
+ * la chiusura (D-019), quindi l'avanzamento si vede subito.
  */
-import type { CopiaSegreto, GiocatoreId, Partita, RegistroVotazione, SceltaMossa } from "./tipi.js";
+import type { CopiaSegreto, GiocatoreId, Partita, RegistroPacchetto, SceltaMossa } from "./tipi.js";
 
 export type Conoscenza = "GIOCATORE" | "COMPLETA";
 
@@ -44,15 +50,10 @@ interface Misura {
 const contaSe = <T>(elenco: T[], condizione: (x: T) => boolean): number => elenco.filter(condizione).length;
 const conta = (n: number): ValoreMisura => ({ valore: n });
 
-/** Votazioni in cui il giocatore ha espresso SÌ o NO. */
-function mieiVoti(c: ContestoMisura): (RegistroVotazione & { mio: "SI" | "NO" })[] {
-  return c.p.storicoVotazioni.flatMap((r) => {
-    const v = r.voti[c.id];
-    return v === "SI" || v === "NO" ? [{ ...r, mio: v }] : [];
-  });
-}
-
-const comeEsito = (r: RegistroVotazione & { mio: "SI" | "NO" }) => (r.mio === "SI") === r.approvata;
+/** Il pacchetto scelto dal giocatore al primo voto di un trimestre (se ha votato). */
+const mioPrimo = (c: ContestoMisura, r: RegistroPacchetto) => r.primiVoti[c.id];
+/** Il tuo pacchetto è passato. */
+const mioPassato = (c: ContestoMisura, r: RegistroPacchetto) => mioPrimo(c, r) === r.approvato;
 
 /** I risultati di un trimestre sono noti al giocatore? (D-029: l'ultimo si scopre al punteggio.) */
 function trimestreNoto(c: ContestoMisura, trimestre: number): boolean {
@@ -61,9 +62,8 @@ function trimestreNoto(c: ContestoMisura, trimestre: number): boolean {
   return risolto && !(c.p.risultatiRinviati && trimestre === c.p.trimestre);
 }
 
-/** Effetto reale noto: maggiore di zero (positiva), minore (dannosa). Solo proposte approvate. */
-const positiva = (c: ContestoMisura, r: RegistroVotazione) => r.approvata && trimestreNoto(c, r.trimestre) && r.effettoAzienda > 0;
-const dannosa = (c: ContestoMisura, r: RegistroVotazione) => r.approvata && trimestreNoto(c, r.trimestre) && r.effettoAzienda < 0;
+/** Effetto del pacchetto approvato, se già noto al giocatore (undefined = non ancora noto). */
+const effettoApprovato = (c: ContestoMisura, r: RegistroPacchetto) => (trimestreNoto(c, r.trimestre) ? r.pacchetti[r.approvato]!.effettoAzienda : undefined);
 
 const messaggiRicevuti = (c: ContestoMisura) => c.p.messaggi.filter((m) => m.a === c.id);
 
@@ -98,50 +98,43 @@ function mosse(c: ContestoMisura, scelta: SceltaMossa): number {
 // ——— Le misure ———
 
 export const MISURE: Record<string, Misura> = {
-  // Voti sulle proposte.
-  VOTI_CONTRO_ESITO: { calcola: (c) => conta(contaSe(mieiVoti(c), (r) => !comeEsito(r))) },
-  VOTI_COME_ESITO: { calcola: (c) => conta(contaSe(mieiVoti(c), comeEsito)) },
-  VOTI_DECISIVI: { calcola: (c) => conta(contaSe(c.p.storicoVotazioni, (r) => r.decisivi.includes(c.id))) },
-  TRIMESTRI_CON_VOTO_DECISIVO: {
-    calcola: (c) => conta(new Set(c.p.storicoVotazioni.filter((r) => r.decisivi.includes(c.id)).map((r) => r.trimestre)).size),
+  // Voto del pacchetto (D-076).
+  PRIMO_VOTO_DIVERSO_DA_APPROVATO: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => mioPrimo(c, r) !== undefined && !mioPassato(c, r))) },
+  PRIMO_VOTO_COME_APPROVATO: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => mioPassato(c, r))) },
+  APPROVATO_AL_PRIMO_VOTO: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => r.esito === "PRIMO_VOTO" && mioPassato(c, r))) },
+  VOTI_DECISIVI: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => r.decisivi.includes(c.id))) },
+  PACCHETTO_SENZA_PIU_CARA: {
+    calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => mioPrimo(c, r) !== undefined && !r.pacchetti[mioPrimo(c, r)!]!.conPiuCara)),
   },
-  DECISIVI_PER_RESPINGERE: { calcola: (c) => conta(contaSe(c.p.storicoVotazioni, (r) => r.decisivi.includes(c.id) && !r.approvata)) },
-  DECISIVI_PER_APPROVARE_POSITIVE: { calcola: (c) => conta(contaSe(c.p.storicoVotazioni, (r) => r.decisivi.includes(c.id) && positiva(c, r))) },
-  NO_PIU_COSTOSA_RESPINTA: {
-    calcola: (c) => conta(new Set(mieiVoti(c).filter((r) => r.piuCostosa && r.mio === "NO" && !r.approvata).map((r) => r.trimestre)).size),
+  PACCHETTO_SENZA_PIU_CARA_APPROVATO: {
+    calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => mioPassato(c, r) && !r.pacchetti[r.approvato]!.conPiuCara)),
   },
-  NO_PIU_COSTOSA: { calcola: (c) => conta(new Set(mieiVoti(c).filter((r) => r.piuCostosa && r.mio === "NO").map((r) => r.trimestre)).size) },
-  NO_SU_APPROVATE: { calcola: (c) => conta(contaSe(mieiVoti(c), (r) => r.mio === "NO" && r.approvata)) },
-  SI_SU_RESPINTE: { calcola: (c) => conta(contaSe(mieiVoti(c), (r) => r.mio === "SI" && !r.approvata)) },
-  SI_POSITIVE: { calcola: (c) => conta(contaSe(mieiVoti(c), (r) => r.mio === "SI" && positiva(c, r))) },
-  NO_SU_DANNOSE: { calcola: (c) => conta(contaSe(mieiVoti(c), (r) => r.mio === "NO" && dannosa(c, r))) },
-  SI_SENZA_DANNOSE: {
+  PACCHETTO_APPROVATO_POSITIVO: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => mioPassato(c, r) && (effettoApprovato(c, r) ?? 0) > 0)) },
+  PACCHETTI_APPROVATI_SENZA_DANNOSI: {
     soloAFine: true,
     calcola: (c) => {
-      const si = mieiVoti(c).filter((r) => r.mio === "SI" && r.approvata && trimestreNoto(c, r.trimestre));
-      return { valore: si.length, violato: si.some((r) => r.effettoAzienda < 0) };
+      const miei = c.p.storicoPacchetti.filter((r) => mioPassato(c, r) && effettoApprovato(c, r) !== undefined);
+      return { valore: miei.length, violato: miei.some((r) => effettoApprovato(c, r)! < 0) };
     },
   },
-  VOTI_UNICA_VOCE: {
+  UNICO_SUL_PACCHETTO: {
     calcola: (c) =>
       conta(
-        contaSe(mieiVoti(c), (r) => {
-          const altri = Object.entries(r.voti).filter(([id, v]) => id !== c.id && (v === "SI" || v === "NO"));
-          return altri.length >= 2 && altri.every(([, v]) => v !== r.mio);
+        contaSe(c.p.storicoPacchetti, (r) => {
+          const mio = mioPrimo(c, r);
+          const altri = Object.entries(r.primiVoti).filter(([id]) => id !== c.id);
+          return mio !== undefined && altri.length >= 2 && altri.every(([, pk]) => pk !== mio);
         }),
       ),
   },
-  TRIMESTRE_TUTTO_COME_ESITO: {
-    calcola: (c) => {
-      const miei = mieiVoti(c);
-      const trimestri = new Set(c.p.storicoVotazioni.filter((r) => r.votazioniDelTrimestre === 3).map((r) => r.trimestre));
-      const pieni = [...trimestri].filter((t) => {
-        const delTrimestre = miei.filter((r) => r.trimestre === t);
-        return delTrimestre.length === 3 && delTrimestre.every(comeEsito);
-      });
-      return conta(pieni.length > 0 ? 1 : 0);
-    },
+  NO_AL_PRINCIPALE: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => r.secondiVoti[c.id] === "NO")) },
+  NO_DECISIVO_PER_ALTERNATIVA: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => r.esito === "ALTERNATIVA" && r.decisivi.includes(c.id))) },
+  SI_PRINCIPALE_RESPINTO: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => r.secondiVoti[c.id] === "SI" && r.esito === "ALTERNATIVA")) },
+  SECONDO_VOTO_CONTRO_ESITO: {
+    calcola: (c) =>
+      conta(contaSe(c.p.storicoPacchetti, (r) => (r.secondiVoti[c.id] === "SI" && r.esito === "ALTERNATIVA") || (r.secondiVoti[c.id] === "NO" && r.esito === "PRINCIPALE"))),
   },
+  NO_PRINCIPALE_APPROVATO: { calcola: (c) => conta(contaSe(c.p.storicoPacchetti, (r) => r.secondiVoti[c.id] === "NO" && r.esito === "PRINCIPALE")) },
 
   // Mossa privata (solo le scelte vere: chi non sceglie non conta, R2).
   MOSSE_AZIENDA: { calcola: (c) => conta(mosse(c, "AZIENDA")) },
@@ -271,13 +264,6 @@ export const MISURE: Record<string, Misura> = {
     calcola: (c) => {
       const ultimo = c.p.storicoTrimestri.find((t) => t.trimestre === c.trimestri);
       return conta(ultimo && ultimo.cassaFine >= (c.parametro ?? 0) ? 1 : 0);
-    },
-  },
-  CASSA_MAI_SOTTO: {
-    soloAFine: true,
-    calcola: (c) => {
-      const sotto = c.p.storicoVotazioni.some((r) => r.cassaDopo < (c.parametro ?? 0));
-      return { valore: sotto ? 0 : 1, violato: sotto };
     },
   },
 

@@ -21,7 +21,7 @@ const FASI_FINE = new Set(["PUNTEGGIO", "LETTURA_MESSAGGI", "FINE"]);
 const CHIAVI_VIETATE = [
   "catena", "statoCasuale", "seme", "mossePrivate", "spieTraAttivi", "effettiPrivati", "effettoAzienda", "nomine", "revocata", "possessore",
   // Obiettivi personali e loro storici (solo server, D-047, D-052).
-  "proposti", "storicoVotazioni", "storicoTrimestri", "decisivi", "mosseScelte", "alterataDa", "modificataDalMittente", "aziendalista", "misura",
+  "proposti", "storicoPacchetti", "primiVoti", "storicoTrimestri", "decisivi", "mosseScelte", "alterataDa", "modificataDalMittente", "aziendalista", "misura",
   // Carte future, alternativa coperta, equilibrio dei ruoli (D-068, D-069, D-074).
   "carte", "alternativa", "equita", "coinvolgimentiSegreti", "secondiVoti_server",
 ];
@@ -83,11 +83,10 @@ function controllaVistaGiocatore(p: Partita, id: string): void {
   for (const k of CHIAVI_VIETATE) expect(chiavi.has(k), `chiave vietata "${k}" nella vista di ${id}`).toBe(false);
   expect(chiavi.has("falsa") || chiavi.has("falso")).toBe(false);
 
-  // Ruoli altrui: solo dei licenziati, o a fine partita.
+  // Ruoli altrui: solo a fine partita, neanche quelli dei licenziati prima (D-078).
   for (const altro of v.giocatori) {
     if (altro.id === id) continue;
-    const stato = p.giocatori.find((g) => g.id === altro.id)!.stato;
-    if (altro.fazione) expect(stato === "LICENZIATO" || fine, `ruolo di ${altro.id} visibile a ${id}`).toBe(true);
+    if (altro.fazione) expect(fine, `ruolo di ${altro.id} visibile a ${id}`).toBe(true);
   }
 
   // Alleati: solo per le spie, solo dello stesso concorrente.
@@ -161,10 +160,7 @@ function controllaVistaTV(p: Partita): void {
   for (const k of [...CHIAVI_VIETATE, "io", "mieiSegreti", "mieiMessaggi", "mieiEffetti", "mieiVoti", "alleati"]) {
     expect(chiavi.has(k), `chiave vietata "${k}" nella vista TV`).toBe(false);
   }
-  for (const g of v.giocatori) {
-    const stato = p.giocatori.find((x) => x.id === g.id)!.stato;
-    if (g.fazione) expect(stato === "LICENZIATO" || fine).toBe(true);
-  }
+  for (const g of v.giocatori) if (g.fazione) expect(fine, `ruolo di ${g.id} visibile in TV`).toBe(true); // D-078
   if (!["LETTURA_MESSAGGI", "FINE"].includes(p.fase.nome)) expect(v.letturaMessaggi).toBeUndefined();
   // Obiettivi: la TV non vede mai un identificativo né le proposte scartate; l'obiettivo scelto di
   // ognuno compare solo dal punteggio in poi (D-047).

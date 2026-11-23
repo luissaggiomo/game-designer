@@ -22,13 +22,14 @@ Legenda: ⬜ da fare · 🔄 in corso · ✅ fatto · ⏸️ sospeso
 - ✅ Regole: votazione pesata, cassa, ordine del giorno, mossa privata, risultati del trimestre, autogestione (versione base), concorrenti (D-054, D-056), segreti e messaggi
 - ✅ Finale "Rinnovo dei contratti" e punteggio (D-058, D-059; demansionamento eliminato, D-057)
 - ✅ Viste filtrate + test di riservatezza (partite casuali da 4 a 8 giocatori, controllo a ogni passo)
-- 🔄 Contenuti in JSON — quesiti: 40 veri con due versioni ciascuno (D-030…D-034, D-045) ✅; segreti: 36 veri (D-035…D-039) ✅; obiettivi personali: 34 con regole di verifica (D-046…D-055) ✅, soglie di messaggi e segreti ⚖️ da tarare nelle serate
-- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-23-simulazione-13.md (avviso atteso: obiettivi da riscrivere, D-071)
+- 🔄 Contenuti in JSON — quesiti: 40 veri con due versioni ciascuno e famiglie di schemi (D-030…D-034, D-045, D-077) ✅; segreti: 36 veri (D-035…D-039) ✅; obiettivi personali: 34 con regole di verifica (D-046…D-055, 16 riscritti D-076) ✅, soglie di messaggi e segreti ⚖️ da tarare nelle serate
+- ✅ Simulatore con robot e report — ultimo report: docs/simulazioni/2026-11-23-simulazione-15.md
 - 🔄 Prima taratura dei numeri ⚖️ e verifica delle decisioni provvisorie D-006…D-062 — in corso (dodicesimo report, dopo la semplificazione D-057…D-062: spia vincente 18–32% con una spia, 40–45% con due; il finale dipende molto da quanto facilmente si risponde "sì, c'è una spia", da osservare nelle serate; la cassa resta poco vincolante → D-068)
 - ✅ Voto del trimestre a pacchetti, equità delle carte, segreti vero/finto con catena e scadenza (D-063…D-074) — nel motore, nei robot e nel tredicesimo report; concorrente ritarato (3,41)
-- ✅ Equilibrio spie: metro 1/N, risultati in linea (D-075); da ricontrollare la spia prima in classifica con 4 giocatori (34%)
-- ⬜ Implementare obiettivi riscritti (D-076) e famiglie di schemi dei quesiti (D-077), tarare le soglie, quattordicesimo report
-- ⬜ Cancello fase 2 → 3
+- ✅ Equilibrio spie: metro 1/N (D-075); spia prima in classifica con 4 giocatori 22% ✅; spia vincente con 4 giocatori 19%, accettata da osservare nelle serate (D-079)
+- ✅ Obiettivi riscritti (D-076) e famiglie di schemi (D-077) implementati e tarati, correzioni D-079 — quindicesimo report; 🟡 tre frasi nuove dei quesiti da 80 K da approvare
+- ✅ Ruolo dei licenziati svelato solo al punteggio (D-078)
+- 🔄 Cancello fase 2 → 3: requisiti di docs/PROCEDURE.md soddisfatti (23/11/2026), manca la conferma di Luis
 
 ## Fase 3 · Prototipo locale giocabile
 - ✅ Bot, timer e prove in locale decisi (D-065…D-067); poteri speciali rinviati (D-064)

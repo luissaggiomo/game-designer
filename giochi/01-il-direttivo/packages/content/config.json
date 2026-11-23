@@ -50,7 +50,7 @@
     "con8Giocatori": 2,
     "nomi": ["Concorrente A", "Concorrente B"],
     "quotaAziendalistaRiferimento": 0.45,
-    "crescitaMediaProposteESegreti": 3.41,
+    "crescitaMediaProposteESegreti": 3.47,
     "eventoCasuale": [-1, 0, 1]
   },
   "_concorrenti": "D-011. Nomi, crescita ed evento casuale sono SEGNAPOSTO: il comportamento dei concorrenti è il punto aperto 4 (Architettura §10.6). D-056: il concorrente avanza quanto l'azienda media. Crescita a trimestre = numero di giocatori × effetto medio della mossa privata se la quota 'quotaAziendalistaRiferimento' sceglie per l'azienda (con i valori attuali 0,45 → −0,1 a testa; scelta di Luis, era 0,55) + 'crescitaMediaProposteESegreti' (effetto medio per trimestre di proposte approvate e segreti arrivati in tempo, misurato col simulatore: sezione 'Crescita dell'azienda' del report) + evento casuale (a media zero: −1 / 0 / +1); la parte decimale diventa +1 con quella probabilità. ⚖️",

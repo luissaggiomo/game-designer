@@ -2,8 +2,8 @@
  * Le carte della partita e l'algoritmo di equità (GDD §8.6 · D-068, D-069, D-070, D-045).
  *
  * A inizio partita si preparano TUTTE le carte: per ogni trimestre un quesito per costo (30 / 50 / 80),
- * con la sua versione (principale o alternativa, D-045), preferendo categorie diverse nello stesso
- * trimestre. Poi i ruoli di ogni schema (es. +3, −1, −1) si assegnano ai reparti occupati in modo che:
+ * con la sua versione (principale o alternativa, D-045) e una delle forme della sua famiglia (D-077),
+ * preferendo categorie diverse nello stesso trimestre. Poi i ruoli della forma (es. +3, −1, −1) si assegnano ai reparti occupati in modo che:
  *
  * 1. ogni reparto riceva, sulla somma di tutte le carte, lo STESSO totale di bonus e lo STESSO totale
  *    di malus (differenza massima "tolleranzaEquita", di solito 1 punto, quando la parità esatta è
@@ -26,6 +26,8 @@ interface CartaScelta {
   trimestre: number;
   modello: ModelloProposta;
   schema: Schema;
+  /** Forma estratta tra quelle della famiglia: i punti dei ruoli. */
+  ruoli: number[];
   spiegazione: string;
 }
 
@@ -40,8 +42,8 @@ export interface EsitoEquita {
   violazioni: number;
 }
 
-/** Quanti reparti ricevono un bonus da uno schema. */
-const repartiConBonus = (schema: Schema) => schema.ruoli.filter((r) => r.punti > 0).length;
+/** Quanti reparti ricevono un bonus da una forma. */
+const repartiConBonus = (ruoli: number[]) => ruoli.filter((p) => p > 0).length;
 
 /**
  * Sceglie le carte di tutta la partita (senza ruoli). In ogni trimestre la combinazione deve permettere
@@ -66,10 +68,11 @@ function scegliCarte(ambiente: Ambiente, casuale: Casuale, numeroReparti: number
         const modello = casuale.scegliPesato(candidati, fattori);
         categorie.push(modello.categoria);
         const alternativa = modello.alternativa && casuale.probabilita(config.selezione.probabilitaAlternativa) ? modello.alternativa : undefined;
-        scelte.push({ trimestre: t, modello, schema: schemi[alternativa?.schema ?? modello.schema]!, spiegazione: alternativa?.spiegazione ?? modello.spiegazione });
+        const schema = schemi[alternativa?.schema ?? modello.schema]!;
+        scelte.push({ trimestre: t, modello, schema, ruoli: casuale.scegli(schema.forme), spiegazione: alternativa?.spiegazione ?? modello.spiegazione });
       }
-      const caro = Math.max(0, ...scelte.filter((c) => c.modello.costo === costoMassimo).map((c) => repartiConBonus(c.schema)));
-      const altri = Math.max(0, ...scelte.filter((c) => c.modello.costo !== costoMassimo).map((c) => repartiConBonus(c.schema)));
+      const caro = Math.max(0, ...scelte.filter((c) => c.modello.costo === costoMassimo).map((c) => repartiConBonus(c.ruoli)));
+      const altri = Math.max(0, ...scelte.filter((c) => c.modello.costo !== costoMassimo).map((c) => repartiConBonus(c.ruoli)));
       if (caro + altri <= numeroReparti) break;
     }
     for (const c of scelte) usati.add(c.modello.id);
@@ -102,7 +105,7 @@ function tentativo(carte: CartaScelta[], reparti: RepartoId[], costoMassimo: num
   const latoAltri = new Map<number, Set<RepartoId>>();
   const lato = (m: Map<number, Set<RepartoId>>, t: number) => m.get(t) ?? m.set(t, new Set()).get(t)!;
   const ruoli = casuale
-    .mescola(carte.flatMap((c, i) => c.schema.ruoli.map((r) => ({ i, punti: r.punti }))))
+    .mescola(carte.flatMap((c, i) => c.ruoli.map((punti) => ({ i, punti }))))
     .sort((a, b) => Math.abs(b.punti) - Math.abs(a.punti));
   for (const { i, punti } of ruoli) {
     const c = carte[i]!;

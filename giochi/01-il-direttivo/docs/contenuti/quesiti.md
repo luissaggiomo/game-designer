@@ -9,6 +9,28 @@
 > **Aggiornamento 23/11/2026:** costi convertiti a 30 / 50 / 80 K (D-062, indicato "era …"); i quesiti con astensione non esistono più (D-060), D-034 è superata.
 >
 > **Aggiornamento 23/11/2026 (D-068…D-071):** i pesi non esistono più (voto del pacchetto, una testa un voto) e gli schemi sono stati sostituiti da schemi **provvisori proporzionali al costo** (30 → +2/−1, 50 → +3/−2, 80 → +5/−3), assegnati ai quesiti a rotazione in `packages/content/proposte.json`. Le spiegazioni e gli schemi indicati qui sotto valgono come traccia: schemi e testi si riscrivono a regole fissate (D-071).
+>
+> **Aggiornamento 23/11/2026 (D-077):** al posto della rotazione, ogni quesito ha nella versione principale e nell'alternativa una **famiglia di schemi** coerente con la sua frase per la TV. Le famiglie sono state ricavate dagli schemi originali (prima del voto a pacchetti), che seguivano già il tono delle frasi (D-033): AZIENDALE, PROTAGONISTA e SACRIFICIO (+2/+3) → **buon affare**; COPPIA e PAREGGIO (+1) → **investimento**; RISCHIO (0) → **neutro**; EGOISTICO (−1) → **spreco**. I testi approvati non cambiano.
+
+### Famiglie di schemi (D-077) — fonte: `packages/content/schemi.json`
+
+Bonus e malus di reparto dipendono solo dal costo (D-070); la **forma** (come si dividono tra i reparti) si estrae a ogni partita tra quelle del costo, uguali per tutte le famiglie, così il proprio numero sul telefono non rivela la famiglia. Effetti sull'azienda ⚖️ (tarati col simulatore, report 14).
+
+| Costo | Buon affare | Investimento | Neutro | Spreco | Forme dei ruoli |
+|---|---|---|---|---|---|
+| 30 K | +2 | +1 | 0 | −1 | +2/−1 · +1/+1/−1 |
+| 50 K | +3 | +2 | 0 | −2 | +3/−1/−1 · +2/+1/−2 · +3/−2 · +1/+1/+1/−2 |
+| 80 K | +6 | +2 | 0 | −3 | +3/+2/−2/−1 · +4/+1/−3 · +3/+2/−3 · +5/−2/−1 |
+
+Quante versioni (principale + alternativa) per famiglia:
+
+| Costo | Quesiti | Buon affare | Investimento | Neutro | Spreco |
+|---|---|---|---|---|---|
+| 30 K | 16 | 15 | 9 | 2 | 6 |
+| 50 K | 12 | 11 | 6 | 3 | 4 |
+| 80 K | 12 | 8 | 9 | 4 | 3 |
+
+Nota (scelta di Luis 3B del 23/11/2026): nessuna frase delle carte da 80 descriveva uno spreco vero; tre versioni neutre sono diventate **spreco** con una frase ritoccata (🟡 proposte da Claude, da approvare): Nuova sede (principale), Campagna in TV (alternativa), Acquisto di un concorrente (principale). Per tenere la grande proporzionale, il buon affare da 80 sale a +6 (report 15).
 
 ## Vincoli tecnici rilevati (dal motore, sola lettura)
 
@@ -87,9 +109,10 @@
 
 Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione`). Questa è la copia leggibile.
 
-#### Nuovo gestionale aziendale (l'ennesimo) — 50 K *(era 60)* · PROTAGONISTA (Un reparto guadagna molto, due perdono poco)
+#### Nuovo gestionale aziendale (l'ennesimo) — 50 K *(era 60)* · buon affare / alternativa neutro
 
-**In TV se approvata (+2):** Dopo tre mesi di lamentele il gestionale funziona: ordini più rapidi, meno errori
+**In TV se approvata — principale (buon affare):** Dopo tre mesi di lamentele il gestionale funziona: ordini più rapidi, meno errori  
+**In TV se approvata — alternativa (neutro):** Il gestionale funziona, ma tra licenze e consulenti si mangia tutto il risparmio
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -102,9 +125,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il gestionale traccia i tuoi progetti: finalmente il tuo lavoro si vede | Ogni ora di laboratorio va registrata su una commessa: burocrazia per te |
 | IT_SICUREZZA | Il progetto lo guidi tu: budget, fornitore e gloria al tuo reparto | Migrazione dei dati nel weekend: il tuo reparto non dorme per un mese |
 
-#### Riorganizzazione degli uffici in open space — 50 K *(era 45)* · COPPIA (Due reparti guadagnano, uno perde molto)
+#### Riorganizzazione degli uffici in open space — 50 K *(era 45)* · investimento / alternativa neutro
 
-**In TV se approvata (+1):** Rumoroso ma vivace: l'open space fa circolare qualche idea in più
+**In TV se approvata — principale (investimento):** Rumoroso ma vivace: l'open space fa circolare qualche idea in più  
+**In TV se approvata — alternativa (neutro):** Più idee, ma anche più chiacchiere: l'open space non cambia nulla
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -117,9 +141,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il tuo laboratorio ottiene lo spazio liberato dai vecchi uffici | Impossibile concentrarsi: i tuoi progetti rallentano di settimane |
 | IT_SICUREZZA | Rete e cablaggi rifatti da zero: finalmente un impianto come dici tu | Cento postazioni da spostare e ricablare in un weekend: tocca a te |
 
-#### Taglio del 10% alle spese generali — 30 K *(era 25)* · SACRIFICIO (Un reparto paga, tre guadagnano un poco)
+#### Taglio del 10% alle spese generali — 30 K *(era 25)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Il taglio regge: conti più snelli e prezzi più competitivi
+**In TV se approvata — principale (buon affare):** Il taglio regge: conti più snelli e prezzi più competitivi  
+**In TV se approvata — alternativa (investimento):** Il taglio fa risparmiare, ma qualche servizio peggiora: guadagno piccolo
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -132,9 +157,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Si taglia altrove: il tuo laboratorio viene dichiarato intoccabile | La ricerca «non rende subito»: il tuo budget è il primo a saltare |
 | IT_SICUREZZA | Disdette le licenze software mai usate: i soldi passano al tuo reparto | Rinviato il rinnovo dei server: tiri avanti con macchine di dieci anni |
 
-#### Progetto pilota con un cliente importante — 80 K *(era 80)* · RISCHIO (Grande guadagno per un reparto, perdita sicura per un altro)
+#### Progetto pilota con un cliente importante — 80 K *(era 80)* · neutro / alternativa buon affare
 
-**In TV se approvata (0):** Il cliente è soddisfatto ma pretende lo sconto: tanto lavoro, guadagno zero
+**In TV se approvata — principale (neutro):** Il cliente è soddisfatto ma pretende lo sconto: tanto lavoro, guadagno zero  
+**In TV se approvata — alternativa (buon affare):** Il pilota riesce: il cliente firma un contratto di tre anni
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -147,9 +173,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il cliente finanzia il tuo prototipo e lo prova sul campo | Il cliente vuole modifiche ogni settimana: i tuoi progetti fermi |
 | IT_SICUREZZA | Il pilota usa i tuoi sistemi: il cliente vuole comprarli anche lui | Il cliente vuole accedere ai nostri sistemi: controlli infiniti per te |
 
-#### Consulenza strategica di una società famosa — 80 K *(era 70)* · PAREGGIO (Due guadagnano poco, due perdono poco)
+#### Consulenza strategica di una società famosa — 80 K *(era 70)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Duecento slide, tre idee buone: qualcosa migliora davvero
+**In TV se approvata — principale (investimento):** Duecento slide, tre idee buone: qualcosa migliora davvero  
+**In TV se approvata — alternativa (buon affare):** Una delle tre idee dei consulenti si rivela d'oro: bel passo avanti
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -162,9 +189,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | I consulenti scoprono il tuo progetto e lo mettono nella prima slide | La ricerca «va resa più efficiente»: obiettivi trimestrali per te |
 | IT_SICUREZZA | Raccomandazione numero uno: investire nei sistemi. Cioè in te | I consulenti vogliono tutti i dati entro venerdì: estrazioni notturne per te |
 
-#### Certificazione di qualità internazionale — 50 K *(era 55)* · AZIENDALE (Buono per l'azienda, costa a due reparti)
+#### Certificazione di qualità internazionale — 50 K *(era 55)* · buon affare / alternativa spreco
 
-**In TV se approvata (+3):** Con il bollino internazionale si aprono mercati nuovi: grande passo avanti
+**In TV se approvata — principale (buon affare):** Con il bollino internazionale si aprono mercati nuovi: grande passo avanti  
+**In TV se approvata — alternativa (spreco):** Mesi di moduli per un bollino che nessun cliente guarda: soldi buttati
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -177,9 +205,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | I tuoi metodi di prova diventano lo standard aziendale | Ogni esperimento va verbalizzato: il laboratorio affoga nelle carte |
 | IT_SICUREZZA | La norma richiede sistemi sicuri: arriva il budget che chiedevi | Backup, accessi e registri da dimostrare agli ispettori: tocca a te |
 
-#### Fondo per l'innovazione interna — 30 K *(era 40)* · EGOISTICO (Buono per un reparto, cattivo per l'azienda)
+#### Fondo per l'innovazione interna — 30 K *(era 40)* · spreco / alternativa buon affare
 
-**In TV se approvata (-1):** Il fondo finisce in un progetto che interessa solo a chi l'ha voluto: soldi bruciati
+**In TV se approvata — principale (spreco):** Il fondo finisce in un progetto che interessa solo a chi l'ha voluto: soldi bruciati  
+**In TV se approvata — alternativa (buon affare):** Dal fondo esce un'idea brillante che migliora tutta l'azienda: colpo grosso
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -192,9 +221,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il fondo va al tuo laboratorio: un progetto nuovo tutto tuo | Il fondo fa concorrenza ai tuoi progetti: idee finanziate altrove |
 | IT_SICUREZZA | Il fondo finanzia la tua piattaforma: il tuo reparto al centro | Ogni idea finanziata vuole un'app entro un mese: e la fai tu |
 
-#### Fiera di settore a Milano — 50 K *(era 60)* · PROTAGONISTA (Un reparto guadagna molto, due perdono poco)
+#### Fiera di settore a Milano — 50 K *(era 60)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Stand affollato per tre giorni: contatti nuovi e marchio in vista
+**In TV se approvata — principale (buon affare):** Stand affollato per tre giorni: contatti nuovi e marchio in vista  
+**In TV se approvata — alternativa (investimento):** Tre giorni di strette di mano: qualche contatto buono, niente di più
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -207,9 +237,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Presenti il tuo prototipo: un'università propone una collaborazione | Il tuo prototipo va reso presentabile prima del tempo: due mesi persi |
 | IT_SICUREZZA | In fiera si lancia l'app che hai sviluppato: il tuo reparto sotto i riflettori | Wi-fi, schermi e app dello stand: tre giorni di emergenze per il tuo reparto |
 
-#### Prestito di personale tra reparti per un anno — 30 K *(era 35)* · COPPIA (Due reparti guadagnano, uno perde molto)
+#### Prestito di personale tra reparti per un anno — 30 K *(era 35)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Qualche attrito, ma lo scambio di persone sblocca un paio di colli di bottiglia
+**In TV se approvata — principale (investimento):** Qualche attrito, ma lo scambio di persone sblocca un paio di colli di bottiglia  
+**In TV se approvata — alternativa (buon affare):** Le persone prestate portano metodi nuovi: l'azienda ne guadagna parecchio
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -222,9 +253,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Un tecnico di produzione nel tuo laboratorio: prototipi più realistici | I tuoi ricercatori finiscono a fare assistenza: progetti fermi |
 | IT_SICUREZZA | Ti prestano persone esperte: smaltisci le richieste arretrate | Il tuo sistemista prestato altrove: le emergenze restano tutte a te |
 
-#### Nuova sede di rappresentanza in centro — 80 K *(era 95)* · RISCHIO (Grande guadagno per un reparto, perdita sicura per un altro)
+#### Nuova sede di rappresentanza in centro — 80 K *(era 95)* · spreco 🟡 / alternativa investimento
 
-**In TV se approvata (0):** Bella sede, belle foto, stessi clienti di prima: l'affitto si mangia tutto
+**In TV se approvata — principale (spreco, frase 🟡 proposta):** Bella sede, belle foto, stessi clienti di prima: l'affitto ci manda in perdita  
+**In TV se approvata — alternativa (investimento):** La sede in centro attira qualche cliente importante: guadagno modesto
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -237,9 +269,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il tuo laboratorio si sposta nei vecchi uffici, più grandi | Il tuo laboratorio resta in periferia, dimenticato da tutti |
 | IT_SICUREZZA | La nuova sede nasce con i sistemi che hai progettato tu | Nuova sede da collegare in un mese: il tuo reparto in trincea |
 
-#### Settimana corta sperimentale — 30 K *(era 40)* · PAREGGIO (Due guadagnano poco, due perdono poco) · ~~astensione ammessa~~ *(D-060)*
+#### Settimana corta sperimentale — 30 K *(era 40)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Personale più riposato e meno assenze: piccolo guadagno di produttività
+**In TV se approvata — principale (investimento):** Personale più riposato e meno assenze: piccolo guadagno di produttività  
+**In TV se approvata — alternativa (buon affare):** Quattro giorni, ma lavorati tutti: produttività in netta crescita
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -252,9 +285,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Giornate lunghe e senza interruzioni: i tuoi progetti avanzano | Gli esperimenti non si fermano il venerdì: turni di guardia per te |
 | IT_SICUREZZA | Il venerdì i sistemi sono liberi: aggiornamenti senza disturbare nessuno | Il venerdì c'è sempre un guasto, e il reperibile sei tu |
 
-#### Corso di formazione obbligatorio per tutti — 30 K *(era 25)* · AZIENDALE (Buono per l'azienda, costa a due reparti) · ~~astensione ammessa~~ *(D-060)*
+#### Corso di formazione obbligatorio per tutti — 30 K *(era 25)* · buon affare / alternativa spreco
 
-**In TV se approvata (+3):** Il corso funziona davvero: errori dimezzati in tutta l'azienda
+**In TV se approvata — principale (buon affare):** Il corso funziona davvero: errori dimezzati in tutta l'azienda  
+**In TV se approvata — alternativa (spreco):** Una giornata di slide e sbadigli: ore di lavoro perse per niente
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -267,9 +301,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il docente è un tuo contatto universitario: collaborazione in vista | Un corso su cose che il tuo laboratorio sa già: tempo perso |
 | IT_SICUREZZA | Finalmente tutti sanno cos'è una password sicura | Piattaforma del corso da installare e cento password da reimpostare |
 
-#### Auto di rappresentanza per le visite ai clienti — 50 K *(era 45)* · EGOISTICO (Buono per un reparto, cattivo per l'azienda)
+#### Auto di rappresentanza per le visite ai clienti — 50 K *(era 45)* · spreco / alternativa buon affare
 
-**In TV se approvata (-1):** L'auto si vede più spesso al bar che dai clienti: spesa senza ritorno
+**In TV se approvata — principale (spreco):** L'auto si vede più spesso al bar che dai clienti: spesa senza ritorno  
+**In TV se approvata — alternativa (buon affare):** Con l'auto le visite raddoppiano e i clienti firmano: investimento azzeccato
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -282,9 +317,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | L'auto ti serve per portare i prototipi dai clienti: test sul posto | Il tuo furgone per le prove viene venduto per pagare l'auto |
 | IT_SICUREZZA | Auto connessa: la flotta digitale la progetti tu | L'auto connessa va integrata nei sistemi, e il navigatore non va mai |
 
-#### Accordo quadro con un fornitore unico — 50 K *(era 55)* · SACRIFICIO (Un reparto paga, tre guadagnano un poco)
+#### Accordo quadro con un fornitore unico — 50 K *(era 55)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Prezzi bloccati e consegne puntuali: l'accordo quadro ripaga
+**In TV se approvata — principale (buon affare):** Prezzi bloccati e consegne puntuali: l'accordo quadro ripaga  
+**In TV se approvata — alternativa (investimento):** Prezzi bloccati, ma il fornitore unico se la prende comoda: piccolo vantaggio
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -297,9 +333,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il fornitore ti dà in anteprima i suoi materiali nuovi | Il fornitore unico non ha il materiale per il tuo prototipo |
 | IT_SICUREZZA | Ordini automatici con un solo fornitore: integrazione semplice per te | Il fornitore pretende accesso diretto ai nostri sistemi: rischi da coprire |
 
-#### Campagna pubblicitaria in televisione — 80 K *(era 90)* · PROTAGONISTA (Un reparto guadagna molto, due perdono poco)
+#### Campagna pubblicitaria in televisione — 80 K *(era 90)* · buon affare / alternativa spreco 🟡
 
-**In TV se approvata (+2):** Lo spot fa parlare di noi: il marchio guadagna terreno sui concorrenti
+**In TV se approvata — principale (buon affare):** Lo spot fa parlare di noi: il marchio guadagna terreno sui concorrenti  
+**In TV se approvata — alternativa (spreco, frase 🟡 proposta):** Spot simpatico, tutti lo ricordano, nessuno compra: soldi buttati
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -312,9 +349,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Lo spot mostra il tuo prototipo: ora il direttivo lo finanzia volentieri | Lo spot promette un prodotto che il tuo laboratorio non ha finito |
 | IT_SICUREZZA | Lo spot lancia il nuovo sito che hai costruito tu | Dopo lo spot il sito crolla sotto le visite: notte in bianco per te |
 
-#### Digitalizzazione di tutti gli archivi — 50 K *(era 60)* · COPPIA (Due reparti guadagnano, uno perde molto)
+#### Digitalizzazione di tutti gli archivi — 50 K *(era 60)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Qualche file perso, ma ora tutti trovano le cose un po' più in fretta
+**In TV se approvata — principale (investimento):** Qualche file perso, ma ora tutti trovano le cose un po' più in fretta  
+**In TV se approvata — alternativa (buon affare):** Archivi digitali e ricerche istantanee: l'azienda lavora molto più spedita
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -327,9 +365,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Vecchi brevetti ritrovati in archivio ispirano il tuo nuovo progetto | I tuoi quaderni di laboratorio vanno trascritti uno per uno |
 | IT_SICUREZZA | Il progetto lo guidi tu: archivio moderno e budget al tuo reparto | Montagne di scansioni da custodire: spazio e sicurezza a carico tuo |
 
-#### Assunzione di un super-esperto (carissimo) — 80 K *(era 75)* · RISCHIO (Grande guadagno per un reparto, perdita sicura per un altro)
+#### Assunzione di un super-esperto (carissimo) — 80 K *(era 75)* · neutro / alternativa investimento
 
-**In TV se approvata (0):** L'esperto porta idee brillanti e costa una fortuna: alla fine si va in pari
+**In TV se approvata — principale (neutro):** L'esperto porta idee brillanti e costa una fortuna: alla fine si va in pari  
+**In TV se approvata — alternativa (investimento):** L'esperto costa tanto ma risolve due problemi cronici: piccolo guadagno
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -342,9 +381,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | L'esperto entra nel tuo laboratorio: il progetto fa un salto | L'esperto boccia il tuo progetto davanti a tutti |
 | IT_SICUREZZA | L'esperto ti modernizza i sistemi in tre mesi | L'esperto vuole strumenti speciali, compatibili con niente: tocca a te |
 
-#### Nuove regole sulle trasferte — 30 K *(era 20)* · PAREGGIO (Due guadagnano poco, due perdono poco)
+#### Nuove regole sulle trasferte — 30 K *(era 20)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Meno viaggi, meno spese, quasi nessun cliente perso: piccolo risparmio
+**In TV se approvata — principale (investimento):** Meno viaggi, meno spese, quasi nessun cliente perso: piccolo risparmio  
+**In TV se approvata — alternativa (buon affare):** Le videochiamate funzionano: viaggi dimezzati e clienti contenti lo stesso
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -357,9 +397,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Niente congressi inutili: più tempo per il tuo laboratorio | Niente più congressi: il tuo reparto resta indietro sulle novità |
 | IT_SICUREZZA | Videochiamate al posto dei viaggi: il tuo sistema diventa indispensabile | Tutti in videochiamata, e ogni microfono che non va è un problema tuo |
 
-#### Piano di risparmio energetico — 50 K *(era 55)* · AZIENDALE (Buono per l'azienda, costa a due reparti)
+#### Piano di risparmio energetico — 50 K *(era 55)* · buon affare / alternativa neutro
 
-**In TV se approvata (+3):** Bollette giù di un terzo: un risparmio che si sente su tutti i prezzi
+**In TV se approvata — principale (buon affare):** Bollette giù di un terzo: un risparmio che si sente su tutti i prezzi  
+**In TV se approvata — alternativa (neutro):** Bollette più basse, ma la rata degli impianti si mangia il risparmio
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -372,9 +413,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il tuo laboratorio progetta il sistema di recupero del calore | Le tue apparecchiature di prova consumano troppo: orari ridotti |
 | IT_SICUREZZA | Server nuovi e a basso consumo: finalmente | Server spenti di notte per risparmiare: e i backup? |
 
-#### Premio di risultato legato agli obiettivi — 30 K *(era 40)* · EGOISTICO (Buono per un reparto, cattivo per l'azienda) · ~~astensione ammessa~~ *(D-060)*
+#### Premio di risultato legato agli obiettivi — 30 K *(era 40)* · spreco / alternativa buon affare
 
-**In TV se approvata (-1):** Il premio scatena invidie e la corsa agli obiettivi facili: l'azienda ci perde
+**In TV se approvata — principale (spreco):** Il premio scatena invidie e la corsa agli obiettivi facili: l'azienda ci perde  
+**In TV se approvata — alternativa (buon affare):** Tutti inseguono gli obiettivi e li superano: anno record per l'azienda
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -387,9 +429,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il premio va al tuo laboratorio per il brevetto depositato | Obiettivi trimestrali per la ricerca? Il tuo reparto resta a secco |
 | IT_SICUREZZA | Il premio va al tuo reparto: un anno senza blocchi dei sistemi | Il calcolo dei premi va programmato in una settimana: lo fai tu |
 
-#### Partecipazione a una gara d'appalto pubblica — 80 K *(era 70)* · SACRIFICIO (Un reparto paga, tre guadagnano un poco)
+#### Partecipazione a una gara d'appalto pubblica — 80 K *(era 70)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Gara vinta: un cliente pubblico che paga sempre e porta prestigio
+**In TV se approvata — principale (buon affare):** Gara vinta: un cliente pubblico che paga sempre e porta prestigio  
+**In TV se approvata — alternativa (investimento):** Gara vinta col prezzo più basso: lavoro assicurato, margini sottili
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -402,9 +445,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il bando premia l'innovazione: il tuo progetto vale punti preziosi | La gara vuole il prodotto vecchio: il tuo progetto nuovo resta nel cassetto |
 | IT_SICUREZZA | La piattaforma della gara la conosci solo tu: il merito è tuo | Il portale della gara va in crash il giorno della scadenza: panico da te |
 
-#### Sistema di videosorveglianza (anche in mensa) — 50 K *(era 45)* · PROTAGONISTA (Un reparto guadagna molto, due perdono poco) · ~~astensione ammessa~~ *(D-060)*
+#### Sistema di videosorveglianza (anche in mensa) — 50 K *(era 45)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Furti azzerati e assicurazione più bassa: le telecamere si ripagano
+**In TV se approvata — principale (buon affare):** Furti azzerati e assicurazione più bassa: le telecamere si ripagano  
+**In TV se approvata — alternativa (investimento):** Qualche furto in meno, qualche malumore in più: piccolo guadagno
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -417,9 +461,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il laboratorio finalmente protetto: i tuoi prototipi al sicuro | Telecamere nel laboratorio: i tuoi ricercatori si sentono spiati |
 | IT_SICUREZZA | Il sistema lo gestisci tu: il tuo reparto controlla tutto | Mille ore di video da archiviare e proteggere: a carico tuo |
 
-#### Spostamento del magazzino fuori città — 80 K *(era 80)* · COPPIA (Due reparti guadagnano, uno perde molto)
+#### Spostamento del magazzino fuori città — 80 K *(era 80)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Il trasloco costa fatica, ma le consegne lontane ora sono più veloci
+**In TV se approvata — principale (investimento):** Il trasloco costa fatica, ma le consegne lontane ora sono più veloci  
+**In TV se approvata — alternativa (buon affare):** Affitto dimezzato e camion senza traffico: il nuovo magazzino ripaga presto
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -432,9 +477,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il vecchio magazzino diventa il tuo nuovo laboratorio | I campioni per le tue prove ora arrivano dopo giorni |
 | IT_SICUREZZA | Il magazzino nuovo nasce automatizzato: il tuo progetto più bello | Collegare il nuovo magazzino alla rete: cantiere infinito per te |
 
-#### Lancio di una linea di prodotti economici — 80 K *(era 75)* · RISCHIO (Grande guadagno per un reparto, perdita sicura per un altro)
+#### Lancio di una linea di prodotti economici — 80 K *(era 75)* · neutro / alternativa investimento
 
-**In TV se approvata (0):** Le vendite salgono ma i margini spariscono: la linea economica va in pari
+**In TV se approvata — principale (neutro):** Le vendite salgono ma i margini spariscono: la linea economica va in pari  
+**In TV se approvata — alternativa (investimento):** La linea economica porta clienti nuovi senza rubare i vecchi: piccolo guadagno
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -447,9 +493,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Progettare economico è una sfida, e il tuo laboratorio la vince | Il tuo progetto di punta viene sospeso per la linea economica |
 | IT_SICUREZZA | La nuova linea si vende online: il negozio digitale lo fai tu | Nuovi codici, nuovo listino, nuovo sito: tutto entro un mese, tutto tuo |
 
-#### Riunione settimanale obbligatoria del lunedì — 30 K *(era 15)* · PAREGGIO (Due guadagnano poco, due perdono poco) · ~~astensione ammessa~~ *(D-060)*
+#### Riunione settimanale obbligatoria del lunedì — 30 K *(era 15)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Le riunioni del lunedì evitano qualche lavoro doppio: guadagno modesto
+**In TV se approvata — principale (investimento):** Le riunioni del lunedì evitano qualche lavoro doppio: guadagno modesto  
+**In TV se approvata — alternativa (buon affare):** Le riunioni del lunedì allineano tutti: errori e lavori doppi in netto calo
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -462,9 +509,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il lunedì il direttivo vede i tuoi progressi e ti dà fiducia | Ogni lunedì ti chiedono «quando è pronto?» |
 | IT_SICUREZZA | Riunione in videochiamata: il tuo sistema diventa indispensabile | Il proiettore non funziona mai, e ogni lunedì chiamano te |
 
-#### Revisione completa dei contratti con i clienti — 30 K *(era 35)* · AZIENDALE (Buono per l'azienda, costa a due reparti)
+#### Revisione completa dei contratti con i clienti — 30 K *(era 35)* · buon affare / alternativa spreco
 
-**In TV se approvata (+3):** Contratti nuovi, pagamenti puntuali: l'azienda respira come non mai
+**In TV se approvata — principale (buon affare):** Contratti nuovi, pagamenti puntuali: l'azienda respira come non mai  
+**In TV se approvata — alternativa (spreco):** Ai clienti le nuove clausole non piacciono: due se ne vanno sbattendo la porta
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -477,9 +525,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Nei contratti entra la proprietà dei progetti: i tuoi brevetti protetti | I clienti chiedono garanzie sui prodotti futuri: prove extra per te |
 | IT_SICUREZZA | Firma digitale per tutti i contratti: il progetto è tuo | Mille contratti da caricare in un sistema che non esiste ancora |
 
-#### Sponsorizzazione della squadra di calcio locale — 50 K *(era 55)* · EGOISTICO (Buono per un reparto, cattivo per l'azienda)
+#### Sponsorizzazione della squadra di calcio locale — 50 K *(era 55)* · spreco / alternativa buon affare
 
-**In TV se approvata (-1):** La squadra retrocede: il nostro logo su ogni sconfitta
+**In TV se approvata — principale (spreco):** La squadra retrocede: il nostro logo su ogni sconfitta  
+**In TV se approvata — alternativa (buon affare):** La squadra vince il campionato: il nostro logo ovunque, e ordini a pioggia
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -492,9 +541,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | La squadra prova il tuo nuovo materiale: test gratuiti sul campo | I soldi dello sponsor arrivano da un tuo progetto congelato |
 | IT_SICUREZZA | La squadra adotta la tua app per i biglietti: il tuo reparto in vetrina | Il sito della squadra sotto attacco ogni domenica: ora tocca a te difenderlo |
 
-#### Rinnovo dei computer di tutta l'azienda — 80 K *(era 70)* · SACRIFICIO (Un reparto paga, tre guadagnano un poco)
+#### Rinnovo dei computer di tutta l'azienda — 80 K *(era 70)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Computer nuovi, meno blocchi: tutta l'azienda lavora più veloce
+**In TV se approvata — principale (buon affare):** Computer nuovi, meno blocchi: tutta l'azienda lavora più veloce  
+**In TV se approvata — alternativa (investimento):** Computer veloci, ma metà del tempo va a imparare i programmi nuovi
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -507,9 +557,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Computer potenti per le simulazioni: i tuoi progetti accelerano | Dati di ricerca persi nel passaggio ai nuovi computer |
 | IT_SICUREZZA | Finalmente macchine tutte uguali: assistenza dimezzata | Mille computer da configurare in un weekend: tocca al tuo reparto |
 
-#### Programma di benessere aziendale (yoga alle 7) — 30 K *(era 35)* · PROTAGONISTA (Un reparto guadagna molto, due perdono poco)
+#### Programma di benessere aziendale (yoga alle 7) — 30 K *(era 35)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Meno assenze, più energia: lo yoga alle 7 funziona (nessuno lo ammetterà)
+**In TV se approvata — principale (buon affare):** Meno assenze, più energia: lo yoga alle 7 funziona (nessuno lo ammetterà)  
+**In TV se approvata — alternativa (investimento):** Lo yoga alle 7 lo fanno in tre, ma quei tre lavorano meglio: guadagno minimo
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -522,9 +573,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il tuo laboratorio studia la postura ideale: progetto pubblicato | La sala yoga è il tuo vecchio laboratorio |
 | IT_SICUREZZA | L'app del benessere l'hai fatta tu: la usano tutti | Braccialetti contapassi da collegare ai sistemi: privacy e problemi per te |
 
-#### Esternalizzazione dei servizi interni — 30 K *(era 40)* · COPPIA (Due reparti guadagnano, uno perde molto)
+#### Esternalizzazione dei servizi interni — 30 K *(era 40)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Servizi esterni un po' più lenti ma più economici: piccolo vantaggio
+**In TV se approvata — principale (investimento):** Servizi esterni un po' più lenti ma più economici: piccolo vantaggio  
+**In TV se approvata — alternativa (buon affare):** I servizi esterni costano meno e funzionano meglio: buon risparmio
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -537,9 +589,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Le prove a un centro esterno: tu ti concentri sulle idee | Il centro esterno vede i tuoi progetti: rischio di fuga di idee |
 | IT_SICUREZZA | L'assistenza ai computer va fuori: tu ti dedichi ai progetti veri | Gli esterni vogliono accedere ai sistemi: password e rischi da gestire |
 
-#### Apertura di un ufficio all'estero — 80 K *(era 95)* · RISCHIO (Grande guadagno per un reparto, perdita sicura per un altro)
+#### Apertura di un ufficio all'estero — 80 K *(era 95)* · neutro / alternativa investimento
 
-**In TV se approvata (0):** L'ufficio estero vende, ma costa altrettanto: per ora si va in pari
+**In TV se approvata — principale (neutro):** L'ufficio estero vende, ma costa altrettanto: per ora si va in pari  
+**In TV se approvata — alternativa (investimento):** L'ufficio estero trova i primi clienti: piccolo guadagno, per ora
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -552,9 +605,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Apri un piccolo laboratorio accanto a un'università straniera | Il budget per l'estero viene preso dai tuoi progetti |
 | IT_SICUREZZA | Il nuovo ufficio nasce con i tuoi sistemi: un modello per tutta l'azienda | Collegare l'ufficio estero alla rete: fusi orari ed emergenze notturne per te |
 
-#### Codice di abbigliamento aziendale — 30 K *(era 15)* · PAREGGIO (Due guadagnano poco, due perdono poco) · ~~astensione ammessa~~ *(D-060)*
+#### Codice di abbigliamento aziendale — 30 K *(era 15)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** Un'aria più professionale: i clienti notano la differenza, un po'
+**In TV se approvata — principale (investimento):** Un'aria più professionale: i clienti notano la differenza, un po'  
+**In TV se approvata — alternativa (buon affare):** Look professionale, clienti colpiti: diverse trattative chiuse in più
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -567,9 +621,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il laboratorio è esentato: i tuoi ricercatori ti adorano | Camici nuovi obbligatori, scomodi e brutti |
 | IT_SICUREZZA | Il tuo reparto ottiene l'esenzione «felpa»: morale alle stelle | Il badge nelle divise nuove non funziona, e chiamano te |
 
-#### Controllo di gestione mensile su tutti i reparti — 30 K *(era 40)* · AZIENDALE (Buono per l'azienda, costa a due reparti)
+#### Controllo di gestione mensile su tutti i reparti — 30 K *(era 40)* · buon affare / alternativa spreco
 
-**In TV se approvata (+3):** I numeri mensili scovano sprechi ovunque: grande recupero di efficienza
+**In TV se approvata — principale (buon affare):** I numeri mensili scovano sprechi ovunque: grande recupero di efficienza  
+**In TV se approvata — alternativa (spreco):** Più tempo a compilare report che a lavorare: il controllo costa più di quel che scova
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -582,9 +637,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | I numeri mostrano quanto valgono i tuoi brevetti | La ricerca non ha risultati mensili, e ti trattano da spreco |
 | IT_SICUREZZA | Il cruscotto mensile lo costruisci tu: tutti lo guardano | Dati da estrarre da sei sistemi diversi, ogni mese, a mano |
 
-#### Ristrutturazione del piano direzionale — 30 K *(era 40)* · EGOISTICO (Buono per un reparto, cattivo per l'azienda)
+#### Ristrutturazione del piano direzionale — 30 K *(era 40)* · spreco / alternativa buon affare
 
-**In TV se approvata (-1):** Piano direzionale splendido, clienti mai visti: soldi spesi per pochi
+**In TV se approvata — principale (spreco):** Piano direzionale splendido, clienti mai visti: soldi spesi per pochi  
+**In TV se approvata — alternativa (buon affare):** I grandi clienti ora vengono volentieri: trattative chiuse nella sala nuova
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -597,9 +653,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il tuo laboratorio si sposta al piano nuovo: spazio e luce | Il cantiere si prende il deposito dei tuoi prototipi |
 | IT_SICUREZZA | Il piano nuovo ospita la tua sala server, moderna e sicura | Il piano nuovo va cablato da zero: lavoro tutto tuo |
 
-#### Scorte di sicurezza per sei mesi — 50 K *(era 60)* · SACRIFICIO (Un reparto paga, tre guadagnano un poco)
+#### Scorte di sicurezza per sei mesi — 50 K *(era 60)* · buon affare / alternativa spreco
 
-**In TV se approvata (+2):** Arriva la crisi delle forniture: i concorrenti restano a secco, noi no
+**In TV se approvata — principale (buon affare):** Arriva la crisi delle forniture: i concorrenti restano a secco, noi no  
+**In TV se approvata — alternativa (spreco):** La crisi delle forniture non arriva: magazzino pieno e soldi fermi sugli scaffali
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -612,9 +669,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Materiali in abbondanza: prove senza limiti per te | Scorte di materiali vecchi: il tuo nuovo progetto deve usarle |
 | IT_SICUREZZA | Nuovo gestionale di magazzino: il progetto lo guidi tu | Sei mesi di inventario da tracciare: sistemi al limite |
 
-#### Concorso a premi per i clienti — 50 K *(era 45)* · PROTAGONISTA (Un reparto guadagna molto, due perdono poco)
+#### Concorso a premi per i clienti — 50 K *(era 45)* · buon affare / alternativa investimento
 
-**In TV se approvata (+2):** Migliaia di partecipanti al concorso: clienti nuovi e marchio più noto
+**In TV se approvata — principale (buon affare):** Migliaia di partecipanti al concorso: clienti nuovi e marchio più noto  
+**In TV se approvata — alternativa (investimento):** Partecipano soprattutto i clienti che avevamo già: piccolo ritorno
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -627,9 +685,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il premio è il tuo prototipo: test gratuito con mille clienti | Il tuo prototipo dato come premio prima di essere pronto |
 | IT_SICUREZZA | La piattaforma del concorso è tua, ed è un successo | Il sito del concorso crolla il primo giorno, e chiamano te |
 
-#### Turni di lavoro anche il sabato — 30 K *(era 25)* · COPPIA (Due reparti guadagnano, uno perde molto)
+#### Turni di lavoro anche il sabato — 30 K *(era 25)* · investimento / alternativa neutro
 
-**In TV se approvata (+1):** I turni del sabato smaltiscono gli arretrati: qualche ordine in più
+**In TV se approvata — principale (investimento):** I turni del sabato smaltiscono gli arretrati: qualche ordine in più  
+**In TV se approvata — alternativa (neutro):** Straordinari pagati cari e stanchezza il lunedì: gli ordini in più si pagano da soli
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -642,9 +701,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | Il sabato il laboratorio è silenzioso: i tuoi esperimenti più lunghi | Il sabato ti chiedono di fare assistenza alla produzione |
 | IT_SICUREZZA | Il sabato fai gli aggiornamenti in pace | Sistemi accesi anche il sabato: reperibilità per il tuo reparto |
 
-#### Acquisto di un piccolo concorrente in crisi — 80 K *(era 95)* · RISCHIO (Grande guadagno per un reparto, perdita sicura per un altro)
+#### Acquisto di un piccolo concorrente in crisi — 80 K *(era 95)* · spreco 🟡 / alternativa buon affare
 
-**In TV se approvata (0):** Clienti in più, debiti in più: l'acquisizione va in pari
+**In TV se approvata — principale (spreco, frase 🟡 proposta):** I clienti del concorrente scappano, restano i suoi debiti: un buco nei conti  
+**In TV se approvata — alternativa (buon affare):** I clienti del concorrente passano a noi in blocco: affare dell'anno
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -657,9 +717,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | I brevetti del concorrente arrivano nel tuo laboratorio | I progetti del concorrente doppiano i tuoi: il tuo viene chiuso |
 | IT_SICUREZZA | I sistemi del concorrente sono più moderni: li adotti e brilli | Due sistemi incompatibili da unire: un anno di emergenze per te |
 
-#### App aziendale per i clienti — 80 K *(era 75)* · PAREGGIO (Due guadagnano poco, due perdono poco)
+#### App aziendale per i clienti — 80 K *(era 75)* · investimento / alternativa buon affare
 
-**In TV se approvata (+1):** L'app funziona (venerdì sera a parte): qualche ordine in più
+**In TV se approvata — principale (investimento):** L'app funziona (venerdì sera a parte): qualche ordine in più  
+**In TV se approvata — alternativa (buon affare):** L'app piace: i clienti ordinano di più e più spesso
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|
@@ -672,9 +733,10 @@ Fonte di verità: `packages/content/proposte.json` (campi `testi` e `spiegazione
 | RICERCA_SVILUPPO | I dati dell'app ti dicono cosa vogliono i clienti | I clienti chiedono dall'app funzioni che non esistono ancora |
 | IT_SICUREZZA | L'app la sviluppi tu: il progetto più visibile dell'anno | L'app si blocca ogni venerdì sera, e il reperibile sei tu |
 
-#### Bilancio sociale e di sostenibilità — 30 K *(era 25)* · AZIENDALE (Buono per l'azienda, costa a due reparti)
+#### Bilancio sociale e di sostenibilità — 30 K *(era 25)* · buon affare / alternativa neutro
 
-**In TV se approvata (+3):** Il bilancio sociale conquista banche e grandi clienti: salto di reputazione
+**In TV se approvata — principale (buon affare):** Il bilancio sociale conquista banche e grandi clienti: salto di reputazione  
+**In TV se approvata — alternativa (neutro):** Bel documento, applausi al convegno, nessun contratto in più: si va in pari
 
 | Reparto | Se guadagna (+) | Se perde (−) |
 |---|---|---|

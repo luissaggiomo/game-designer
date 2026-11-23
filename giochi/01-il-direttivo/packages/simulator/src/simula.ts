@@ -67,9 +67,10 @@ export interface DatiPartita {
   /** Scarto massimo tra reparti nei totali di bonus e malus delle carte, e trimestri con reparti non smistati (D-069). */
   equita: { scarto: number; violazioni: number };
   cassaInizioTrimestre: number[];
-  /** Cassa dopo l'ultima votazione di ogni trimestre e minima dopo le votazioni (obiettivi sulla cassa). */
+  /** Cassa dopo il voto di ogni trimestre (obiettivi sulla cassa). */
   cassaFineTrimestre: number[];
-  cassaMinimaDopoVoti: number;
+  /** Le 12 carte della partita: costo, effetto sull'azienda, famiglia (D-077), se approvata. */
+  carte: { costo: number; effetto: number; famiglia: string; approvata: boolean }[];
   /** Per trimestre: effetto sull'azienda di proposte approvate e segreti arrivati in tempo (D-056). */
   crescitaProposteESegreti: number[];
   /** Finale "Rinnovo dei contratti" (D-058). */
@@ -114,7 +115,7 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     robot.set(g.id, new Robot(g.id, profilo, ambiente, creaCasuale(casuale.intero(1, 2 ** 31))));
   }
 
-  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "cassaMinimaDopoVoti" | "crescitaProposteESegreti" | "finale" | "equita"> & { mosse: DatiPartita["mosse"] } = {
+  const dati: Omit<DatiPartita, "mercato" | "dettaglio" | "segreti" | "spieLicenziate" | "onestiLicenziatiNelFinale" | "cassaFineTrimestre" | "carte" | "crescitaProposteESegreti" | "finale" | "equita"> & { mosse: DatiPartita["mosse"] } = {
     giocatori: n,
     seme,
     spie: 0,
@@ -189,7 +190,12 @@ export function simulaPartita(n: number, seme: number, ambiente: Ambiente, opzio
     configurazioneSpie: spie.length === 0 ? "0" : spie.length === 1 ? "1" : concorrentiSpie.size === 1 ? "2 alleate" : "2 rivali",
     mercato,
     cassaFineTrimestre: p.storicoTrimestri.map((t) => t.cassaFine),
-    cassaMinimaDopoVoti: Math.min(...p.storicoVotazioni.map((r) => r.cassaDopo)),
+    carte: p.carte.flat().map((c) => ({
+      costo: c.costo,
+      effetto: c.effettoAzienda,
+      famiglia: Object.values(ambiente.schemi).find((s) => s.costo === c.costo && s.effettoAzienda === c.effettoAzienda)?.famiglia ?? "?",
+      approvata: c.approvata === true,
+    })),
     equita: p.equita ?? { scarto: 0, violazioni: 0 },
     crescitaProposteESegreti: p.storicoTrimestri.map((t) => (t.effettoProposte ?? 0) + (t.effettoSegreti ?? 0)),
     finale: {

@@ -12,7 +12,7 @@
 import type { AzioneGiocatore, Esito, Evento } from "./azioni.js";
 import type { Ambiente } from "./contenuti.js";
 import { creaCasuale } from "./rng.js";
-import type { GiocatoreId, Partita, PropostaIstanza, Voto } from "./tipi.js";
+import type { DatiPacchetto, GiocatoreId, Partita, PropostaIstanza, Voto, VotoTrimestre } from "./tipi.js";
 
 /** Chiave di un pacchetto (per confrontarli e contarli). */
 export const chiavePacchetto = (pacchetto: string[]): string => [...pacchetto].sort().join("+");
@@ -67,30 +67,52 @@ export function votaSecondo(partita: Partita, azione: Extract<AzioneGiocatore, {
   return { ok: true, partita: nuova, eventi: [{ tipo: "VOTO_REGISTRATO", da: g.id, causa: `${g.nome} ha votato` }] };
 }
 
-/** Approva il pacchetto: segna le proposte, paga, registra lo storico. Modifica la copia ricevuta. */
-function approva(partita: Partita, pacchetto: string[]): void {
+/** Approva il pacchetto: segna le proposte, paga, registra lo storico (D-076). Modifica la copia ricevuta. */
+function approva(partita: Partita, pacchetto: string[], esito: NonNullable<VotoTrimestre["esito"]>): void {
   const voto = partita.votoTrimestre!;
   voto.approvato = [...pacchetto];
+  voto.esito = esito;
   for (const p of partita.proposteTrimestre) p.approvata = pacchetto.includes(p.id);
   partita.azienda.cassa -= costoPacchetto(partita, pacchetto);
-  // Storico per proposta (obiettivi, da rivedere con D-071): "SI" se il primo voto la conteneva.
+
   const costoMassimo = Math.max(...partita.proposteTrimestre.map((x) => x.costo));
-  partita.proposteTrimestre.forEach((p, i) => {
-    const voti: Partial<Record<GiocatoreId, Voto>> = {};
-    for (const [id, scelto] of Object.entries(voto.voti)) if (scelto) voti[id] = scelto.includes(p.id) ? "SI" : "NO";
-    partita.storicoVotazioni.push({
-      propostaId: p.id,
-      trimestre: partita.trimestre,
-      posizione: i + 1,
-      votazioniDelTrimestre: partita.proposteTrimestre.length,
-      costo: p.costo,
-      piuCostosa: p.costo === costoMassimo,
-      approvata: p.approvata === true,
-      effettoAzienda: p.effettoAzienda,
-      voti,
-      decisivi: [],
-      cassaDopo: partita.azienda.cassa,
-    });
+  const pacchetti: Record<string, DatiPacchetto> = {};
+  for (const pk of voto.pacchetti) {
+    const proposte = pk.map((id) => partita.proposteTrimestre.find((x) => x.id === id)!);
+    pacchetti[chiavePacchetto(pk)] = {
+      costo: proposte.reduce((s, x) => s + x.costo, 0),
+      conPiuCara: proposte.some((x) => x.costo === costoMassimo),
+      effettoAzienda: proposte.reduce((s, x) => s + x.effettoAzienda, 0),
+    };
+  }
+  const primiVoti: Partial<Record<GiocatoreId, string>> = {};
+  for (const [id, scelto] of Object.entries(voto.voti)) if (scelto) primiVoti[id] = chiavePacchetto(scelto);
+  const secondiVoti: Partial<Record<GiocatoreId, Voto>> = { ...voto.secondiVoti };
+  const approvato = chiavePacchetto(pacchetto);
+
+  // Voto decisivo (D-076).
+  const serve = maggioranza(partita);
+  let decisivi: GiocatoreId[] = [];
+  if (esito === "PRIMO_VOTO") {
+    const favorevoli = Object.keys(primiVoti).filter((id) => primiVoti[id] === approvato);
+    if (favorevoli.length === serve) decisivi = favorevoli;
+  } else {
+    const si = Object.keys(secondiVoti).filter((id) => secondiVoti[id] === "SI");
+    const no = Object.keys(secondiVoti).filter((id) => secondiVoti[id] === "NO");
+    if (esito === "PRINCIPALE" && si.length === serve) decisivi = si;
+    if (esito === "ALTERNATIVA" && si.length === serve - 1) decisivi = no;
+  }
+
+  partita.storicoPacchetti.push({
+    trimestre: partita.trimestre,
+    pacchetti,
+    primiVoti,
+    ...(voto.principale ? { principale: chiavePacchetto(voto.principale) } : {}),
+    secondiVoti,
+    approvato,
+    esito,
+    decisivi,
+    cassaDopo: partita.azienda.cassa,
   });
 }
 
@@ -108,8 +130,7 @@ export function chiudiVotoPacchetto(partita: Partita, ambiente: Ambiente): Event
   const inTesta = voto.pacchetti.filter((p) => massimo > 0 && conteggio.get(chiavePacchetto(p)) === massimo);
 
   if (massimo >= maggioranza(partita) && inTesta.length === 1) {
-    approva(partita, inTesta[0]!);
-    voto.esito = "PRIMO_VOTO";
+    approva(partita, inTesta[0]!, "PRIMO_VOTO");
     return [
       {
         tipo: "VOTO_PACCHETTO_CHIUSO",
@@ -154,8 +175,7 @@ export function chiudiSecondoVoto(partita: Partita, ambiente: Ambiente): Evento[
   const si = Object.values(rivelati).filter((v) => v === "SI").length;
   const passa = si >= maggioranza(partita);
   const pacchetto = passa ? voto.principale : voto.alternativa;
-  approva(partita, pacchetto);
-  voto.esito = passa ? "PRINCIPALE" : "ALTERNATIVA";
+  approva(partita, pacchetto, passa ? "PRINCIPALE" : "ALTERNATIVA");
   return [
     {
       tipo: "SECONDO_VOTO_CHIUSO",

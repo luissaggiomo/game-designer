@@ -80,7 +80,10 @@ type ContenutoEvento =
   /** Pubblico: quale segreto ha usato il concorrente, e se era falso (GDD §11.3–11.4). */
   | { tipo: "SEGRETO_USATO"; concorrente: string; segretoId: string; falso: boolean; variazione: number; causa: string }
   /** Licenziamento: il ruolo viene rivelato subito (GDD §15). */
-  | { tipo: "LICENZIAMENTO"; giocatore: GiocatoreId; spia: boolean; causa: string }
+  /** Licenziamento nel finale: il ruolo NON si rivela qui (D-078). */
+  | { tipo: "LICENZIAMENTO"; giocatore: GiocatoreId; causa: string }
+  /** Al punteggio: ruoli dei licenziati svelati (D-078). */
+  | { tipo: "RUOLI_RIVELATI"; giocatori: GiocatoreId[]; causa: string }
   /** Dice solo chi ha risposto / nominato, mai cosa. */
   | { tipo: "RISPOSTA_REGISTRATA"; da: GiocatoreId; causa: string }
   /** Domanda del finale: voto palese (D-058). */

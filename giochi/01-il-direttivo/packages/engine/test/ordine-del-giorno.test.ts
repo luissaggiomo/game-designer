@@ -90,9 +90,30 @@ describe("algoritmo di equità (D-069)", () => {
   it("in una carta un reparto ha al massimo un ruolo", () => {
     const p = nuova(4, 8);
     for (const c of p.carte.flat()) {
-      const schema = Object.values(ambiente.schemi).find((s) => s.costo === c.costo)!;
       const coinvolti = Object.values(c.effettiPrivati).filter((e) => (e?.punti ?? 0) !== 0).length;
-      expect(coinvolti).toBeLessThanOrEqual(Math.max(...Object.values(ambiente.schemi).filter((x) => x.costo === schema.costo).map((x) => x.ruoli.length)));
+      const forme = Object.values(ambiente.schemi).filter((x) => x.costo === c.costo).flatMap((x) => x.forme);
+      expect(coinvolti).toBeLessThanOrEqual(Math.max(...forme.map((f) => f.length)));
+    }
+  });
+
+  it("famiglie di schemi (D-077): ogni carta ha l'effetto della sua famiglia e una forma del suo costo", () => {
+    for (const seme of [3, 9, 27]) {
+      const p = nuova(5, seme);
+      for (const c of p.carte.flat()) {
+        const modello = ambiente.mazzo.find((m) => m.id === c.modelloId)!;
+        const nomi = [modello.schema, modello.alternativa?.schema].filter((x): x is string => !!x);
+        const schema = nomi.map((n) => ambiente.schemi[n]!).find((s) => s.effettoAzienda === c.effettoAzienda);
+        expect(schema, c.id).toBeDefined();
+        const punti = Object.values(c.effettiPrivati).map((e) => e?.punti ?? 0).filter((x) => x !== 0).sort((a, b) => a - b);
+        expect(schema!.forme.map((f) => [...f].sort((a, b) => a - b))).toContainEqual(punti);
+      }
+    }
+  });
+
+  it("famiglie di schemi (D-077): principale e alternativa di famiglie diverse, quattro famiglie per costo", () => {
+    for (const m of ambiente.mazzo) expect(ambiente.schemi[m.schema]!.famiglia).not.toBe(ambiente.schemi[m.alternativa!.schema]!.famiglia);
+    for (const costo of ambiente.config.proposte.costi) {
+      expect(new Set(Object.values(ambiente.schemi).filter((s) => s.costo === costo).map((s) => s.famiglia)).size).toBe(4);
     }
   });
 

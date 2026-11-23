@@ -68,6 +68,21 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
   }
   sezioni.push(tabella(["Giocatori", "Spie", "Partite", "Vincono gli onesti", "Vince la spia"], righeFazione));
 
+  // 1d. Equilibrio della spia (D-075): vittoria e primo posto in classifica vicini a 1/N (±3–4 punti).
+  sezioni.push("\n### Equilibrio della spia (D-075, partite con una spia)\n\nUn ruolo è equilibrato se vince circa **una volta ogni N partite** (scarto accettabile ±3–4 punti). \"Prima in classifica\" = la spia ha il punteggio personale più alto (pari merito compreso).\n");
+  const righeEquilibrio: (string | number)[][] = [];
+  for (const n of numeri) {
+    const g = perN(n).filter((p) => p.configurazioneSpie === "1");
+    if (g.length === 0) continue;
+    const vince = g.filter((p) => p.vincitoreFazione === "SPIE").length / g.length;
+    const prima = g.filter((p) => p.dettaglio.some((x) => x.spia && x.vincitore)).length / g.length;
+    righeEquilibrio.push([n, g.length, pct(1, n), pct(vince * g.length, g.length), pct(prima * g.length, g.length)]);
+    if (g.length >= 100 && (Math.abs(prima - 1 / n) > 0.04 || Math.abs(vince - 1 / n) > 0.04)) {
+      avvisi.push({ testo: `Con ${n} giocatori la spia vince il ${(vince * 100).toFixed(0)}% ed è prima in classifica nel ${(prima * 100).toFixed(0)}% (metro 1/N = ${(100 / n).toFixed(0)}%, D-075).` });
+    }
+  }
+  sezioni.push(tabella(["Giocatori", "Partite", "Metro 1/N", "Vince la spia", "Spia prima in classifica"], righeEquilibrio));
+
   // 2. Finale "Rinnovo dei contratti" (D-058).
   sezioni.push("\n## 2. Finale: rinnovo dei contratti (D-058)\n\nLa domanda \"C'è una spia?\" passa con almeno metà di sì. \"Doppio\" = due licenziati per stallo ripetuto a due; \"Ultima a vuoto\" = percorso a tre finito senza licenziati.\n");
   sezioni.push(
@@ -177,6 +192,28 @@ export function creaReport(partite: DatiPartita[], intestazione: string, ambient
     ),
   );
   sezioni.push(`\nCassa media a fine anno: ${dec(media(partite.map((p) => p.cassaFineTrimestre.at(-1) ?? 0)))} K.`);
+
+  // 5a. Effetto delle carte per costo (D-070, D-077): in media proporzionale al costo, la grande quanto le due piccole.
+  sezioni.push("\n### Effetto delle carte sull'azienda per costo (D-070, D-077)\n\nEffetto medio sull'azienda delle carte uscite (approvate o no) e di quelle approvate. Obiettivo: proporzionale al costo, cioè la grande in media quanto le due piccole insieme. Famiglie: quota di carte uscite per famiglia.\n");
+  const carte = partite.flatMap((p) => p.carte);
+  const costi = [...new Set(carte.map((c) => c.costo))].sort((a, b) => a - b);
+  const famiglie = ["BUON_AFFARE", "INVESTIMENTO", "NEUTRO", "SPRECO"];
+  const mediaCosto = (costo: number) => media(carte.filter((c) => c.costo === costo).map((c) => c.effetto));
+  sezioni.push(
+    tabella(
+      ["Costo (K)", "Carte uscite", "Effetto medio", "Effetto per 10 K", "Effetto medio se approvata", ...famiglie.map((f) => f.toLowerCase().replace("_", " "))],
+      costi.map((costo) => {
+        const g = carte.filter((c) => c.costo === costo);
+        const approvate = g.filter((c) => c.approvata);
+        return [costo, g.length, dec(mediaCosto(costo), 2), dec((mediaCosto(costo) * 10) / costo, 2), dec(media(approvate.map((c) => c.effetto)), 2), ...famiglie.map((f) => pct(g.filter((c) => c.famiglia === f).length, g.length))];
+      }),
+    ),
+  );
+  if (costi.length === 3) {
+    const [a, b, c] = costi.map(mediaCosto) as [number, number, number];
+    sezioni.push(`\nLe due piccole insieme: **${dec(a + b, 2)}** · la grande: **${dec(c, 2)}**.`);
+    if (Math.abs(a + b - c) > 0.25 * Math.max(a + b, c)) avvisi.push({ testo: `Carte: le due piccole rendono in media ${dec(a + b, 2)}, la grande ${dec(c, 2)} (non proporzionale al costo, D-070).` });
+  }
 
   // 5b. Crescita dell'azienda (D-056): serve a tarare la velocità del concorrente.
   sezioni.push("\n### Crescita dell'azienda da proposte e segreti (D-056)\n\nEffetto medio per trimestre delle proposte approvate e dei segreti arrivati in tempo, nelle partite **senza spie**: è il valore da usare per `concorrenti.crescitaMediaProposteESegreti`.\n");
@@ -311,13 +348,12 @@ function sezioneSoglie(partite: DatiPartita[], ambiente: Ambiente): string[] {
     if (gs.length < 30) continue;
     const suggerite: number[] = [];
     o.traguardi.forEach((t, i) => {
-      if (t.parametro !== undefined) {
+      if (t.parametro !== undefined && (t.misura === "TRIMESTRI_CASSA_MINIMA" || t.misura === "CASSA_FINE_ANNO")) {
         // Obiettivi sulla cassa: si cerca l'importo (a passi di 10 K) invece della soglia.
         const giochi = partite.filter((p) => p.dettaglio.some((g) => g.obiettivo.id === o.id));
         const riesce = (p: DatiPartita, k: number): boolean => {
           if (t.misura === "TRIMESTRI_CASSA_MINIMA") return p.cassaFineTrimestre.filter((c) => c >= k).length >= (t.soglia as number);
           if (t.misura === "CASSA_FINE_ANNO") return (p.cassaFineTrimestre.at(-1) ?? 0) >= k;
-          if (t.misura === "CASSA_MAI_SOTTO") return p.cassaMinimaDopoVoti >= k;
           return false;
         };
         const quota = (k: number) => giochi.filter((p) => riesce(p, k)).length / giochi.length;

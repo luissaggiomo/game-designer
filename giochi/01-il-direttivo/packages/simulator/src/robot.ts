@@ -62,10 +62,11 @@ const PROBABILITA_CHIACCHIERA = 0.35;
 
 /** Cosa fa un robot per ciascuna misura degli obiettivi (le misure "passive" non hanno regole). */
 type Intenzione =
+  | "SEGUI"
   | "VOTA_CONTRO"
+  | "SOLITARIO"
   | "VOTA_NO"
   | "VOTA_SI"
-  | "SELETTIVO"
   | "NO_PIU_COSTOSA"
   | "RISPARMIA"
   | "MOSSA_AZIENDA"
@@ -76,20 +77,29 @@ type Intenzione =
   | "ANONIMO"
   | "NON_CONSEGNARE_FONTE";
 
+/**
+ * Obiettivi sul voto del pacchetto (D-076). "SEGUI" = votare il pacchetto che probabilmente vincerà
+ * (serve per "il tuo pacchetto passa", "decisivo", "positivo": il robot non conosce gli effetti
+ * sull'azienda, quindi può solo stare con la maggioranza); "VOTA_CONTRO" = un pacchetto diverso da
+ * quello che probabilmente vincerà; "SOLITARIO" = quello che nessun altro dovrebbe votare.
+ */
 const INTENZIONI: Record<string, Intenzione> = {
-  VOTI_CONTRO_ESITO: "VOTA_CONTRO",
-  VOTI_UNICA_VOCE: "VOTA_CONTRO",
-  NO_SU_APPROVATE: "VOTA_NO",
-  DECISIVI_PER_RESPINGERE: "VOTA_NO",
-  SI_SU_RESPINTE: "VOTA_SI",
-  SI_POSITIVE: "VOTA_SI",
-  DECISIVI_PER_APPROVARE_POSITIVE: "VOTA_SI",
-  SI_SENZA_DANNOSE: "SELETTIVO",
-  NO_PIU_COSTOSA: "NO_PIU_COSTOSA",
-  NO_PIU_COSTOSA_RESPINTA: "NO_PIU_COSTOSA",
+  PRIMO_VOTO_DIVERSO_DA_APPROVATO: "VOTA_CONTRO",
+  UNICO_SUL_PACCHETTO: "SOLITARIO",
+  PRIMO_VOTO_COME_APPROVATO: "SEGUI",
+  APPROVATO_AL_PRIMO_VOTO: "SEGUI",
+  VOTI_DECISIVI: "SEGUI",
+  PACCHETTO_APPROVATO_POSITIVO: "SEGUI",
+  PACCHETTI_APPROVATI_SENZA_DANNOSI: "SEGUI",
+  PACCHETTO_SENZA_PIU_CARA: "NO_PIU_COSTOSA",
+  PACCHETTO_SENZA_PIU_CARA_APPROVATO: "NO_PIU_COSTOSA",
   TRIMESTRI_CASSA_MINIMA: "RISPARMIA",
   CASSA_FINE_ANNO: "RISPARMIA",
-  CASSA_MAI_SOTTO: "RISPARMIA",
+  NO_AL_PRINCIPALE: "VOTA_NO",
+  NO_DECISIVO_PER_ALTERNATIVA: "VOTA_NO",
+  NO_PRINCIPALE_APPROVATO: "VOTA_NO",
+  SI_PRINCIPALE_RESPINTO: "VOTA_SI",
+  SECONDO_VOTO_CONTRO_ESITO: "VOTA_SI",
   MOSSE_AZIENDA: "MOSSA_AZIENDA",
   TRIMESTRI_META_AZIENDA: "MOSSA_AZIENDA",
   TRIMESTRI_MAGGIORANZA_AZIENDA: "MOSSA_AZIENDA",
@@ -106,12 +116,19 @@ const INTENZIONI: Record<string, Intenzione> = {
   FONTE_MAI_AL_CONCORRENTE: "NON_CONSEGNARE_FONTE",
 };
 
+/** "Forma" di un pacchetto: i costi delle sue proposte (es. "30+50"), confrontabile tra trimestri. */
+const forma = (costi: number[]) => [...costi].sort((a, b) => a - b).join("+");
+/** Senza informazioni (1° trimestre) il robot pensa che gli altri votino le due piccole. */
+const FORMA_PRESUNTA = "30+50";
+
 export class Robot {
   readonly sospetto = new Map<GiocatoreId, number>();
   private readonly inviati: { titolo: string; a: GiocatoreId }[] = [];
   private readonly ricevuti: { titolo: string; da: GiocatoreId }[] = [];
   private readonly condivisi = new Set<string>();
   private readonly consegnati = new Set<string>();
+  /** Forma dell'ultimo pacchetto votato da ciascun collega al primo voto (voti pubblici, D-019). */
+  private readonly ultimaForma = new Map<GiocatoreId, string>();
 
   constructor(
     readonly id: GiocatoreId,
@@ -193,6 +210,14 @@ export class Robot {
 
   /** Aggiorna i sospetti in base agli eventi ricevuti (solo informazioni a cui il robot ha diritto). */
   osserva(eventi: Evento[], v: VistaGiocatore): void {
+    // Voti del pacchetto rivelati alla chiusura: li ricordano tutti, spie comprese.
+    for (const e of eventi) {
+      if (e.tipo !== "VOTO_PACCHETTO_CHIUSO") continue;
+      for (const [id, pk] of Object.entries(e.voti)) {
+        if (id === this.id || !Array.isArray(pk)) continue;
+        this.ultimaForma.set(id, forma(pk.map((x) => v.ordineDelGiorno.find((o) => o.id === x)?.costo ?? 0)));
+      }
+    }
     if (this.spia(v)) return;
     for (const e of eventi) {
       if (e.tipo === "SEGRETO_USATO" || e.tipo === "FUGA_DI_NOTIZIE") {
@@ -288,9 +313,10 @@ export class Robot {
         if (io.stato !== "ATTIVO" || !v.votoTrimestre) break;
         const pacchetti = v.votoTrimestre.pacchetti;
         if (pacchetti.length === 0) break;
-        const costo = (pk: string[]) => pk.reduce((t, id) => t + (v.ordineDelGiorno.find((x) => x.id === id)?.costo ?? 0), 0);
+        const costoDi = (id: string) => v.ordineDelGiorno.find((x) => x.id === id)?.costo ?? 0;
+        const costo = (pk: string[]) => pk.reduce((t, id) => t + costoDi(id), 0);
         const piuCara = Math.max(...v.ordineDelGiorno.map((x) => x.costo));
-        const conCara = (pk: string[]) => pk.some((id) => v.ordineDelGiorno.find((x) => x.id === id)?.costo === piuCara);
+        const conCara = (pk: string[]) => pk.some((id) => costoDi(id) === piuCara);
         // Punteggio di un pacchetto: effetto sul mio reparto; il cooperativo preferisce investire di più
         // (crede che spendere aiuti l'azienda); gli obiettivi spostano un po' la scelta.
         const risparmia = this.vuole(v, "RISPARMIA");
@@ -300,8 +326,26 @@ export class Robot {
           (p.nome === "COOPERATIVO" ? costo(pk) / 100 : 0) -
           (risparmia ? costo(pk) / 40 : 0) -
           (noCara && conCara(pk) ? 3 : 0);
-        // La spia non sa quale pacchetto aiuta l'azienda: segue il suo interesse o vota a caso.
-        const scelto = spia && r.probabilita(p.sabotaggio * 0.5) ? r.scegli(pacchetti) : this.migliore(pacchetti, valore);
+        // Quanti colleghi dovrebbero votare ciascun pacchetto (come hanno votato l'ultima volta).
+        const altri = v.giocatori.filter((g) => g.stato === "ATTIVO" && g.id !== this.id);
+        const previsti = (pk: string[]) => {
+          const f = forma(pk.map(costoDi));
+          return altri.filter((g) => (this.ultimaForma.get(g.id) ?? FORMA_PRESUNTA) === f).length;
+        };
+        const favorito = this.migliore(pacchetti, (pk) => previsti(pk) * 100 + valore(pk));
+        let scelto: string[];
+        if (spia && r.probabilita(p.sabotaggio * 0.5)) {
+          // La spia non sa quale pacchetto aiuta l'azienda: a volte vota a caso.
+          scelto = r.scegli(pacchetti);
+        } else if (this.vuole(v, "SOLITARIO")) {
+          scelto = this.migliore(pacchetti, (pk) => -previsti(pk) * 100 + valore(pk));
+        } else if (this.vuole(v, "VOTA_CONTRO") && pacchetti.length > 1) {
+          scelto = this.migliore(pacchetti.filter((pk) => pk !== favorito), valore);
+        } else if (this.vuole(v, "SEGUI")) {
+          scelto = favorito;
+        } else {
+          scelto = this.migliore(pacchetti, valore);
+        }
         azioni.push({ tipo: "VOTA_PACCHETTO", da: this.id, pacchetto: scelto });
         break;
       }
@@ -311,7 +355,16 @@ export class Robot {
         // L'alternativa è coperta: la stimo come la media degli altri pacchetti possibili.
         const altri = v.votoTrimestre.pacchetti.filter((pk) => pk.join("+") !== principale.join("+"));
         const attesa = altri.length > 0 ? altri.reduce((t, pk) => t + this.puntiPacchetto(v, pk), 0) / altri.length : 0;
-        const si = spia && r.probabilita(p.sabotaggio * 0.5) ? r.probabilita(0.5) : this.puntiPacchetto(v, principale) >= attesa;
+        // Obiettivi sul secondo voto (D-076): "NO al principale" / "SÌ a un principale che non passa";
+        // con entrambi aperti (Controcorrente) sceglie a caso.
+        const vuoleNo = this.vuole(v, "VOTA_NO");
+        const vuoleSi = this.vuole(v, "VOTA_SI");
+        let si: boolean;
+        if (spia && r.probabilita(p.sabotaggio * 0.5)) si = r.probabilita(0.5);
+        else if (vuoleNo && vuoleSi) si = r.probabilita(0.5);
+        else if (vuoleNo) si = false;
+        else if (vuoleSi) si = true;
+        else si = this.puntiPacchetto(v, principale) >= attesa;
         azioni.push({ tipo: "VOTA", da: this.id, voto: si ? "SI" : "NO" });
         break;
       }

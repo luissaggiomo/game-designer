@@ -104,12 +104,17 @@ describe("finale: la domanda \"C'è una spia?\" (D-058)", () => {
 });
 
 describe("finale: i nomi (D-058)", () => {
-  it("più della metà dei nomi fatti → licenziato subito, ruolo rivelato", () => {
+  it("più della metà dei nomi fatti → licenziato subito, ruolo svelato solo al punteggio (D-078)", () => {
     const q = aiNomi(conSpia(nuova()));
     const { partita, eventi } = vota(q, { g2: "g1", g3: "g1", g4: "g1", g1: "g2" }); // 3 su 4
     expect(g(partita, "g1").stato).toBe("LICENZIATO");
-    expect(eventi.find((e) => e.tipo === "LICENZIAMENTO")?.causa).toContain("spia");
+    const licenziamento = eventi.find((e) => e.tipo === "LICENZIAMENTO")!;
+    expect(licenziamento.causa).not.toMatch(/spia|onest/);
+    expect(Object.keys(licenziamento)).not.toContain("spia");
     expect(partita.fase.nome).toBe("PUNTEGGIO");
+    // Il ruolo esce con il punteggio, prima della classifica.
+    const rivelati = eventi.find((e) => e.tipo === "RUOLI_RIVELATI");
+    expect(rivelati?.causa).toContain("era una spia");
   });
 
   it("la maggioranza si conta sui votanti: chi non fa un nome non conta", () => {
@@ -257,6 +262,17 @@ describe("finale con 8 giocatori: secondo giro (D-058)", () => {
     expect(g(partita, "g1").stato).toBe("LICENZIATO");
     expect(partita.fase).toEqual({ nome: "DOMANDA", giro: 2 });
     expect(rifiutata(partita, { tipo: "DOMANDA_SPIA", da: "g1", risposta: "SI" })).toBe(true);
+  });
+
+  it("nel secondo giro nessuno sa se il primo licenziato era una spia (D-078)", () => {
+    const q = aiNomi(conSpia(nuova(8)));
+    const voti = Object.fromEntries(["g2", "g3", "g4", "g5", "g6"].map((id) => [id, "g1"]));
+    const { partita, eventi } = vota(q, voti);
+    expect(partita.fase).toEqual({ nome: "DOMANDA", giro: 2 });
+    expect(eventi.some((e) => e.tipo === "RUOLI_RIVELATI")).toBe(false);
+    expect(eventi.find((e) => e.tipo === "LICENZIAMENTO")!.causa).not.toMatch(/spia|onest/);
+    expect(vistaTV(partita, ambiente).giocatori.find((x) => x.id === "g1")!.fazione).toBeUndefined();
+    for (const id of ["g2", "g7"]) expect(vistaGiocatore(partita, id, ambiente).giocatori.find((x) => x.id === "g1")!.fazione).toBeUndefined();
   });
 
   it("due licenziati (doppio stallo) → niente secondo giro", () => {

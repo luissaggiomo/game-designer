@@ -86,7 +86,7 @@ export function creaPartita(partecipanti: NuovoGiocatore[], seme: number, ambien
     coinvolgimentiSegreti: {},
     contatore: 0,
     obiettivi: {},
-    storicoVotazioni: [],
+    storicoPacchetti: [],
     storicoTrimestri: [],
     finale: { risposte: {}, nomine: {}, esitiDomanda: [], votazioni: [], licenziamenti: [] },
   };

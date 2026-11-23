@@ -152,7 +152,7 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 
 ✅ *(provvisorio — D-048, confermato da Luis il 23/11/2026)* **La scelta fra tre resta**: dà a ognuno la possibilità di prendersi in parte la responsabilità del proprio destino, decidendo quale rischio assumersi.
 
-✅ *(provvisorio, soglie ⚖️ da tarare col simulatore — D-052; «Intermediario» al posto di «Riformatore» e «Squadra» riscritti con il conteggio della mossa privata, D-057, D-061, approvati il 23/11/2026)* **Lista:** 34 obiettivi (12 di tipo 1, 11 di tipo 2, 11 di tipo 3 dopo la ritaratura D-053), di cui 4 aziendalisti per tipo. Regole di verifica: l'avanzamento sul telefono conta solo ciò che il giocatore può già sapere, il resto si verifica a fine partita; contano solo le scelte del giocatore (non voti scaduti né scelte predefinite); i voti con peso 0 non contano. ⚠️ *(D-071)* Gli obiettivi sui voti e sulla cassa (circa 32 traguardi su 68) vanno riscritti per il voto del pacchetto, a regole fissate. Lista completa: [contenuti/obiettivi.md](contenuti/obiettivi.md).
+✅ *(provvisorio, soglie ⚖️ da tarare col simulatore — D-052; «Intermediario» al posto di «Riformatore» e «Squadra» riscritti con il conteggio della mossa privata, D-057, D-061, approvati il 23/11/2026)* **Lista:** 34 obiettivi (12 di tipo 1, 11 di tipo 2, 11 di tipo 3 dopo la ritaratura D-053), di cui 4 aziendalisti per tipo. Regole di verifica: l'avanzamento sul telefono conta solo ciò che il giocatore può già sapere, il resto si verifica a fine partita; contano solo le scelte del giocatore (non voti scaduti né scelte predefinite); i voti con peso 0 non contano. ⚠️ *(D-071)* Gli obiettivi sui voti e sulla cassa (circa 32 traguardi su 68) vanno riscritti per il voto del pacchetto, a regole fissate. Lista completa: [contenuti/obiettivi.md](contenuti/obiettivi.md). *(D-076, 23/11/2026: 16 obiettivi riscritti per il voto del pacchetto, con le definizioni di "voto decisivo" e "pacchetto positivo"; soglie tarate col report 14, vedi [contenuti/obiettivi.md](contenuti/obiettivi.md).)*
 
 ---
 
@@ -296,7 +296,7 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 ✅ **Algoritmo di equità (D-069).** A inizio partita il gioco sceglie le 12 carte (e la loro versione, D-045) e assegna i ruoli ai reparti occupati in modo che, **sulla somma delle 12 carte**, ogni reparto riceva **lo stesso totale di bonus e lo stesso totale di malus** (differenza massima **1 punto** se la parità esatta è impossibile). Se un reparto finisce penalizzato è per le scelte dei giocatori, mai per le carte.
 ✅ **Reparti smistati (D-069).** Nello stesso trimestre si evita che un reparto abbia un bonus sia nella grande sia nelle due piccole: il pacchetto deve mettere reparti diversi uno contro l'altro. I bonus di ciascun reparto si distribuiscono tra trimestri diversi.
 ✅ Vincoli dell'estrazione che restano: trimestri ammessi del quesito, categorie diverse nello stesso trimestre, nessun ruolo ai reparti vacanti (D-006).
-✅ *(D-071)* **Contenuti da riscrivere a regole fissate:** schemi e testi dei 40 quesiti secondo questi criteri; fino ad allora simulazioni e prove usano schemi provvisori proporzionali al costo.
+~~✅ *(D-071)* Contenuti da riscrivere a regole fissate~~ → ✅ *(provvisorio, numeri ⚖️ tarati col report 14 — D-077)* **Famiglie di schemi:** per ogni costo quattro famiglie distinte dall'effetto sull'azienda, **buon affare / investimento / neutro / spreco** (30 K: +2 / +1 / 0 / −1 · 50 K: +3 / +2 / 0 / −2 · 80 K: +6 / +2 / 0 / −3). Ogni quesito ha, nella versione principale e nell'alternativa, la famiglia coerente con la sua frase per la TV; il modo in cui bonus e malus si dividono tra i reparti (la "forma") si estrae a ogni partita, così il proprio numero sul telefono non rivela la famiglia. Dettagli: [contenuti/quesiti.md](contenuti/quesiti.md).
 ❌ ~~Bilanciamento dei favoriti (D-014)~~: sostituito dall'algoritmo di equità.
 
 ---
@@ -443,7 +443,7 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 1. **La domanda.** Ogni membro del direttivo risponde: **"C'è una spia nel direttivo?"** Sì / No. **Voto palese**: la TV mostra chi ha votato cosa quando hanno votato tutti. **Chi non risponde in tempo vale "No"** (il tempo scaduto conserva lo stato delle cose).
 2. Se i **sì sono almeno la metà** dei membri (50/50 = si procede), si passa ai nomi; altrimenti il gioco passa al punteggio.
 3. **I nomi.** Ognuno indica in segreto un collega (non sé stesso). La TV rivela i nomi **uno alla volta**. Chi non fa un nome in tempo non vota.
-4. Chi raccoglie **più della metà dei nomi fatti** (metà più uno, contata sui votanti) viene **licenziato** e il suo ruolo **rivelato subito**.
+4. Chi raccoglie **più della metà dei nomi fatti** (metà più uno, contata sui votanti) viene **licenziato**; il suo ruolo **non si rivela subito**, ma al punteggio *(D-078)*.
 5. **Ballottaggio.** Altrimenti vanno al ballottaggio il più nominato e il secondo; con pari merito vanno tutti (in testa o al secondo posto). **Chi è al ballottaggio non vota**; se fuori dal ballottaggio non resta nessuno a votare, votano anche i candidati (non per sé stessi). Viene licenziato chi ha **più voti da solo** (con due candidati: metà più uno dei voti dati; con tre o più basta la maggioranza relativa, es. 2-1-1).
 6. **Stallo con due candidati:** si rivota una volta; al secondo stallo **vengono licenziati entrambi**.
    *(D-063)* Un turno di ballottaggio in cui **nessuno vota** non è uno stallo: si ripete una volta lo stesso turno, con l'avviso in TV; se anche la ripetizione resta senza voti, **non viene licenziato nessuno** (vale a due e a tre candidati).
@@ -455,7 +455,7 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 ✅ *(provvisorio — D-029)* **Il finale si gioca senza conoscere l'esito della corsa di mercato**: i numeri del 4° trimestre si scoprono al punteggio; le fughe di notizie e il conteggio della mossa privata del 4° trimestre si annunciano subito, perché sono indizi utili al finale *(D-061)*.
 ✅ Nel finale **ogni voto vale 1**, senza pesi di reparto.
 ✅ Si può nominare solo un membro del direttivo non licenziato, escluso sé stessi.
-✅ Il ruolo di ogni licenziato viene rivelato subito.
+✅ *(D-078, scelta di Luis del 23/11/2026, modifica la regola precedente)* **Il ruolo dei licenziati non si rivela subito**, ma solo a gioco concluso, al punteggio (prima della classifica). Chi deve ancora decidere, per esempio nel secondo giro con 8 giocatori, non deve sapere se ha già eliminato una spia. Il licenziato conosce il proprio ruolo e può dire ciò che vuole (anche mentire).
 ✅ *(D-059)* **Nessun punto per le accuse**: nominare, votare o essere licenziati non dà né toglie punti. L'unica conseguenza è D-025: la spia licenziata non prende il bonus della vittoria del suo concorrente.
 
 ### 15.3 Dopo il finale
@@ -512,7 +512,7 @@ Nel tipo 1 il secondo gradino comprende il primo; nei tipi 2 e 3 i traguardi con
 - Stato dei direttori: attivo o licenziato; reparti vacanti in autogestione
 - "Pausa caffè" ☕
 - Indicatore di **chi sta parlando** (fase online)
-- Finale: domanda "C'è una spia?", nomi e ballottaggi rivelati uno alla volta, ruoli dei licenziati
+- Finale: domanda "C'è una spia?", nomi e ballottaggi rivelati uno alla volta, ruoli dei licenziati (svelati al punteggio, D-078)
 - Punteggi e lettura dei messaggi
 
 ### 17.2 Telefono (privato)
@@ -598,7 +598,7 @@ Dettagli tecnici nel documento di architettura.
 | 30 | Spia scoperta (licenziata): conserva il bonus "il suo concorrente vince"? Oggi sì (+10, poi −5); il criterio di vittoria indicato da Luis dice che una spia scoperta ha perso | ✅ provvisorio (D-025: niente bonus alla spia licenziata) |
 | 32 | Scadenza dei segreti con il voto unico del trimestre | ✅ provvisorio (D-072): fine del trimestre successivo, anche per la spia; 4° trimestre senza nuovi segreti |
 | 34 | Segreti che coinvolgono la spia | ✅ provvisorio (D-074): coppia vero/finto a ogni trimestre, quello della spia è sempre il finto; con 4 giocatori da verificare col simulatore |
-| 33 | Riscrittura di obiettivi e quesiti per il voto del pacchetto (D-071) | ✅ provvisorio: obiettivi D-076, quesiti D-077; da implementare e tarare |
+| 33 | Riscrittura di obiettivi e quesiti per il voto del pacchetto (D-071) | ✅ provvisorio: obiettivi D-076, quesiti D-077; implementati e tarati (report 14) |
 | 31 | Gli onesti egoisti vincono più spesso dei cooperativi (simulazione 04: 23% contro 9%) perché il bonus aziendale va a tutti gli onesti. Alternative: A) bonus proporzionale alle mosse "per l'azienda" · B) ridurre il guadagno della mossa "reparto" · C) lasciare così e contare sulle accuse | ⏸️ per ora C (Luis, 22/11/2026): si osserva nelle serate di prova. *(D-061: il conteggio "3 su 5 per l'azienda" rende l'egoismo nascosto meno comodo.)* |
 
 ---
@@ -617,7 +617,7 @@ Dettagli tecnici nel documento di architettura.
 | **Segreto** | Informazione concreta generata dal gioco, vera o falsa |
 | **Trappola del canarino** | Dare versioni diverse di un dato a persone diverse per scoprire chi lo fa trapelare |
 | **Autogestione** | Reparto guidato dal computer |
-| **Licenziamento** | Esclusione decisa nel finale ("rinnovo dei contratti"), con ruolo rivelato |
+| **Licenziamento** | Esclusione decisa nel finale ("rinnovo dei contratti"); il ruolo si scopre a fine partita (D-078) |
 | **Ballottaggio** | Nuova votazione tra i più nominati quando nessuno ha raccolto più della metà dei nomi |
 | **Noise gate** | Filtro che lascia passare solo le voci forti e vicine |
 | **Premi-e-parla** | Il microfono si attiva solo mentre si preme (o dopo un tocco) |

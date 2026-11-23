@@ -9,7 +9,7 @@ import type { Configurazione } from "./config.js";
 import { risolviTrimestre } from "./risoluzione.js";
 import { distribuisciSegreti } from "./segreti.js";
 import { preparaCarte } from "./proposte.js";
-import { duePossibiliSpie, licenziatiNelGiro } from "./finale.js";
+import { duePossibiliSpie, licenziatiNelGiro, rivelaRuoliLicenziati } from "./finale.js";
 import { calcolaPunteggi } from "./punteggio.js";
 import { creaCasuale } from "./rng.js";
 import type { Fase, Partita } from "./tipi.js";
@@ -73,10 +73,10 @@ export function entraNellaFase(partita: Partita, ambiente: Ambiente): Evento[] {
       partita.finale.nomine = {};
       return [];
     case "PUNTEGGIO": {
-      // Prima si svelano i risultati dell'ultimo trimestre (D-029), poi la classifica.
+      // Prima si svelano i risultati dell'ultimo trimestre (D-029) e i ruoli dei licenziati (D-078), poi la classifica.
       const rinviati = partita.risultatiRinviati?.eventi ?? [];
       delete partita.risultatiRinviati;
-      return [...rinviati, ...calcolaPunteggi(partita, ambiente)];
+      return [...rinviati, ...rivelaRuoliLicenziati(partita), ...calcolaPunteggi(partita, ambiente)];
     }
     case "RAPPORTO":
       break;

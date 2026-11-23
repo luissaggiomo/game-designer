@@ -10,7 +10,7 @@ import { MISURE_NOTE } from "../src/misure.js";
 import { applica } from "../src/motore.js";
 import { valutaObiettivo, vociObiettivo } from "../src/obiettivi.js";
 import { creaPartita } from "../src/partita.js";
-import type { Partita, RegistroVotazione } from "../src/tipi.js";
+import type { Partita, RegistroPacchetto } from "../src/tipi.js";
 import { vistaGiocatore, vistaTV } from "../src/viste.js";
 
 const ambiente = caricaAmbiente();
@@ -38,11 +38,31 @@ function conObiettivo(obiettivo: string, n = 5): Partita {
   return p;
 }
 
-function registro(r: Partial<RegistroVotazione>): RegistroVotazione {
+/** Registro di un trimestre: "A" = 80 K con la più cara, positivo; "B" = 30+50, dannoso; "C" = 30+80, positivo. */
+function registro(r: Partial<RegistroPacchetto>): RegistroPacchetto {
   return {
-    propostaId: "x", trimestre: 1, posizione: 1, votazioniDelTrimestre: 2, costo: 30, piuCostosa: false,
-    approvata: true, effettoAzienda: 1, voti: {}, decisivi: [], cassaDopo: 100, ...r,
+    trimestre: 1,
+    pacchetti: {
+      A: { costo: 80, conPiuCara: true, effettoAzienda: 2 },
+      B: { costo: 80, conPiuCara: false, effettoAzienda: -1 },
+      C: { costo: 110, conPiuCara: true, effettoAzienda: 3 },
+    },
+    primiVoti: {},
+    secondiVoti: {},
+    approvato: "A",
+    esito: "PRIMO_VOTO",
+    decisivi: [],
+    cassaDopo: 20,
+    ...r,
   };
+}
+
+/** Partita in fase di voto del pacchetto (1° trimestre: validi solo la grande e le due piccole). */
+function inVoto(obiettivo: string): { p: Partita; grande: string[]; piccole: string[] } {
+  const p = conObiettivo(obiettivo);
+  p.fase = { nome: "VOTO_PACCHETTO" };
+  const [piccola, media, grande] = p.proposteTrimestre;
+  return { p, grande: [grande!.id], piccole: [piccola!.id, media!.id] };
 }
 
 describe("contenuti degli obiettivi", () => {
@@ -144,34 +164,106 @@ describe("scelta dell'obiettivo (D-048)", () => {
 
 describe("verifica dei traguardi (D-052)", () => {
   it("tipo 1 graduale: i due gradini si sommano (+3 e +5)", () => {
-    const p = conObiettivo("T1-01"); // Bastian contrario 3 / 5
-    p.storicoVotazioni = [1, 2, 3, 4, 5].map((i) => registro({ propostaId: `p${i}`, approvata: true, voti: { g1: "NO" } }));
+    const p = conObiettivo("T1-01"); // Bastian contrario 2 / 3: al primo voto un pacchetto diverso dall'approvato
+    p.storicoPacchetti = [1, 2, 3].map((trimestre) => registro({ trimestre, primiVoti: { g1: "B" } }));
     expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE").map((t) => t.stato)).toEqual(["RAGGIUNTO", "RAGGIUNTO"]);
     expect(vociObiettivo(p, ambiente, p.giocatori.find((g) => g.id === "g1")!).reduce((s, v) => s + v.punti, 0)).toBe(8);
   });
 
-  it("contano solo i voti espressi: i voti scaduti no (R2)", () => {
+  it("contano solo i voti espressi: chi non vota non è né d'accordo né contrario (R2)", () => {
     const p = conObiettivo("T1-01");
-    p.storicoVotazioni = [registro({ approvata: true, voti: {} }), registro({ approvata: false, voti: { g1: "SI" } })];
+    p.storicoPacchetti = [registro({ primiVoti: {} }), registro({ trimestre: 2, primiVoti: { g1: "B" } }), registro({ trimestre: 3, primiVoti: { g1: "A" } })];
     expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.valore).toBe(1);
   });
 
-  it("con il voto del pacchetto lo storico segna SÌ sulle proposte del pacchetto votato, NO sulle altre (provvisorio, D-071)", () => {
-    let p = conObiettivo("T1-02");
-    p.fase = { nome: "VOTO_PACCHETTO" };
-    const [piccola, media, grande] = p.proposteTrimestre;
-    for (const da of ["g1", "g2", "g3"]) p = fai(p, { tipo: "VOTA_PACCHETTO", da, pacchetto: [grande!.id] }).partita;
-    p = fai(p, { tipo: "VOTA_PACCHETTO", da: "g4", pacchetto: [piccola!.id, media!.id] }).partita;
+  it("primo voto: lo storico registra i pacchetti votati e i decisivi (passa con il minimo dei voti, D-076)", () => {
+    let { p, grande, piccole } = inVoto("T1-02");
+    for (const da of ["g1", "g2", "g3"]) p = fai(p, { tipo: "VOTA_PACCHETTO", da, pacchetto: grande }).partita;
+    p = fai(p, { tipo: "VOTA_PACCHETTO", da: "g4", pacchetto: piccole }).partita;
     p = fai(p, { tipo: "AVANZA_FASE" }).partita;
-    const registro = (id: string) => p.storicoVotazioni.find((r) => r.propostaId === id)!;
-    expect(registro(grande!.id)).toMatchObject({ approvata: true, piuCostosa: true, voti: { g1: "SI", g4: "NO" } });
-    expect(registro(piccola!.id)).toMatchObject({ approvata: false, voti: { g1: "NO", g4: "SI" } });
-    expect(registro(grande!.id).voti.g5).toBeUndefined(); // chi non vota non conta (R2)
+    const r = p.storicoPacchetti[0]!;
+    expect(r.esito).toBe("PRIMO_VOTO");
+    expect(r.approvato).toBe(grande[0]);
+    expect(r.primiVoti.g5).toBeUndefined(); // chi non vota non conta (R2)
+    expect(r.pacchetti[r.approvato]).toMatchObject({ costo: 80, conPiuCara: true });
+    expect([...r.decisivi].sort()).toEqual(["g1", "g2", "g3"]); // 3 voti su 5: il minimo per passare
+    expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[0]!.valore).toBe(1); // Ago della bilancia: 1 trimestre decisivo
+  });
+
+  it("primo voto con più voti del minimo: nessuno è decisivo", () => {
+    let { p, grande } = inVoto("T1-02");
+    for (const da of ["g1", "g2", "g3", "g4"]) p = fai(p, { tipo: "VOTA_PACCHETTO", da, pacchetto: grande }).partita;
+    p = fai(p, { tipo: "AVANZA_FASE" }).partita;
+    expect(p.storicoPacchetti[0]!.decisivi).toEqual([]);
+  });
+
+  const alSecondoVoto = (obiettivo: string) => {
+    let { p, grande, piccole } = inVoto(obiettivo);
+    for (const da of ["g1", "g2"]) p = fai(p, { tipo: "VOTA_PACCHETTO", da, pacchetto: grande }).partita;
+    for (const da of ["g3", "g4"]) p = fai(p, { tipo: "VOTA_PACCHETTO", da, pacchetto: piccole }).partita;
+    p = fai(p, { tipo: "AVANZA_FASE" }).partita;
+    expect(p.fase.nome).toBe("SECONDO_VOTO");
+    return p;
+  };
+
+  it("secondo voto: il principale passa con il minimo dei sì → decisivi i sì", () => {
+    let p = alSecondoVoto("T3-01");
+    for (const da of ["g1", "g2", "g3"]) p = fai(p, { tipo: "VOTA", da, voto: "SI" }).partita;
+    p = fai(p, { tipo: "VOTA", da: "g4", voto: "NO" }).partita;
+    p = fai(p, { tipo: "AVANZA_FASE" }).partita;
+    const r = p.storicoPacchetti[0]!;
+    expect(r.esito).toBe("PRINCIPALE");
+    expect([...r.decisivi].sort()).toEqual(["g1", "g2", "g3"]);
+    expect(r.secondiVoti).toEqual({ g1: "SI", g2: "SI", g3: "SI", g4: "NO" });
+  });
+
+  it("secondo voto: al principale manca un sì → decisivi i NO espressi; il tuo NO fa passare l'alternativa (T2-01)", () => {
+    let p = alSecondoVoto("T2-01");
+    for (const da of ["g2", "g3"]) p = fai(p, { tipo: "VOTA", da, voto: "SI" }).partita;
+    for (const da of ["g1", "g4"]) p = fai(p, { tipo: "VOTA", da, voto: "NO" }).partita;
+    p = fai(p, { tipo: "AVANZA_FASE" }).partita; // g5 non vota: vale no ma non è decisivo (R2)
+    const r = p.storicoPacchetti[0]!;
+    expect(r.esito).toBe("ALTERNATIVA");
+    expect([...r.decisivi].sort()).toEqual(["g1", "g4"]);
+    const [facile, difficile] = valutaObiettivo(p, ambiente, "g1", "COMPLETA");
+    expect(facile!.valore).toBe(1); // NO al principale: 1 su 2
+    expect(difficile!.valore).toBe(1); // il tuo NO ha fatto passare l'alternativa una volta
+  });
+
+  it("controcorrente (T3-08): SÌ a un principale che non passa / NO a un principale che passa", () => {
+    const p = conObiettivo("T3-08");
+    p.storicoPacchetti = [
+      registro({ esito: "ALTERNATIVA", principale: "B", secondiVoti: { g1: "SI" } }),
+      registro({ trimestre: 2, esito: "PRINCIPALE", principale: "A", secondiVoti: { g1: "NO" } }),
+    ];
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA").map((t) => t.stato)).toEqual(["RAGGIUNTO", "RAGGIUNTO"]);
+  });
+
+  it("pacchetti senza danni (T3-10 difficile): servono abbastanza pacchetti tuoi approvati, e cade al primo dannoso", () => {
+    const p = conObiettivo("T3-10");
+    p.storicoPacchetti = [1, 2, 3].map((trimestre) => registro({ trimestre, primiVoti: { g1: "A" } }));
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[1]!.stato).toBe("RAGGIUNTO");
+    p.storicoPacchetti.push(registro({ trimestre: 4, primiVoti: { g1: "B" }, approvato: "B" }));
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[1]!.stato).toBe("NON_RAGGIUNTO");
+  });
+
+  it("voce solitaria (T3-02 difficile): unico a votare il tuo pacchetto, con almeno due altri votanti", () => {
+    const p = conObiettivo("T3-02");
+    p.storicoPacchetti = [registro({ primiVoti: { g1: "C", g2: "A" } })];
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[1]!.valore).toBe(0);
+    p.storicoPacchetti = [registro({ primiVoti: { g1: "C", g2: "A", g3: "B" } })];
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[1]!.valore).toBe(1);
+  });
+
+  it("forbici (T1-03): pacchetto senza la più cara, e passa", () => {
+    const p = conObiettivo("T1-03");
+    p.storicoPacchetti = [registro({ primiVoti: { g1: "B" }, approvato: "B" }), registro({ trimestre: 2, primiVoti: { g1: "B" } }), registro({ trimestre: 3, primiVoti: { g1: "A" } })];
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.valore).toBe(1);
   });
 
   it("gli effetti si contano solo quando sono rivelati: l'ultimo trimestre al punteggio (D-029, R1)", () => {
-    const p = conObiettivo("T1-11"); // Occhio clinico: SÌ a proposte positive
-    p.storicoVotazioni = [registro({ trimestre: 1, voti: { g1: "SI" } }), registro({ trimestre: 2, voti: { g1: "SI" } })];
+    const p = conObiettivo("T1-11"); // Occhio clinico: il tuo pacchetto passa e si rivela positivo
+    p.storicoPacchetti = [registro({ trimestre: 1, primiVoti: { g1: "A" } }), registro({ trimestre: 2, primiVoti: { g1: "A" } })];
     p.storicoTrimestri = [{ trimestre: 1, mosseScelte: {}, perAzienda: 3, partecipanti: 5, cassaInizio: 100, cassaFine: 70 }];
     p.trimestre = 2;
     expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[0]!.valore).toBe(1);
@@ -194,12 +286,10 @@ describe("verifica dei traguardi (D-052)", () => {
     expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.valore).toBe(2);
   });
 
-  it("i traguardi 'mai…' restano in corso fino alla fine e cadono appena violati", () => {
-    const p = conObiettivo("T3-07"); // Tesoriere: la cassa non scende mai sotto 40 K
-    expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[0]!.stato).toBe("IN_CORSO");
-    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA")[0]!.stato).toBe("RAGGIUNTO");
-    p.storicoVotazioni.push(registro({ cassaDopo: 20 }));
-    expect(valutaObiettivo(p, ambiente, "g1", "GIOCATORE")[0]!.stato).toBe("NON_RAGGIUNTO");
+  it("controcorrente facile (T3-08): basta andare contro l'esito del secondo voto in uno dei due modi", () => {
+    const p = conObiettivo("T3-08");
+    p.storicoPacchetti = [registro({ esito: "PRINCIPALE", principale: "A", secondiVoti: { g1: "NO" } })];
+    expect(valutaObiettivo(p, ambiente, "g1", "COMPLETA").map((t) => t.stato)).toEqual(["RAGGIUNTO", "NON_RAGGIUNTO"]);
   });
 
   it("mossa privata: contano solo le scelte vere, non quella predefinita (R2)", () => {

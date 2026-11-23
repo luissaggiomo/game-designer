@@ -3,6 +3,27 @@
 Voci più recenti in alto. Categorie: **Design** (regole), **Aggiunto**, **Modificato**, **Corretto**, **Rimosso**.
 Versioni nel formato `0.FASE.N` finché il gioco non è completo.
 
+## 2026-11-23 — 0.2.18
+
+### Design
+- D-079 (scelte di Luis sul report 14): Tesoriere difficile "almeno 60 K a fine anno"; Controcorrente facile "contro l'esito del secondo voto in uno dei due modi"; tre versioni da 80 K diventano spreco (frasi 🟡 da approvare) e il buon affare da 80 sale a +6; spia con 4 giocatori accettata così. Quindicesimo report (docs/simulazioni/2026-11-23-simulazione-15.md).
+- D-078 (scelta di Luis): il **ruolo dei licenziati non si rivela subito**, ma al punteggio, prima della classifica (chi decide nel secondo giro con 8 giocatori non deve sapere se ha già preso una spia). GDD §15 e architettura aggiornati.
+- D-076 e D-077 implementati e tarati col simulatore (vedi DECISIONI: esito della verifica e tre punti da decidere con Luis). GDD §4.4, §8.6 e §20 punto 33 aggiornati.
+
+### Aggiunto
+- `schemi.json`: **quattro famiglie per costo** (buon affare, investimento, neutro, spreco), ognuna con le forme di ripartizione del suo costo estratte a ogni partita; `proposte.json`: famiglia coerente con la frase per la TV in ogni versione dei 40 quesiti (ricavata dagli schemi originali). Controlli automatici: famiglie distinte per costo, forme con i totali del costo, alternativa di un'altra famiglia.
+- Motore: **storico del voto del pacchetto** per trimestre (`storicoPacchetti`: primi voti, secondo voto, esito, decisivi secondo D-076, effetto di ogni pacchetto) e **14 misure nuove** per i 16 obiettivi riscritti (dopo D-079); evento `RUOLI_RIVELATI` al punteggio (D-078).
+- Simulatore: robot con intenzioni per il voto del pacchetto (seguire la maggioranza prevista dai voti precedenti, votare contro, restare soli, limite di costo, NO / SÌ al principale); report con le tabelle "Equilibrio della spia (1/N)" ed "Effetto delle carte per costo".
+- Quattordicesimo e quindicesimo report (docs/simulazioni/2026-11-23-simulazione-14.md e -15.md); `crescitaMediaProposteESegreti` 3,47 (D-056, misura 3,45 nel report 15).
+- Test: famiglie di schemi, storico e decisivi al primo e al secondo voto, misure nuove, ruoli nascosti nel secondo giro. 186 test.
+
+### Modificato
+- `obiettivi.json` e docs/contenuti/obiettivi.md: 16 obiettivi riscritti con le soglie del report 14; docs/contenuti/quesiti.md con famiglie, valori e frasi di entrambe le versioni.
+- Viste: il ruolo dei licenziati non compare più prima del punteggio (test di riservatezza aggiornato).
+
+### Rimosso
+- Storico "per proposta" (`storicoVotazioni`) e le 16 misure dei vecchi obiettivi sul voto della singola proposta e sulla cassa minima.
+
 ## 2026-11-23 — 0.2.17
 
 ### Design

@@ -779,6 +779,7 @@ Modello di voce:
 - Ragionamento di Luis (accolto): ognuno punta a vincere personalmente (D-054), quindi un ruolo è equilibrato se vince **una volta ogni N partite** (4 → 25%, 5 → 20%, 6 → 17%, 7 → 14%, 8 → 12,5%; con due spie 2/N). Scarto accettabile ±3–4 punti: il resto lo fanno le persone.
 - Verifica: vittoria della fazione spia e primo posto in classifica sono vicini a 1/N, tranne **la spia prima in classifica con 4 giocatori: 34%** (neutro 25%), probabilmente per gli obiettivi personali (le spie prendono più punti): da ricontrollare dopo la riscrittura degli obiettivi (D-076).
 - Le correzioni proposte (catena 3 con 7–8 giocatori, concorrente più veloce nelle partite grandi) non servono.
+- Verifica (report 14, dopo D-076): la spia prima in classifica con 4 giocatori scende al **23%** ✓. Spia vincente 19 / 22 / 18 / 18 / 8% (4…8 giocatori): fuori di 6 punti con 4 giocatori e di 4,5 con 8 → da decidere con Luis.
 - Rif.: docs/simulazioni/2026-11-23-simulazione-13.md · D-054, D-056
 
 ## D-076 — Obiettivi personali riscritti per il voto del pacchetto
@@ -789,10 +790,29 @@ Modello di voce:
 - Tipo 2 (+3/+7): 2.1 Voce critica: NO al principale 2 volte / il tuo NO fa passare l'alternativa · 2.8 Forbici d'oro: in 3 trimestri un pacchetto senza la più cara / a fine anno almeno 60 K · 2.10 🏢 Occhio clinico: 2 pacchetti tuoi passano positivi / con almeno 3 voti nessuno dannoso · 2.12 🏢 Consenso: in 3 trimestri il primo voto è l'approvato / in 2 trimestri il tuo pacchetto passa già al primo voto.
 - Tipo 3 (+4/+6): 3.1 Ago d'oro: decisivo una volta / in 2 trimestri diversi · 3.2 Voce solitaria: diverso dall'approvato 2 volte / unico a votare il tuo pacchetto in un trimestre · 3.7 Tesoriere: a fine anno almeno 40 K / mai un pacchetto oltre 80 K · 3.8 Controcorrente: SÌ a un principale che non passa / NO a un principale che passa · 3.10 🏢 Occhio clinico: un pacchetto tuo passa positivo / con almeno 3 voti nessuno dannoso · 3.12 🏢 Maggioranza: primo voto = approvato in 2 trimestri / in tutti e 4.
 - Aziendalisti: 4 per tipo (invariato, D-049).
+- Implementazione (23/11/2026): misure nuove in packages/engine/src/misure.ts su uno storico del voto per trimestre (storicoPacchetti). "Con almeno N, nessuno dannoso" (2.10 e 3.10 difficili) conta **i tuoi pacchetti approvati** (interpretazione di Claude: contare i soli voti lascerebbe vincere chi vota pacchetti che non passano mai).
+- Taratura (report 14): soglie ritoccate (1.2 2/3, 1.8 2/3 trimestri, 1.11 2/3, 2.1 difficile 2, 2.12 2/3, 3.1 2/3, 3.2 difficile 2, 3.7 facile 30 K, 3.10 facile 2); tipi 3,8 / 4,2 / 4,5 punti ✓. Fuori bersaglio per i pochi gradini possibili: 1.1, 1.10, 2.12, 3.2, 3.12. **Da rivedere con Luis:** 3.7 Tesoriere difficile (93%, non si può rendere più difficile con la soglia) e 3.8 Controcorrente facile (23%).
 - Rif.: GDD §4.4 · D-046…D-055, D-068, D-071 · docs/contenuti/obiettivi.md
 
 ## D-077 — Quesiti: quattro famiglie di schemi per costo
 - Data: 2026-11-23 · Stato: ✅ provvisoria — **numeri ⚖️ da tarare col simulatore**
 - Scelta di Luis: per ogni costo quattro famiglie di schemi distinte dall'effetto sull'azienda: **buon affare** (molto positivo), **investimento** (positivo), **neutro** (zero), **spreco** (negativo). Bonus e malus di reparto restano quelli del costo (30 → +2/−1, 50 → +3/−2, 80 → +5/−3, D-070). Ogni quesito riceve, nella versione principale e nell'alternativa, la famiglia coerente con la sua frase di spiegazione: i testi già approvati (D-030…D-033) restano validi. Effetto medio sull'azienda proporzionale al costo (da verificare col simulatore e, se serve, con i valori delle famiglie).
 - Sostituisce l'assegnazione a rotazione provvisoria di D-071.
+- Implementazione (23/11/2026): famiglie ricavate dagli schemi originali, già coerenti con le frasi (AZIENDALE, PROTAGONISTA, SACRIFICIO → buon affare; COPPIA, PAREGGIO → investimento; RISCHIO → neutro; EGOISTICO → spreco). Scelta tecnica di Claude: ogni famiglia ha **più forme** di ripartizione dei punti tra i reparti, estratte a ogni partita (principio di D-031/D-045: il proprio numero non deve rivelare la famiglia).
+- Taratura (report 14): effetti 30 K +2/+1/0/−1 · 50 K +3/+2/0/−2 · 80 K +5/**+2**/0/−3 → effetto medio 1,02 / 1,59 / 2,59, le due piccole 2,61 = la grande ✓. Concorrente (D-056) 3,47. **Da decidere con Luis:** nessun quesito da 80 ha una versione "spreco" (le frasi arrivano al massimo a "si va in pari").
 - Rif.: GDD §8.2, §8.6 · D-045, D-070, D-071 · docs/contenuti/quesiti.md
+
+## D-078 — Il ruolo dei licenziati si rivela solo a fine partita
+- Data: 2026-11-23 · Stato: ✅ (scelta di Luis) — modifica la regola "ruolo rivelato subito" (GDD §15.1 punto 4, §15.2)
+- Regola: quando un giocatore viene licenziato nel finale, la TV dice solo chi è stato licenziato e con quanti voti; il **ruolo non si rivela**. I ruoli dei licenziati si svelano **al punteggio**, prima della classifica. Fino ad allora né la TV né i telefoni mostrano il ruolo dei licenziati.
+- Motivo (Luis): chi deve ancora decidere se eliminare un'altra persona (secondo giro con 8 giocatori) non deve sapere se al primo giro ha già eliminato una spia.
+- Effetti: il secondo giro dipende solo da quanti sono stati licenziati (D-058), non da chi, quindi non svela nulla. Il licenziato conosce il proprio ruolo e può parlare liberamente (anche mentire); la spia alleata, con due spie, lo sa già.
+- Rif.: GDD §15 · D-058 · test in packages/engine/test/finale.test.ts e riservatezza.test.ts
+
+## D-079 — Correzioni dopo il quattordicesimo report
+- Data: 2026-11-23 · Stato: ✅ (scelte di Luis) — le tre frasi nuove dei quesiti sono 🟡 **proposte da Claude, da approvare**
+- 1A · **Tesoriere** (3.7), traguardo difficile: "a fine anno la cassa ha almeno 60 K" al posto di "mai un pacchetto oltre 80 K" (raggiunto dal 93%, non tarabile con la soglia). Report 15: 62% / 28% ✓.
+- 2A · **Controcorrente** (3.8): facile = "al secondo voto vai contro l'esito una volta (SÌ a un principale che non passa, o NO a uno che passa)"; difficile = "SÌ a un principale che non passa" (era il facile). Report 15: 42% / 36% (facile ancora un po' basso, i robot non prevedono l'esito: da osservare nelle serate).
+- 3B · **Spreco anche da 80 K:** tre versioni neutre diventano spreco con la frase ritoccata 🟡: Nuova sede (principale) «Bella sede, belle foto, stessi clienti di prima: l'affitto ci manda in perdita»; Campagna in TV (alternativa) «Spot simpatico, tutti lo ricordano, nessuno compra: soldi buttati»; Acquisto di un concorrente (principale) «I clienti del concorrente scappano, restano i suoi debiti: un buco nei conti». Buon affare da 80 portato a **+6** per restare proporzionale: le due piccole 2,61, la grande 2,70 ✓.
+- 4A · **Spia vincente con 4 giocatori (19%)** sotto il metro 1/N (25%): si accetta e si osserva nelle serate (prima in classifica 22%). Con 8 giocatori ora 9% / 11% (metro 12,5%).
+- Rif.: docs/simulazioni/2026-11-23-simulazione-15.md · D-075, D-076, D-077

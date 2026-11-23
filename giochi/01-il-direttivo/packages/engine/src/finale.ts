@@ -31,11 +31,29 @@ function ruolo(p: Partita, g: Giocatore): string {
   return `era una spia di ${p.concorrenti.find((c) => c.id === concorrente)?.nome ?? concorrente}`;
 }
 
+/**
+ * Licenziamento (D-078): il ruolo NON si rivela subito. Chi deve ancora decidere (domanda e nomi del
+ * secondo giro con 8 giocatori) non deve sapere se ha già preso una spia; i ruoli dei licenziati si
+ * svelano solo al punteggio (rivelaRuoliLicenziati).
+ */
 function licenzia(p: Partita, id: GiocatoreId, giro: number, votatoDa: GiocatoreId[], motivo: string): Evento {
   const g = p.giocatori.find((x) => x.id === id)!;
   g.stato = "LICENZIATO";
   p.finale.licenziamenti.push({ giocatore: id, giro, votatoDa });
-  return { tipo: "LICENZIAMENTO", giocatore: g.id, spia: g.fazione.tipo === "SPIA", causa: `${g.nome} ${motivo}: ${ruolo(p, g)}.` };
+  return { tipo: "LICENZIAMENTO", giocatore: g.id, causa: `${g.nome} ${motivo}. Il suo ruolo si scoprirà a fine partita.` };
+}
+
+/** Al punteggio: la TV svela il ruolo di ogni licenziato, prima della classifica (D-078). */
+export function rivelaRuoliLicenziati(p: Partita): Evento[] {
+  const licenziati = p.finale.licenziamenti.map((l) => p.giocatori.find((g) => g.id === l.giocatore)!);
+  if (licenziati.length === 0) return [];
+  return [
+    {
+      tipo: "RUOLI_RIVELATI",
+      giocatori: licenziati.map((g) => g.id),
+      causa: `Rinnovo dei contratti, i ruoli dei licenziati: ${licenziati.map((g) => `${g.nome} ${ruolo(p, g)}`).join("; ")}.`,
+    },
+  ];
 }
 
 /** Sono possibili due spie solo con 8 giocatori (GDD §4.2): serve per il secondo giro. */

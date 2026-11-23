@@ -2,108 +2,106 @@
   "_nota": "Obiettivi personali (GDD §4.4, D-046…D-052, scheda: docs/contenuti/obiettivi.md). Ogni obiettivo ha un tipo (1 graduale, 2 e 3 doppi) e due traguardi: facile e difficile; i punti per tipo stanno in config.json (obiettivi.punti). 'aziendalista' = aiuta l'azienda: le spie ricevono solo questi (D-049). Ogni traguardo ha una 'misura' (cosa conta il computer, vedi packages/engine/src/obiettivi.ts), una 'soglia' ⚖️ da tarare col simulatore (un numero, oppure META_ALTRI, TUTTI_ALTRI, TUTTI_I_TRIMESTRI) e, se serve, un 'parametro' (es. la cassa minima in K). Nei testi {soglia} e {parametro} si sostituiscono con i valori.",
   "obiettivi": [
     { "id": "T1-01", "nome": "Bastian contrario", "tipo": 1, "aziendalista": false, "traguardi": [
-      { "testo": "Vota in modo opposto all'esito {soglia} volte", "misura": "VOTI_CONTRO_ESITO", "soglia": 3 },
-      { "testo": "Vota in modo opposto all'esito {soglia} volte", "misura": "VOTI_CONTRO_ESITO", "soglia": 5 } ] },
+      { "testo": "Al primo voto scegli un pacchetto diverso da quello poi approvato, in {soglia} trimestri", "misura": "PRIMO_VOTO_DIVERSO_DA_APPROVATO", "soglia": 2 },
+      { "testo": "Al primo voto scegli un pacchetto diverso da quello poi approvato, in {soglia} trimestri", "misura": "PRIMO_VOTO_DIVERSO_DA_APPROVATO", "soglia": 3} ]  },
     { "id": "T1-02", "nome": "Ago della bilancia", "tipo": 1, "aziendalista": false, "traguardi": [
-      { "testo": "Il tuo voto è decisivo in {soglia} votazioni", "misura": "VOTI_DECISIVI", "soglia": 3 },
-      { "testo": "Il tuo voto è decisivo in {soglia} votazioni", "misura": "VOTI_DECISIVI", "soglia": 4 } ] },
+      { "testo": "Il tuo voto è decisivo in {soglia} trimestri", "misura": "VOTI_DECISIVI", "soglia": 2},
+      { "testo": "Il tuo voto è decisivo in {soglia} trimestri", "misura": "VOTI_DECISIVI", "soglia": 3} ]  },
     { "id": "T1-03", "nome": "Forbici", "tipo": 1, "aziendalista": false, "traguardi": [
-      { "testo": "Vota NO alla proposta più costosa del trimestre, e falla respingere, in {soglia} trimestri", "misura": "NO_PIU_COSTOSA_RESPINTA", "soglia": 3 },
-      { "testo": "Vota NO alla proposta più costosa del trimestre, e falla respingere, in {soglia} trimestri", "misura": "NO_PIU_COSTOSA_RESPINTA", "soglia": 4 } ] },
+      { "testo": "Voti un pacchetto senza la proposta più cara, e passa, in {soglia} trimestri", "misura": "PACCHETTO_SENZA_PIU_CARA_APPROVATO", "soglia": 2 },
+      { "testo": "Voti un pacchetto senza la proposta più cara, e passa, in {soglia} trimestri", "misura": "PACCHETTO_SENZA_PIU_CARA_APPROVATO", "soglia": 3} ]  },
     { "id": "T1-04", "nome": "Passaparola", "tipo": 1, "aziendalista": false, "traguardi": [
       { "testo": "Inoltra {soglia} copie di segreti ad altri giocatori", "misura": "SEGRETI_INOLTRATI", "soglia": 3 },
-      { "testo": "Inoltra {soglia} copie di segreti ad altri giocatori", "misura": "SEGRETI_INOLTRATI", "soglia": 6 } ] },
+      { "testo": "Inoltra {soglia} copie di segreti ad altri giocatori", "misura": "SEGRETI_INOLTRATI", "soglia": 6} ]  },
     { "id": "T1-05", "nome": "Falsario", "tipo": 1, "aziendalista": false, "traguardi": [
       { "testo": "Inoltra {soglia} copia modificata di un segreto", "misura": "COPIE_MODIFICATE", "soglia": 1 },
-      { "testo": "Inoltra {soglia} copie modificate di segreti", "misura": "COPIE_MODIFICATE", "soglia": 3 } ] },
+      { "testo": "Inoltra {soglia} copie modificate di segreti", "misura": "COPIE_MODIFICATE", "soglia": 3} ]  },
     { "id": "T1-06", "nome": "Centralino", "tipo": 1, "aziendalista": false, "traguardi": [
       { "testo": "Ricevi messaggi da almeno metà degli altri giocatori ({soglia})", "misura": "MITTENTI_MESSAGGI_DIVERSI", "soglia": "META_ALTRI" },
-      { "testo": "Ricevi messaggi da tutti gli altri giocatori ({soglia})", "misura": "MITTENTI_MESSAGGI_DIVERSI", "soglia": "TUTTI_ALTRI" } ] },
+      { "testo": "Ricevi messaggi da tutti gli altri giocatori ({soglia})", "misura": "MITTENTI_MESSAGGI_DIVERSI", "soglia": "TUTTI_ALTRI"} ]  },
     { "id": "T1-07", "nome": "Confidente", "tipo": 1, "aziendalista": false, "traguardi": [
       { "testo": "Ricevi copie di segreti da {soglia} giocatori diversi", "misura": "MITTENTI_SEGRETI_DIVERSI", "soglia": 2 },
-      { "testo": "Ricevi copie di segreti da {soglia} giocatori diversi", "misura": "MITTENTI_SEGRETI_DIVERSI", "soglia": 3 } ] },
+      { "testo": "Ricevi copie di segreti da {soglia} giocatori diversi", "misura": "MITTENTI_SEGRETI_DIVERSI", "soglia": 3} ]  },
     { "id": "T1-08", "nome": "Cassaforte", "tipo": 1, "aziendalista": false, "traguardi": [
-      { "testo": "Chiudi {soglia} trimestre con almeno {parametro} K in cassa dopo le votazioni", "misura": "TRIMESTRI_CASSA_MINIMA", "soglia": 1, "parametro": 120 },
-      { "testo": "Chiudi {soglia} trimestri con almeno {parametro} K in cassa dopo le votazioni", "misura": "TRIMESTRI_CASSA_MINIMA", "soglia": 3, "parametro": 120 } ] },
+      { "testo": "Chiudi {soglia} trimestri con almeno {parametro} K in cassa", "misura": "TRIMESTRI_CASSA_MINIMA", "soglia": 2, "parametro": 40 },
+      { "testo": "Chiudi {soglia} trimestri con almeno {parametro} K in cassa", "misura": "TRIMESTRI_CASSA_MINIMA", "soglia": 3, "parametro": 40} ]  },
     { "id": "T1-09", "nome": "Gioco di squadra", "tipo": 1, "aziendalista": true, "traguardi": [
       { "testo": "Scegli \"per l'azienda\" nella mossa privata in {soglia} trimestri", "misura": "MOSSE_AZIENDA", "soglia": 3 },
-      { "testo": "Scegli \"per l'azienda\" nella mossa privata in {soglia} trimestri", "misura": "MOSSE_AZIENDA", "soglia": 4 } ] },
+      { "testo": "Scegli \"per l'azienda\" nella mossa privata in {soglia} trimestri", "misura": "MOSSE_AZIENDA", "soglia": 4} ]  },
     { "id": "T1-10", "nome": "In linea", "tipo": 1, "aziendalista": true, "traguardi": [
-      { "testo": "Vota come l'esito {soglia} volte", "misura": "VOTI_COME_ESITO", "soglia": 5 },
-      { "testo": "Vota come l'esito {soglia} volte", "misura": "VOTI_COME_ESITO", "soglia": 8 } ] },
+      { "testo": "Al primo voto scegli il pacchetto poi approvato, in {soglia} trimestri", "misura": "PRIMO_VOTO_COME_APPROVATO", "soglia": 2 },
+      { "testo": "Al primo voto scegli il pacchetto poi approvato, in {soglia} trimestri", "misura": "PRIMO_VOTO_COME_APPROVATO", "soglia": 3} ]  },
     { "id": "T1-11", "nome": "Occhio clinico", "tipo": 1, "aziendalista": true, "traguardi": [
-      { "testo": "Vota SÌ ad almeno {soglia} proposta che si rivela positiva per l'azienda", "misura": "SI_POSITIVE", "soglia": 1 },
-      { "testo": "Vota SÌ a {soglia} proposte che si rivelano positive per l'azienda", "misura": "SI_POSITIVE", "soglia": 3 } ] },
+      { "testo": "Il tuo pacchetto passa e si rivela positivo per l'azienda in {soglia} trimestri", "misura": "PACCHETTO_APPROVATO_POSITIVO", "soglia": 2},
+      { "testo": "Il tuo pacchetto passa e si rivela positivo per l'azienda in {soglia} trimestri", "misura": "PACCHETTO_APPROVATO_POSITIVO", "soglia": 3} ]  },
     { "id": "T1-12", "nome": "Postino", "tipo": 1, "aziendalista": true, "traguardi": [
       { "testo": "Fai arrivare in tempo al reparto a cui serve {soglia} copia vera inoltrata da te", "misura": "SEGRETI_IN_TEMPO_GRAZIE_A_TE", "soglia": 1 },
-      { "testo": "Fai arrivare in tempo al reparto a cui serve {soglia} copie vere inoltrate da te", "misura": "SEGRETI_IN_TEMPO_GRAZIE_A_TE", "soglia": 2 } ] },
-
+      { "testo": "Fai arrivare in tempo al reparto a cui serve {soglia} copie vere inoltrate da te", "misura": "SEGRETI_IN_TEMPO_GRAZIE_A_TE", "soglia": 2} ]  },
     { "id": "T2-01", "nome": "Voce critica", "tipo": 2, "aziendalista": false, "traguardi": [
-      { "testo": "Il tuo voto decide il respingimento di {soglia} proposte", "misura": "DECISIVI_PER_RESPINGERE", "soglia": 2 },
-      { "testo": "Vota NO a {soglia} proposte che vengono approvate", "misura": "NO_SU_APPROVATE", "soglia": 2 } ] },
+      { "testo": "Vota NO al pacchetto principale {soglia} volte", "misura": "NO_AL_PRINCIPALE", "soglia": 2 },
+      { "testo": "Il tuo NO fa passare l'alternativa {soglia} volte (senza di te il principale passava)", "misura": "NO_DECISIVO_PER_ALTERNATIVA", "soglia": 2} ]  },
     { "id": "T2-02", "nome": "Intermediario", "tipo": 2, "aziendalista": false, "traguardi": [
       { "testo": "Inoltra {soglia} copie di segreti ad altri giocatori", "misura": "SEGRETI_INOLTRATI", "soglia": 2 },
-      { "testo": "Una copia inoltrata da te passa per almeno {soglia} giocatori", "misura": "CATENA_DOPO_DI_TE", "soglia": 3 } ] },
+      { "testo": "Una copia inoltrata da te passa per almeno {soglia} giocatori", "misura": "CATENA_DOPO_DI_TE", "soglia": 3} ]  },
     { "id": "T2-03", "nome": "Archivista", "tipo": 2, "aziendalista": false, "traguardi": [
       { "testo": "Ricevi copie di segreti da {soglia} giocatori diversi", "misura": "MITTENTI_SEGRETI_DIVERSI", "soglia": 2 },
-      { "testo": "A fine anno possiedi copie di {soglia} segreti diversi", "misura": "SEGRETI_POSSEDUTI", "soglia": 5 } ] },
+      { "testo": "A fine anno possiedi copie di {soglia} segreti diversi", "misura": "SEGRETI_POSSEDUTI", "soglia": 5} ]  },
     { "id": "T2-04", "nome": "Disinformatore", "tipo": 2, "aziendalista": false, "traguardi": [
       { "testo": "Inoltra una copia modificata di un segreto", "misura": "COPIE_MODIFICATE", "soglia": 1 },
-      { "testo": "Un concorrente usa un dato falso partito da una tua copia modificata", "misura": "FALSO_USATO_DA_CONCORRENTE", "soglia": 1 } ] },
+      { "testo": "Un concorrente usa un dato falso partito da una tua copia modificata", "misura": "FALSO_USATO_DA_CONCORRENTE", "soglia": 1} ]  },
     { "id": "T2-05", "nome": "Popolare", "tipo": 2, "aziendalista": false, "traguardi": [
       { "testo": "Ricevi un messaggio anonimo", "misura": "ANONIMI_RICEVUTI", "soglia": 1 },
-      { "testo": "Ricevi più messaggi di chiunque altro (vale anche il pari merito)", "misura": "PIU_MESSAGGI_RICEVUTI", "soglia": 1 } ] },
+      { "testo": "Ricevi più messaggi di chiunque altro (vale anche il pari merito)", "misura": "PIU_MESSAGGI_RICEVUTI", "soglia": 1} ]  },
     { "id": "T2-06", "nome": "Fantasma", "tipo": 2, "aziendalista": false, "traguardi": [
       { "testo": "Ricevi messaggi da almeno metà degli altri giocatori ({soglia})", "misura": "MITTENTI_MESSAGGI_DIVERSI", "soglia": "META_ALTRI" },
-      { "testo": "Manda un messaggio anonimo in tutti i {soglia} trimestri", "misura": "TRIMESTRI_CON_ANONIMO_INVIATO", "soglia": "TUTTI_I_TRIMESTRI" } ] },
+      { "testo": "Manda un messaggio anonimo in tutti i {soglia} trimestri", "misura": "TRIMESTRI_CON_ANONIMO_INVIATO", "soglia": "TUTTI_I_TRIMESTRI"} ]  },
     { "id": "T2-08", "nome": "Forbici d'oro", "tipo": 2, "aziendalista": false, "traguardi": [
-      { "testo": "Vota NO alla proposta più costosa del trimestre in tutti i {soglia} trimestri", "misura": "NO_PIU_COSTOSA", "soglia": 4 },
-      { "testo": "A fine anno la cassa ha almeno {parametro} K", "misura": "CASSA_FINE_ANNO", "soglia": 1, "parametro": 150 } ] },
+      { "testo": "Al primo voto scegli un pacchetto senza la proposta più cara in {soglia} trimestri", "misura": "PACCHETTO_SENZA_PIU_CARA", "soglia": 3 },
+      { "testo": "A fine anno la cassa ha almeno {parametro} K", "misura": "CASSA_FINE_ANNO", "soglia": 1, "parametro": 60} ]  },
     { "id": "T2-09", "nome": "Squadra", "tipo": 2, "aziendalista": true, "traguardi": [
       { "testo": "Scegli \"per l'azienda\" nella mossa privata in {soglia} trimestri", "misura": "MOSSE_AZIENDA", "soglia": 3 },
-      { "testo": "In ogni trimestre almeno metà del direttivo gioca per l'azienda", "misura": "TRIMESTRI_META_AZIENDA", "soglia": "TUTTI_I_TRIMESTRI" } ] },
+      { "testo": "In ogni trimestre almeno metà del direttivo gioca per l'azienda", "misura": "TRIMESTRI_META_AZIENDA", "soglia": "TUTTI_I_TRIMESTRI"} ]  },
     { "id": "T2-10", "nome": "Occhio clinico", "tipo": 2, "aziendalista": true, "traguardi": [
-      { "testo": "Vota SÌ a {soglia} proposte che si rivelano positive per l'azienda", "misura": "SI_POSITIVE", "soglia": 2 },
-      { "testo": "Vota NO ad almeno {soglia} proposta approvata che si rivela dannosa per l'azienda", "misura": "NO_SU_DANNOSE", "soglia": 1 } ] },
+      { "testo": "{soglia} tuoi pacchetti passano e si rivelano positivi per l'azienda", "misura": "PACCHETTO_APPROVATO_POSITIVO", "soglia": 2 },
+      { "testo": "Almeno {soglia} tuoi pacchetti passano e nessuno si rivela dannoso per l'azienda", "misura": "PACCHETTI_APPROVATI_SENZA_DANNOSI", "soglia": 3} ]  },
     { "id": "T2-11", "nome": "Postino", "tipo": 2, "aziendalista": true, "traguardi": [
       { "testo": "Inoltra una copia vera di un segreto al reparto a cui serve", "misura": "COPIA_VERA_AL_REPARTO_UTILE", "soglia": 1 },
-      { "testo": "{soglia} segreti arrivano in tempo al reparto giusto grazie a te", "misura": "SEGRETI_IN_TEMPO_GRAZIE_A_TE", "soglia": 2 } ] },
+      { "testo": "{soglia} segreti arrivano in tempo al reparto giusto grazie a te", "misura": "SEGRETI_IN_TEMPO_GRAZIE_A_TE", "soglia": 2} ]  },
     { "id": "T2-12", "nome": "Consenso", "tipo": 2, "aziendalista": true, "traguardi": [
-      { "testo": "Vota come l'esito {soglia} volte", "misura": "VOTI_COME_ESITO", "soglia": 6 },
-      { "testo": "Il tuo voto è decisivo per approvare {soglia} proposte positive per l'azienda", "misura": "DECISIVI_PER_APPROVARE_POSITIVE", "soglia": 2 } ] },
-
+      { "testo": "Al primo voto scegli il pacchetto poi approvato, in {soglia} trimestri", "misura": "PRIMO_VOTO_COME_APPROVATO", "soglia": 2},
+      { "testo": "Il tuo pacchetto passa già al primo voto in {soglia} trimestri", "misura": "APPROVATO_AL_PRIMO_VOTO", "soglia": 3} ]  },
     { "id": "T3-01", "nome": "Ago d'oro", "tipo": 3, "aziendalista": false, "traguardi": [
-      { "testo": "Il tuo voto è decisivo in {soglia} votazioni", "misura": "VOTI_DECISIVI", "soglia": 3 },
-      { "testo": "Il tuo voto è decisivo in {soglia} trimestri diversi", "misura": "TRIMESTRI_CON_VOTO_DECISIVO", "soglia": 4 } ] },
+      { "testo": "Il tuo voto è decisivo in {soglia} trimestri", "misura": "VOTI_DECISIVI", "soglia": 2},
+      { "testo": "Il tuo voto è decisivo in {soglia} trimestri diversi", "misura": "VOTI_DECISIVI", "soglia": 3} ]  },
     { "id": "T3-02", "nome": "Voce solitaria", "tipo": 3, "aziendalista": false, "traguardi": [
-      { "testo": "Vota in modo opposto all'esito {soglia} volte", "misura": "VOTI_CONTRO_ESITO", "soglia": 3 },
-      { "testo": "In almeno {soglia} votazione sei l'unico ad aver votato così", "misura": "VOTI_UNICA_VOCE", "soglia": 1 } ] },
+      { "testo": "Al primo voto scegli un pacchetto diverso da quello poi approvato, in {soglia} trimestri", "misura": "PRIMO_VOTO_DIVERSO_DA_APPROVATO", "soglia": 2 },
+      { "testo": "In {soglia} trimestri sei l'unico a votare il tuo pacchetto", "misura": "UNICO_SUL_PACCHETTO", "soglia": 2} ]  },
     { "id": "T3-03", "nome": "Rete", "tipo": 3, "aziendalista": false, "traguardi": [
       { "testo": "Un segreto di cui sei la fonte arriva ad almeno {soglia} giocatori", "misura": "FONTE_ARRIVATA_A_GIOCATORI", "soglia": 2 },
-      { "testo": "Una copia inoltrata da te passa per almeno {soglia} giocatori", "misura": "CATENA_DOPO_DI_TE", "soglia": 3 } ] },
+      { "testo": "Una copia inoltrata da te passa per almeno {soglia} giocatori", "misura": "CATENA_DOPO_DI_TE", "soglia": 3} ]  },
     { "id": "T3-04", "nome": "Canarino", "tipo": 3, "aziendalista": false, "traguardi": [
       { "testo": "Inoltra versioni diverse dello stesso segreto a {soglia} giocatori", "misura": "VERSIONI_DIVERSE_INOLTRATE", "soglia": 2 },
-      { "testo": "Un concorrente usa una delle tue versioni", "misura": "VERSIONE_CANARINO_USATA", "soglia": 1 } ] },
+      { "testo": "Un concorrente usa una delle tue versioni", "misura": "VERSIONE_CANARINO_USATA", "soglia": 1} ]  },
     { "id": "T3-05", "nome": "Crocevia", "tipo": 3, "aziendalista": false, "traguardi": [
       { "testo": "Ricevi messaggi da tutti gli altri giocatori ({soglia})", "misura": "MITTENTI_MESSAGGI_DIVERSI", "soglia": "TUTTI_ALTRI" },
-      { "testo": "Ricevi messaggi da almeno 2 giocatori diversi in tutti i {soglia} trimestri", "misura": "TRIMESTRI_CON_DUE_MITTENTI", "soglia": "TUTTI_I_TRIMESTRI" } ] },
+      { "testo": "Ricevi messaggi da almeno 2 giocatori diversi in tutti i {soglia} trimestri", "misura": "TRIMESTRI_CON_DUE_MITTENTI", "soglia": "TUTTI_I_TRIMESTRI"} ]  },
     { "id": "T3-07", "nome": "Tesoriere", "tipo": 3, "aziendalista": false, "traguardi": [
-      { "testo": "La cassa non scende mai sotto {parametro} K dopo le votazioni", "misura": "CASSA_MAI_SOTTO", "soglia": 1, "parametro": 40 },
-      { "testo": "A fine anno la cassa ha almeno {parametro} K", "misura": "CASSA_FINE_ANNO", "soglia": 1, "parametro": 150 } ] },
+      { "testo": "A fine anno la cassa ha almeno {parametro} K", "misura": "CASSA_FINE_ANNO", "soglia": 1, "parametro": 30 },
+      { "testo": "A fine anno la cassa ha almeno {parametro} K", "misura": "CASSA_FINE_ANNO", "soglia": 1, "parametro": 60 } ] },
     { "id": "T3-08", "nome": "Controcorrente", "tipo": 3, "aziendalista": false, "traguardi": [
-      { "testo": "Vota SÌ a {soglia} proposte che vengono respinte", "misura": "SI_SU_RESPINTE", "soglia": 2 },
-      { "testo": "Vota NO a {soglia} proposte che vengono approvate", "misura": "NO_SU_APPROVATE", "soglia": 2 } ] },
+      { "testo": "Al secondo voto vai contro l'esito {soglia} volta: SÌ a un principale che non passa, o NO a uno che passa", "misura": "SECONDO_VOTO_CONTRO_ESITO", "soglia": 1 },
+      { "testo": "Vota SÌ a {soglia} pacchetto principale che non passa", "misura": "SI_PRINCIPALE_RESPINTO", "soglia": 1 } ] },
     { "id": "T3-09", "nome": "Squadra", "tipo": 3, "aziendalista": true, "traguardi": [
       { "testo": "Scegli \"per l'azienda\" nella mossa privata in {soglia} trimestri", "misura": "MOSSE_AZIENDA", "soglia": 3 },
-      { "testo": "Più di metà del direttivo gioca per l'azienda in tutti i {soglia} trimestri", "misura": "TRIMESTRI_MAGGIORANZA_AZIENDA", "soglia": 4 } ] },
+      { "testo": "Più di metà del direttivo gioca per l'azienda in tutti i {soglia} trimestri", "misura": "TRIMESTRI_MAGGIORANZA_AZIENDA", "soglia": 4} ]  },
     { "id": "T3-10", "nome": "Occhio clinico", "tipo": 3, "aziendalista": true, "traguardi": [
-      { "testo": "Vota SÌ ad almeno {soglia} proposta che si rivela positiva per l'azienda", "misura": "SI_POSITIVE", "soglia": 1 },
-      { "testo": "Vota SÌ ad almeno {soglia} proposte approvate, e a nessuna che si riveli dannosa", "misura": "SI_SENZA_DANNOSE", "soglia": 2 } ] },
+      { "testo": "{soglia} tuoi pacchetti passano e si rivelano positivi per l'azienda", "misura": "PACCHETTO_APPROVATO_POSITIVO", "soglia": 2},
+      { "testo": "Almeno {soglia} tuoi pacchetti passano e nessuno si rivela dannoso per l'azienda", "misura": "PACCHETTI_APPROVATI_SENZA_DANNOSI", "soglia": 3} ]  },
     { "id": "T3-11", "nome": "Custode", "tipo": 3, "aziendalista": true, "traguardi": [
       { "testo": "{soglia} segreto arriva in tempo al reparto giusto grazie a te", "misura": "SEGRETI_IN_TEMPO_GRAZIE_A_TE", "soglia": 1 },
-      { "testo": "Nessun segreto di cui sei la fonte finisce a un concorrente (con almeno {soglia} ricevuti)", "misura": "FONTE_MAI_AL_CONCORRENTE", "soglia": 2 } ] },
+      { "testo": "Nessun segreto di cui sei la fonte finisce a un concorrente (con almeno {soglia} ricevuti)", "misura": "FONTE_MAI_AL_CONCORRENTE", "soglia": 2} ]  },
     { "id": "T3-12", "nome": "Maggioranza", "tipo": 3, "aziendalista": true, "traguardi": [
-      { "testo": "Vota come l'esito in tutte le votazioni di un trimestre", "misura": "TRIMESTRE_TUTTO_COME_ESITO", "soglia": 1 },
-      { "testo": "Vota come l'esito {soglia} volte", "misura": "VOTI_COME_ESITO", "soglia": 8 } ] }
+      { "testo": "Al primo voto scegli il pacchetto poi approvato, in {soglia} trimestri", "misura": "PRIMO_VOTO_COME_APPROVATO", "soglia": 2 },
+      { "testo": "Al primo voto scegli il pacchetto poi approvato, in tutti i {soglia} trimestri", "misura": "PRIMO_VOTO_COME_APPROVATO", "soglia": "TUTTI_I_TRIMESTRI" } ] }
   ]
 }
